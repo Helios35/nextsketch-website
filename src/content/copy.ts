@@ -17,7 +17,7 @@ export const SITE = {
    */
   title: "NextSketch — Software Products from Idea to Production",
   description:
-    "NextSketch builds software products and agentic systems from idea to production — and stays. A product development partner for founders and small-to-medium businesses.",
+    "NextSketch builds software products and agentic systems from idea to production — and stays. Book a free consultation today. A product development partner for founders and small-to-medium businesses.",
 } as const;
 
 export const NAV = {
