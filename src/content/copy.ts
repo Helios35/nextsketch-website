@@ -21,6 +21,8 @@ export const SITE = {
 } as const;
 
 export const NAV = {
+  /** Accessible name of the main nav landmark. */
+  label: "Main",
   items: [
     { id: "process", label: "Process" },
     { id: "work", label: "Work" },
@@ -29,6 +31,38 @@ export const NAV = {
     { id: "faq", label: "FAQ" },
   ] as const satisfies readonly { id: SectionId; label: string }[],
   cta: "Start a Conversation",
+  /** Mobile menu toggle labels (screen-reader copy). */
+  menu: {
+    open: "Open menu",
+    close: "Close menu",
+  },
+} as const;
+
+/**
+ * Footer-only strings. Social platform set locked per
+ * docs/decision-log.md #4; hrefs are placeholders — real URLs are
+ * owner-owed before launch (launch-readiness check).
+ */
+export const FOOTER = {
+  /** Accessible name of the footer nav landmark. */
+  label: "Footer",
+  socials: [
+    { label: "LinkedIn", href: "#" },
+    { label: "X / Twitter", href: "#" },
+    { label: "Instagram", href: "#" },
+  ],
+} as const;
+
+/**
+ * 404 copy — not in Messaging Kit §05; drafted in brand voice
+ * (Brand Philosophy §8) — DRAFT pending owner approval, see
+ * briefs/build-notes/02-page-shell.md.
+ */
+export const NOT_FOUND = {
+  eyebrow: "404",
+  headline: "This page doesn't exist.",
+  body: "NextSketch lives on a single page now — everything you're looking for is there.",
+  cta: "Go to the page",
 } as const;
 
 export const HERO = {
