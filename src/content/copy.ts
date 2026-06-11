@@ -71,6 +71,19 @@ export const HERO = {
   subheadline:
     "NextSketch takes software ideas from concept to production — and stays with you. We figure out what needs to be built, build it correctly, validate it works, and partner with you through what comes next. No handoff. No fluff. A real partner.",
   cta: "Start a Conversation",
+  /**
+   * Stat strip ships with placeholder numbers per docs/decision-log.md
+   * #5 — visually real, numerically obviously unfinal. Real numbers
+   * are owner-owed before launch. Labels are DRAFT copy (brand voice,
+   * not Messaging Kit) pending owner approval — see
+   * briefs/build-notes/03-sections-story.md.
+   */
+  stats: [
+    { value: "00", label: "Products in production" },
+    { value: "00+", label: "Ideas validated first" },
+    { value: "00%", label: "Partners who stayed" },
+    { value: "00", label: "Handoffs after launch" },
+  ],
 } as const;
 
 export const MANIFESTO = {
@@ -84,6 +97,13 @@ export const MANIFESTO = {
 
 export const PROCESS = {
   headline: "Strategy. Build. Validate. Stay.",
+  /**
+   * Handwritten margin annotation shown with the Validate phase —
+   * text from docs/04-ux-spec.md §Sketch accent system (the spec's
+   * own example for this exact placement). DRAFT pending owner
+   * approval — see briefs/build-notes/03-sections-story.md.
+   */
+  annotation: "this is the part most firms skip",
   phases: [
     {
       order: "01",

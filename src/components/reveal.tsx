@@ -10,6 +10,12 @@ interface RevealProps {
   className?: string;
   /** Stagger offset in seconds. */
   delay?: number;
+  /**
+   * Rendered element. Use "span" (with an inline-block class so the
+   * rise transform applies) for inline reveals such as the hero's
+   * per-word stagger; defaults to a block div.
+   */
+  as?: "div" | "span";
 }
 
 /**
@@ -23,16 +29,23 @@ interface RevealProps {
  * (UX spec §Motion), and avoids hydrating animated styles into a
  * static tree.
  */
-export function Reveal({ children, className, delay = 0 }: RevealProps) {
+export function Reveal({
+  children,
+  className,
+  delay = 0,
+  as = "div",
+}: RevealProps) {
   const reduceMotion = useReducedMotion();
   const mounted = useMounted();
 
   if (!mounted || reduceMotion) {
-    return <div className={className}>{children}</div>;
+    const Tag = as;
+    return <Tag className={className}>{children}</Tag>;
   }
 
+  const MotionTag = as === "span" ? motion.span : motion.div;
   return (
-    <motion.div
+    <MotionTag
       className={className}
       initial="hidden"
       whileInView="visible"
@@ -41,6 +54,6 @@ export function Reveal({ children, className, delay = 0 }: RevealProps) {
       custom={delay}
     >
       {children}
-    </motion.div>
+    </MotionTag>
   );
 }
