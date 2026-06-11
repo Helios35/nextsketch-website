@@ -33,3 +33,18 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-hand: var(--font-caveat), cursive;
 }
+
+/*
+ * Anchor navigation under the sticky nav: smooth scrolling is
+ * motion-gated (docs/04-ux-spec.md §Motion inventory); scroll-margin
+ * keeps section tops clear of the shrunken nav bar.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+section[id] {
+  scroll-margin-top: 5rem;
+}
