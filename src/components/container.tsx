@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import type { SectionId } from "@/lib/types";
 
 interface ContainerProps {
-  children: ReactNode;
+  /** Optional so the page frame can render empty anchored slots. */
+  children?: ReactNode;
   className?: string;
   /** Renders a <section> when an anchor id is supplied. */
   id?: SectionId;
