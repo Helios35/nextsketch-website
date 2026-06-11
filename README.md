@@ -14,3 +14,5 @@ npm run build        # production build
 ```
 
 CI runs lint, typecheck, and build on every PR (`.github/workflows/ci.yml`).
+
+_CI smoke check: this line proves the pipeline runs on PRs._
