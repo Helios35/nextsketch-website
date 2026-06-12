@@ -8,15 +8,22 @@ import type { Variants } from "motion/react";
  * inventory: sections rise 12px + fade over 500ms, once.
  */
 
-export const REVEAL_RISE_PX = 12;
-export const REVEAL_DURATION_S = 0.5;
+export const REVEAL_RISE_PX = 16;
+export const REVEAL_DURATION_S = 0.6;
+
+/**
+ * Settle curve (unit 08): a long-tail ease-out so content lands like
+ * paper coming to rest rather than a UI tween. Spec'd in the as-built
+ * motion inventory (docs/04-ux-spec.md).
+ */
+const SETTLE_EASE = [0.22, 1, 0.36, 1] as const;
 
 export const revealVariants: Variants = {
   hidden: { opacity: 0, y: REVEAL_RISE_PX },
   visible: (delay: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: REVEAL_DURATION_S, ease: "easeOut", delay },
+    transition: { duration: REVEAL_DURATION_S, ease: SETTLE_EASE, delay },
   }),
 };
 

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
+  <!-- Placeholder sketch art (unit 08): an agentic-system graph, hand-drawn.
+       Clearly a sketch, never proof (Rule 4.3). Swapped by file name. -->
+  <circle cx="300" cy="320" r="55" fill="#cb9da2" opacity="0.4"/>
+  <rect x="380" y="90" width="150" height="80" rx="12" fill="#cb9da2" opacity="0.25" transform="rotate(0.8 455 130)"/>
+  <g fill="none" stroke="#5c2529" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.8">
+    <rect x="80" y="120" width="140" height="80" rx="12" transform="rotate(-1 150 160)"/>
+    <rect x="380" y="90" width="150" height="80" rx="12" transform="rotate(0.8 455 130)"/>
+    <circle cx="300" cy="320" r="55"/>
+    <rect x="90" y="420" width="150" height="90" rx="12" transform="rotate(0.5 165 465)"/>
+    <rect x="400" y="400" width="130" height="80" rx="12" transform="rotate(-0.6 465 440)"/>
+    <path d="M228 158 C 280 142, 330 138, 376 132" stroke-dasharray="12 10"/>
+    <path d="M186 204 C 222 240, 252 268, 268 282" stroke-dasharray="12 10"/>
+    <path d="M438 174 C 408 224, 372 264, 342 288" stroke-dasharray="12 10"/>
+    <path d="M276 372 C 246 392, 216 408, 194 418" stroke-dasharray="12 10"/>
+    <path d="M340 364 C 372 380, 402 392, 426 400" stroke-dasharray="12 10"/>
+    <path d="M212 402 L 192 420 L 214 432"/>
+    <path d="M404 384 L 428 402 L 406 414"/>
+    <path d="M282 304 C 290 312, 296 320, 300 330"/>
+    <path d="M318 304 C 312 314, 308 322, 304 332"/>
+  </g>
+</svg>

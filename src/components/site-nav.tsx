@@ -77,7 +77,7 @@ export function SiteNav() {
         "sticky top-0 z-40 border-b",
         "motion-safe:transition-colors motion-safe:duration-300",
         scrolled
-          ? "border-ink/10 bg-paper"
+          ? "border-ink/10 bg-paper/85 backdrop-blur-md"
           : "border-transparent bg-transparent",
       ].join(" ")}
     >
@@ -160,6 +160,15 @@ export function SiteNav() {
           </div>
         </div>
       )}
+      {/*
+       * Scroll-progress stroke (unit 08): the page draws itself as
+       * it's read. Pure CSS scroll-driven animation — motion-gated
+       * and hidden where unsupported (globals.css .scroll-progress).
+       */}
+      <span
+        aria-hidden="true"
+        className="scroll-progress pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-gold"
+      />
     </header>
   );
 }

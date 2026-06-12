@@ -133,8 +133,9 @@ const INPUT_CLASS =
 
 const OPTION_CLASS =
   "flex min-h-11 cursor-pointer items-center rounded-2xl border border-ink/20 " +
-  "px-5 py-4 text-left text-base font-medium transition-colors " +
-  "hover:border-ink/60 has-checked:border-ink has-checked:bg-ink " +
+  "bg-white/60 px-5 py-4 text-left text-base font-medium " +
+  "motion-safe:transition-colors " +
+  "hover:border-ink/60 hover:bg-white has-checked:border-ink has-checked:bg-ink " +
   "has-checked:text-white has-focus-visible:outline-2 " +
   "has-focus-visible:outline-offset-2 has-focus-visible:outline-ink";
 
@@ -298,6 +299,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
       className={[
         "flex h-dvh max-h-none w-full max-w-none flex-col bg-paper p-0 text-ink",
         "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:rounded-3xl",
+        "md:shadow-sheet-xl",
         // backdrop color lives in globals.css (::backdrop var-inheritance quirk)
         "motion-safe:animate-modal-in",
       ].join(" ")}
@@ -314,8 +316,12 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
               {PROGRESS_STEPS.map((step, i) => (
                 <span
                   key={step}
-                  className={`h-2 w-2 rounded-full ${
-                    i <= stepIndex ? "bg-ink" : "bg-ink/20"
+                  className={`h-2 rounded-full motion-safe:transition-[width,background-color] motion-safe:duration-300 ${
+                    i === stepIndex
+                      ? "w-6 bg-ink"
+                      : i < stepIndex
+                        ? "w-2 bg-ink"
+                        : "w-2 bg-ink/20"
                   }`}
                 />
               ))}

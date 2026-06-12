@@ -24,7 +24,7 @@ export function ManifestoSection() {
   return (
     <div className="py-24 md:py-36">
       <Reveal>
-        <SectionHeading className="max-w-4xl">
+        <SectionHeading size="statement" className="max-w-4xl">
           {phraseStart === -1 ? (
             headline
           ) : (

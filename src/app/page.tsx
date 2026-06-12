@@ -15,12 +15,18 @@ import { WorkSection } from "@/components/work-section";
  * docs/03-site-architecture.md §Page structure. Each Container below
  * is an anchored slot, filled in place by units 03–05 without
  * touching this frame.
+ *
+ * Tonal bands (unit 08, working-drawing direction): the page scrolls
+ * through rooms — gridded paper (hero) → paper → white sheet
+ * (process) → paper → ink (about) → paper → ink close (#start) into
+ * the ink footer. Band classes live here so the rhythm of the whole
+ * sheet is legible in one place.
  */
 export default function Home() {
   return (
     <main className="grow">
       {/* Unit 03 — Hero (incl. placeholder stat strip) */}
-      <Container id="top">
+      <Container id="top" band="grid-paper wash-gold">
         <HeroSection />
       </Container>
       {/* Unit 03 — Manifesto */}
@@ -28,7 +34,7 @@ export default function Home() {
         <ManifestoSection />
       </Container>
       {/* Unit 03 — Process */}
-      <Container id="process">
+      <Container id="process" band="border-y border-ink/5 bg-paper-bright">
         <ProcessSection />
       </Container>
       {/* Unit 04 — Selected work */}
@@ -40,7 +46,7 @@ export default function Home() {
         <ServicesSection />
       </Container>
       {/* Unit 04 — About */}
-      <Container id="about">
+      <Container id="about" band="grid-ink bg-ink text-white">
         <AboutSection />
       </Container>
       {/* Unit 04 — Testimonials (placeholder blocks) */}
@@ -56,7 +62,7 @@ export default function Home() {
         <FaqSection />
       </Container>
       {/* Unit 05 — Final CTA */}
-      <Container id="start">
+      <Container id="start" band="grid-ink wash-gold-ink bg-ink text-white">
         <FinalCtaSection />
       </Container>
     </main>

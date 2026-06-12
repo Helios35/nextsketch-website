@@ -15,7 +15,7 @@ export function PlusIcon() {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      className="shrink-0 self-center text-ink/40 group-open:rotate-45 motion-safe:transition-transform motion-safe:duration-200"
+      className="shrink-0 self-center text-ink/40 group-open:rotate-45 group-hover:text-ink/80 motion-safe:transition-[transform,color] motion-safe:duration-200"
     >
       <path d="M10 3v14M3 10h14" />
     </svg>

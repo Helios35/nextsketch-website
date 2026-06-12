@@ -27,7 +27,7 @@ export function HeroSection() {
   const words = HERO.headline.split(" ");
 
   return (
-    <div className="pt-20 pb-16 md:pt-32 md:pb-20">
+    <div className="pt-24 pb-20 md:pt-36 md:pb-24">
       <SectionHeading as="h1" size="hero">
         {words.map((word, i) => (
           <Fragment key={`${word}-${i}`}>
@@ -59,12 +59,25 @@ export function HeroSection() {
       <Reveal delay={0.35} className="mt-10">
         <ModalTrigger>{HERO.cta}</ModalTrigger>
       </Reveal>
+      {/*
+       * Stat strip as a drafting title block (unit 08): hairline-boxed
+       * cells, big tabular numerals, tracked-out labels — the document
+       * frame that makes the placeholder values read as a draft
+       * awaiting its revision stamp (Decision Log #5), not as missing
+       * content. Cells are opaque paper so the band grid stays quiet
+       * behind the numbers.
+       */}
       <Reveal delay={0.45} className="mt-20 md:mt-28">
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-10 border-t border-ink/10 pt-10 md:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-ink/15 bg-ink/15 shadow-sheet md:grid-cols-4">
           {HERO.stats.map(({ value, label }) => (
-            <div key={label} className="flex flex-col-reverse gap-2">
-              <dt className="text-sm text-ink/60">{label}</dt>
-              <dd className="text-3xl font-bold tracking-tight md:text-4xl">
+            <div
+              key={label}
+              className="flex flex-col-reverse gap-3 bg-paper p-6 md:p-8"
+            >
+              <dt className="text-xs font-medium tracking-[0.18em] uppercase text-ink/55">
+                {label}
+              </dt>
+              <dd className="text-4xl font-bold tracking-tight tabular-nums md:text-5xl">
                 {value}
               </dd>
             </div>

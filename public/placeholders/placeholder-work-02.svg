@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
+  <!-- Placeholder sketch art (unit 08): a mobile product flow, hand-drawn.
+       Clearly a sketch, never proof (Rule 4.3). Swapped by file name. -->
+  <rect x="150" y="150" width="140" height="90" rx="8" fill="#bbb2ce" opacity="0.4" transform="rotate(-0.8 220 280)"/>
+  <rect x="430" y="250" width="110" height="80" rx="10" fill="#bbb2ce" opacity="0.3" transform="rotate(1 485 290)"/>
+  <g fill="none" stroke="#453b60" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.8">
+    <rect x="120" y="80" width="200" height="400" rx="28" transform="rotate(-0.8 220 280)"/>
+    <path d="M192 112 C 212 110, 230 112, 248 111"/>
+    <rect x="150" y="150" width="140" height="90" rx="8" transform="rotate(-0.8 220 280)"/>
+    <path d="M150 272 C 196 269, 250 273, 288 270"/>
+    <path d="M150 302 C 184 300, 226 303, 252 301"/>
+    <path d="M150 332 C 190 330, 240 333, 272 331"/>
+    <rect x="150" y="385" width="140" height="42" rx="21" transform="rotate(-0.5 220 405)"/>
+    <path d="M338 218 C 382 198, 408 216, 428 248"/>
+    <path d="M414 234 L 430 252 L 408 258"/>
+    <rect x="430" y="250" width="110" height="80" rx="10" transform="rotate(1 485 290)"/>
+    <path d="M482 338 C 484 376, 466 402, 436 424"/>
+    <path d="M456 408 L 434 426 L 452 438"/>
+    <circle cx="398" cy="468" r="34"/>
+    <path d="M384 468 L 395 479 L 414 456"/>
+  </g>
+</svg>

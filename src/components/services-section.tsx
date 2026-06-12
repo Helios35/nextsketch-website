@@ -35,7 +35,7 @@ export function ServicesSection() {
         {SERVICES.map((service, i) => (
           <Reveal key={service.slug} delay={i * 0.1}>
             <div
-              className={`group relative h-full rounded-2xl p-8 md:p-10 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-1 ${CARD_CLASS[service.accent]}`}
+              className={`group relative h-full rounded-2xl p-8 shadow-sheet hover:shadow-sheet-lg md:p-10 motion-safe:transition-[transform,box-shadow] motion-safe:duration-300 motion-safe:hover:-translate-y-1.5 ${CARD_CLASS[service.accent]}`}
             >
               <h3 className="max-w-[85%] text-xl font-semibold tracking-tight md:text-2xl">
                 {service.name}

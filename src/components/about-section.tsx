@@ -5,17 +5,18 @@ import { ABOUT } from "@/content/copy";
 
 /**
  * About (#about) — the person behind it, solo
- * (docs/03-site-architecture.md row 7). An ink panel inside the
- * Container frame: the reference layout's dark about band, contained
- * rather than full-bleed so the shared page frame stays untouched
- * (judgment flagged in build-notes). Photo is a layout-final
- * placeholder — real photography is owner-owed at launch-readiness.
+ * (docs/03-site-architecture.md row 7). A full-bleed ink band (unit
+ * 08: the Container band variant revisits the contained-panel call of
+ * build-notes 04 deviation 3 — this is the owner-initiated revisit
+ * that note reserved). The portrait is a pinned sheet: a paper mat
+ * holding the layout-final placeholder — real photography is
+ * owner-owed at launch-readiness and swaps in by taxonomy name.
  */
 export function AboutSection() {
   return (
-    <div className="py-24 md:py-32">
+    <div className="py-24 md:py-36">
       <Reveal>
-        <div className="grid gap-10 rounded-3xl bg-ink px-8 py-12 text-white md:grid-cols-[3fr_2fr] md:gap-16 md:p-16">
+        <div className="grid gap-12 md:grid-cols-[3fr_2fr] md:gap-16">
           <div>
             <SectionHeading>{ABOUT.headline}</SectionHeading>
             <div className="mt-8 space-y-6">
@@ -29,12 +30,11 @@ export function AboutSection() {
               ))}
             </div>
           </div>
-          <Placeholder
-            section="about"
-            index={1}
-            ratio="3/4"
-            className="self-center md:max-w-sm md:justify-self-end"
-          />
+          <div className="self-center md:max-w-sm md:justify-self-end">
+            <div className="rotate-[0.8deg] rounded-lg bg-paper p-3 shadow-sheet-lg">
+              <Placeholder section="about" index={1} ratio="3/4" art />
+            </div>
+          </div>
         </div>
       </Reveal>
     </div>

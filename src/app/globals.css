@@ -35,6 +35,105 @@
 }
 
 /*
+ * Sheet-shadow scale — the depth system of the working-drawing
+ * direction (unit 08): soft, low shadows that read as paper resting
+ * on a desk, not app-style elevation. One scale for every surface so
+ * depth stays coherent.
+ */
+@theme {
+  --shadow-sheet: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 16px rgb(0 0 0 / 0.07);
+  --shadow-sheet-lg: 0 2px 4px rgb(0 0 0 / 0.05), 0 16px 40px rgb(0 0 0 / 0.12);
+  --shadow-sheet-xl: 0 8px 16px rgb(0 0 0 / 0.08), 0 32px 80px rgb(0 0 0 / 0.2);
+  --shadow-pill: 0 6px 20px rgb(0 0 0 / 0.16);
+}
+
+/*
+ * Drafting-grid band textures (unit 08). Tonal extensions of the ink
+ * token only — graph-paper hairlines behind full-bleed bands, fading
+ * out so content zones stay quiet. Painted on a -z-1 pseudo-element
+ * inside an isolated stacking context: above the band's own
+ * background, below every child.
+ */
+@utility grid-paper {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgb(0 0 0 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(0 0 0 / 0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+    -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+  }
+}
+
+@utility grid-ink {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+    background-size: 32px 32px;
+    -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+  }
+}
+
+/*
+ * Warm light washes (unit 08) — a tint of the gold token only, no new
+ * hue. wash-gold warms the hero's paper; wash-gold-ink puts a faint
+ * glow on the closing ink band.
+ */
+@utility wash-gold {
+  position: relative;
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      56% 44% at 82% 0%,
+      color-mix(in srgb, var(--color-gold) 16%, transparent),
+      transparent 70%
+    );
+  }
+}
+
+@utility wash-gold-ink {
+  position: relative;
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      52% 60% at 78% 4%,
+      color-mix(in srgb, var(--color-gold) 9%, transparent),
+      transparent 72%
+    );
+  }
+}
+
+/*
  * Qualification modal motion per docs/04-ux-spec.md §Motion
  * inventory: open is scale 0.97→1 + fade over 250ms; step
  * transitions are 200ms slide/fade. Both are applied motion-safe
@@ -61,6 +160,28 @@
 }
 
 /*
+ * Paper grain (unit 08): a static fractal-noise tile at 5% over the
+ * whole page so the background reads as paper stock, not a flat hex.
+ * Fixed, non-interactive, above the page chrome like a print finish;
+ * the modal lives in the top layer and is unaffected by design.
+ */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* Selection in the brand's gold — a tint of the existing token. */
+::selection {
+  background-color: color-mix(in srgb, var(--color-gold) 45%, transparent);
+}
+
+/*
  * Anchor navigation under the sticky nav: smooth scrolling is
  * motion-gated (docs/04-ux-spec.md §Motion inventory); scroll-margin
  * keeps section tops clear of the shrunken nav bar.
@@ -68,6 +189,59 @@
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+/*
+ * Accordion expansion (unit 08): <details> content eases open via
+ * ::details-content — motion-gated, so reduced-motion keeps the
+ * instant toggle, and browsers without interpolate-size simply skip
+ * the transition. Content stays fully readable without JS either way.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+
+  details::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      content-visibility 300ms allow-discrete,
+      block-size 300ms ease-out;
+  }
+
+  details[open]::details-content {
+    block-size: auto;
+  }
+}
+
+/*
+ * Nav scroll-progress stroke (unit 08): a gold hairline draws along
+ * the nav's bottom edge as the page scrolls — the page drawing itself
+ * as it's read. CSS scroll-driven animation only: motion-gated, and
+ * hidden entirely where animation-timeline is unsupported so it never
+ * renders as a stuck full-width bar.
+ */
+.scroll-progress {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes scroll-draw {
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    .scroll-progress {
+      display: block;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: scroll-draw linear both;
+      animation-timeline: scroll(root);
+    }
   }
 }
 
@@ -83,4 +257,5 @@ section[id] {
  */
 dialog::backdrop {
   background-color: rgb(0 0 0 / 0.65);
+  backdrop-filter: blur(3px);
 }

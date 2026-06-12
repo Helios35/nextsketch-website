@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <!-- Placeholder sketch art (unit 08): a product-in-the-browser wireframe,
+       hand-drawn. Clearly a sketch, never proof — no project names, no
+       outcomes (Rule 4.3). Swapped for a real asset by file name. -->
+  <rect x="130" y="200" width="330" height="180" rx="10" fill="#e4b976" opacity="0.35" transform="rotate(0.4 295 290)"/>
+  <rect x="500" y="350" width="130" height="44" rx="22" fill="#e4b976" opacity="0.25"/>
+  <g fill="none" stroke="#65451d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.8">
+    <rect x="80" y="90" width="640" height="430" rx="18" transform="rotate(-0.5 400 305)"/>
+    <path d="M84 162 C 250 155, 560 167, 716 159"/>
+    <circle cx="124" cy="127" r="9"/>
+    <circle cx="158" cy="125" r="9"/>
+    <circle cx="192" cy="128" r="9"/>
+    <rect x="130" y="200" width="330" height="180" rx="10" transform="rotate(0.4 295 290)"/>
+    <path d="M152 352 C 230 292, 302 358, 368 268 C 398 230, 424 240, 442 232"/>
+    <path d="M505 216 C 552 213, 608 218, 655 215"/>
+    <path d="M505 251 C 542 249, 590 253, 625 250"/>
+    <path d="M505 286 C 550 283, 600 288, 645 285"/>
+    <path d="M505 321 C 535 319, 572 322, 600 320"/>
+    <rect x="500" y="350" width="130" height="44" rx="22"/>
+    <path d="M136 432 C 205 429, 290 434, 355 431"/>
+    <path d="M136 464 C 190 462, 260 466, 315 463"/>
+  </g>
+</svg>

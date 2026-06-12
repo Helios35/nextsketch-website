@@ -7,15 +7,17 @@ interface SectionHeadingProps {
   as?: "h1" | "h2" | "h3";
   /**
    * Display scale per docs/04-ux-spec.md §Typography: "display" for
-   * section headings, "hero" for the top-of-page promise (64–96px
-   * desktop / 40–48px mobile).
+   * section headings, "statement" for the editorial spreads that
+   * carry a section on type alone (manifesto, final CTA), "hero" for
+   * the top-of-page promise (64–96px desktop / 40–48px mobile).
    */
-  size?: "display" | "hero";
+  size?: "display" | "statement" | "hero";
   className?: string;
 }
 
 const SIZE_CLASS: Record<NonNullable<SectionHeadingProps["size"]>, string> = {
   display: "text-4xl md:text-5xl lg:text-6xl",
+  statement: "text-4xl md:text-6xl lg:text-7xl",
   hero: "text-5xl md:text-7xl lg:text-8xl",
 };
 

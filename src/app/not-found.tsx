@@ -11,7 +11,9 @@ import { NOT_FOUND } from "@/content/copy";
  */
 export default function NotFound() {
   return (
-    <main className="flex grow items-center">
+    // grid-paper: the 404 sits on the same drafting sheet as the hero
+    // (unit 08) so the error state still reads as the brand.
+    <main className="grid-paper flex grow items-center">
       <Container className="py-24">
         <SectionHeading as="h1" eyebrow={NOT_FOUND.eyebrow}>
           {NOT_FOUND.headline}

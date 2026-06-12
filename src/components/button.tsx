@@ -9,18 +9,23 @@ export type ButtonProps = { variant?: ButtonVariant } & (AsButton | AsAnchor);
 
 const BASE =
   "inline-flex min-h-11 items-center justify-center rounded-full px-7 py-3 " +
-  "text-base font-medium transition-transform duration-150 " +
-  "motion-safe:hover:scale-[1.02] " +
+  "text-base font-medium " +
+  "motion-safe:transition-[transform,box-shadow,background-color,color] " +
+  "motion-safe:duration-200 " +
+  "motion-safe:hover:scale-[1.02] motion-safe:active:scale-[0.99] " +
   "focus-visible:outline-2 focus-visible:outline-offset-2";
 
 /* Outline color lives with the variant: the focus ring must contrast
- * with the surface the button sits on (ink ring is invisible on ink). */
+ * with the surface the button sits on (ink ring is invisible on ink).
+ * Hover states change color/shadow instantly under reduced motion —
+ * only the transitions are gated. */
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-ink text-white focus-visible:outline-ink",
+  primary: "bg-ink text-white hover:shadow-pill focus-visible:outline-ink",
   secondary:
-    "border border-ink bg-transparent text-ink focus-visible:outline-ink",
+    "border border-ink bg-transparent text-ink " +
+    "hover:bg-ink hover:text-white focus-visible:outline-ink",
   /** Primary's role on ink surfaces (final-CTA panel): white bg / ink text. */
-  inverse: "bg-white text-ink focus-visible:outline-white",
+  inverse: "bg-white text-ink hover:shadow-pill focus-visible:outline-white",
 };
 
 /**

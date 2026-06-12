@@ -29,16 +29,34 @@ const TILE_COLUMNS: readonly (readonly WorkTile[])[] = [
   ],
 ];
 
+/*
+ * Pinned-sheet treatment (unit 08): each tile is a sheet of drawing
+ * paper resting on the desk — slight alternating rotation, sheet
+ * shadow, straightens and lifts on hover. The rotation is static
+ * composition (visible as-is under reduced motion); only the
+ * transitions are motion-gated.
+ */
+const SHEET_ROTATION = ["md:-rotate-[0.7deg]", "md:rotate-[0.6deg]"] as const;
+
 function Tile({ tile, delay }: { tile: WorkTile; delay: number }) {
   return (
     <Reveal delay={delay}>
-      <div className="group relative motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-1">
+      <div
+        className={[
+          "group relative rounded-lg shadow-sheet hover:shadow-sheet-lg",
+          "motion-safe:transition-[transform,box-shadow,rotate,translate]",
+          "motion-safe:duration-300",
+          "motion-safe:hover:-translate-y-1.5 motion-safe:hover:rotate-0",
+          SHEET_ROTATION[tile.index % 2],
+        ].join(" ")}
+      >
         <Placeholder
           section="work"
           index={tile.index}
           ratio={tile.ratio}
           accent={tile.accent}
           label={WORK.tileLabel}
+          art
         />
         <SketchAccent
           variant="arrow"

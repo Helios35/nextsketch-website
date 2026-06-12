@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <!-- Placeholder sketch art (unit 08): a working dashboard, hand-drawn.
+       Clearly a sketch, never proof (Rule 4.3). Swapped by file name. -->
+  <rect x="230" y="130" width="300" height="180" rx="10" fill="#aebbba" opacity="0.35" transform="rotate(0.4 380 220)"/>
+  <g fill="none" stroke="#3a4444" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.8">
+    <rect x="70" y="80" width="660" height="440" rx="16" transform="rotate(0.4 400 300)"/>
+    <path d="M192 86 C 188 230, 194 420, 190 514"/>
+    <path d="M106 142 C 124 140, 144 142, 158 141"/>
+    <path d="M106 182 C 122 180, 142 182, 156 181"/>
+    <path d="M106 222 C 126 220, 146 222, 160 221"/>
+    <rect x="230" y="130" width="300" height="180" rx="10" transform="rotate(0.4 380 220)"/>
+    <path d="M252 282 C 300 206, 342 262, 392 196 C 426 152, 472 180, 508 158"/>
+    <path d="M580 308 C 581 290, 580 270, 581 252"/>
+    <path d="M616 308 C 617 278, 616 240, 617 210"/>
+    <path d="M652 308 C 653 296, 652 282, 653 270"/>
+    <path d="M688 308 C 689 284, 688 252, 689 230"/>
+    <circle cx="300" cy="420" r="55"/>
+    <path d="M300 365 A 55 55 0 0 1 352 442" stroke-width="9"/>
+    <path d="M392 396 C 450 393, 522 398, 570 395"/>
+    <path d="M392 430 C 438 428, 496 432, 532 429"/>
+    <path d="M392 464 C 446 462, 512 466, 552 463"/>
+  </g>
+</svg>

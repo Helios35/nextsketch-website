@@ -12,7 +12,9 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-ink text-white">
+    // border-t articulates the footer inside the dark closing run
+    // (#start band → footer, unit 08).
+    <footer className="border-t border-white/10 bg-ink text-white">
       <Container className="py-16 md:py-20">
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-baseline">
           <a href="#top" className="text-lg font-bold tracking-tight">

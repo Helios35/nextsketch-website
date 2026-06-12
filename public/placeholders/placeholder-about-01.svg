@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">
+  <!-- Placeholder sketch art (unit 08): a contour portrait — obviously a
+       drawing, not a person. Real photography is owner-owed at
+       launch-readiness and swaps in by file name (Taxonomy §7). -->
+  <ellipse cx="300" cy="350" rx="170" ry="200" fill="#e4b976" opacity="0.16"/>
+  <g fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.72">
+    <path d="M300 182 C 372 178, 416 248, 408 330 C 401 402, 362 452, 302 455 C 242 453, 200 404, 193 328 C 187 250, 226 186, 300 182"/>
+    <path d="M212 268 C 216 196, 262 154, 320 156 C 378 159, 412 204, 412 268 C 398 232, 362 208, 330 211 C 290 214, 242 232, 212 268"/>
+    <path d="M196 320 C 184 318, 176 330, 180 344 C 183 355, 192 360, 199 356"/>
+    <path d="M247 302 C 256 295, 270 295, 279 301"/>
+    <path d="M325 301 C 334 294, 348 294, 357 300"/>
+    <path d="M298 318 C 293 338, 290 352, 302 357"/>
+    <path d="M280 396 C 295 404, 317 403, 330 395"/>
+    <path d="M254 446 C 257 480, 255 502, 248 518"/>
+    <path d="M350 448 C 352 482, 355 502, 362 516"/>
+    <path d="M118 648 C 158 562, 222 520, 300 518 C 380 520, 442 564, 482 648"/>
+    <path d="M268 532 C 280 548, 294 558, 302 562 C 312 556, 326 544, 336 530"/>
+  </g>
+</svg>
