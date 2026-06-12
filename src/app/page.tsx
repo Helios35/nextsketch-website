@@ -1,7 +1,11 @@
+import { AboutSection } from "@/components/about-section";
 import { Container } from "@/components/container";
 import { HeroSection } from "@/components/hero-section";
 import { ManifestoSection } from "@/components/manifesto-section";
 import { ProcessSection } from "@/components/process-section";
+import { ServicesSection } from "@/components/services-section";
+import { TestimonialsSection } from "@/components/testimonials-section";
+import { WorkSection } from "@/components/work-section";
 
 /**
  * The single page — every Taxonomy §6 anchor in canonical order per
@@ -26,13 +30,21 @@ export default function Home() {
         <ProcessSection />
       </Container>
       {/* Unit 04 — Selected work */}
-      <Container id="work" className="min-h-40" />
+      <Container id="work">
+        <WorkSection />
+      </Container>
       {/* Unit 04 — Services */}
-      <Container id="services" className="min-h-40" />
+      <Container id="services">
+        <ServicesSection />
+      </Container>
       {/* Unit 04 — About */}
-      <Container id="about" className="min-h-40" />
+      <Container id="about">
+        <AboutSection />
+      </Container>
       {/* Unit 04 — Testimonials (placeholder blocks) */}
-      <Container id="voices" className="min-h-40" />
+      <Container id="voices">
+        <TestimonialsSection />
+      </Container>
       {/* Unit 05 — Who it's for */}
       <Container id="fit" className="min-h-40" />
       {/* Unit 05 — FAQ */}
