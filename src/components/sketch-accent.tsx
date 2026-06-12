@@ -9,13 +9,27 @@ type SketchVariant = "underline" | "circle" | "arrow";
 interface SketchAccentProps {
   variant: SketchVariant;
   accent?: AccentName;
+  /**
+   * Stroke tone: "base" is the accent itself (on neutral paper);
+   * "ink" is the paired -ink — required on accent backgrounds per
+   * the pairing rule.
+   */
+  tone?: "base" | "ink";
+  /**
+   * Draw trigger. "view" (default): Motion draw-on at scroll into
+   * view, once. "hover": pure-CSS draw while a parent `group` is
+   * hovered (work tiles / service cards per docs/04-ux-spec.md
+   * §Motion inventory) — no Motion involved, so it stays
+   * server-renderable and reduced-motion users see it pre-drawn.
+   */
+  drawOn?: "view" | "hover";
   /** Caller controls size and placement (absolute positioning, width, etc.). */
   className?: string;
   strokeWidth?: number;
 }
 
 /**
- * Static accent→class map: Tailwind only compiles class literals.
+ * Static accent→class maps: Tailwind only compiles class literals.
  * Stroke color flows via currentColor so one map covers every variant.
  */
 const ACCENT_CLASS: Record<AccentName, string> = {
@@ -23,6 +37,13 @@ const ACCENT_CLASS: Record<AccentName, string> = {
   lavender: "text-lavender",
   rose: "text-rose",
   sage: "text-sage",
+};
+
+const ACCENT_INK_CLASS: Record<AccentName, string> = {
+  gold: "text-gold-ink",
+  lavender: "text-lavender-ink",
+  rose: "text-rose-ink",
+  sage: "text-sage-ink",
 };
 
 interface SketchSpec {
@@ -70,32 +91,69 @@ const drawVariants = (duration: number): Variants => ({
 });
 
 /**
+ * CSS hover-draw: pathLength={1} normalizes the geometry so a
+ * one-unit dash covers the whole stroke; offsetting it by one hides
+ * the stroke until the parent `group` is hovered. Gated motion-safe —
+ * reduced-motion users get the pre-drawn stroke, matching the
+ * view-triggered branch.
+ */
+const HOVER_PATH_CLASS = [
+  "[stroke-dasharray:1]",
+  "motion-safe:[stroke-dashoffset:1]",
+  "motion-safe:transition-[stroke-dashoffset]",
+  "motion-safe:duration-300",
+  "motion-safe:ease-out",
+  "motion-safe:group-hover:[stroke-dashoffset:0]",
+].join(" ");
+
+/**
  * Hand-drawn SVG accent, stroke-animated on scroll into view (draw-on,
- * once). The only decoration license on the site — each placement must
- * annotate real meaning. Reduced-motion users see it pre-drawn.
+ * once) or on hover. The only decoration license on the site — each
+ * placement must annotate real meaning. Reduced-motion users see it
+ * pre-drawn.
  *
  * Pre-drawn on the server and first client render (same rationale as
  * <Reveal>); the draw-on branch mounts only client-side when motion
  * is allowed. Motion drives stroke-dasharray internally via the
- * normalized pathLength prop — never set strokeDasharray on these
- * paths.
+ * normalized pathLength prop — never set strokeDasharray on the
+ * view-triggered paths.
  */
 export function SketchAccent({
   variant,
   accent = "gold",
+  tone = "base",
+  drawOn = "view",
   className,
   strokeWidth = 3,
 }: SketchAccentProps) {
   const reduceMotion = useReducedMotion();
   const mounted = useMounted();
   const spec = SPECS[variant];
-  const cls = [ACCENT_CLASS[accent], className].filter(Boolean).join(" ");
+  const accentClass =
+    tone === "ink" ? ACCENT_INK_CLASS[accent] : ACCENT_CLASS[accent];
+  const cls = [accentClass, className].filter(Boolean).join(" ");
   const pathProps = {
     stroke: "currentColor",
     strokeWidth,
     strokeLinecap: "round",
     fill: "none",
   } as const;
+
+  if (drawOn === "hover") {
+    return (
+      <svg viewBox={spec.viewBox} className={cls} aria-hidden="true">
+        {spec.paths.map((d, i) => (
+          <path
+            key={d}
+            d={d}
+            pathLength={1}
+            className={`${HOVER_PATH_CLASS} ${i > 0 ? "motion-safe:delay-300" : ""}`}
+            {...pathProps}
+          />
+        ))}
+      </svg>
+    );
+  }
 
   if (!mounted || reduceMotion) {
     return (

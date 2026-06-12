@@ -140,6 +140,47 @@ export const PROCESS = {
   ] as const satisfies readonly ProcessPhase[],
 } as const;
 
+/**
+ * Selected-work (#work) strings — no canonical copy exists for this
+ * section (architecture row 5 defers to the Taxonomy §7 placeholder
+ * spec). Headline is DRAFT in brand voice; tileLabel is the UX spec's
+ * own placeholder-treatment text (docs/04-ux-spec.md §Component
+ * specs, Rule 4.3: no invented project names or outcomes). Both
+ * pending owner approval — see briefs/build-notes/04-sections-proof.md.
+ */
+export const WORK = {
+  headline: "Selected work",
+  tileLabel: "Case study — coming in build",
+} as const;
+
+/**
+ * About (#about) copy — the solo "about me" (architecture row 7:
+ * "New copy, voice per Brand Philosophy §8"). Not in Messaging Kit
+ * §05; drafted in brand voice — DRAFT pending owner approval, see
+ * briefs/build-notes/04-sections-proof.md. No invented biography:
+ * every claim restates documented brand positioning.
+ */
+export const ABOUT = {
+  headline: "NextSketch is one person. On purpose.",
+  body: [
+    "I'm Nathan. When you work with NextSketch, you work with me — the person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",
+    "NextSketch runs agent-native. The same embedded agents and AI-accelerated workflow I build for clients run this business every day — it's how one person ships what used to take a team. I eat my own cooking.",
+    "And I stay. Launch isn't the end of the engagement; it's the start of the part that matters — a working product, in production, with a partner who doesn't leave.",
+  ],
+} as const;
+
+/**
+ * Testimonials (#voices) strings — placeholder blocks until original
+ * clients re-approve rewritten quotes (Rule 4.2; docs/decision-log.md
+ * sprint plan Decision 7). Headline is DRAFT in brand voice;
+ * placeholderLabel is the UX spec's placeholder-state text. Both
+ * pending owner approval — see briefs/build-notes/04-sections-proof.md.
+ */
+export const TESTIMONIALS = {
+  headline: "In their words",
+  placeholderLabel: "Client quote — pending approval",
+} as const;
+
 export const FIT = {
   headline: "Built for founders and business owners who are ready to move.",
   body: [
