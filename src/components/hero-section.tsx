@@ -74,7 +74,7 @@ export function HeroSection() {
               key={label}
               className="flex flex-col-reverse gap-3 bg-paper p-6 md:p-8"
             >
-              <dt className="text-xs font-medium tracking-[0.18em] uppercase text-ink/55">
+              <dt className="text-xs font-medium tracking-[0.18em] uppercase text-ink/60">
                 {label}
               </dt>
               <dd className="text-4xl font-bold tracking-tight tabular-nums md:text-5xl">

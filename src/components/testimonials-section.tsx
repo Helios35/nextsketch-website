@@ -54,7 +54,7 @@ export function TestimonialsSection() {
               >
                 &ldquo;
               </span>
-              <p className="mt-6 text-base text-ink/50">
+              <p className="mt-6 text-base text-ink/60">
                 {TESTIMONIALS.placeholderLabel}
               </p>
             </blockquote>
