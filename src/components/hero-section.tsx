@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Button } from "@/components/button";
+import { ModalTrigger } from "@/components/modal-trigger";
 import { Reveal } from "@/components/reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { SketchAccent } from "@/components/sketch-accent";
@@ -20,8 +20,8 @@ const UNDERLINED_WORD = "stay";
  * Hero (#top) — the promise in 3 seconds (docs/03-site-architecture.md
  * row 2). Headline Option A staggers in word by word on load; the
  * stat strip ships with placeholder numbers per docs/decision-log.md
- * #5. CTA anchors to #start until the qualification modal lands
- * (unit 06 swaps the action — locked interim behavior).
+ * #5. CTA opens the qualification modal, degrading to mailto without
+ * JS (Business Rules E3).
  */
 export function HeroSection() {
   const words = HERO.headline.split(" ");
@@ -57,7 +57,7 @@ export function HeroSection() {
         </p>
       </Reveal>
       <Reveal delay={0.35} className="mt-10">
-        <Button href="#start">{HERO.cta}</Button>
+        <ModalTrigger>{HERO.cta}</ModalTrigger>
       </Reveal>
       <Reveal delay={0.45} className="mt-20 md:mt-28">
         <dl className="grid grid-cols-2 gap-x-6 gap-y-10 border-t border-ink/10 pt-10 md:grid-cols-4">

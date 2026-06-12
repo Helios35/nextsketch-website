@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/button";
+import { CloseIcon } from "@/components/close-icon";
 import { Container } from "@/components/container";
+import { ModalTrigger } from "@/components/modal-trigger";
 import { NAV, SITE } from "@/content/copy";
 
 /** Scroll depth (px) past which the nav turns solid and shrinks. */
@@ -25,23 +26,6 @@ function BurgerIcon() {
   );
 }
 
-function CloseIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    >
-      <path d="M4 4l12 12M16 4L4 16" />
-    </svg>
-  );
-}
-
 /**
  * Sticky top nav per docs/03-site-architecture.md §Navigation and
  * docs/04-ux-spec.md §Component specs: transparent over the hero,
@@ -50,10 +34,10 @@ function CloseIcon() {
  * motion-safe (no <Reveal>/<SketchAccent> needed). Mobile: hamburger
  * opens a full-screen overlay with the anchors and the CTA.
  *
- * The CTA anchors to #start until the qualification modal lands
- * (unit 06 swaps the action — sprint plan, locked interim behavior).
+ * The CTA opens the qualification modal via <ModalTrigger>, which
+ * degrades to the mailto escape hatch without JS (Business Rules E3).
  * Server render is the static branch (not scrolled, menu closed), so
- * the no-JS page keeps working anchor links (Business Rules E3).
+ * the no-JS page keeps working anchor links.
  */
 export function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
@@ -122,7 +106,7 @@ export function SiteNav() {
             ))}
           </ul>
           <div className="hidden md:block">
-            <Button href="#start">{NAV.cta}</Button>
+            <ModalTrigger>{NAV.cta}</ModalTrigger>
           </div>
           <button
             ref={toggleRef}
@@ -170,9 +154,9 @@ export function SiteNav() {
             ))}
           </ul>
           <div className="pb-10">
-            <Button href="#start" onClick={closeMenu} className="w-full">
+            <ModalTrigger className="w-full" onBeforeOpen={closeMenu}>
               {NAV.cta}
-            </Button>
+            </ModalTrigger>
           </div>
         </div>
       )}

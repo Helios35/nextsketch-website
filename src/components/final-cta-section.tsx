@@ -1,8 +1,8 @@
-import { Button } from "@/components/button";
+import { ModalTrigger } from "@/components/modal-trigger";
 import { Reveal } from "@/components/reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { SketchAccent } from "@/components/sketch-accent";
-import { FINAL_CTA, SITE } from "@/content/copy";
+import { FINAL_CTA } from "@/content/copy";
 
 /**
  * Final CTA (#start) — convert (docs/03-site-architecture.md row 11).
@@ -11,10 +11,9 @@ import { FINAL_CTA, SITE } from "@/content/copy";
  * an explicitly licensed sketch placement (docs/04-ux-spec.md §Sketch
  * accent system).
  *
- * Interim behavior, locked in brief 05: until the qualification modal
- * lands (unit 06) the button is the mailto escape hatch — the E3
- * degrade path. Unit 06 swaps href for onClick via Button's
- * discriminated props; no restructuring.
+ * The button opens the qualification modal via <ModalTrigger>,
+ * which degrades to the mailto escape hatch without JS — the E3
+ * path that was this CTA's interim behavior in unit 05.
  */
 export function FinalCtaSection() {
   return (
@@ -28,9 +27,7 @@ export function FinalCtaSection() {
             {FINAL_CTA.body}
           </p>
           <div className="mt-10 flex items-center gap-4">
-            <Button variant="inverse" href={`mailto:${SITE.email}`}>
-              {FINAL_CTA.cta}
-            </Button>
+            <ModalTrigger variant="inverse">{FINAL_CTA.cta}</ModalTrigger>
             <SketchAccent
               variant="arrow"
               accent="gold"

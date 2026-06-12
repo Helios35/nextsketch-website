@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Caveat } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { QualificationModalProvider } from "@/components/qualification-modal-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { SITE } from "@/content/copy";
@@ -34,9 +35,11 @@ export default function RootLayout({
       className={`${inter.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-paper font-sans text-ink">
-        <SiteNav />
-        {children}
-        <SiteFooter />
+        <QualificationModalProvider>
+          <SiteNav />
+          {children}
+          <SiteFooter />
+        </QualificationModalProvider>
         <Analytics />
       </body>
     </html>
