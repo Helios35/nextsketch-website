@@ -35,6 +35,32 @@
 }
 
 /*
+ * Qualification modal motion per docs/04-ux-spec.md §Motion
+ * inventory: open is scale 0.97→1 + fade over 250ms; step
+ * transitions are 200ms slide/fade. Both are applied motion-safe
+ * only, so reduced-motion users get instant visibility — the same
+ * contract as <Reveal>/<SketchAccent>.
+ */
+@theme {
+  --animate-modal-in: modal-in 250ms ease-out;
+  --animate-step-in: step-in 200ms ease-out;
+
+  @keyframes modal-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+
+  @keyframes step-in {
+    from {
+      opacity: 0;
+      transform: translateX(12px);
+    }
+  }
+}
+
+/*
  * Anchor navigation under the sticky nav: smooth scrolling is
  * motion-gated (docs/04-ux-spec.md §Motion inventory); scroll-margin
  * keeps section tops clear of the shrunken nav bar.
@@ -47,4 +73,14 @@
 
 section[id] {
   scroll-margin-top: 5rem;
+}
+
+/*
+ * Qualification-modal backdrop. A literal, not the backdrop:bg-ink
+ * utility: the oklab()/color-mix() forms Tailwind compiles tokens to
+ * computed correctly but failed to *paint* on ::backdrop in the
+ * verification browser. The value is the ink token (#000) at 65%.
+ */
+dialog::backdrop {
+  background-color: rgb(0 0 0 / 0.65);
 }

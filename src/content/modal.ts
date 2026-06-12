@@ -109,3 +109,27 @@ export const MODAL_NAV = {
   next: "Next",
   close: "Close",
 } as const;
+
+/**
+ * Contact-step heading — Business Rules 1.5 names only the fields;
+ * no canonical heading exists for the step. DRAFT in brand voice
+ * pending owner approval, see
+ * briefs/build-notes/06-qualification-modal.md.
+ */
+export const MODAL_CONTACT_HEADING = "Last step — where do we reach you?";
+
+/**
+ * Screen-reader step announcement for the progress dots (sr-only;
+ * the NAV.menu microcopy pattern). DRAFT pending owner approval.
+ */
+export const MODAL_PROGRESS = {
+  step: (current: number, total: number): string =>
+    `Step ${current} of ${total}`,
+} as const;
+
+/**
+ * Subject line for the failure-fallback mailto (Rule 2.7): the link
+ * carries the visitor's composed answers in the body so a failed
+ * submit is one click from recovery. DRAFT pending owner approval.
+ */
+export const MODAL_FAILURE_SUBJECT = "Project inquiry — my qualification answers";
