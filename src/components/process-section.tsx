@@ -1,25 +1,8 @@
+import { PlusIcon } from "@/components/plus-icon";
 import { Reveal } from "@/components/reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { SketchAccent } from "@/components/sketch-accent";
 import { PROCESS } from "@/content/copy";
-
-function PlusIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      width="18"
-      height="18"
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      className="shrink-0 self-center text-ink/40 group-open:rotate-45 motion-safe:transition-transform motion-safe:duration-200"
-    >
-      <path d="M10 3v14M3 10h14" />
-    </svg>
-  );
-}
 
 /**
  * Process (#process) — the interactive centerpiece
