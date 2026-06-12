@@ -181,6 +181,17 @@ export const TESTIMONIALS = {
   placeholderLabel: "Client quote — pending approval",
 } as const;
 
+/**
+ * FAQ (#faq) section heading — the six Q&As themselves are canonical
+ * (src/content/faq.ts, verbatim per Rule 4.1), but no heading exists
+ * for the section in Messaging Kit §05 (architecture row 10 names
+ * only the Q&As). Headline is DRAFT in brand voice pending owner
+ * approval — see briefs/build-notes/05-sections-convert.md.
+ */
+export const FAQ = {
+  headline: "Common questions",
+} as const;
+
 export const FIT = {
   headline: "Built for founders and business owners who are ready to move.",
   body: [

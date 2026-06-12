@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 
-type ButtonVariant = "primary" | "secondary";
+type ButtonVariant = "primary" | "secondary" | "inverse";
 
 type AsButton = ButtonHTMLAttributes<HTMLButtonElement> & { href?: never };
 type AsAnchor = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string };
@@ -11,11 +11,16 @@ const BASE =
   "inline-flex min-h-11 items-center justify-center rounded-full px-7 py-3 " +
   "text-base font-medium transition-transform duration-150 " +
   "motion-safe:hover:scale-[1.02] " +
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
+  "focus-visible:outline-2 focus-visible:outline-offset-2";
 
+/* Outline color lives with the variant: the focus ring must contrast
+ * with the surface the button sits on (ink ring is invisible on ink). */
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-ink text-white",
-  secondary: "border border-ink bg-transparent text-ink",
+  primary: "bg-ink text-white focus-visible:outline-ink",
+  secondary:
+    "border border-ink bg-transparent text-ink focus-visible:outline-ink",
+  /** Primary's role on ink surfaces (final-CTA panel): white bg / ink text. */
+  inverse: "bg-white text-ink focus-visible:outline-white",
 };
 
 /**

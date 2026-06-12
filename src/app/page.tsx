@@ -1,5 +1,8 @@
 import { AboutSection } from "@/components/about-section";
 import { Container } from "@/components/container";
+import { FaqSection } from "@/components/faq-section";
+import { FinalCtaSection } from "@/components/final-cta-section";
+import { FitSection } from "@/components/fit-section";
 import { HeroSection } from "@/components/hero-section";
 import { ManifestoSection } from "@/components/manifesto-section";
 import { ProcessSection } from "@/components/process-section";
@@ -10,9 +13,8 @@ import { WorkSection } from "@/components/work-section";
 /**
  * The single page — every Taxonomy §6 anchor in canonical order per
  * docs/03-site-architecture.md §Page structure. Each Container below
- * is an anchored slot: units 03–05 fill them in place without
- * touching this frame. The min-height keeps anchor navigation
- * observable until real sections land; section units replace it.
+ * is an anchored slot, filled in place by units 03–05 without
+ * touching this frame.
  */
 export default function Home() {
   return (
@@ -46,11 +48,17 @@ export default function Home() {
         <TestimonialsSection />
       </Container>
       {/* Unit 05 — Who it's for */}
-      <Container id="fit" className="min-h-40" />
+      <Container id="fit">
+        <FitSection />
+      </Container>
       {/* Unit 05 — FAQ */}
-      <Container id="faq" className="min-h-40" />
+      <Container id="faq">
+        <FaqSection />
+      </Container>
       {/* Unit 05 — Final CTA */}
-      <Container id="start" className="min-h-40" />
+      <Container id="start">
+        <FinalCtaSection />
+      </Container>
     </main>
   );
 }
