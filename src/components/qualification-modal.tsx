@@ -128,15 +128,17 @@ const HEADING_CLASS =
   "text-2xl font-bold tracking-tight text-balance outline-none md:text-3xl";
 
 const INPUT_CLASS =
-  "mt-2 w-full rounded-xl border border-ink/20 bg-white px-4 py-3 text-base " +
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
+  "mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white " +
+  "placeholder:text-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
 
+/* Selected state uses the gold accent with its paired ink text (UX
+ * spec pairing rule), echoing the landing hero's gold accent. */
 const OPTION_CLASS =
-  "flex min-h-11 cursor-pointer items-center rounded-2xl border border-ink/20 " +
-  "px-5 py-4 text-left text-base font-medium transition-colors " +
-  "hover:border-ink/60 has-checked:border-ink has-checked:bg-ink " +
-  "has-checked:text-white has-focus-visible:outline-2 " +
-  "has-focus-visible:outline-offset-2 has-focus-visible:outline-ink";
+  "flex min-h-11 cursor-pointer items-center rounded-xl border border-white/15 " +
+  "px-5 py-4 text-left text-base font-medium text-white/90 transition-colors " +
+  "hover:border-white/40 has-checked:border-gold has-checked:bg-gold " +
+  "has-checked:text-gold-ink has-focus-visible:outline-2 " +
+  "has-focus-visible:outline-offset-2 has-focus-visible:outline-gold";
 
 const MAILTO = `mailto:${MODAL_ESCAPE_HATCH.email}`;
 
@@ -296,8 +298,8 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
       onClose={onClose}
       aria-labelledby={headingId}
       className={[
-        "flex h-dvh max-h-none w-full max-w-none flex-col bg-paper p-0 text-ink",
-        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:rounded-3xl",
+        "flex h-dvh max-h-none w-full max-w-none flex-col bg-ink p-0 text-white",
+        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:rounded-2xl md:border md:border-white/10 md:shadow-2xl",
         // backdrop color lives in globals.css (::backdrop var-inheritance quirk)
         "motion-safe:animate-modal-in",
       ].join(" ")}
@@ -315,7 +317,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
                 <span
                   key={step}
                   className={`h-2 w-2 rounded-full ${
-                    i <= stepIndex ? "bg-ink" : "bg-ink/20"
+                    i <= stepIndex ? "bg-gold" : "bg-white/20"
                   }`}
                 />
               ))}
@@ -326,7 +328,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
           type="button"
           aria-label={MODAL_NAV.close}
           onClick={close}
-          className="inline-flex min-h-11 min-w-11 items-center justify-center"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center text-white/60 transition-colors hover:text-white"
         >
           <CloseIcon />
         </button>
@@ -366,10 +368,11 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
               ))}
             </div>
             <div className="mt-8 flex items-center justify-between gap-4">
-              <Button variant="secondary" type="button" onClick={goBack}>
+              <Button variant="ghost" type="button" onClick={goBack}>
                 {MODAL_NAV.back}
               </Button>
               <Button
+                variant="inverse"
                 type="button"
                 onClick={goNext}
                 disabled={answers[screen] === undefined}
@@ -470,10 +473,11 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
                 className="absolute -left-[9999px] h-px w-px opacity-0"
               />
               <div className="mt-8 flex items-center justify-between gap-4">
-                <Button variant="secondary" type="button" onClick={goBack}>
+                <Button variant="ghost" type="button" onClick={goBack}>
                   {MODAL_NAV.back}
                 </Button>
                 <Button
+                  variant="inverse"
                   type="submit"
                   disabled={submitting}
                   className="disabled:pointer-events-none disabled:opacity-40"
@@ -495,20 +499,20 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
             >
               {MODAL_OFF_RAMP.headline}
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-ink/80">
+            <p className="mt-4 text-base leading-relaxed text-white/70">
               {MODAL_OFF_RAMP.body}
             </p>
             <p className="mt-6 text-base leading-relaxed">
               {MODAL_OFF_RAMP.closing}{" "}
               <a
                 href={MAILTO}
-                className="font-medium underline underline-offset-4"
+                className="font-medium text-gold underline underline-offset-4"
               >
                 {MODAL_ESCAPE_HATCH.email}
               </a>
             </p>
             <div className="mt-8">
-              <Button variant="secondary" type="button" onClick={goBack}>
+              <Button variant="ghost" type="button" onClick={goBack}>
                 {MODAL_NAV.back}
               </Button>
             </div>
@@ -525,11 +529,11 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
             >
               {MODAL_SUCCESS.headline}
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-ink/80">
+            <p className="mt-4 text-base leading-relaxed text-white/70">
               {MODAL_SUCCESS.body}
             </p>
             <div className="mt-8">
-              <Button type="button" onClick={close}>
+              <Button variant="inverse" type="button" onClick={close}>
                 {MODAL_NAV.close}
               </Button>
             </div>
@@ -546,33 +550,35 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
             >
               {MODAL_FAILURE.headline}
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-ink/80">
+            <p className="mt-4 text-base leading-relaxed text-white/70">
               {MODAL_FAILURE.body}
             </p>
-            <dl className="mt-6 space-y-4 rounded-2xl border border-ink/10 bg-paper-bright p-5">
+            <dl className="mt-6 space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5">
               {composed.map(({ label, value }) => (
                 <div key={label}>
-                  <dt className="text-sm text-ink/60">{label}</dt>
+                  <dt className="text-sm text-white/50">{label}</dt>
                   <dd className="font-medium whitespace-pre-wrap">{value}</dd>
                 </div>
               ))}
             </dl>
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Button variant="secondary" type="button" onClick={goBack}>
+              <Button variant="ghost" type="button" onClick={goBack}>
                 {MODAL_NAV.back}
               </Button>
-              <Button href={failureMailto}>{MODAL_ESCAPE_HATCH.email}</Button>
+              <Button variant="inverse" href={failureMailto}>
+                {MODAL_ESCAPE_HATCH.email}
+              </Button>
             </div>
           </>
         )}
       </div>
 
       {/* Escape hatch, persistent at every step (Rule 2.6). */}
-      <footer className="border-t border-ink/10 px-6 py-4 text-sm text-ink/70 md:px-10">
+      <footer className="border-t border-white/10 px-6 py-4 text-sm text-white/60 md:px-10">
         {MODAL_ESCAPE_HATCH.prompt}{" "}
         <a
           href={MAILTO}
-          className="font-medium text-ink underline underline-offset-4"
+          className="font-medium text-gold underline underline-offset-4"
         >
           {MODAL_ESCAPE_HATCH.email}
         </a>
