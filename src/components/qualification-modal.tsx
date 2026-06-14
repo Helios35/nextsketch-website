@@ -128,17 +128,22 @@ const HEADING_CLASS =
   "text-2xl font-bold tracking-tight text-balance outline-none md:text-3xl";
 
 const INPUT_CLASS =
-  "mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white " +
-  "placeholder:text-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
+  "mt-2 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-base text-white " +
+  "placeholder:text-white/40 transition-[border-color,background-color,box-shadow] duration-200 ease-[var(--ease-premium)] " +
+  "focus-visible:border-gold/50 focus-visible:bg-white/[0.06] " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
 
-/* Selected state uses the gold accent with its paired ink text (UX
- * spec pairing rule), echoing the landing hero's gold accent. */
+/* Default rows are a faint raised surface; selected fills with the gold
+ * accent and its paired ink text (UX-spec pairing rule) plus a gold glow
+ * — echoing the hero CTA. All on the shared expo-out easing. */
 const OPTION_CLASS =
-  "flex min-h-11 cursor-pointer items-center rounded-xl border border-white/15 " +
-  "px-5 py-4 text-left text-base font-medium text-white/90 transition-colors " +
-  "hover:border-white/40 has-checked:border-gold has-checked:bg-gold " +
-  "has-checked:text-gold-ink has-focus-visible:outline-2 " +
-  "has-focus-visible:outline-offset-2 has-focus-visible:outline-gold";
+  "flex min-h-12 cursor-pointer items-center rounded-xl border border-white/10 bg-white/[0.03] " +
+  "px-5 py-4 text-left text-base font-medium text-white/90 " +
+  "transition-[background-color,border-color,box-shadow,transform] duration-200 ease-[var(--ease-premium)] " +
+  "hover:border-white/25 hover:bg-white/[0.06] " +
+  "has-checked:border-gold has-checked:bg-gold has-checked:text-gold-ink " +
+  "has-checked:shadow-[0_10px_30px_-10px_rgb(228_185_118/0.45)] " +
+  "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-gold";
 
 const MAILTO = `mailto:${MODAL_ESCAPE_HATCH.email}`;
 
@@ -298,8 +303,10 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
       onClose={onClose}
       aria-labelledby={headingId}
       className={[
-        "flex h-dvh max-h-none w-full max-w-none flex-col bg-ink p-0 text-white",
-        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:rounded-2xl md:border md:border-white/10 md:shadow-2xl",
+        // Elevated near-black (never pure #000 — reads flat); desktop adds
+        // a top-lit gradient surface, hairline border, and deep shadow.
+        "flex h-dvh max-h-none w-full max-w-none flex-col bg-[#0b0b0d] p-0 text-white",
+        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:rounded-2xl md:border md:border-white/10 md:bg-gradient-to-b md:from-[#141416] md:to-[#0a0a0b] md:shadow-[var(--shadow-modal)]",
         // backdrop color lives in globals.css (::backdrop var-inheritance quirk)
         "motion-safe:animate-modal-in",
       ].join(" ")}

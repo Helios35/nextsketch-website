@@ -25,6 +25,30 @@
 }
 
 /*
+ * Premium dark material system (ui-ux-pro-max "Modern Dark / Cinema"):
+ * surfaces are never pure #000 (reads flat), layered near-blacks carry
+ * depth, hairlines are lit (white at low alpha), the primary CTA gets a
+ * gold glow, and one expo-out easing is shared by every transition so
+ * the whole page moves with a single rhythm (motion-consistency).
+ */
+:root {
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-cta: 0 14px 40px -12px rgb(0 0 0 / 0.7), 0 6px 18px -8px rgb(228 185 118 / 0.4);
+  --shadow-cta-hover: 0 24px 60px -12px rgb(0 0 0 / 0.78), 0 12px 30px -8px rgb(228 185 118 / 0.6);
+  --shadow-modal: 0 40px 100px -24px rgb(0 0 0 / 0.85), 0 12px 32px -16px rgb(0 0 0 / 0.6);
+}
+
+/*
+ * Filmic grain — a tiny tiled fractal-noise SVG, used at low opacity
+ * with a blend mode so the hero reads like graded film, not a flat
+ * photo. Decorative only; the layer is aria-hidden in the component.
+ */
+.grain-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/*
  * Font tokens reference next/font CSS variables (set on <html> in
  * layout.tsx), so they must live in an inline theme block. Landing
  * re-skin (2026-06-14, owner-directed): Space Grotesk for display/UI,
@@ -44,8 +68,8 @@
  * contract as <Reveal>/<SketchAccent>.
  */
 @theme {
-  --animate-modal-in: modal-in 250ms ease-out;
-  --animate-step-in: step-in 200ms ease-out;
+  --animate-modal-in: modal-in 280ms var(--ease-premium);
+  --animate-step-in: step-in 220ms var(--ease-premium);
 
   @keyframes modal-in {
     from {
@@ -72,7 +96,7 @@
  */
 @theme {
   --animate-marquee: marquee var(--duration, 42s) linear infinite;
-  --animate-rise-in: rise-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-rise-in: rise-in 750ms var(--ease-premium) both;
 
   @keyframes marquee {
     from {
@@ -115,5 +139,5 @@ section[id] {
  */
 dialog::backdrop {
   background-color: rgb(0 0 0 / 0.72);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
 }
