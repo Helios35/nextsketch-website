@@ -10,19 +10,19 @@ Replaced the multi-section site with a **single dark cinematic landing hero** �
 ## Decisions (owner-set this session)
 
 - **Fonts (owner choice):** Inter + Caveat → **Space Grotesk** (display/UI) + **JetBrains Mono** (capability strip + mono labels), via `next/font/google` variable fonts. `next/font` self-hosts them at build time — no runtime requests. Inter/Caveat retired.
-- **Hero treatment (owner choice):** **dark cinematic re-skin.** Full-bleed background image + layered ink scrims (base `bg-ink/50` + top/bottom gradients) for white-on-dark legibility; white headline with the **gold** brand accent (`#E4B976`) on the two payoff words ("production", "stay"). The template's lime `--primary` was **not** added — brand gold is used.
+- **Hero treatment (owner choice):** **dark cinematic re-skin, faithful to the template composition.** Bottom-anchored `items-start`; full-bleed background image under a **single light overlay** (the template's `bg-black/40`, re-skinned to `bg-ink/40`) + a soft bottom scrim so the image reads crisply while the white headline stays legible; a `max-w-4xl` upper **capability strip**, then the template's two-column row — `w-1/2` headline + CTA (left) and a **gold-italic, right-aligned** supporting line (right). White headline with the **gold** brand accent (`#E4B976`) on the two payoff words ("production", "stay"). The template's lime `--primary` was **not** added — brand gold is used. (First pass used a heavier double-scrim + a generic pill; revised to match the source after owner feedback "doesn't quite look right.")
 - **Brand-truth edits to the template:**
   - Dropped the fake 5-person **avatar stack** (NextSketch is one person — Brand Philosophy §10, ABOUT copy).
   - Dropped the invented **revenue-stats marquee** (no social proof, no invented numbers — Brand Philosophy §10, Rule 4.3). Repurposed it into the **capability strip** sanctioned by UX spec §Motion inventory, showing the **four canonical services** (Taxonomy §1, exact casing).
   - Headline = locked **Option A** ("From idea to production. And we stay."). Supporting line = Messaging Kit §03 **Message 4** (verbatim).
-- **Qualification modal:** untouched. Hero CTA = "Start a Conversation" (Rule 3.1) → shared `<ModalTrigger>` → modal; no-JS degrades to `mailto` (Business Rules E3).
+- **Qualification modal:** untouched. Hero CTA = "Start a Conversation" (Rule 3.1) → `<HeroCta>` (the template's divided-arrow button — a rebuilt `<ModalTrigger>` seam so the button can be squared/segmented without fighting the shared pill `<Button>`) → modal; no-JS degrades to `mailto` (Business Rules E3).
 - **Conventions held:** inline SVG arrow (no `lucide-react`); project's flat `src/components/` structure (not shadcn `/components/ui`); all copy in `src/content/copy.ts` (`LANDING`).
 - **Motion:** capability marquee + hero `rise-in` are **CSS keyframes, `motion-safe`-gated** (no `motion/react` import — ESLint `no-restricted-imports` respected; same reduced-motion contract as the modal animations).
 - **Shell:** `SiteNav` + `SiteFooter` no longer mounted; body is the dark ink theme. The 404 (`not-found.tsx`) was given its own light paper surface so it stays legible on the dark layout.
 
 ## Files
 
-- **New:** `src/components/hero.tsx`.
+- **New:** `src/components/hero.tsx`, `src/components/hero-cta.tsx`.
 - **Modified:** `src/content/copy.ts` (added `LANDING`), `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/globals.css`, `src/app/not-found.tsx`.
 - **Dormant (not deleted):** the multi-section component files (sections, `site-nav`, `site-footer`, `container`, `reveal`, `sketch-accent`, etc.) remain on disk but are no longer rendered — non-destructive/reversible. They still compile and are excluded from the build output, so the banned-terms gate does not scan them.
 
