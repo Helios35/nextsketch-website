@@ -7,8 +7,8 @@ import {
   useRef,
   useState,
   type FormEvent,
+  type ReactNode,
 } from "react";
-import { Button } from "@/components/button";
 import { CloseIcon } from "@/components/close-icon";
 import {
   MODAL_CONTACT,
@@ -47,7 +47,7 @@ type Answers = {
  */
 type Screen = QuestionKey | "contact" | "off_ramp" | "success" | "failure";
 
-/** Steps the progress dots cover — the qualified path. */
+/** Steps the progress meter covers — the qualified path. */
 const PROGRESS_STEPS = [...QUESTION_ORDER, "contact"] as const;
 
 function isQuestionKey(screen: Screen): screen is QuestionKey {
@@ -124,26 +124,76 @@ function composeAnswers(
   return composed;
 }
 
+/* Visual language matched to the landing template: squared corners,
+ * hairline borders, glassy dark surfaces, JetBrains-Mono micro-labels,
+ * and the flat gold accent (no glows). */
+
 const HEADING_CLASS =
-  "text-2xl font-bold tracking-tight text-balance outline-none md:text-3xl";
+  "text-2xl font-medium tracking-tight text-balance text-white outline-none md:text-3xl";
+
+/** Uppercase mono caption — the template's marquee label treatment. */
+const CAPTION_CLASS =
+  "font-mono text-[0.7rem] uppercase tracking-[0.14em] text-white/55";
 
 const INPUT_CLASS =
-  "mt-2 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-base text-white " +
-  "placeholder:text-white/40 transition-[border-color,background-color,box-shadow] duration-200 ease-[var(--ease-premium)] " +
-  "focus-visible:border-gold/50 focus-visible:bg-white/[0.06] " +
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
+  "mt-2.5 w-full rounded-none border border-white/15 bg-white/[0.03] px-4 py-3 text-base text-white " +
+  "transition-colors duration-150 placeholder:text-white/40 " +
+  "focus-visible:border-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
 
-/* Default rows are a faint raised surface; selected fills with the gold
- * accent and its paired ink text (UX-spec pairing rule) plus a gold glow
- * — echoing the hero CTA. All on the shared expo-out easing. */
+/* Squared hairline rows; selected fills flat gold with paired ink text
+ * (UX-spec pairing rule, the template's text-primary accent) — no glow. */
 const OPTION_CLASS =
-  "flex min-h-12 cursor-pointer items-center rounded-xl border border-white/10 bg-white/[0.03] " +
-  "px-5 py-4 text-left text-base font-medium text-white/90 " +
-  "transition-[background-color,border-color,box-shadow,transform] duration-200 ease-[var(--ease-premium)] " +
-  "hover:border-white/25 hover:bg-white/[0.06] " +
+  "flex min-h-12 cursor-pointer items-center rounded-none border border-white/12 bg-white/[0.02] " +
+  "px-5 py-4 text-left text-base font-medium text-white/90 transition-colors duration-150 " +
+  "hover:border-white/30 hover:bg-white/[0.05] " +
   "has-checked:border-gold has-checked:bg-gold has-checked:text-gold-ink " +
-  "has-checked:shadow-[0_10px_30px_-10px_rgb(228_185_118/0.45)] " +
   "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-gold";
+
+/* Forward action — the template's divided-arrow button (label segment +
+ * bordered arrow box), matching the hero CTA. White surface / ink mark. */
+const ADVANCE_CLASS =
+  "inline-flex min-h-11 items-stretch bg-white text-base font-medium text-ink " +
+  "transition-opacity duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 " +
+  "focus-visible:outline-white disabled:pointer-events-none disabled:opacity-40";
+
+/* Secondary action — a squared hairline ghost. */
+const GHOST_CLASS =
+  "inline-flex min-h-11 items-center rounded-none border border-white/30 bg-transparent px-6 py-3 " +
+  "text-base font-medium text-white transition-colors duration-150 " +
+  "hover:border-white/60 hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+
+/** Inline arrow — the project uses inline SVG icons, never lucide. */
+function ArrowIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="size-[18px]"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+/** Label segment + (optional) divided arrow box, for the advance button. */
+function AdvanceInner({ label, arrow = true }: { label: ReactNode; arrow?: boolean }) {
+  return (
+    <>
+      <span className="flex items-center px-6 py-3">{label}</span>
+      {arrow && (
+        <span className="flex items-center border-l border-ink/15 px-3.5 py-3">
+          <ArrowIcon />
+        </span>
+      )}
+    </>
+  );
+}
 
 const MAILTO = `mailto:${MODAL_ESCAPE_HATCH.email}`;
 
@@ -163,7 +213,8 @@ interface QualificationModalProps {
  * top-layer rendering are the platform's. Escape hatch and a back
  * control on every step (Rules 1.6, 2.6). Interim submit resolves to
  * the failure-fallback per docs/decision-log.md #6 — see
- * @/lib/qualify.
+ * @/lib/qualify. Styling matches the landing template (squared,
+ * hairline, glassy, mono labels, flat gold accent).
  */
 export function QualificationModal({ onClose }: QualificationModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -303,15 +354,15 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
       onClose={onClose}
       aria-labelledby={headingId}
       className={[
-        // Elevated near-black (never pure #000 — reads flat); desktop adds
-        // a top-lit gradient surface, hairline border, and deep shadow.
-        "flex h-dvh max-h-none w-full max-w-none flex-col bg-[#0b0b0d] p-0 text-white",
-        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:rounded-2xl md:border md:border-white/10 md:bg-gradient-to-b md:from-[#141416] md:to-[#0a0a0b] md:shadow-[var(--shadow-modal)]",
+        // Squared, hairline, glassy near-black — the template's surface
+        // language (border-y/backdrop-blur strips), not a rounded card.
+        "flex h-dvh max-h-none w-full max-w-none flex-col rounded-none bg-[#0a0a0c] p-0 text-white",
+        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:border md:border-white/15 md:bg-[#0a0a0c]/95 md:backdrop-blur-xl md:shadow-[var(--shadow-modal)]",
         // backdrop color lives in globals.css (::backdrop var-inheritance quirk)
         "motion-safe:animate-modal-in",
       ].join(" ")}
     >
-      <header className="flex items-center justify-between gap-4 px-6 pt-4 md:px-10 md:pt-6">
+      <header className="flex items-center justify-between gap-4 px-6 pt-5 md:px-10 md:pt-7">
         {stepIndex === -1 ? (
           <span aria-hidden="true" />
         ) : (
@@ -319,12 +370,13 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
             <p className="sr-only">
               {MODAL_PROGRESS.step(stepIndex + 1, PROGRESS_STEPS.length)}
             </p>
-            <div aria-hidden="true" className="flex items-center gap-2">
+            {/* Thin segmented meter — sharp, matches the hairline strips. */}
+            <div aria-hidden="true" className="flex items-center gap-1.5">
               {PROGRESS_STEPS.map((step, i) => (
                 <span
                   key={step}
-                  className={`h-2 w-2 rounded-full ${
-                    i <= stepIndex ? "bg-gold" : "bg-white/20"
+                  className={`h-[3px] w-7 ${
+                    i <= stepIndex ? "bg-gold" : "bg-white/15"
                   }`}
                 />
               ))}
@@ -358,7 +410,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
             <div
               role="radiogroup"
               aria-labelledby={headingId}
-              className="mt-6 flex flex-col gap-3"
+              className="mt-6 flex flex-col gap-2.5"
             >
               {MODAL_QUESTIONS[screen].options.map(({ value, label }) => (
                 <label key={value} className={OPTION_CLASS}>
@@ -375,18 +427,17 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
               ))}
             </div>
             <div className="mt-8 flex items-center justify-between gap-4">
-              <Button variant="ghost" type="button" onClick={goBack}>
+              <button type="button" onClick={goBack} className={GHOST_CLASS}>
                 {MODAL_NAV.back}
-              </Button>
-              <Button
-                variant="inverse"
+              </button>
+              <button
                 type="button"
                 onClick={goNext}
                 disabled={answers[screen] === undefined}
-                className="disabled:pointer-events-none disabled:opacity-40"
+                className={ADVANCE_CLASS}
               >
-                {MODAL_NAV.next}
-              </Button>
+                <AdvanceInner label={MODAL_NAV.next} />
+              </button>
             </div>
           </>
         )}
@@ -402,9 +453,9 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
               {MODAL_CONTACT_HEADING}
             </h2>
             <form onSubmit={handleContactSubmit} className="mt-6">
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-5">
                 <label className="block">
-                  <span className="text-sm font-medium">
+                  <span className={CAPTION_CLASS}>
                     {MODAL_CONTACT.fields.name.label}
                   </span>
                   <input
@@ -421,7 +472,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
                   />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-medium">
+                  <span className={CAPTION_CLASS}>
                     {MODAL_CONTACT.fields.email.label}
                   </span>
                   <input
@@ -437,7 +488,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
                   />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-medium">
+                  <span className={CAPTION_CLASS}>
                     {MODAL_CONTACT.fields.company.label}
                   </span>
                   <input
@@ -453,7 +504,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
                   />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-medium">
+                  <span className={CAPTION_CLASS}>
                     {MODAL_CONTACT.fields.details.label}
                   </span>
                   <textarea
@@ -480,17 +531,16 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
                 className="absolute -left-[9999px] h-px w-px opacity-0"
               />
               <div className="mt-8 flex items-center justify-between gap-4">
-                <Button variant="ghost" type="button" onClick={goBack}>
+                <button type="button" onClick={goBack} className={GHOST_CLASS}>
                   {MODAL_NAV.back}
-                </Button>
-                <Button
-                  variant="inverse"
+                </button>
+                <button
                   type="submit"
                   disabled={submitting}
-                  className="disabled:pointer-events-none disabled:opacity-40"
+                  className={ADVANCE_CLASS}
                 >
-                  {MODAL_CONTACT.submit}
-                </Button>
+                  <AdvanceInner label={MODAL_CONTACT.submit} />
+                </button>
               </div>
             </form>
           </>
@@ -519,9 +569,9 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
               </a>
             </p>
             <div className="mt-8">
-              <Button variant="ghost" type="button" onClick={goBack}>
+              <button type="button" onClick={goBack} className={GHOST_CLASS}>
                 {MODAL_NAV.back}
-              </Button>
+              </button>
             </div>
           </>
         )}
@@ -540,9 +590,9 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
               {MODAL_SUCCESS.body}
             </p>
             <div className="mt-8">
-              <Button variant="inverse" type="button" onClick={close}>
-                {MODAL_NAV.close}
-              </Button>
+              <button type="button" onClick={close} className={ADVANCE_CLASS}>
+                <AdvanceInner label={MODAL_NAV.close} arrow={false} />
+              </button>
             </div>
           </>
         )}
@@ -560,32 +610,34 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
             <p className="mt-4 text-base leading-relaxed text-white/70">
               {MODAL_FAILURE.body}
             </p>
-            <dl className="mt-6 space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5">
+            <dl className="mt-6 space-y-4 rounded-none border border-white/12 bg-white/[0.02] p-5">
               {composed.map(({ label, value }) => (
                 <div key={label}>
-                  <dt className="text-sm text-white/50">{label}</dt>
-                  <dd className="font-medium whitespace-pre-wrap">{value}</dd>
+                  <dt className={CAPTION_CLASS}>{label}</dt>
+                  <dd className="mt-1 font-medium whitespace-pre-wrap text-white">
+                    {value}
+                  </dd>
                 </div>
               ))}
             </dl>
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Button variant="ghost" type="button" onClick={goBack}>
+              <button type="button" onClick={goBack} className={GHOST_CLASS}>
                 {MODAL_NAV.back}
-              </Button>
-              <Button variant="inverse" href={failureMailto}>
-                {MODAL_ESCAPE_HATCH.email}
-              </Button>
+              </button>
+              <a href={failureMailto} className={ADVANCE_CLASS}>
+                <AdvanceInner label={MODAL_ESCAPE_HATCH.email} />
+              </a>
             </div>
           </>
         )}
       </div>
 
       {/* Escape hatch, persistent at every step (Rule 2.6). */}
-      <footer className="border-t border-white/10 px-6 py-4 text-sm text-white/60 md:px-10">
-        {MODAL_ESCAPE_HATCH.prompt}{" "}
+      <footer className="flex items-center gap-2 border-t border-white/10 px-6 py-4 md:px-10">
+        <span className={CAPTION_CLASS}>{MODAL_ESCAPE_HATCH.prompt}</span>
         <a
           href={MAILTO}
-          className="font-medium text-gold underline underline-offset-4"
+          className="text-sm font-medium text-gold underline underline-offset-4"
         >
           {MODAL_ESCAPE_HATCH.email}
         </a>
