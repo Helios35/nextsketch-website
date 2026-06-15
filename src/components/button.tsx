@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "inverse";
+type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost";
 
 type AsButton = ButtonHTMLAttributes<HTMLButtonElement> & { href?: never };
 type AsAnchor = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string };
@@ -21,6 +21,8 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "border border-ink bg-transparent text-ink focus-visible:outline-ink",
   /** Primary's role on ink surfaces (final-CTA panel): white bg / ink text. */
   inverse: "bg-white text-ink focus-visible:outline-white",
+  /** Secondary's role on ink surfaces (dark qualification modal): white hairline. */
+  ghost: "border border-white/40 bg-transparent text-white focus-visible:outline-white",
 };
 
 /**

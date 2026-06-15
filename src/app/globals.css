@@ -25,13 +25,27 @@
 }
 
 /*
+ * Premium material for the qualification modal (ui-ux-pro-max "Modern
+ * Dark / Cinema"): its surface is never pure #000 (reads flat), the
+ * elevated card carries a deep shadow, and one expo-out easing is
+ * shared across its transitions (motion-consistency). Scoped to the
+ * modal — the hero is the approved template treatment, untouched.
+ */
+:root {
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-modal: 0 40px 100px -24px rgb(0 0 0 / 0.85), 0 12px 32px -16px rgb(0 0 0 / 0.6);
+}
+
+/*
  * Font tokens reference next/font CSS variables (set on <html> in
- * layout.tsx), so they must live in an inline theme block.
- * Pairing approved by owner 2026-06-11 (UX spec Review Note 1).
+ * layout.tsx), so they must live in an inline theme block. Landing
+ * re-skin (2026-06-14, owner-directed): Space Grotesk for display/UI,
+ * JetBrains Mono for the capability strip and other mono labels —
+ * Inter/Caveat retired.
  */
 @theme inline {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-hand: var(--font-caveat), cursive;
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
 /*
@@ -42,8 +56,8 @@
  * contract as <Reveal>/<SketchAccent>.
  */
 @theme {
-  --animate-modal-in: modal-in 250ms ease-out;
-  --animate-step-in: step-in 200ms ease-out;
+  --animate-modal-in: modal-in 280ms var(--ease-premium);
+  --animate-step-in: step-in 220ms var(--ease-premium);
 
   @keyframes modal-in {
     from {
@@ -56,6 +70,35 @@
     from {
       opacity: 0;
       transform: translateX(12px);
+    }
+  }
+}
+
+/*
+ * Landing-hero motion (docs/04-ux-spec.md §Motion inventory): the
+ * capability strip is a slow continuous marquee (--duration/--gap are
+ * set on the strip element); hero content rises in on load. Applied
+ * motion-safe only in the components, so reduced-motion users get a
+ * static strip and instant visibility — the same contract as the
+ * modal animations above.
+ */
+@theme {
+  --animate-marquee: marquee var(--duration, 42s) linear infinite;
+  --animate-rise-in: rise-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap, 2.75rem)));
+    }
+  }
+
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
     }
   }
 }
@@ -79,8 +122,10 @@ section[id] {
  * Qualification-modal backdrop. A literal, not the backdrop:bg-ink
  * utility: the oklab()/color-mix() forms Tailwind compiles tokens to
  * computed correctly but failed to *paint* on ::backdrop in the
- * verification browser. The value is the ink token (#000) at 65%.
+ * verification browser. The value is the ink token (#000) at 72%,
+ * with a light blur so the dark modal card reads against the hero.
  */
 dialog::backdrop {
-  background-color: rgb(0 0 0 / 0.65);
+  background-color: rgb(0 0 0 / 0.72);
+  backdrop-filter: blur(8px);
 }

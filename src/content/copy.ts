@@ -86,6 +86,43 @@ export const HERO = {
   ],
 } as const;
 
+/**
+ * Landing hero (single-page site) — the dark cinematic re-skin of the
+ * supplied template, mapped to NextSketch messaging. Every string here
+ * traces to an approved source:
+ * - headline: Messaging Kit §05 Hero Option A (locked, architecture row 2).
+ * - accentWords: the two payoff words rendered in the gold brand accent;
+ *   matched against `headline` punctuation-insensitively (if the headline
+ *   changes, an unmatched word simply renders un-accented).
+ * - supportingLine: Messaging Kit §03 Message 4 (The Relationship), verbatim.
+ * - capabilities: the four canonical services (Taxonomy §1, exact casing),
+ *   shown as the slow capability strip sanctioned in UX spec §Motion inventory
+ *   — no invented numbers or social proof (Brand Philosophy §10, Rule 4.3).
+ * - cta: the Rule 3.1 primary; opens the qualification modal.
+ *
+ * backgroundImage is an INTERIM remote placeholder (config, not copy) —
+ * owner-owed: replace with a self-hosted brand asset before launch, see
+ * briefs/build-notes/08-landing-rebuild.md.
+ */
+export const LANDING = {
+  wordmark: SITE.name,
+  headline: "From idea to production. And we stay.",
+  accentWords: ["production", "stay"],
+  supportingLine:
+    "You're not hiring a vendor. You're gaining a product partner.",
+  capabilities: [
+    "New Products from Scratch",
+    "Rescue & Completion",
+    "Agentic Systems Integration",
+    "Ongoing Product Partnership",
+  ],
+  cta: "Start a Conversation",
+  /** Accessible name for the decorative capability strip. */
+  capabilitiesLabel: "What we build",
+  backgroundImage:
+    "https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?q=80&w=2400&auto=format&fit=crop",
+} as const;
+
 export const MANIFESTO = {
   headline:
     "Most firms build what you ask for. We help you figure out what you actually need.",
