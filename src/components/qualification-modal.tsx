@@ -152,8 +152,11 @@ const OPTION_CLASS =
 /* Forward action — the template's divided-arrow button (label segment +
  * bordered arrow box), matching the hero CTA. White surface / ink mark. */
 const ADVANCE_CLASS =
-  "inline-flex min-h-11 items-stretch bg-white text-base font-medium text-ink " +
-  "transition-opacity duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 " +
+  "group/adv inline-flex min-h-11 items-stretch bg-white text-base font-medium text-ink " +
+  // Tailwind v4 scale/translate compile to the standalone scale/translate
+  // CSS properties — transition those (not `transform`) so the hover animates.
+  "transition-[scale,opacity] duration-150 motion-safe:hover:scale-[1.02] " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 " +
   "focus-visible:outline-white disabled:pointer-events-none disabled:opacity-40";
 
 /* Secondary action — a squared hairline ghost. */
@@ -188,7 +191,9 @@ function AdvanceInner({ label, arrow = true }: { label: ReactNode; arrow?: boole
       <span className="flex items-center px-6 py-3">{label}</span>
       {arrow && (
         <span className="flex items-center border-l border-ink/15 px-3.5 py-3">
-          <ArrowIcon />
+          <span className="transition-[translate] duration-150 motion-safe:group-hover/adv:translate-x-0.5">
+            <ArrowIcon />
+          </span>
         </span>
       )}
     </>
