@@ -5,20 +5,33 @@ export interface QualifyResult {
 }
 
 /**
- * Submit seam for the qualification modal. Sprint 02 replaces the
- * body with `POST /api/qualify` (docs/07-technical-spec.md §API
- * design) and maps the response; the contract the modal builds
- * against — resolve `{ ok }` or throw, caller runs the Rule 2.7
- * preserve-and-fallback on anything but `ok: true` — stays unchanged.
+ * Submit seam for the qualification modal — posts the validated
+ * payload to `POST /api/qualify` (docs/07-technical-spec.md §API) and
+ * maps the response. The contract the modal builds against is
+ * unchanged: resolve `{ ok }` or throw, and the caller runs the Rule
+ * 2.7 preserve-and-fallback on anything but `ok: true`.
  *
- * Interim behavior, locked: no API exists yet (sprint plan Decision 2,
- * docs/decision-log.md #6), so every completed submit resolves not-ok
- * and the modal shows the failure-fallback with the composed answers
- * preserved. No fake success.
+ * A non-2xx response resolves `{ ok: false }` (the server's honest
+ * verdict — validation, an unwired/unreachable destination, or a
+ * provider failure); a genuine network error throws and the modal's
+ * catch runs the same fallback. The endpoint only reports `ok: true`
+ * once a lead is durably handed off, so there is no fake success.
  */
 export async function submitQualification(
   payload: QualificationPayload,
 ): Promise<QualifyResult> {
-  void payload; // consumed when Sprint 02 posts it to /api/qualify
-  return { ok: false };
+  const response = await fetch("/api/qualify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    return { ok: false };
+  }
+  const data: unknown = await response.json();
+  const ok =
+    typeof data === "object" &&
+    data !== null &&
+    (data as { ok?: unknown }).ok === true;
+  return { ok };
 }
