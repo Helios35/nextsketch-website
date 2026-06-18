@@ -1,7 +1,7 @@
 # Build Note 09 — Qualify Endpoint (Sprint 02 · Unit 01)
 
 **Date:** 2026-06-18 · **Branch:** `feature/qualify-endpoint` · **Sprint 02 (Lead Capture) Unit 01.**
-**Status:** Committed locally, **not pushed / no PR** (per owner policy — Nate opens the PR after he verifies).
+**Status:** Committed and pushed to `origin/feature/qualify-endpoint`; **no PR** (per owner policy — Nate opens the PR after he verifies). Feature-branch push = Vercel **preview** deploy only; production is `main`.
 
 ## What changed
 
@@ -41,4 +41,4 @@ The brief says deviations from `docs/07-technical-spec.md` §API get flagged for
 
 1. **The judgment call above** — confirm the "no fake success / valid submit still shows failure until Unit 02" reading is what you want for the Unit-01 review gate.
 2. **Rate limiting** — deferred (see deviations §3). Confirm it should be its own unit, not bolted into this endpoint.
-3. **No push / no PR** — committed to `feature/qualify-endpoint` only; open the PR when you've verified.
+3. **Branch pushed, no PR** — `feature/qualify-endpoint` is on origin (preview deploy only; production is `main`). Open the PR when you've verified.
