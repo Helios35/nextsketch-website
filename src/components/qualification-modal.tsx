@@ -18,12 +18,14 @@ import {
   MODAL_FAILURE_SUBJECT,
   MODAL_NAV,
   MODAL_OFF_RAMP,
+  MODAL_OFF_RAMP_SUCCESS,
   MODAL_PROGRESS,
   MODAL_QUESTIONS,
+  MODAL_QUICK,
   MODAL_SUCCESS,
 } from "@/content/modal";
 import { submitQualification } from "@/lib/qualify";
-import { qualificationPayloadSchema } from "@/lib/schema";
+import { leadPayloadSchema } from "@/lib/schema";
 
 /** Question order per Business Rules 1.1–1.4. */
 const QUESTION_ORDER = [
@@ -40,12 +42,19 @@ type Answers = {
 };
 
 /**
- * Flow screens: the four question steps and the contact step
- * (Business Rules §1), the off-ramp (Rules 2.1–2.2), and the
- * terminal submit screens (UX spec §Qualification modal; failure
- * per Rule 2.7).
+ * Flow screens: the quick door (Unit 04 — the low-friction primary
+ * entry), the four question steps and the contact step (Business
+ * Rules §1), the off-ramp (Rules 2.1–2.2, now with an email capture),
+ * and the terminal submit screens (UX spec §Qualification modal;
+ * failure per Rule 2.7).
  */
-type Screen = QuestionKey | "contact" | "off_ramp" | "success" | "failure";
+type Screen =
+  | "quick"
+  | QuestionKey
+  | "contact"
+  | "off_ramp"
+  | "success"
+  | "failure";
 
 /** Steps the progress meter covers — the qualified path. */
 const PROGRESS_STEPS = [...QUESTION_ORDER, "contact"] as const;
@@ -200,6 +209,33 @@ function AdvanceInner({ label, arrow = true }: { label: ReactNode; arrow?: boole
   );
 }
 
+/**
+ * Honeypot (Rule 2.8): visually and AT-hidden; bots fill it, the schema
+ * rejects anything non-empty. Shared by every door's form (Unit 04) so
+ * the quick path and off-ramp capture carry the same anti-bot guard as
+ * the qualifier's contact step.
+ */
+function HoneypotField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <input
+      type="text"
+      name="_hp"
+      tabIndex={-1}
+      autoComplete="off"
+      aria-hidden="true"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="absolute -left-[9999px] h-px w-px opacity-0"
+    />
+  );
+}
+
 const MAILTO = `mailto:${MODAL_ESCAPE_HATCH.email}`;
 
 interface QualificationModalProps {
@@ -227,10 +263,17 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
   /** Modal-open timestamp for the minimum-time check (Rule 2.8); set on mount. */
   const openedAt = useRef(0);
   const headingId = useId();
-  const [screen, setScreen] = useState<Screen>("project_type");
+  /** Open to the quick door (Unit 04 — the low-friction primary path). */
+  const [screen, setScreen] = useState<Screen>("quick");
   const [answers, setAnswers] = useState<Answers>({});
   const [contact, setContact] = useState<ContactFields>(EMPTY_CONTACT);
   const [submitting, setSubmitting] = useState(false);
+  /**
+   * The form a submit came from — so the failure-fallback's Back returns
+   * to the right door (Rule 2.7) and the success screen can show the
+   * gentler off-ramp confirmation when the lead was an "exploring" one.
+   */
+  const [returnScreen, setReturnScreen] = useState<Screen>("contact");
 
   /*
    * Layout effect so the dialog opens before first paint — the
@@ -273,14 +316,19 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
   };
 
   /**
-   * Back per Rule 1.6 — every step has one. From Q1 it closes (the
-   * page is what's behind); from the off-ramp it returns to whichever
-   * question triggered Rule 2.1 so the answer can be changed (E1/E2).
+   * Back per Rule 1.6 — every step has one. From the quick door (the
+   * entry) it closes; from Q1 it returns to the quick door it was
+   * reached from; from the off-ramp it returns to whichever question
+   * triggered Rule 2.1 so the answer can be changed (E1/E2); from the
+   * failure-fallback it returns to the door that submitted (Rule 2.7).
    */
   const goBack = () => {
     switch (screen) {
-      case "project_type":
+      case "quick":
         close();
+        break;
+      case "project_type":
+        setScreen("quick");
         break;
       case "readiness":
         setScreen("project_type");
@@ -300,7 +348,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
         );
         break;
       case "failure":
-        setScreen("contact");
+        setScreen(returnScreen);
         break;
       case "success":
         close();
@@ -308,28 +356,21 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
     }
   };
 
-  const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    /*
-     * Validation gate: the payload must satisfy
-     * qualificationPayloadSchema before anything is submitted.
-     * "exploring" answers can't reach here (Rule 2.1 routed them to
-     * the off-ramp) and can't pass the schema either — UI-only by
-     * construction. A parse failure (honeypot, sub-3s timing) goes
-     * to the failure-fallback: the lead is never silently dropped.
-     */
-    const parsed = qualificationPayloadSchema.safeParse({
-      project_type: answers.project_type,
-      readiness: answers.readiness,
-      authority: answers.authority,
-      validation: answers.validation,
-      name: contact.name,
-      email: contact.email,
-      company: contact.company === "" ? undefined : contact.company,
-      details: contact.details === "" ? undefined : contact.details,
-      _hp: contact.hp,
-      _t: Date.now() - openedAt.current,
-    });
+  /**
+   * Shared submit core for every door. The payload is re-validated
+   * client-side against `leadPayloadSchema` first: "exploring" answers
+   * can't reach the qualifier path (Rule 2.1 routed them to the
+   * off-ramp) and can't pass the schema either, and a tripped honeypot
+   * or sub-3s timing (Rule 2.8) parse-fails here. Either way a failure
+   * goes to the fallback with answers preserved — the lead is never
+   * silently dropped (Rule 2.7). `from` is recorded so the fallback's
+   * Back and the success variant resolve to the right door.
+   */
+  const runSubmit = async (
+    parsed: ReturnType<typeof leadPayloadSchema.safeParse>,
+    from: Screen,
+  ) => {
+    setReturnScreen(from);
     if (!parsed.success) {
       setScreen("failure");
       return;
@@ -344,6 +385,54 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  /** Full qualifier (Business Rules §1) — the optional "tell us more" door. */
+  const handleQualifiedSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const parsed = leadPayloadSchema.safeParse({
+      kind: "qualified",
+      project_type: answers.project_type,
+      readiness: answers.readiness,
+      authority: answers.authority,
+      validation: answers.validation,
+      name: contact.name,
+      email: contact.email,
+      company: contact.company === "" ? undefined : contact.company,
+      details: contact.details === "" ? undefined : contact.details,
+      _hp: contact.hp,
+      _t: Date.now() - openedAt.current,
+    });
+    void runSubmit(parsed, "contact");
+  };
+
+  /** Quick door (Unit 04) — name + email + an optional one-line message. */
+  const handleQuickSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const parsed = leadPayloadSchema.safeParse({
+      kind: "quick",
+      source: "quick_door",
+      name: contact.name,
+      email: contact.email,
+      details: contact.details === "" ? undefined : contact.details,
+      _hp: contact.hp,
+      _t: Date.now() - openedAt.current,
+    });
+    void runSubmit(parsed, "quick");
+  };
+
+  /** Off-ramp email capture (Unit 04) — the honest "not yet" still leaves a contact. */
+  const handleOffRampSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const parsed = leadPayloadSchema.safeParse({
+      kind: "quick",
+      source: "off_ramp",
+      name: contact.name,
+      email: contact.email,
+      _hp: contact.hp,
+      _t: Date.now() - openedAt.current,
+    });
+    void runSubmit(parsed, "off_ramp");
   };
 
   const composed = composeAnswers(answers, contact);
@@ -402,6 +491,102 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
         key={screen}
         className="min-h-0 grow overflow-y-auto px-6 py-6 md:px-10 md:py-8 motion-safe:animate-step-in"
       >
+        {screen === "quick" && (
+          <>
+            <h2
+              id={headingId}
+              ref={headingRef}
+              tabIndex={-1}
+              className={HEADING_CLASS}
+            >
+              {MODAL_QUICK.heading}
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-white/70">
+              {MODAL_QUICK.body}
+            </p>
+            <form onSubmit={handleQuickSubmit} className="mt-6">
+              <div className="flex flex-col gap-5">
+                <label className="block">
+                  <span className={CAPTION_CLASS}>
+                    {MODAL_CONTACT.fields.name.label}
+                  </span>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    maxLength={100}
+                    autoComplete="name"
+                    value={contact.name}
+                    onChange={(e) =>
+                      setContact({ ...contact, name: e.target.value })
+                    }
+                    className={INPUT_CLASS}
+                  />
+                </label>
+                <label className="block">
+                  <span className={CAPTION_CLASS}>
+                    {MODAL_CONTACT.fields.email.label}
+                  </span>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    autoComplete="email"
+                    value={contact.email}
+                    onChange={(e) =>
+                      setContact({ ...contact, email: e.target.value })
+                    }
+                    className={INPUT_CLASS}
+                  />
+                </label>
+                <label className="block">
+                  <span className={CAPTION_CLASS}>
+                    {MODAL_QUICK.messageLabel}
+                  </span>
+                  <textarea
+                    name="details"
+                    rows={3}
+                    maxLength={MODAL_CONTACT.fields.details.maxLength}
+                    placeholder={MODAL_QUICK.messagePlaceholder}
+                    value={contact.details}
+                    onChange={(e) =>
+                      setContact({ ...contact, details: e.target.value })
+                    }
+                    className={INPUT_CLASS}
+                  />
+                </label>
+              </div>
+              <HoneypotField
+                value={contact.hp}
+                onChange={(value) => setContact({ ...contact, hp: value })}
+              />
+              <div className="mt-8 flex items-center justify-between gap-4">
+                <button type="button" onClick={goBack} className={GHOST_CLASS}>
+                  {MODAL_NAV.back}
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={ADVANCE_CLASS}
+                >
+                  <AdvanceInner label={MODAL_QUICK.submit} />
+                </button>
+              </div>
+            </form>
+            {/* Secondary path into the full four-question qualifier. */}
+            <button
+              type="button"
+              onClick={() => setScreen("project_type")}
+              className="group/more mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {MODAL_QUICK.toQualifier}
+              <span className="transition-[translate] duration-150 motion-safe:group-hover/more:translate-x-0.5">
+                <ArrowIcon />
+              </span>
+            </button>
+          </>
+        )}
+
         {isQuestionKey(screen) && (
           <>
             <h2
@@ -457,7 +642,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
             >
               {MODAL_CONTACT_HEADING}
             </h2>
-            <form onSubmit={handleContactSubmit} className="mt-6">
+            <form onSubmit={handleQualifiedSubmit} className="mt-6">
               <div className="flex flex-col gap-5">
                 <label className="block">
                   <span className={CAPTION_CLASS}>
@@ -524,16 +709,9 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
                   />
                 </label>
               </div>
-              {/* Honeypot (Rule 2.8): visually and AT-hidden; bots fill it. */}
-              <input
-                type="text"
-                name="_hp"
-                tabIndex={-1}
-                autoComplete="off"
-                aria-hidden="true"
+              <HoneypotField
                 value={contact.hp}
-                onChange={(e) => setContact({ ...contact, hp: e.target.value })}
-                className="absolute -left-[9999px] h-px w-px opacity-0"
+                onChange={(value) => setContact({ ...contact, hp: value })}
               />
               <div className="mt-8 flex items-center justify-between gap-4">
                 <button type="button" onClick={goBack} className={GHOST_CLASS}>
@@ -573,11 +751,67 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
                 {MODAL_ESCAPE_HATCH.email}
               </a>
             </p>
-            <div className="mt-8">
-              <button type="button" onClick={goBack} className={GHOST_CLASS}>
-                {MODAL_NAV.back}
-              </button>
-            </div>
+            {/* Optional email capture (Unit 04): an honest "stay in touch,"
+                not a hard sell (Rule 2.2 intent preserved). */}
+            <form
+              onSubmit={handleOffRampSubmit}
+              className="mt-8 border-t border-white/10 pt-6"
+            >
+              <p className="text-base leading-relaxed text-white/70">
+                {MODAL_OFF_RAMP.capture.prompt}
+              </p>
+              <div className="mt-5 flex flex-col gap-5">
+                <label className="block">
+                  <span className={CAPTION_CLASS}>
+                    {MODAL_CONTACT.fields.name.label}
+                  </span>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    maxLength={100}
+                    autoComplete="name"
+                    value={contact.name}
+                    onChange={(e) =>
+                      setContact({ ...contact, name: e.target.value })
+                    }
+                    className={INPUT_CLASS}
+                  />
+                </label>
+                <label className="block">
+                  <span className={CAPTION_CLASS}>
+                    {MODAL_CONTACT.fields.email.label}
+                  </span>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    autoComplete="email"
+                    value={contact.email}
+                    onChange={(e) =>
+                      setContact({ ...contact, email: e.target.value })
+                    }
+                    className={INPUT_CLASS}
+                  />
+                </label>
+              </div>
+              <HoneypotField
+                value={contact.hp}
+                onChange={(value) => setContact({ ...contact, hp: value })}
+              />
+              <div className="mt-8 flex items-center justify-between gap-4">
+                <button type="button" onClick={goBack} className={GHOST_CLASS}>
+                  {MODAL_NAV.back}
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={ADVANCE_CLASS}
+                >
+                  <AdvanceInner label={MODAL_OFF_RAMP.capture.submit} />
+                </button>
+              </div>
+            </form>
           </>
         )}
 
@@ -589,10 +823,14 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
               tabIndex={-1}
               className={HEADING_CLASS}
             >
-              {MODAL_SUCCESS.headline}
+              {returnScreen === "off_ramp"
+                ? MODAL_OFF_RAMP_SUCCESS.headline
+                : MODAL_SUCCESS.headline}
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/70">
-              {MODAL_SUCCESS.body}
+              {returnScreen === "off_ramp"
+                ? MODAL_OFF_RAMP_SUCCESS.body
+                : MODAL_SUCCESS.body}
             </p>
             <div className="mt-8">
               <button type="button" onClick={close} className={ADVANCE_CLASS}>

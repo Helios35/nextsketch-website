@@ -2,18 +2,20 @@ import { after } from "next/server";
 
 import { deliverLead } from "@/lib/lead-delivery";
 import { notifyLead } from "@/lib/lead-notify";
-import { qualificationPayloadSchema } from "@/lib/schema";
+import { leadPayloadSchema } from "@/lib/schema";
 
 /**
  * POST /api/qualify — the site's only server-side surface
  * (docs/07-technical-spec.md §API; no database, no auth — owner
- * decision). Receives a completed qualification, re-validates it with
- * the shared `qualificationPayloadSchema`, and hands the lead to the
- * durable delivery seam.
+ * decision). Receives a completed lead from either door (Sprint 02
+ * Unit 04: the full qualifier or the quick path / off-ramp capture),
+ * re-validates it with the shared `leadPayloadSchema`, and hands the
+ * lead to the durable delivery seam.
  *
- * Server-side re-validation is the security boundary: the schema's
- * enums exclude the "exploring" answers, require an empty honeypot,
- * and require `_t >= 3000`, so off-ramp, honeypot, and sub-3s
+ * Server-side re-validation is the security boundary: the discriminated
+ * union enforces the right shape per `kind`, the qualifier enums
+ * exclude the "exploring" answers, and BOTH doors require an empty
+ * honeypot and `_t >= 3000`, so off-ramp, honeypot, and sub-3s
  * submissions are rejected here even on a direct POST that bypasses
  * the client (Business Rules 2.1, 2.8 — exactly what the schema's own
  * comment promises).
@@ -33,11 +35,12 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ ok: false }, { status: 400 });
   }
 
-  const parsed = qualificationPayloadSchema.safeParse(body);
+  const parsed = leadPayloadSchema.safeParse(body);
   if (!parsed.success) {
-    // Off-ramp values, a tripped honeypot, a sub-threshold completion
-    // time, or any malformed field reject here. Generic body on
-    // purpose: never tell a probe which guard tripped.
+    // An unknown `kind`, off-ramp values on the qualifier, a tripped
+    // honeypot, a sub-threshold completion time, or any malformed field
+    // reject here. Generic body on purpose: never tell a probe which
+    // guard tripped.
     return Response.json({ ok: false }, { status: 400 });
   }
 

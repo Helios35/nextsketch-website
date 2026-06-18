@@ -1,15 +1,17 @@
-import type { QualificationPayload } from "@/lib/schema";
+import type { LeadPayload } from "@/lib/schema";
 
 export interface QualifyResult {
   ok: boolean;
 }
 
 /**
- * Submit seam for the qualification modal — posts the validated
- * payload to `POST /api/qualify` (docs/07-technical-spec.md §API) and
- * maps the response. The contract the modal builds against is
- * unchanged: resolve `{ ok }` or throw, and the caller runs the Rule
- * 2.7 preserve-and-fallback on anything but `ok: true`.
+ * Submit seam for the modal — posts a validated lead to `POST /api/qualify`
+ * (docs/07-technical-spec.md §API) and maps the response. Carries either
+ * door (Sprint 02 Unit 04): the full qualifier or the quick path /
+ * off-ramp capture, discriminated by `LeadPayload["kind"]`. The contract
+ * the modal builds against is unchanged: resolve `{ ok }` or throw, and
+ * the caller runs the Rule 2.7 preserve-and-fallback on anything but
+ * `ok: true`.
  *
  * A non-2xx response resolves `{ ok: false }` (the server's honest
  * verdict — validation, an unwired/unreachable destination, or a
@@ -18,7 +20,7 @@ export interface QualifyResult {
  * once a lead is durably handed off, so there is no fake success.
  */
 export async function submitQualification(
-  payload: QualificationPayload,
+  payload: LeadPayload,
 ): Promise<QualifyResult> {
   const response = await fetch("/api/qualify", {
     method: "POST",

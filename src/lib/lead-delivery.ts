@@ -1,5 +1,5 @@
 import { toAsanaTask, toSheetRecord } from "@/lib/lead-format";
-import type { QualificationPayload } from "@/lib/schema";
+import type { LeadPayload } from "@/lib/schema";
 
 /**
  * Outbound timeouts (`AbortSignal.timeout`) so a hung destination can
@@ -55,7 +55,7 @@ function errMsg(reason: unknown): string {
  * env vars (no `NEXT_PUBLIC_` prefix) — it must never reach the client.
  */
 export async function deliverLead(
-  payload: QualificationPayload,
+  payload: LeadPayload,
 ): Promise<boolean> {
   const capturedAt = new Date().toISOString();
 
@@ -105,7 +105,7 @@ export async function deliverLead(
  * success while the destination is unconfigured.
  */
 async function writeLeadToSheet(
-  payload: QualificationPayload,
+  payload: LeadPayload,
   capturedAt: string,
 ): Promise<boolean> {
   const webhookUrl = process.env.LEADS_SHEET_WEBHOOK_URL;
@@ -140,7 +140,7 @@ async function writeLeadToSheet(
  * record.
  */
 async function createAsanaTask(
-  payload: QualificationPayload,
+  payload: LeadPayload,
   capturedAt: string,
 ): Promise<boolean> {
   const token = process.env.ASANA_ACCESS_TOKEN;
