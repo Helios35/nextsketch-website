@@ -56,6 +56,8 @@ If a database is added later (post-launch), this schema becomes the `leads` tabl
 - Returns: `200 {ok:true}` · `400 {ok:false, error}` validation · `429` rate-limited · `500 {ok:false}` provider failure (client then executes Rule 2.7 fallback).
 - Rate limit: in-memory/sliding-window per IP, 5/hour (sufficient without persistence; revisit post-launch).
 
+> ⚠️ **Sprint 02 (Unit 03) flag — Sprint 03 doc audit, not rewritten here.** Resend no longer *is* the capture (Unit 02 moved the durable record to the Sheet + Asana). Resend now sends **two notification emails after** a durable capture, fired via `after()` so they run post-response and are best-effort — a send failure never blocks or reverses the capture (no fake failure of a stored lead): (1) an **auto-reply to the lead** honoring the `MODAL_SUCCESS` two-business-days promise, reply-to the brand inbox; (2) a **real-time alert to `NOTIFY_EMAIL`** with the Rule 2.5 signal in the subject and every answer (Taxonomy §3 labels) in the body, reply-to the lead. The "one email to hello@nextsketch.com" framing of Rule 2.4 is the alert recipient question below. See `briefs/build-notes/11-notify.md`.
+
 ## Business logic implementation
 
 - Branching (Rules 2.1–2.3): client-side state machine in `QualificationModal`; server re-validates so the off-ramp can't be bypassed by direct POST.
@@ -85,6 +87,8 @@ Resend (email) · Vercel Analytics · Google Fonts via next/font (build-time onl
 | `NOTIFY_EMAIL` | Lead destination, `hello@nextsketch.com` | Vercel project settings |
 
 > ⚠️ **Sprint 02 (Unit 02) flag — Sprint 03 doc audit.** Lead destination adds three server-only vars (no `NEXT_PUBLIC_` prefix), all owner-provided via the sprint plan setup checklist and set in Vercel (prod + preview) + local `.env.local`: `LEADS_SHEET_WEBHOOK_URL` (Apps Script web-app URL that appends the row — gates capture success), `ASANA_ACCESS_TOKEN` and `ASANA_PROJECT_ID` (best-effort Asana task). Until `LEADS_SHEET_WEBHOOK_URL` is set, captures honestly report not-ok (no fake success).
+
+> ⚠️ **Sprint 02 (Unit 03) flag — Sprint 03 doc audit.** Notification clarifies/adds env: `NOTIFY_EMAIL` is now the **alert recipient** (Nate's inbox), distinct from the `hello@nextsketch.com` escape hatch / auto-reply reply-to (the table's "Lead destination, `hello@nextsketch.com`" gloss is pre-pivot). New optional server-only `LEAD_FROM_EMAIL` — the verified branded sender (a bare address or `"Name <addr>"`); **when unset, email falls back to Resend's interim onboarding sender** so launch isn't blocked on DNS (Decision 3). `RESEND_API_KEY` unset → notification is skipped (best-effort), the lead is still captured.
 
 ## Project structure (target)
 

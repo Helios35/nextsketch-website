@@ -38,6 +38,8 @@ Owner confirms: domain currently points to Webflow; owner controls it.
 - Lead pipeline: any week with zero `[Lead]` emails AND nonzero traffic → manually test the modal (silent pipeline failure is failure mode #1).
 - Resend dashboard: delivery failures/bounces.
 
+> ⚠️ **Sprint 02 (Unit 03) flag — Sprint 03 doc audit, not rewritten here.** Resend now sends **two** emails per capture: the **lead auto-reply** and **Nate's alert** (to `NOTIFY_EMAIL`). They fire via `after()` **only after** the durable Sheet write (Unit 02), so a Resend outage degrades notification but never the captured lead — check the Sheet, not just the inbox, when triaging "no email." Sends are logged in Vercel under `lead-notify:`. Interim sender (Decision 3): until `LEAD_FROM_EMAIL` (verified branded sender) is set, email sends from Resend's onboarding domain — Nate's alert works immediately; the lead auto-reply may be limited to the account's own verified address until DNS verifies. See `briefs/build-notes/11-notify.md`.
+
 ## Common failure modes
 
 | Symptom | Likely cause | Fix |

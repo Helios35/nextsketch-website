@@ -16,8 +16,13 @@ import type { QualificationPayload } from "@/lib/schema";
  * keep that value↔label tie rather than inventing alternates.
  */
 
-/** Resolve a payload value to its canonical display label (Taxonomy §3). */
-function labelFor(
+/**
+ * Resolve a payload value to its canonical display label (Taxonomy §3).
+ * Exported so Unit 03 (notify) builds the alert email body from the
+ * same resolver the Sheet/Asana records use — the labels can't drift
+ * across destinations because there is one resolver, one source.
+ */
+export function labelFor(
   options: readonly { readonly value: string; readonly label: string }[],
   value: string,
 ): string {
