@@ -1,4 +1,7 @@
+import { after } from "next/server";
+
 import { deliverLead } from "@/lib/lead-delivery";
+import { notifyLead } from "@/lib/lead-notify";
 import { qualificationPayloadSchema } from "@/lib/schema";
 
 /**
@@ -40,6 +43,15 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     const delivered = await deliverLead(parsed.data);
+    if (delivered) {
+      // Notify only once the lead is durably recorded (Unit 03): fire
+      // the auto-reply + Nate's alert via `after()` so they run after
+      // the response is sent. Best-effort by construction — an email
+      // failure can never block or reverse a capture that already
+      // succeeded (brief Outcome 4); we never acknowledge a lead that
+      // wasn't stored (Scope Guardrail).
+      after(() => notifyLead(parsed.data));
+    }
     // No fake success: ok:true only once the lead is durably recorded.
     // 503 when it isn't (destination unreachable or not yet
     // configured) so the client treats it as not-ok (Rule 2.7).
