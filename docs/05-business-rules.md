@@ -43,6 +43,14 @@ The modal asks, in order (canonical answer values in `06-taxonomy.md` §Modal an
 - **2.7 — Failure fallback:** if submission fails (network/API error), show the escape hatch with the user's composed answers preserved on screen so nothing is lost. Never silently drop a lead.
 - **2.8 — Spam:** honeypot field + minimum-time check (reject < 3s completions) + rate limit per Tech Spec. No CAPTCHA (Rule: friction budget is spent on qualification, not bot tests).
 
+> ⚠️ **Sprint 02 Unit 04 (Quick Door) — flagged for Sprint 03 ratification.** The lead-capture sprint added a second door under owner Decision 4; implemented and noted here, to be reconciled into these rules during the Sprint 03 doc audit (sprint plan Decision 1). What changed vs. the rules above:
+> - **New entry — the quick door.** The modal now opens to a low-friction path (name + email + an optional one-line message, no qualifier questions) as the primary CTA; the four-question qualifier (§1) stays as the optional "tell us more" path, reachable from the quick door. §1.1–1.4 are no longer the only way in. Both doors carry the §2.8 honeypot + minimum-time guards; both still degrade to the mailto escape hatch with no JS (E3).
+> - **Rule 2.1–2.2 — off-ramp now captures.** The off-ramp keeps its honest "not yet" message and the escape hatch, and **adds** an optional, low-pressure email capture ("Stay in Touch"). It remains a success state, not a hard sell — but it is no longer "no contact form."
+> - **Rule 2.4 / system of record.** Pre-pivot 2.4 ("one email to hello@…, no data stored") was already superseded in Units 01–03 (durable Google Sheet + Asana, plus a lead auto-reply and Nate's alert). Quick-door and off-ramp leads flow through that **same** pipeline.
+> - **Rule 2.5 — new signal labels.** Quick-door leads have no qualifier answers, so the buy-in / build-first flags don't apply. They get their own honest subject/lead-type labels: `[Lead — quick]` (quick path) and `[Lead — exploring]` (off-ramp capture). An "exploring" capture also receives a gentler auto-reply (no two-business-day promise), consistent with the off-ramp tone.
+> - **Rule 3.1 — CTA set.** The off-ramp capture's "Stay in Touch" is intentionally outside the §3.1 conversion-CTA set: pushing a §3.1 CTA on a visitor who just said they're still exploring would violate the Rule 2.2 "not a hard sell" intent. Reconcile the §3.1 set with this case in the audit. (Quick-door submit uses "Talk to Us", which is in the §3.1 set.)
+> Copy for all of the above lives in `src/content/modal.ts` / `src/content/email.ts` (DRAFT, brand voice) per the "copy is code" convention; see `briefs/build-notes/12-quick-door.md`.
+
 ## 3. Language rules (site-wide, enforced at build and in verification)
 
 - **3.1 — Required CTA set (exhaustive):** "Start a Conversation" · "Talk to Us" · "Qualify Your Project" · "Let's See if We're a Fit" · "Build With Us". Primary CTA everywhere: "Start a Conversation".

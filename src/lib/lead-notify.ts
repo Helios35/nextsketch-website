@@ -1,10 +1,15 @@
 import { Resend } from "resend";
 
 import { SITE } from "@/content/copy";
-import { LEAD_ALERT, LEAD_AUTOREPLY } from "@/content/email";
+import {
+  LEAD_ALERT,
+  LEAD_AUTOREPLY,
+  LEAD_AUTOREPLY_EXPLORING,
+  LEAD_AUTOREPLY_QUICK,
+} from "@/content/email";
 import { MODAL_CONTACT, MODAL_QUESTIONS } from "@/content/modal";
 import { labelFor, leadSignal } from "@/lib/lead-format";
-import type { QualificationPayload } from "@/lib/schema";
+import type { LeadPayload } from "@/lib/schema";
 
 /**
  * Lead notification (Sprint 02 Unit 03 — notify). Fires two emails via
@@ -80,7 +85,7 @@ function resolveSender(): { from: string; branded: boolean } {
   return { from: INTERIM_SENDER, branded: false };
 }
 
-export async function notifyLead(payload: QualificationPayload): Promise<void> {
+export async function notifyLead(payload: LeadPayload): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.error(
@@ -122,31 +127,44 @@ export async function notifyLead(payload: QualificationPayload): Promise<void> {
  * Instant acknowledgment to the lead. Plain, on-brand, and consistent
  * with the success screen the visitor just saw. Reply-to is the brand
  * inbox (`SITE.email`) so any reply reaches Nate.
+ *
+ * Copy is chosen per door so it never describes content the lead didn't
+ * provide (Unit 04): the qualifier keeps "your answers / project
+ * details"; the quick door gets answer-neutral wording but the same
+ * two-business-day promise (it's a ready lead); the off-ramp
+ * ("exploring") capture gets the gentler, no-promise variant matching
+ * MODAL_OFF_RAMP_SUCCESS.
  */
 async function sendAutoReply(
   resend: Resend,
   from: string,
-  payload: QualificationPayload,
+  payload: LeadPayload,
 ): Promise<boolean> {
+  const copy =
+    payload.kind === "qualified"
+      ? LEAD_AUTOREPLY
+      : payload.source === "off_ramp"
+        ? LEAD_AUTOREPLY_EXPLORING
+        : LEAD_AUTOREPLY_QUICK;
   const firstName = payload.name.trim().split(/\s+/)[0] || payload.name.trim();
-  const greeting = LEAD_AUTOREPLY.greeting(firstName);
+  const greeting = copy.greeting(firstName);
 
   const text = [
     greeting,
     "",
-    LEAD_AUTOREPLY.heading,
+    copy.heading,
     "",
-    ...LEAD_AUTOREPLY.body,
+    ...copy.body,
     "",
-    LEAD_AUTOREPLY.signoff,
+    copy.signoff,
   ].join("\n");
 
   const html = wrapHtml(
     [
       `<p>${escapeHtml(greeting)}</p>`,
-      `<p><strong>${escapeHtml(LEAD_AUTOREPLY.heading)}</strong></p>`,
-      ...LEAD_AUTOREPLY.body.map((line) => `<p>${escapeHtml(line)}</p>`),
-      `<p>${escapeHtml(LEAD_AUTOREPLY.signoff)}</p>`,
+      `<p><strong>${escapeHtml(copy.heading)}</strong></p>`,
+      ...copy.body.map((line) => `<p>${escapeHtml(line)}</p>`),
+      `<p>${escapeHtml(copy.signoff)}</p>`,
     ].join("\n"),
   );
 
@@ -154,7 +172,7 @@ async function sendAutoReply(
     from,
     to: payload.email,
     replyTo: SITE.email,
-    subject: LEAD_AUTOREPLY.subject,
+    subject: copy.subject,
     text,
     html,
   });
@@ -175,7 +193,7 @@ async function sendAutoReply(
 async function sendAlert(
   resend: Resend,
   from: string,
-  payload: QualificationPayload,
+  payload: LeadPayload,
   capturedAt: string,
 ): Promise<boolean> {
   const to = process.env.NOTIFY_EMAIL;
@@ -187,53 +205,88 @@ async function sendAlert(
   }
 
   const signal = leadSignal(payload);
-  const projectType = labelFor(
-    MODAL_QUESTIONS.project_type.options,
-    payload.project_type,
-  );
-  const company = payload.company?.trim() ? payload.company.trim() : "—";
   const details = payload.details?.trim() ? payload.details.trim() : "—";
   const fields = MODAL_CONTACT.fields;
+  // Company only exists on the qualifier; the quick door collects none.
+  const company =
+    payload.kind === "qualified" && payload.company?.trim()
+      ? payload.company.trim()
+      : "—";
 
-  const answers = QUESTION_ORDER.map((key) => ({
-    question: MODAL_QUESTIONS[key].question,
-    answer: labelFor(MODAL_QUESTIONS[key].options, payload[key]),
-  }));
+  // Qualifier answers only exist on the full path; the quick door has none
+  // (the subject's signal label already says which door it came through).
+  const answers =
+    payload.kind === "qualified"
+      ? QUESTION_ORDER.map((key) => ({
+          question: MODAL_QUESTIONS[key].question,
+          answer: labelFor(MODAL_QUESTIONS[key].options, payload[key]),
+        }))
+      : [];
 
-  const subject = `${signal.label} ${payload.name} — ${projectType}`;
+  const subject =
+    payload.kind === "qualified"
+      ? `${signal.label} ${payload.name} — ${labelFor(
+          MODAL_QUESTIONS.project_type.options,
+          payload.project_type,
+        )}`
+      : `${signal.label} ${payload.name}`;
 
-  const text = [
+  const textLines: string[] = [
     LEAD_ALERT.intro,
     "",
     `${fields.name.label}: ${payload.name}`,
     `${fields.email.label}: ${payload.email}`,
-    `${fields.company.label}: ${company}`,
-    "",
-    LEAD_ALERT.answersHeading,
-    ...answers.map(({ question, answer }) => `${question}\n  → ${answer}`),
-    "",
+  ];
+  if (payload.kind === "qualified") {
+    textLines.push(`${fields.company.label}: ${company}`);
+  }
+  textLines.push("");
+  if (answers.length > 0) {
+    textLines.push(
+      LEAD_ALERT.answersHeading,
+      ...answers.map(({ question, answer }) => `${question}\n  → ${answer}`),
+      "",
+    );
+  }
+  textLines.push(
     `${fields.details.label}: ${details}`,
     "",
     `${LEAD_ALERT.capturedLabel}: ${capturedAt}`,
     "",
     LEAD_ALERT.replyHint,
-  ].join("\n");
+  );
+  const text = textLines.join("\n");
+
+  const contactHtml = [
+    "<p>",
+    `${escapeHtml(fields.name.label)}: ${escapeHtml(payload.name)}<br>`,
+    `${escapeHtml(fields.email.label)}: ${escapeHtml(payload.email)}`,
+  ];
+  if (payload.kind === "qualified") {
+    contactHtml.push(
+      `<br>${escapeHtml(fields.company.label)}: ${escapeHtml(company)}`,
+    );
+  }
+  contactHtml.push("</p>");
+
+  const answersHtml =
+    answers.length > 0
+      ? [
+          `<p><strong>${escapeHtml(LEAD_ALERT.answersHeading)}</strong></p>`,
+          "<ul>",
+          ...answers.map(
+            ({ question, answer }) =>
+              `<li>${escapeHtml(question)}<br><strong>${escapeHtml(answer)}</strong></li>`,
+          ),
+          "</ul>",
+        ]
+      : [];
 
   const html = wrapHtml(
     [
       `<p>${escapeHtml(LEAD_ALERT.intro)}</p>`,
-      "<p>",
-      `${escapeHtml(fields.name.label)}: ${escapeHtml(payload.name)}<br>`,
-      `${escapeHtml(fields.email.label)}: ${escapeHtml(payload.email)}<br>`,
-      `${escapeHtml(fields.company.label)}: ${escapeHtml(company)}`,
-      "</p>",
-      `<p><strong>${escapeHtml(LEAD_ALERT.answersHeading)}</strong></p>`,
-      "<ul>",
-      ...answers.map(
-        ({ question, answer }) =>
-          `<li>${escapeHtml(question)}<br><strong>${escapeHtml(answer)}</strong></li>`,
-      ),
-      "</ul>",
+      ...contactHtml,
+      ...answersHtml,
       `<p>${escapeHtml(fields.details.label)}: ${escapeHtml(details)}</p>`,
       `<p>${escapeHtml(LEAD_ALERT.capturedLabel)}: ${escapeHtml(capturedAt)}</p>`,
       `<p>${escapeHtml(LEAD_ALERT.replyHint)}</p>`,

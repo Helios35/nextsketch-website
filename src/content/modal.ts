@@ -69,6 +69,29 @@ export const MODAL_CONTACT = {
 } as const;
 
 /**
+ * Quick door (Sprint 02 Unit 04) — the low-friction primary path: name,
+ * email, and an optional one-line message, no qualifier questions. The
+ * full four-question qualifier stays reachable from here as the optional
+ * "tell us more" path (`toQualifier`). The message reuses the contact
+ * step's `details` field so it lands in the same lead record.
+ *
+ * New flow + copy = a spec change touching Business Rules §1–2 — flagged
+ * for the Sprint 03 audit (docs/05-business-rules.md). DRAFT in brand
+ * voice pending owner approval.
+ */
+export const MODAL_QUICK = {
+  heading: "Tell us what you need.",
+  body: "The short version. Your name, your email, and a line on what you're building — we'll take it from there.",
+  /** Label + placeholder for the optional one-line message. */
+  messageLabel: "What do you need?",
+  messagePlaceholder: "One line is plenty — we'll follow up.",
+  /** Submit CTA (Rule 3.1 set). */
+  submit: "Talk to Us",
+  /** Secondary affordance into the full four-question qualifier. */
+  toQualifier: "Rather walk us through it? Answer a few questions",
+} as const;
+
+/**
  * Escape hatch (Rule 2.6): visible at every step, always a plain
  * mailto — never a form.
  */
@@ -87,12 +110,34 @@ export const MODAL_OFF_RAMP = {
   headline: "You're not ready for this yet — and that's the right read.",
   body: "We work with people who have a real problem to solve and the authority to move on it. Still exploring is a fine place to be — it's just not where we add value. When you're ready to build, come back. We'll be here.",
   closing: "Until then, the door stays open:",
+  /**
+   * Off-ramp email capture (Sprint 02 Unit 04): an honest, low-pressure
+   * offer to stay in touch instead of only showing the door — NOT a hard
+   * sell (Rule 2.2 intent preserved). New flow + copy flagged for the
+   * Sprint 03 audit. DRAFT pending owner approval.
+   */
+  capture: {
+    prompt:
+      "Or leave your details and we'll reach out when the timing's right — no sequence, no pressure.",
+    submit: "Stay in Touch",
+  },
 } as const;
 
 /** Success screen (UX spec §Qualification modal). */
 export const MODAL_SUCCESS = {
   headline: "That's everything we need.",
   body: "You'll hear from Nathan within two business days.",
+} as const;
+
+/**
+ * Off-ramp capture confirmation (Sprint 02 Unit 04) — a gentler success
+ * than MODAL_SUCCESS. An "exploring" visitor isn't promised a
+ * two-business-day reply; they're told, honestly, that we'll be here.
+ * DRAFT pending owner approval, flagged for the Sprint 03 audit.
+ */
+export const MODAL_OFF_RAMP_SUCCESS = {
+  headline: "Got it — we'll be here.",
+  body: "No follow-up sequence, no pressure. When you're ready to build, you'll know where to find us — and we'll reach out if the timing lines up.",
 } as const;
 
 /**
