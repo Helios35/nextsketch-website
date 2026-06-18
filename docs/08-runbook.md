@@ -11,11 +11,31 @@
 1. Work merges to `main` on GitHub (`nextsketch-website`).
 2. Vercel auto-builds and deploys `main` to production; every branch/PR gets a preview URL.
 3. CI gate: build fails on banned-term grep hit (Rule 3.2/3.4) or type errors.
-4. Verify after deploy: load production URL, open modal, run one test submission, confirm the lead email arrives.
+4. Verify after deploy: set the env vars below, then run the **Production smoke test (Sprint 02 capture)** below. The **Sheet is the durable record** — not the email (email is best-effort notification, build-notes 10–11); when triaging "no lead," check the Sheet first.
+
+## Production smoke test (Sprint 02 capture)
+
+Run on the deployed site **after** the env vars below are set. Proves both doors and honest failure handling end-to-end (Unit 05 verification gate).
+
+1. **Quick path:** open the modal (it opens to the quick door) → fill name + email + a line → "Talk to Us" → success ("…within two business days"). Confirm all four artifacts: a Sheet row (`lead_type: quick`, signal `[Lead — quick]`), an Asana task, the lead auto-reply, and Nate's `[Lead …]` alert.
+2. **Full qualifier:** "Rather walk us through it?" → answer the four questions on a qualified (non-exploring) path → contact step → submit. Confirm the same four artifacts (`lead_type: qualified` or `flagged`).
+3. **Off-ramp capture:** pick "I'm still exploring" → off-ramp → "Stay in Touch" with name + email. Confirm the gentle success, a Sheet row (`lead_type: exploring`, signal `[Lead — exploring]`), and the gentler auto-reply (no two-day promise).
+4. **Honest failure (no fake success):** temporarily point `LEADS_SHEET_WEBHOOK_URL` at a failing/empty value and submit → the modal shows "That didn't go through — your answers are safe." with answers preserved + the escape hatch (Rule 2.7); restore the webhook after.
+5. **As-built checks:** modal renders full-height on mobile (≤375px); reduced-motion users get no animation; banned-terms gate green (CI).
 
 ## Environment variables
 
-`RESEND_API_KEY`, `NOTIFY_EMAIL` — set in Vercel project settings for Production and Preview. Never committed. Local dev uses `.env.local` (gitignored).
+Set in Vercel project settings for **Production and Preview**; never committed. Local dev uses `.env.local` (gitignored). Names only here — values live in Vercel.
+
+| Var | Purpose | Gating |
+|---|---|---|
+| `LEADS_SHEET_WEBHOOK_URL` | Apps Script web-app URL for the "Inbound Leads" Sheet; appends a row, returns 2xx on success | **Durable record — gates capture success.** Unset ⇒ every capture honestly reports not-ok (no fake success). **Set this first.** |
+| `ASANA_ACCESS_TOKEN` + `ASANA_PROJECT_ID` | Open a task in the Asana "Inbound Leads" project | Best-effort. Unset ⇒ task skipped, capture still succeeds. |
+| `RESEND_API_KEY` | Resend key for the lead auto-reply + Nate's alert | Notification only (best-effort, via `after()`). Unset ⇒ emails skipped, lead still captured. |
+| `NOTIFY_EMAIL` | Recipient of the `[Lead …]` alert (Nate's inbox) | Unset ⇒ alert skipped (auto-reply unaffected). |
+| `LEAD_FROM_EMAIL` *(optional)* | Verified branded sender (e.g. `"NextSketch <hello@nextsketch.com>"`) | Unset ⇒ sends from Resend's interim onboarding domain (Decision 3); set once DNS verifies. |
+
+When building the Apps Script: format the lead columns as plain text (or prefix `= + - @`) to neutralize spreadsheet formula injection (build-note 10). The pre-pivot table listed only `RESEND_API_KEY` / `NOTIFY_EMAIL`; the Sheet + Asana vars were added in Sprint 02 Units 02–03.
 
 ## Domain migration — Webflow → Vercel (one-time cutover)
 
@@ -44,10 +64,13 @@ Owner confirms: domain currently points to Webflow; owner controls it.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| Modal submits but no email | Resend key expired/revoked, or daily quota hit | Rotate key in Vercel env, redeploy; check Resend logs |
-| All submissions 429 | Rate-limit too aggressive / shared-IP traffic | Raise limit in `lib/rate-limit.ts`, redeploy |
+| Modal always "didn't go through" (no capture) | `LEADS_SHEET_WEBHOOK_URL` unset/wrong, or the Apps Script not returning 2xx | Set/fix the webhook in Vercel env, redeploy; check Vercel logs under `lead-delivery:` |
+| Sheet row appears but no Asana task | `ASANA_ACCESS_TOKEN` / `ASANA_PROJECT_ID` unset/invalid (best-effort) | Set/fix in Vercel env; the lead is safe in the Sheet meanwhile (log: "Asana task NOT created") |
+| Capture works but no emails | `RESEND_API_KEY` unset/revoked/quota, or `NOTIFY_EMAIL` unset | Set/rotate in Vercel env; check Resend logs + Vercel `lead-notify:` logs (the lead is already captured) |
+| Lead emails in spam / auto-reply not reaching arbitrary recipients | Branded domain not verified in Resend (still on interim sender) | Verify `nextsketch.com` SPF/DKIM in Resend, set `LEAD_FROM_EMAIL` |
 | Site down after DNS change | Wrong/partial DNS records | Re-check Vercel domain panel; rollback DNS to Webflow values if needed |
-| Lead emails in spam | Domain not verified in Resend | Complete Resend domain verification (SPF/DKIM records) |
+
+> ⚠️ **Sprint 02 Unit 05 flag — Sprint 03 doc audit.** The pre-pivot "All submissions 429 / `lib/rate-limit.ts`" row was removed: rate limiting was **never implemented** (deferred in Unit 01, build-note 09 §3 — in-memory per-IP limiting is unreliable on Vercel serverless). Revisit as its own unit with a shared store if abuse appears; it is not a leak-stopper. The §Redirects (`next.config`) entry is a domain-cutover item and is **out of scope until the Webflow cutover** (Decision 5) — verify it then.
 
 ## Rollback procedure
 
