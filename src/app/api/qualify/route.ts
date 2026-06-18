@@ -16,9 +16,10 @@ import { qualificationPayloadSchema } from "@/lib/schema";
  * comment promises).
  *
  * Reports `{ ok }` honestly: success only once `deliverLead` durably
- * hands the lead off. Until Unit 02 wires the destination it resolves
- * not-ok, the modal runs its Rule 2.7 preserve-and-fallback, and no
- * fake success is ever shown.
+ * records the lead in the Google Sheet (Unit 02 wired the Sheet +
+ * Asana destinations). If the durable record is unreachable — or not
+ * yet configured — it resolves not-ok, the modal runs its Rule 2.7
+ * preserve-and-fallback, and no fake success is ever shown.
  */
 export async function POST(request: Request): Promise<Response> {
   let body: unknown;
@@ -39,9 +40,9 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     const delivered = await deliverLead(parsed.data);
-    // No fake success: ok:true only once the lead is durably handed
-    // off (Unit 02 fills the seam). 503 while the destination is
-    // unwired so the client treats it as not-ok (Rule 2.7).
+    // No fake success: ok:true only once the lead is durably recorded.
+    // 503 when it isn't (destination unreachable or not yet
+    // configured) so the client treats it as not-ok (Rule 2.7).
     return Response.json({ ok: delivered }, { status: delivered ? 200 : 503 });
   } catch (error) {
     // Structured failure, no stack trace to the client; logged for

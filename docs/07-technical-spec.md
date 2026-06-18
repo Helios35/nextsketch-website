@@ -75,12 +75,16 @@ None. All public. API route is the only mutation surface, protected per Rule 2.8
 
 Resend (email) · Vercel Analytics · Google Fonts via next/font (build-time only). No other third parties. No cookies beyond Vercel Analytics' cookieless tracking → no cookie banner required.
 
+> ⚠️ **Sprint 02 (Unit 02) flag — reconcile in the Sprint 03 doc audit, not rewritten here.** Lead capture now writes to two destinations (sprint plan Decision 2): the **Google Sheet "Inbound Leads"** (durable system of record, via an owner-provided Apps Script web-app webhook — a plain POST, no new dependency) and the **Asana "Inbound Leads" project** (best-effort task, via the Asana REST API). These are the system of record (no database). See `briefs/build-notes/10-lead-destination.md`.
+
 ## Environment variables
 
 | Var | Purpose | Where set |
 |---|---|---|
 | `RESEND_API_KEY` | Email provider auth | Vercel project settings (prod + preview) |
 | `NOTIFY_EMAIL` | Lead destination, `hello@nextsketch.com` | Vercel project settings |
+
+> ⚠️ **Sprint 02 (Unit 02) flag — Sprint 03 doc audit.** Lead destination adds three server-only vars (no `NEXT_PUBLIC_` prefix), all owner-provided via the sprint plan setup checklist and set in Vercel (prod + preview) + local `.env.local`: `LEADS_SHEET_WEBHOOK_URL` (Apps Script web-app URL that appends the row — gates capture success), `ASANA_ACCESS_TOKEN` and `ASANA_PROJECT_ID` (best-effort Asana task). Until `LEADS_SHEET_WEBHOOK_URL` is set, captures honestly report not-ok (no fake success).
 
 ## Project structure (target)
 
