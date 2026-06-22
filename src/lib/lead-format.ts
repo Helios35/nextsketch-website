@@ -1,4 +1,4 @@
-import { MODAL_QUESTIONS } from "@/content/modal";
+import { MODAL_QUESTIONS, MODAL_QUICK } from "@/content/modal";
 import type { LeadPayload } from "@/lib/schema";
 
 /**
@@ -34,6 +34,17 @@ export function labelFor(
   // A schema-validated payload always has a matching option; fall back
   // to the raw value rather than throw — never lose a lead's answer.
   return options.find((option) => option.value === value)?.label ?? value;
+}
+
+/**
+ * The quick door's multi-select needs as the short labels the visitor saw
+ * (Sprint 03 adhoc), joined for the single Sheet `project_type` cell and
+ * the Asana task. Empty string when none were picked (it's optional).
+ */
+function quickNeeds(values: readonly string[] | undefined): string {
+  return (values ?? [])
+    .map((value) => labelFor(MODAL_QUICK.needsOptions, value))
+    .join("; ");
 }
 
 export type LeadType = "qualified" | "flagged" | "quick" | "exploring";
@@ -110,9 +121,11 @@ export function toSheetRecord(
     name: payload.name,
     email: payload.email,
     company: qualified ? (payload.company ?? "") : "",
+    // Qualifier writes its single answer; the quick door writes its
+    // multi-select picks as a delimited list into the same column.
     project_type: qualified
       ? labelFor(MODAL_QUESTIONS.project_type.options, payload.project_type)
-      : "",
+      : quickNeeds(payload.project_types),
     readiness: qualified
       ? labelFor(MODAL_QUESTIONS.readiness.options, payload.readiness)
       : "",
@@ -142,7 +155,10 @@ export function toAsanaTask(
   if (payload.kind === "quick") {
     const door =
       payload.source === "off_ramp" ? "Off-ramp (still exploring)" : "Quick path";
-    const name = `${signal.label} ${payload.name}`;
+    const needs = quickNeeds(payload.project_types);
+    const name = needs
+      ? `${signal.label} ${payload.name} — ${needs}`
+      : `${signal.label} ${payload.name}`;
     const notes = [
       `Captured: ${capturedAt}`,
       "",
@@ -150,6 +166,7 @@ export function toAsanaTask(
       `Email:   ${payload.email}`,
       "",
       `Door: ${door}`,
+      `Looking for: ${needs || "—"}`,
       "",
       `Message: ${payload.details ?? "—"}`,
     ].join("\n");

@@ -7,7 +7,7 @@ import {
   LEAD_AUTOREPLY_EXPLORING,
   LEAD_AUTOREPLY_QUICK,
 } from "@/content/email";
-import { MODAL_CONTACT, MODAL_QUESTIONS } from "@/content/modal";
+import { MODAL_CONTACT, MODAL_QUESTIONS, MODAL_QUICK } from "@/content/modal";
 import { labelFor, leadSignal } from "@/lib/lead-format";
 import type { LeadPayload } from "@/lib/schema";
 
@@ -207,6 +207,14 @@ async function sendAlert(
   const signal = leadSignal(payload);
   const details = payload.details?.trim() ? payload.details.trim() : "—";
   const fields = MODAL_CONTACT.fields;
+  // Quick door's multi-select "what do you need" picks (Sprint 03 adhoc),
+  // as the short labels the visitor saw; "" for the qualifier / off-ramp.
+  const needs =
+    payload.kind === "quick"
+      ? (payload.project_types ?? [])
+          .map((value) => labelFor(MODAL_QUICK.needsOptions, value))
+          .join("; ")
+      : "";
   // Company only exists on the qualifier; the quick door collects none.
   const company =
     payload.kind === "qualified" && payload.company?.trim()
@@ -229,7 +237,9 @@ async function sendAlert(
           MODAL_QUESTIONS.project_type.options,
           payload.project_type,
         )}`
-      : `${signal.label} ${payload.name}`;
+      : needs
+        ? `${signal.label} ${payload.name} — ${needs}`
+        : `${signal.label} ${payload.name}`;
 
   const textLines: string[] = [
     LEAD_ALERT.intro,
@@ -247,6 +257,9 @@ async function sendAlert(
       ...answers.map(({ question, answer }) => `${question}\n  → ${answer}`),
       "",
     );
+  }
+  if (needs) {
+    textLines.push(`${MODAL_QUICK.messageLabel} ${needs}`, "");
   }
   textLines.push(
     `${fields.details.label}: ${details}`,
@@ -282,11 +295,18 @@ async function sendAlert(
         ]
       : [];
 
+  const needsHtml = needs
+    ? [
+        `<p><strong>${escapeHtml(MODAL_QUICK.messageLabel)}</strong> ${escapeHtml(needs)}</p>`,
+      ]
+    : [];
+
   const html = wrapHtml(
     [
       `<p>${escapeHtml(LEAD_ALERT.intro)}</p>`,
       ...contactHtml,
       ...answersHtml,
+      ...needsHtml,
       `<p>${escapeHtml(fields.details.label)}: ${escapeHtml(details)}</p>`,
       `<p>${escapeHtml(LEAD_ALERT.capturedLabel)}: ${escapeHtml(capturedAt)}</p>`,
       `<p>${escapeHtml(LEAD_ALERT.replyHint)}</p>`,

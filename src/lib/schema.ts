@@ -21,6 +21,18 @@ import { z } from "zod";
  *     (Business Rules 2.8) sit on BOTH doors.
  */
 
+/**
+ * Canonical project_type values (docs/06-taxonomy.md §3). Shared so the
+ * qualifier's single-select answer and the quick door's multi-select
+ * `project_types` enumerate from one source and can't drift.
+ */
+export const PROJECT_TYPE_VALUES = [
+  "new_product",
+  "rescue",
+  "agentic",
+  "partnership",
+] as const;
+
 /** Contact + anti-bot guards every door shares (Business Rules 1.5, 2.8). */
 const leadContact = {
   name: z.string().trim().min(1).max(100),
@@ -34,7 +46,7 @@ const leadContact = {
 /** The full four-question qualifier (Business Rules §1). */
 export const qualificationPayloadSchema = z.object({
   kind: z.literal("qualified"),
-  project_type: z.enum(["new_product", "rescue", "agentic", "partnership"]),
+  project_type: z.enum(PROJECT_TYPE_VALUES),
   readiness: z.enum(["now", "soon"]),
   authority: z.enum(["full", "shared", "none"]),
   validation: z.enum(["validated", "willing", "build_first"]),
@@ -54,6 +66,13 @@ export const quickLeadPayloadSchema = z.object({
   kind: z.literal("quick"),
   source: z.enum(["quick_door", "off_ramp"]),
   ...leadContact,
+  /**
+   * Quick door's optional multi-select "what do you need" categories
+   * (adhoc Sprint 03): zero or more canonical project types. The visitor
+   * can combine them (e.g. a new product *with* an agentic system).
+   * Absent for the off-ramp capture, which collects only name + email.
+   */
+  project_types: z.array(z.enum(PROJECT_TYPE_VALUES)).optional(),
   details: z.string().trim().max(1000).optional(),
 });
 

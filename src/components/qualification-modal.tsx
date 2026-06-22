@@ -82,11 +82,16 @@ function screenAfter(key: QuestionKey, answers: Answers): Screen {
   }
 }
 
+/** A quick-door "what do you need" value — one of the canonical needs options. */
+type NeedValue = (typeof MODAL_QUICK.needsOptions)[number]["value"];
+
 interface ContactFields {
   name: string;
   email: string;
   company: string;
   details: string;
+  /** Quick door's optional multi-select needs (Sprint 03 adhoc). */
+  projectTypes: NeedValue[];
   /** Honeypot (Rule 2.8) — anything non-empty rejects at the schema. */
   hp: string;
 }
@@ -96,7 +101,26 @@ const EMPTY_CONTACT: ContactFields = {
   email: "",
   company: "",
   details: "",
+  projectTypes: [],
   hp: "",
+};
+
+/** Resolve a quick-door need value to the short label the visitor saw. */
+function needLabel(value: string): string {
+  return MODAL_QUICK.needsOptions.find((o) => o.value === value)?.label ?? value;
+}
+
+/**
+ * Mutually exclusive needs (Sprint 03 adhoc): a brand-new build and a
+ * product completion are either-or — you can't start from scratch and
+ * finish an existing build at once. Product support and agentic system
+ * ride on top of either, so they never conflict (they're absent here).
+ * Picking one of the pair grays out the other; the picked tab stays
+ * toggleable so the visitor can switch back.
+ */
+const NEED_CONFLICTS: Partial<Record<NeedValue, NeedValue>> = {
+  new_product: "rescue",
+  rescue: "new_product",
 };
 
 interface ComposedAnswer {
@@ -126,6 +150,12 @@ function composeAnswers(
   composed.push({ label: fields.email.label, value: contact.email });
   if (contact.company !== "") {
     composed.push({ label: fields.company.label, value: contact.company });
+  }
+  if (contact.projectTypes.length > 0) {
+    composed.push({
+      label: MODAL_QUICK.messageLabel,
+      value: contact.projectTypes.map(needLabel).join("; "),
+    });
   }
   if (contact.details !== "") {
     composed.push({ label: fields.details.label, value: contact.details });
@@ -158,6 +188,27 @@ const OPTION_CLASS =
   "has-checked:border-gold has-checked:bg-gold has-checked:text-gold-ink " +
   "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-gold";
 
+/* Single-select tabs replacing the quick door's free-text line — the same
+ * selectable language as OPTION_CLASS (squared, hairline, gold-fill-on-select)
+ * as a compact wrapping segmented set rather than full-width rows. */
+const TAB_CLASS =
+  "flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-none border border-white/12 bg-white/[0.02] " +
+  "px-3 py-2.5 text-center text-sm font-medium text-white/90 transition-colors duration-150 " +
+  "hover:border-white/30 hover:bg-white/[0.05] " +
+  "has-checked:border-gold has-checked:bg-gold has-checked:text-gold-ink " +
+  "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-gold " +
+  // Conflicting need (new product ⟷ completion): grayed out and inert.
+  "has-[:disabled]:pointer-events-none has-[:disabled]:opacity-40";
+
+/* The squared check box rendered inside each tab — the multi-select
+ * affordance. Border/checkmark decoupled from the box fill: white hairline
+ * + hidden mark by default; ink border + visible ink checkmark once the
+ * (sr-only) checkbox is checked and the tab turns gold. */
+const TAB_CHECK_CLASS =
+  "flex size-4 shrink-0 items-center justify-center rounded-[2px] border border-white/45 " +
+  "text-transparent transition-colors duration-150 " +
+  "peer-checked:border-gold-ink peer-checked:text-gold-ink";
+
 /* Forward action — the template's divided-arrow button (label segment +
  * bordered arrow box), matching the hero CTA. White surface / ink mark. */
 const ADVANCE_CLASS =
@@ -189,6 +240,24 @@ function ArrowIcon() {
     >
       <path d="M5 12h14" />
       <path d="m13 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+/** Inline checkmark — fills the tab's check box when a need is selected. */
+function CheckIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="size-3"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={3}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M5 13l4 4L19 7" />
     </svg>
   );
 }
@@ -309,6 +378,27 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
   const setAnswer = <K extends QuestionKey>(key: K, value: Answers[K]) =>
     setAnswers((current) => ({ ...current, [key]: value }));
 
+  /**
+   * Toggle a quick-door need on/off (multi-select, Sprint 03 adhoc).
+   * Adding one drops its mutually exclusive partner (NEED_CONFLICTS) so the
+   * new-product/completion pair can never both be set, even if the disabled
+   * guard were bypassed.
+   */
+  const toggleNeed = (value: NeedValue) =>
+    setContact((current) => {
+      if (current.projectTypes.includes(value)) {
+        return {
+          ...current,
+          projectTypes: current.projectTypes.filter((v) => v !== value),
+        };
+      }
+      const conflict = NEED_CONFLICTS[value];
+      const kept = conflict
+        ? current.projectTypes.filter((v) => v !== conflict)
+        : current.projectTypes;
+      return { ...current, projectTypes: [...kept, value] };
+    });
+
   const goNext = () => {
     if (isQuestionKey(screen) && answers[screen] !== undefined) {
       setScreen(screenAfter(screen, answers));
@@ -414,7 +504,8 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
       source: "quick_door",
       name: contact.name,
       email: contact.email,
-      details: contact.details === "" ? undefined : contact.details,
+      project_types:
+        contact.projectTypes.length > 0 ? contact.projectTypes : undefined,
       _hp: contact.hp,
       _t: Date.now() - openedAt.current,
     });
@@ -539,22 +630,45 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
                     className={INPUT_CLASS}
                   />
                 </label>
-                <label className="block">
+                <div className="block">
                   <span className={CAPTION_CLASS}>
                     {MODAL_QUICK.messageLabel}
                   </span>
-                  <textarea
-                    name="details"
-                    rows={3}
-                    maxLength={MODAL_CONTACT.fields.details.maxLength}
-                    placeholder={MODAL_QUICK.messagePlaceholder}
-                    value={contact.details}
-                    onChange={(e) =>
-                      setContact({ ...contact, details: e.target.value })
-                    }
-                    className={INPUT_CLASS}
-                  />
-                </label>
+                  {/* Multi-select tabs (optional), two levels: new product /
+                      product completion are mutually exclusive; product support
+                      and agentic system combine with either. Picks are stored
+                      as `project_types` → the Sheet's project_type column.
+                      Stacked on mobile, 2×2 from sm up. */}
+                  <div
+                    role="group"
+                    aria-label={MODAL_QUICK.messageLabel}
+                    className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2"
+                  >
+                    {MODAL_QUICK.needsOptions.map(({ value, label }) => {
+                      const conflict = NEED_CONFLICTS[value];
+                      const disabled =
+                        conflict !== undefined &&
+                        contact.projectTypes.includes(conflict);
+                      return (
+                        <label key={value} className={TAB_CLASS}>
+                          <input
+                            type="checkbox"
+                            name="quick_needs"
+                            value={value}
+                            checked={contact.projectTypes.includes(value)}
+                            disabled={disabled}
+                            onChange={() => toggleNeed(value)}
+                            className="peer sr-only"
+                          />
+                          <span aria-hidden="true" className={TAB_CHECK_CLASS}>
+                            <CheckIcon />
+                          </span>
+                          {label}
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
               <HoneypotField
                 value={contact.hp}

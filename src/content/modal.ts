@@ -82,9 +82,23 @@ export const MODAL_CONTACT = {
 export const MODAL_QUICK = {
   heading: "Tell us what you need.",
   body: "The short version. Your name, your email, and a line on what you're building — we'll take it from there.",
-  /** Label + placeholder for the optional one-line message. */
+  /** Label for the optional needs selector. */
   messageLabel: "What do you need?",
-  messagePlaceholder: "One line is plenty — we'll follow up.",
+  /**
+   * Multi-select options replacing the free-text line (Sprint 03 adhoc),
+   * laid out as two levels: the primary build (new product / product
+   * completion — mutually exclusive) then the add-ons (product support /
+   * agentic system — combine with either). Stored as `project_types` and
+   * written to the Sheet's existing `project_type` column as a delimited
+   * list. Values are canonical project types (docs/06-taxonomy.md §3) —
+   * "Product support" is the `partnership` type. The selection is optional.
+   */
+  needsOptions: [
+    { value: "new_product", label: "New product" },
+    { value: "rescue", label: "Product completion" },
+    { value: "partnership", label: "Product support" },
+    { value: "agentic", label: "Agentic system" },
+  ],
   /** Submit CTA (Rule 3.1 set). */
   submit: "Talk to Us",
   /** Secondary affordance into the full four-question qualifier. */
