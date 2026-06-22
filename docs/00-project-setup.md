@@ -1,8 +1,10 @@
 # Project Setup Reference — NextSketch Website Rebuild
 
-**Version:** 1.0 · **Date:** 2026-06-11 · **Status:** Active
+**Version:** 1.1 · **Date:** 2026-06-22 · **Status:** Active — conventions current; one-time setup reconciled (Sprint 03 doc audit)
 **Purpose:** Hand-to-agent standards for standing up and working in the repo. Every brief inherits this document.
 **References:** `07-technical-spec.md` (stack decisions — binding)
+
+> **Sprint 03 audit note:** the conventions below are **CURRENT** (unchanged by the pivot). The one-time scaffold/setup checklist is **historical** (done in Sprint 01); the canonical, full environment-variable list now lives in `07-technical-spec.md` §Environment variables and `08-runbook.md` (the pre-pivot `RESEND_API_KEY` / `NOTIFY_EMAIL` pair is incomplete — the lead pipeline added the Sheet/Asana vars in Sprint 02).
 
 ---
 
@@ -33,12 +35,12 @@
 
 Lint, typecheck, build green locally and in CI · build-notes written to `briefs/build-notes/` · deviations from docs flagged in the PR, never silently resolved.
 
-## Setup checklist (gate before kickoff slice starts)
+## Setup checklist (one-time — completed Sprint 01; historical)
 
-- [ ] Repo created, scaffold committed, pushed
-- [ ] CI runs and passes on a trivial PR
-- [ ] `docs/` copied into repo root so briefs can cite repo-relative paths
+- [x] Repo created, scaffold committed, pushed
+- [x] CI runs and passes on a trivial PR
+- [x] `docs/` copied into repo root so briefs can cite repo-relative paths
 
-**Deferred (owner decision 2026-06-11 — not gates for the foundation slice):**
-- [ ] Vercel connected, preview deploy loads — required before the `lead-api` unit and before launch
-- [ ] Env vars set in Vercel (`RESEND_API_KEY`, `NOTIFY_EMAIL`) — required before the `lead-api` unit can be tested
+**Was deferred at foundation (owner decision 2026-06-11); resolved in Sprint 02:**
+- [x] Vercel connected, preview deploy loads
+- [~] Env vars set in Vercel — the full lead-pipeline set (Sheet / Asana / Resend) is in `07-technical-spec.md` §Environment variables; `LEADS_SHEET_WEBHOOK_URL` gates capture and is set first. Live go-live verification is owner-gated (`08-runbook.md` smoke test).

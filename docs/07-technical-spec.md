@@ -1,104 +1,131 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 1.0 · **Date:** 2026-06-11 · **Status:** Active
+**Version:** 2.0 · **Date:** 2026-06-22 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit)
 **Answers:** How is it built?
-**References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops)
+**References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
+
+> **Reconciliation tags (Sprint 03 audit, 2026-06-22):** **CURRENT** (true as-built) · **CHANGED** (rewritten to as-built) · **DEFERRED** (not shipped). The Sprint 02 ⚠ flag notes (integrations, env, API, data model) are now **rewritten into the as-built spec below** and the flags retired. Where this doc and the code disagree, the **code wins** — this spec was traced from it.
 
 > **REVIEW NOTES**
-> 1. **Email provider** — recommendation: **Resend** (free tier, 100 emails/day, first-class Vercel/Next.js integration). Owner has no tools yet; a free Resend account + domain verification is needed during build. Fallback if rejected: Formspree. Decision needed before the lead pipeline unit.
+> 1. *(closed)* **Email provider** — **Resend** was chosen and is live (account owner-owned). Used for **notification only** (auto-reply + alert), not as the lead record.
 
 ---
 
-## System overview
+## System overview — **CHANGED**
 
-Statically-rendered single-page marketing site with one serverless API route for lead submission. No database, no auth, no CMS. Content is code (typed constants), since canonical copy is locked in the Messaging Kit and changes are owner decisions.
+A statically-rendered **single dark landing hero** with **exactly one serverless API route** for lead submission (`POST /api/qualify`). **No database, no auth, no CMS, and no backend beyond that one route — ever** (decision-log #8). Content is code (typed constants in `src/content/*.ts`), since canonical copy is locked and changes are owner decisions. The durable lead record is an external **Google Sheet** (+ a best-effort Asana task); the site stores nothing server-side.
 
-## Tech stack
+## Tech stack — **CURRENT** (versions as-built)
 
-| Layer | Choice | Why |
+| Layer | Choice | Notes |
 |---|---|---|
-| Framework | Next.js 15+ (App Router, TypeScript) | First-class Vercel target; API route for leads; static generation for speed |
-| Styling | Tailwind CSS v4 | Token-based theme matching `06-taxonomy.md` §5 color tokens |
-| Animation | Motion (Framer Motion) | Scroll-triggered reveals, modal transitions, SVG stroke draw-on; built-in reduced-motion support |
-| Fonts | `next/font/google` | Self-hosted at build; zero layout shift. Pairing per UX Review Note 1 |
-| Email | Resend (Review Note 1) | Lead notification per Rule 2.4 |
-| Validation | Zod | Schema for modal payload, shared client/server |
-| Analytics | `@vercel/analytics` | Zero-config, decision locked |
-| Hosting | Vercel (production = `main`) | Decision locked |
-| Repo | GitHub, `nextsketch-website`, owner's personal account | Owner said "name it whatever" |
+| Framework | **Next.js 16** (App Router, TypeScript) · React 19 | `/api/qualify` is a Route Handler using native `Request`/`Response` and `after()` from `next/server` |
+| Styling | **Tailwind CSS v4** | Token-based theme in `src/app/globals.css` (`@theme`); default palette cleared so only brand tokens compile (`06-taxonomy.md` §5) |
+| Animation | CSS keyframes, `motion-safe`-gated | The live hero + modal use CSS keyframes (no `motion/react` import — the `no-restricted-imports` rule). `motion` (Framer) is installed for the deferred multi-section reveals |
+| Fonts | `next/font/google` | **Space Grotesk** (display/UI) + **JetBrains Mono** (mono); self-hosted at build, zero layout shift (decision-log #1) |
+| Email | **Resend** (`resend` SDK) | Lead auto-reply + Nathan's alert — **best-effort notification**, via `after()` (Rule 2.5) |
+| Lead record | Google Apps Script web-app webhook (Sheet) + Asana REST API | Plain `fetch` POSTs — **no SDK dependency added** |
+| Validation | **Zod v4** | Discriminated-union schema for the lead payload, shared client/server (`src/lib/schema.ts`) |
+| Analytics | `@vercel/analytics` | Cookieless |
+| Hosting | **Vercel** (production = `main`; branches = preview) | |
+| Repo | GitHub **`Helios35/nextsketch-website`**, **private** (decision-log #2) | `main` is production |
 
-## Data model / ERD
+## Data model — **CHANGED** (no database; the Zod union is the contract, the Sheet is the record)
 
-**None at launch — explicit decision.** Leads exist only as emails (Rule 2.4). The Zod schema is the de-facto data contract:
+**No database** (decision-log #8). The durable record is the **Google Sheet "Inbound Leads"** (system of record) plus a best-effort **Asana** task. The **Zod discriminated union** (`src/lib/schema.ts`) is the de-facto data contract — a lead is one of two `kind`s:
 
 ```
-QualificationPayload {
-  project_type: 'new_product'|'rescue'|'agentic'|'partnership'   // 'exploring' never submits (Rule 2.1)
-  readiness:    'now'|'soon'                                      // 'exploring' never submits
-  authority:    'full'|'shared'|'none'
-  validation:   'validated'|'willing'|'build_first'
-  name: string (1..100)
-  email: string (valid email)
-  company?: string (0..100)
+LeadPayload = QualificationPayload | QuickLeadPayload   // discriminated on `kind`
+
+QualificationPayload {                       QuickLeadPayload {
+  kind: "qualified"                            kind: "quick"
+  project_type: new_product|rescue|            source: "quick_door" | "off_ramp"
+                agentic|partnership            name:  string (1..100)
+  readiness:    now|soon                       email: valid email
+  authority:    full|shared|none               project_types?: (canonical project types)[]  // off_ramp omits
+  validation:   validated|willing|build_first  details?: string (0..1000)
+  name:  string (1..100)                       _hp?:  "" (honeypot — Rule 2.8)
+  email: valid email                           _t:    number ≥ 3000 (Rule 2.8)
+  company?: string (0..100)                  }
   details?: string (0..1000)
-  _hp?: string        // honeypot, must be empty (Rule 2.8)
-  _t: number          // ms since modal open, must be ≥ 3000 (Rule 2.8)
+  _hp?:  "" (honeypot — Rule 2.8)            // "exploring" values are UI-only — excluded from the
+  _t:    number ≥ 3000 (Rule 2.8)            // qualifier enums so the off-ramp can't be POSTed (2.1)
 }
 ```
 
-If a database is added later (post-launch), this schema becomes the `leads` table and this section becomes an ERD — versioned change.
+**Sheet record (the durable row).** `toSheetRecord` (`src/lib/lead-format.ts`) flattens either kind into the **same 11 columns, in this order** — so the Apps Script column mapping never branches (`scripts/inbound-leads.gs`; build-note 14):
 
-## API design
+`timestamp · lead_type · signal · name · email · company · project_type · readiness · authority · validation · details`
 
-`POST /api/qualify`
-- Accepts: `QualificationPayload` (JSON). Validates with Zod; enforces Rules 2.1 (exploring values rejected server-side too), 2.8 (honeypot, timing).
-- Does: builds lead email — subject per Rule 2.5 flag logic, body = all answers using Taxonomy §3 display labels + payload values + ISO timestamp. Sends via Resend to `NOTIFY_EMAIL`.
-- Returns: `200 {ok:true}` · `400 {ok:false, error}` validation · `429` rate-limited · `500 {ok:false}` provider failure (client then executes Rule 2.7 fallback).
-- Rate limit: in-memory/sliding-window per IP, 5/hour (sufficient without persistence; revisit post-launch).
+Stored values are the **display labels** the visitor saw (resolved from the canonical `MODAL_QUESTIONS` map, `06-taxonomy.md` §3 — never re-typed). The quick door leaves the qualifier columns (`company`, `readiness`, `authority`, `validation`) empty and writes its multi-select needs as a `"; "`-joined list into `project_type`. `lead_type` ∈ `qualified`/`flagged`/`quick`/`exploring`; `signal` is the Rule 2.5 label.
 
-> ⚠️ **Sprint 02 (Unit 03) flag — Sprint 03 doc audit, not rewritten here.** Resend no longer *is* the capture (Unit 02 moved the durable record to the Sheet + Asana). Resend now sends **two notification emails after** a durable capture, fired via `after()` so they run post-response and are best-effort — a send failure never blocks or reverses the capture (no fake failure of a stored lead): (1) an **auto-reply to the lead** honoring the `MODAL_SUCCESS` two-business-days promise, reply-to the brand inbox; (2) a **real-time alert to `NOTIFY_EMAIL`** with the Rule 2.5 signal in the subject and every answer (Taxonomy §3 labels) in the body, reply-to the lead. The "one email to hello@nextsketch.com" framing of Rule 2.4 is the alert recipient question below. See `briefs/build-notes/11-notify.md`.
+## API design — **CHANGED**
 
-## Business logic implementation
+`POST /api/qualify` — **the only server-side surface.**
+- **Accepts:** `LeadPayload` JSON. Validated with `leadPayloadSchema` (the discriminated union). The discriminator enforces the right shape per `kind`; the qualifier enums exclude `exploring` (Rule 2.1); both kinds require an empty honeypot and `_t ≥ 3000` (Rule 2.8). **Server-side re-validation is the security boundary** — off-ramp/honeypot/too-fast submissions reject here even on a direct POST.
+- **Does:** hands the validated lead to `deliverLead` (the durable seam). On a durable success, schedules `after(() => notifyLead(payload))` so the auto-reply + alert run **after** the response is flushed (best-effort; an email failure can never block or reverse the capture). Reports `{ ok }` **honestly** — success only once the lead is durably recorded.
+- **Returns:** `200 {ok:true}` (durably recorded) · `503 {ok:false}` (valid but not deliverable — destination unreachable or not yet configured) · `400 {ok:false}` (validation reject or malformed JSON) · `500 {ok:false}` (unexpected thrown error) · `405` (non-POST, Next default). The body is a **generic `{ ok }`** on every rejection — a probe is never told which guard tripped. The client reads `ok` + HTTP-ok and runs Rule 2.7 on anything but `ok:true`.
+- **No rate limit.** The pre-pivot `429`/"5-per-hour in-memory per IP" was **never implemented** (unreliable on Vercel serverless; build-note 09 §3). There is also no application-level request-body size cap beyond Vercel's platform limit (~4.5 MB) and the schema's field caps. Both sit in the same deferred abuse-hardening bucket.
 
-- Branching (Rules 2.1–2.3): client-side state machine in `QualificationModal`; server re-validates so the off-ramp can't be bypassed by direct POST.
-- Language rules (§3): all copy lives in `src/content/*.ts` typed constants — single grep surface. CI check greps built output for Rule 3.2/3.4 banned terms and fails the build on a hit.
+## Delivery seam — **CHANGED** (`src/lib/lead-delivery.ts`)
 
-## Auth and permissions
+`deliverLead(payload): Promise<boolean>` attempts both destinations concurrently (`Promise.allSettled` — one throwing can't short-circuit the other) and **gates success on the Sheet**:
+- **Google Sheet "Inbound Leads"** — the **durable system of record**. A single `fetch` POST of the formatted record to the owner-provided Apps Script web-app webhook (`LEADS_SHEET_WEBHOOK_URL`); any non-2xx or missing URL resolves `false` → capture reports not-ok (no fake success). Timeout 10s. Chosen over a service account + `googleapis` to add **no dependency** (smallest diff).
+- **Asana "Inbound Leads" project** — **best-effort**. `POST https://app.asana.com/api/1.0/tasks` with a Bearer token (`ASANA_ACCESS_TOKEN`, `ASANA_PROJECT_ID`). A failure/missing config is logged but **never fails the capture** — the Sheet is the record. Timeout 8s.
+- **Resiliency model (decided in build-note 10):** the Sheet gates success; Asana is best-effort. Every reported success is genuinely, durably recorded; a flaky Asana can't manufacture a false failure for a saved lead. Accepted trade-off: a Sheet-fail/Asana-succeed case reports not-ok, and a retry can create a duplicate Asana task (cheaper than a lost lead; dedupe by hand).
 
-None. All public. API route is the only mutation surface, protected per Rule 2.8.
+## Notification — **CHANGED** (`src/lib/lead-notify.ts`)
 
-## Error handling
+`notifyLead(payload)` fires **two emails via Resend**, concurrently and best-effort (`Promise.allSettled`), only after a durable capture:
+- **Auto-reply to the lead** — instant acknowledgment honoring the success-screen promise. Reply-to is `hello@nextsketch.com`. Copy is chosen per door (qualified / quick / exploring) so it never describes content the lead didn't provide; the exploring variant drops the two-business-day promise.
+- **Alert to Nathan** (`NOTIFY_EMAIL`) — subject carries the Rule 2.5 signal label; body carries contact details + every answer as display labels. Reply-to is the lead's address.
+- **Sender:** `LEAD_FROM_EMAIL` (verified branded sender) if set, else Resend's interim `onboarding@resend.dev` (decision-log #9 / Decision 3) so email works pre-DNS. HTML user fields are escaped; send errors are logged sanitized (code + status + message, never a raw object).
 
-- API: structured JSON errors, no stack traces to client; failures logged via `console.error` (visible in Vercel logs).
-- Client: modal submit failure → Rule 2.7 preserve-and-fallback UI.
+## Business logic implementation — **CURRENT**
+
+- Branching (Rules 2.1–2.3): client-side state machine in `QualificationModal`; the server re-validates so the off-ramp can't be bypassed by a direct POST.
+- Two doors share one submit seam (`submitQualification` → `/api/qualify`); downstream code branches on `kind` (Unit 04) — no parallel system.
+- Language rules (§3): all copy in `src/content/*.ts`; a CI check greps the built output for Rule 3.2/3.4 banned terms and fails the build on a hit.
+
+## Auth and permissions — **CURRENT**
+
+None. All public. `/api/qualify` is the only mutation surface, protected by the Rule 2.8 guards. The no-backend invariant (decision-log #8) is binding: anything that appears to need a database, login, or a second server surface stops and returns to the owner.
+
+## Error handling — **CURRENT**
+
+- API: structured JSON errors, no stack traces to the client; failures `console.error`-logged for Vercel (sanitized — `name: message`, never the raw thrown value).
+- Client: a non-2xx / network failure → Rule 2.7 preserve-and-fallback UI.
 - Global: Next.js error boundary + custom 404 (PRD F12).
+- Sheet-side: the Apps Script appends the row **then** returns 200; any error throws → non-2xx → site reports not-ok (no catch-and-return-200). Formula injection is neutralized on write (apostrophe-prefix on `= + - @`). (build-note 14.)
 
-## Dependencies and integrations
+## Dependencies and integrations — **CHANGED**
 
-Resend (email) · Vercel Analytics · Google Fonts via next/font (build-time only). No other third parties. No cookies beyond Vercel Analytics' cookieless tracking → no cookie banner required.
+Resend (email — best-effort, via `after()`) · **Google Apps Script webhook** (Sheet system of record — plain POST, no SDK) · **Asana REST API** (best-effort task — no SDK) · Vercel Analytics (cookieless → no cookie banner) · Google Fonts via `next/font` (build-time only). No CRM/HubSpot/Klaviyo path (decision-log #7). No cookies → no cookie banner required.
 
-> ⚠️ **Sprint 02 (Unit 02) flag — reconcile in the Sprint 03 doc audit, not rewritten here.** Lead capture now writes to two destinations (sprint plan Decision 2): the **Google Sheet "Inbound Leads"** (durable system of record, via an owner-provided Apps Script web-app webhook — a plain POST, no new dependency) and the **Asana "Inbound Leads" project** (best-effort task, via the Asana REST API). These are the system of record (no database). See `briefs/build-notes/10-lead-destination.md`.
+## Environment variables — **CHANGED** (all server-only; no `NEXT_PUBLIC_` prefix)
 
-## Environment variables
-
-| Var | Purpose | Where set |
+| Var | Purpose | Gating |
 |---|---|---|
-| `RESEND_API_KEY` | Email provider auth | Vercel project settings (prod + preview) |
-| `NOTIFY_EMAIL` | Lead destination, `hello@nextsketch.com` | Vercel project settings |
+| `LEADS_SHEET_WEBHOOK_URL` | Apps Script web-app URL that appends the Sheet row | **Durable record — gates capture success.** Unset ⇒ every capture honestly reports not-ok. **Set first.** |
+| `ASANA_ACCESS_TOKEN` + `ASANA_PROJECT_ID` | Asana "Inbound Leads" task | Best-effort. Unset ⇒ task skipped; capture still succeeds. |
+| `RESEND_API_KEY` | Resend auth for the auto-reply + alert | Notification only (best-effort). Unset ⇒ emails skipped; lead still captured. |
+| `NOTIFY_EMAIL` | **Recipient of the `[Lead …]` alert (Nathan's inbox)** — distinct from the `hello@nextsketch.com` escape hatch / auto-reply reply-to | Unset ⇒ alert skipped (auto-reply unaffected). |
+| `LEAD_FROM_EMAIL` *(optional)* | Verified branded sender (`"NextSketch <hello@nextsketch.com>"`) | Unset ⇒ sends from Resend's interim onboarding domain (decision-log #9); set once DNS verifies. |
 
-> ⚠️ **Sprint 02 (Unit 02) flag — Sprint 03 doc audit.** Lead destination adds three server-only vars (no `NEXT_PUBLIC_` prefix), all owner-provided via the sprint plan setup checklist and set in Vercel (prod + preview) + local `.env.local`: `LEADS_SHEET_WEBHOOK_URL` (Apps Script web-app URL that appends the row — gates capture success), `ASANA_ACCESS_TOKEN` and `ASANA_PROJECT_ID` (best-effort Asana task). Until `LEADS_SHEET_WEBHOOK_URL` is set, captures honestly report not-ok (no fake success).
-
-> ⚠️ **Sprint 02 (Unit 03) flag — Sprint 03 doc audit.** Notification clarifies/adds env: `NOTIFY_EMAIL` is now the **alert recipient** (Nate's inbox), distinct from the `hello@nextsketch.com` escape hatch / auto-reply reply-to (the table's "Lead destination, `hello@nextsketch.com`" gloss is pre-pivot). New optional server-only `LEAD_FROM_EMAIL` — the verified branded sender (a bare address or `"Name <addr>"`); **when unset, email falls back to Resend's interim onboarding sender** so launch isn't blocked on DNS (Decision 3). `RESEND_API_KEY` unset → notification is skipped (best-effort), the lead is still captured.
-
-## Project structure (target)
+## Project structure — **CURRENT** (as-built)
 
 ```
 src/
-  app/            — layout, page, api/qualify/route.ts, not-found
-  components/     — Nav, Hero, Manifesto, ProcessSection, WorkGrid,
-                    Services, About, Testimonials, Fit, Faq, FinalCta,
-                    Footer, QualificationModal, SketchAccent
-  content/        — copy.ts, faq.ts, services.ts, modal.ts (canonical copy)
-  lib/            — schema.ts (Zod), email.ts, rate-limit.ts
-public/placeholders/
+  app/            — layout.tsx (dark ink shell, fonts), page.tsx (hero),
+                    globals.css (Tailwind v4 theme), not-found.tsx,
+                    api/qualify/route.ts (the only server surface)
+  components/     — hero.tsx, hero-cta.tsx, qualification-modal.tsx,
+                    qualification-modal-provider.tsx, button.tsx
+                    (DORMANT, deferred: Nav, sections, SiteNav/Footer,
+                     Reveal, SketchAccent, etc. — on disk, not rendered)
+  content/        — copy.ts (SITE + LANDING live; multi-section copy dormant),
+                    modal.ts, email.ts, faq.ts, services.ts
+  lib/            — schema.ts (Zod union), qualify.ts (submit seam),
+                    lead-delivery.ts, lead-format.ts, lead-notify.ts
+scripts/          — inbound-leads.gs (the Apps Script reference copy; build-note 14)
 ```
