@@ -192,8 +192,8 @@ const OPTION_CLASS =
  * selectable language as OPTION_CLASS (squared, hairline, gold-fill-on-select)
  * as a compact wrapping segmented set rather than full-width rows. */
 const TAB_CLASS =
-  "flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-none border border-white/12 bg-white/[0.02] " +
-  "px-3 py-2.5 text-center text-sm font-medium text-white/90 transition-colors duration-150 " +
+  "flex min-h-11 cursor-pointer items-center justify-start gap-2 rounded-none border border-white/12 bg-white/[0.02] " +
+  "px-3 py-2.5 text-left text-sm font-medium text-white/90 transition-colors duration-150 " +
   "hover:border-white/30 hover:bg-white/[0.05] " +
   "has-checked:border-gold has-checked:bg-gold has-checked:text-gold-ink " +
   "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-gold " +
