@@ -1,88 +1,181 @@
 # UX / Design Spec — NextSketch Website Rebuild
 
-**Version:** 2.0 · **Date:** 2026-06-22 · **Status:** Active — reconciled to the as-built dark MVP (Sprint 03 doc audit)
+**Version:** 3.0 · **Date:** 2026-07-06 · **Status:** Active — hero-derived design system (Redesign Unit 01)
 **Answers:** How does it look and behave?
-**References:** `03-site-architecture.md` (structure) · `02-prd.md` (requirements) · `06-taxonomy.md` (color tokens) · `briefs/build-notes/08-landing-rebuild.md` (the design pivot — canonical for the live look)
+**References:** `03-site-architecture.md` (structure) · `02-prd.md` (requirements) · `06-taxonomy.md` (token names) · `briefs/build-notes/08-landing-rebuild.md` (canonical as-built record of the hero)
 
-> **Reconciliation tags (Sprint 03 audit, 2026-06-22).** Every claim below is tagged exactly one of:
-> **CURRENT** — true of the live build as-built · **CHANGED** — rewritten to match the as-built · **DEFERRED** — still the plan for a later (multi-section) build, not shipped; preserved, not deleted.
-> The 2026-06-14 owner-directed pivot (decision-log #1) replaced the multi-section light site with a **single dark cinematic landing hero** in **Space Grotesk + JetBrains Mono**. The multi-section design below is **deferred, not dead** — its component code is dormant on disk (build-note 08), and its copy still lives in `src/content/copy.ts`. Docs follow the build: the live look is canonical here; the pivot is recorded, not re-litigated.
+> **What this document is (Redesign Unit 01).** The live hero is the website's design source of truth. This spec generalizes its as-built language — plus the qualification modal and capability strip that already share it — into a **reusable design system**: the rules a section-builder follows to make a new section feel native to the hero **without opening the hero code**. Every rule below traces to shipped code (`src/components/hero.tsx`, `hero-cta.tsx`, `qualification-modal.tsx`, `src/app/globals.css`); nothing is invented. Where this doc and the code disagree, **code wins** — fix the doc.
+>
+> **Tags:** **CURRENT** — true of the live build · **CHANGED** — rewritten this unit to match the as-built or an owner decision · **RETIRED** — no longer the direction; recorded so it can't be mistaken for current · **PLANNED** — recorded intent, not designed or built.
+>
+> **Scope of the redesign (decision-log #13, owner):** five sections — **Manifesto, Services, Process, About, Final CTA** — will be added to the single-page site, each designed **against this system**, per-section, with the owner. This doc does not design them.
 
 > **REVIEW NOTES**
-> 1. *(closed — superseded by the pivot)* Typeface pairing was recommended as `Inter` + `Caveat`; owner approved that as decision-log #1 on 2026-06-11. The 2026-06-14 pivot superseded it with **Space Grotesk + JetBrains Mono** (build-note 08). Decision #1 is formally closed/superseded in the decision log (Sprint 03 audit). No open question remains.
-> 2. **Logo** — placeholder wordmark "NextSketch" set in the display sans (now Space Grotesk) until asset handoff. **CURRENT** (the live hero renders a wordmark only).
+> 1. **Logo — CURRENT.** Placeholder wordmark "NextSketch" set in the display sans (Space Grotesk) until asset handoff. The live hero renders a wordmark only.
+> 2. **Decision-log gap — for reviewer.** This unit was briefed against decision-log **#13** (redesign reactivated; section set above) and an owner directive of 2026-07-06 (**gold is the only accent; all other accent colors orphaned** — §Color). Neither is in `docs/decision-log.md` yet (it ends at #12). Log them at the next decision-log touch; this unit is spec-only and does not edit the log.
 
 ---
 
 ## Design feeling (binding, from Brand Philosophy §9) — **CURRENT**
 
-Builders not talkers · confident restraint · feels like a product, not a brochure · grounded confidence. Nothing decorative for its own sake — every animation must communicate something. The pivot to a dark cinematic hero did not change this north star; it expresses it differently (a single, fast, product-like screen rather than a long scroll).
+Builders not talkers · confident restraint · feels like a product, not a brochure · grounded confidence. Nothing decorative for its own sake — every animation must communicate something. The dark cinematic language expresses this north star: a fast, product-like screen, not a marketing scroll.
 
-## Color system
+## How to build a new section from this doc
 
-Token **names** are canonical and defined in `src/app/globals.css` (the source of truth) — see `06-taxonomy.md` §Color tokens. Values:
+1. Surface: the page is `ink`; a section sits directly on it or on a **glass panel** (§Surfaces). Squared corners everywhere — `rounded-none` is the shape of the brand.
+2. Type: one **display heading** (Space Grotesk, heavy, tight), **mono micro-labels** (JetBrains Mono, uppercase, tracked) for structure/meta, **body** in white-alpha (§Typography).
+3. Color: `white` on `ink`; **`gold` is the only accent** and is spent sparingly — payoff words, selection, markers, links (§Color).
+4. Layout: full-width band, shared gutters, generous bottom-weighted vertical padding (§Layout).
+5. Motion: CSS keyframes only, `motion-safe`-gated, reduced-motion parity (§Motion).
+6. Controls: the divided-arrow button advances, the hairline ghost steps back, selection fills flat gold (§Interaction vocabulary).
+
+If a rule here doesn't cover your case, generalize from the hero/modal code and flag the judgment call — don't invent a new pattern silently.
+
+---
+
+## Color & theme
+
+Token **names** are canonical per `06-taxonomy.md` §5 and defined in `src/app/globals.css` (the source of truth). The default Tailwind palette is cleared (`--color-*: initial`), so only brand tokens compile.
+
+### Live palette — **CURRENT**
 
 | Token | Hex | Role |
 |-------|-----|------|
-| `paper` | `#E5E6E1` | Light surface — **DEFERRED** (multi-section build); also the 404 page surface (**CURRENT**, kept legible on the dark layout) |
-| `paper-bright` | `#F3F3F3` | Cards on paper — **DEFERRED** (multi-section build) |
-| `ink` | `#000000` | **Page surface of the live site** + modal backdrop base — **CHANGED** (was "dark sections only"; now the default background) |
-| `white` | `#FFFFFF` | **Body/headline text on the live dark site** — **CHANGED** (was "text on ink" only; now the default text color) |
-| `gold` / `gold-ink` | `#E4B976` / `#65451D` | **The one live accent** — payoff words in the hero, capability strip, modal selection — **CURRENT** |
-| `lavender` / `lavender-ink` | `#BBB2CE` / `#453B60` | Accent pair 2 — **DEFERRED** (maps to a multi-section service/phase) |
-| `rose` / `rose-ink` | `#CB9DA2` / `#5C2529` | Accent pair 3 — **DEFERRED** |
-| `sage` / `sage-ink` | `#AEBBBA` / `#3A4444` | Accent pair 4 — **DEFERRED** |
+| `ink` | `#000000` | Page surface; also the alpha base for overlays and scrims |
+| `white` | `#FFFFFF` | Text and the advance-button surface; the alpha base for hairlines, panel fills, and text hierarchy |
+| `gold` | `#E4B976` | **The accent — the only one.** Payoff words, strip markers, selection fill, progress, focus, links |
+| `gold-ink` | `#65451D` | The paired text color on a `gold` fill (pairing rule below) |
 
-**Theme — CHANGED.** The live site is **dark**: `ink` (#000) is the page surface, `white` is the body/headline text, and `gold` (#E4B976) is the single accent (the two payoff words "production"/"stay", the capability strip, and the modal's selected state). The pre-pivot model — `paper` as the light page background, `ink` only for dark sections, accents mapped 1:1 to four services and four process phases — is **DEFERRED** with the multi-section build. (`paper`/`paper-bright` and the lavender/rose/sage pairs are still defined in code for that future build; only `ink`/`white`/`gold` are exercised on the live screen, plus the light `paper` 404 surface.)
+One deliberate literal sits outside the token set: **`#0a0a0c`**, the modal's elevated-surface color — an elevated surface is never pure `#000` (it reads flat). Use it (with translucency + blur, §Surfaces) for elevated panels; the page itself stays `ink`.
 
-**Accent-pairing rule — CURRENT (binding).** An accent background always takes its paired `-ink` text — never black. This still governs the live gold selection in the modal (gold fill + `gold-ink` text), and governs the deferred accents when their sections ship.
+### The alpha ladders — **CURRENT (binding)**
+
+The system's real texture is white-on-black at low alpha. Use these shipped stops; don't invent new ones:
+
+- **Hairline borders:** `white/10` (strip edges, dividers) · `white/12` (option rows, panels) · `white/15` (inputs, the modal card). Hover raises a border to `white/30`; a ghost button's border is `white/30` → `white/60` on hover.
+- **Panel fills:** `white/[0.02]` (option rows, panels) · `white/[0.03]` (inputs) · `white/[0.05]`–`white/[0.06]` (hover fills).
+- **Text hierarchy:** `white` (headings, emphasized values) · `white/90` (option labels) · `white/70` (body, strip labels) · `white/55` (mono captions) · `white/40` (placeholders) · `white/60` (muted interactive, hover → `white`).
+- **Ink alphas (image treatment & backdrops):** `ink/40` (flat overlay) · `ink/85 → ink/20 → transparent` (bottom scrim gradient) · `ink/30` (translucent strip fill) · `ink/15` (divider on a white surface) · ink at 72% + 8px blur (modal backdrop, a literal in `globals.css`).
+
+### Accent rules — **CURRENT (binding)**
+
+- **Gold is scarce.** On the live screen it appears only as: two payoff headline words, the strip's diamond markers, the supporting line, selection fills, the progress meter, focus rings, and underlined links. A section that uses gold everywhere is off-brand; restraint *is* the system.
+- **Accent-pairing rule:** an accent background always takes its paired `-ink` text — a `gold` fill carries `gold-ink` text, never black or white.
+
+### Orphaned colors — **CHANGED (owner directive, 2026-07-06)**
+
+Gold is the **only** accent. The remaining brand tokens are **orphaned**: they keep their canonical names in `globals.css` (removing them is a code change, out of scope this unit) but have **no role in the design system** — do not use them in any new section.
+
+| Token(s) | Status |
+|---|---|
+| `lavender`/`lavender-ink` · `rose`/`rose-ink` · `sage`/`sage-ink` | **Orphaned.** The old per-service / per-phase accent mapping (`06-taxonomy.md` §1–2) is stale — flagged for reviewer, not rewritten here |
+| `paper-bright` | **Orphaned.** |
+| `paper` | **Orphaned from the system**, with one live exception: the 404 page's light surface (**CURRENT** — code wins). Not available to sections |
+
+**No new tokens.** The 2026-07-06 inspiration reference (owner-supplied editorial screenshot) contributes *fidelity only* — its rust/orange accent is explicitly **not** adopted; where it shows a warm accent, this system uses `gold`.
 
 ## Typography
 
-- **Fonts — CHANGED.** Display/UI: **Space Grotesk**; mono labels + capability strip: **JetBrains Mono** — both via `next/font/google` variable fonts, self-hosted at build (zero runtime requests, zero layout shift). `Inter` + `Caveat` are **retired** (decision-log #1, superseded). The handwritten accent face is gone from the live design.
-- Display: large, tight leading, heavy weight — **CURRENT** (the hero headline). Body: **CURRENT**.
-- **Handwritten accent — DEFERRED.** The "annotation only, max one per viewport" handwritten element belonged to the multi-section sketch system; the dark hero uses none.
+**Fonts — CURRENT.** Display/UI: **Space Grotesk** (`font-sans`); labels/meta: **JetBrains Mono** (`font-mono`) — both via `next/font/google` variable fonts, self-hosted at build (zero runtime requests, zero layout shift). Font tokens live in `globals.css` `@theme inline`. Inter + Caveat are **RETIRED** (decision-log #1, superseded).
 
-## Sketch accent system (the "hand" of the brand) — **DEFERRED**
+The system has exactly **three type roles**; their cadence (display → mono label → body) is the rhythm every surface repeats:
 
-Hand-drawn SVG elements, stroke-animated on scroll (underlines, margin arrows, circled numbers, handwritten annotations) were the multi-section decoration license. The live single-screen hero does not use them; `sketch-accent.tsx` is dormant. Preserved for the multi-section build, not shipped. (The one carried-over idea — accenting key headline words — survives in the live hero as the **gold** color treatment on "production"/"stay", not as a drawn stroke.)
+| Role | Face | Shipped treatment | Trace |
+|---|---|---|---|
+| **Display heading** | Space Grotesk | `font-medium`, `tracking-tight`, tight leading (`leading-[1.05]` at hero scale); hero scale `text-4xl → sm:5xl → md:6xl → lg:7xl`; panel scale `text-2xl → md:text-3xl` (+ `text-balance`) | hero `<h1>`, modal `HEADING_CLASS` |
+| **Mono micro-label** | JetBrains Mono | uppercase, tracked, small, muted: `text-[0.7rem] uppercase tracking-[0.14em] text-white/55` (captions/field labels) or `text-xs sm:text-sm tracking-[0.12em] text-white/70` (strip labels, no uppercase transform — strip copy is already cased) | modal `CAPTION_CLASS`, capability strip |
+| **Body** | Space Grotesk | `text-base leading-relaxed text-white/70`; emphasized values `font-medium text-white` | modal body copy, failure list |
 
-## Component specs
+Two shipped display accents, available to sections:
 
-**Live (as-built):**
+- **Gold payoff words** — accent words inside a white display heading take `text-gold` (the hero's "production" / "stay"). At most a couple of words; the heading stays white.
+- **Gold-italic aside** — a supporting line may be `text-gold italic` (hero's right column). This is the *only* italic in the system.
 
-- **Hero (the live site) — CHANGED/CURRENT.** A dark cinematic, bottom-anchored (`items-start`) full-bleed background image under a single light overlay (`bg-ink/40`) + a soft bottom scrim so the image reads while the white headline stays legible. A `max-w-4xl` upper **capability strip**, then a two-column row: `w-1/2` headline + CTA (left) and a gold-italic, right-aligned supporting line (right). White headline with the **gold** accent on the two payoff words. Wordmark-only header — no nav, no second CTA. (Adapted from an owner-supplied template; build-note 08.) The background image is an **interim remote Unsplash placeholder** — owner-owed: replace with a self-hosted brand asset before launch.
-- **Hero CTA — CURRENT.** "Start a Conversation" (Rule 3.1) rendered as the template's **divided-arrow** button (`<HeroCta>`/`<ModalTrigger>` seam, squared/segmented, distinct from the shared pill `<Button>`); opens the qualification modal; no-JS degrades to a `mailto` (Business Rules E3).
-- **Capability strip — CURRENT.** A slow continuous **marquee** (sanctioned in §Motion inventory) showing the **four canonical services** (Taxonomy §1, exact casing), in JetBrains Mono. No invented numbers or social proof (Brand Philosophy §10, Rule 4.3). Reads once to assistive tech (duplicate copies `aria-hidden`).
-- **Qualification modal — CHANGED.** Re-themed to the dark template's visual language (build-note 08): **squared corners** (`rounded-none`), **hairline borders** (`white/12–15`), a **glassy translucent near-black surface** (`bg-[#0a0a0c]/95 backdrop-blur-xl`), **JetBrains-Mono uppercase micro-labels** (field labels, escape hatch, failure list), a **thin segmented progress meter** (replacing round dots), **flat gold selection** (gold fill + paired `gold-ink` text, no glow), and the **divided-arrow advance button** matching the hero CTA for every forward action, with a squared hairline **`ghost`** Button variant for Back. Full-screen on mobile (renders full-height ≤375px); centered card on desktop. Focus-trapped, Esc closes, scroll locked; backdrop is `ink` at 72% + 8px blur. **Flow / validation / accessibility logic is unchanged from the pre-pivot modal — CURRENT** (only the skin and the two-door entry changed). Two-door behavior is detailed below and ratified in `05-business-rules.md`.
-- **Two-door modal flow — CHANGED** (Sprint 02 Unit 04; build-note 12). The modal opens to a low-friction **quick door** (name + email + an optional multi-select "what do you need?" needs selector — `MODAL_QUICK`, a Sprint 03 adhoc change from the earlier free-text line); the full four-question **qualifier** is reachable from there via "Rather walk us through it?"; the **off-ramp** keeps its honest "not yet" message and the escape hatch and **adds** an optional "Stay in Touch" email capture. Step transitions 200ms slide/fade; modal open is scale 0.97→1 + fade (~280ms). Screens: off-ramp, success ("…within two business days"), gentler off-ramp success ("Got it — we'll be here."), and the Rule 2.7 failure-fallback (answers preserved + escape hatch).
+Over imagery, text carries a soft shadow for legibility (shipped values: headline `[text-shadow:0_2px_30px_rgba(0,0,0,0.5)]`, wordmark `0 1px 16px rgba(0,0,0,0.6)`, supporting line `0 1px 20px rgba(0,0,0,0.7)`). On plain `ink` or a panel, no text shadow.
 
-**Deferred (multi-section build) — DEFERRED:**
+**RETIRED:** the handwritten accent face (Caveat) and the "annotation, max one per viewport" rule — gone with the sketch system (§Retired).
 
-- **Buttons (pill).** Pill shape, primary ink/white with hover scale + accent underline-sketch, secondary 1px ink border. The live site uses the divided-arrow hero CTA and the modal's own squared buttons instead; the shared `<Button>` was reverted to its pre-premium pill state and is otherwise unused on the live screen.
-- **Nav.** Sticky top nav (transparent over hero → solid paper after 80px, shrinks; mobile hamburger → full-screen overlay). Not mounted on the live single screen (`SiteNav` dormant).
-- **Process section** (four expandable rows, circled phase numbers in accent), **Work tiles** (2×2 asymmetric grid, accent-tinted placeholder + sketch-hatch), **Service cards** (4 cards each on its accent), **Testimonial blocks** (oversized accent quote mark, placeholder state), **FAQ accordion** (hairline dividers, plus→minus). All dormant; ship with the multi-section build.
+## Surfaces
 
-## Motion inventory
+Three surface levels, all **squared** (`rounded-none`) and **hairline-bordered** — the glass-panel language shipped in the modal and capability strip:
+
+1. **The page** — flat `ink`. Sections sit directly on it.
+2. **Image band** — a full-bleed background image under the two-layer treatment: a flat `ink/40` overlay **plus** a bottom scrim `bg-gradient-to-t from-ink/85 via-ink/20 to-transparent`, so the image reads while white text stays legible (the hero's recipe).
+3. **Glass panel** — the reusable card/panel surface, generalized from the modal card and the strip:
+   - **Fill:** translucent near-black — `bg-[#0a0a0c]/95 backdrop-blur-xl` for an elevated card (modal), or lighter glass `bg-ink/30 backdrop-blur-sm` for an in-flow strip. Never pure opaque `#000` for an elevated surface.
+   - **Border:** hairline — `border border-white/15` (card) or `border-y border-white/10` (full-width strip).
+   - **Depth:** an elevated card may carry the shared deep shadow token `--shadow-modal` (`0 40px 100px -24px rgb(0 0 0 / 0.85), 0 12px 32px -16px rgb(0 0 0 / 0.6)`). No glows — depth comes from shadow and blur, never from colored light.
+   - **Sub-panels** inside a panel (option rows, data lists): `border-white/12 bg-white/[0.02]`, padded `p-5`.
+
+## Spacing, layout & responsive rhythm
+
+Generalized from the hero's composition and the modal's density:
+
+- **Gutter rhythm (binding):** horizontal padding steps `px-6 → sm:px-8 → lg:px-16`. Every full-width band uses these gutters; panel interiors use `px-6 → md:px-10`.
+- **Full-bleed, bottom-weighted:** the hero is `min-h-dvh`, `flex-col items-start justify-end` — content anchors to the **bottom-left**, with heavy bottom padding stepping `pb-16 → sm:pb-24 → lg:pb-28`. New full-height bands repeat this anchor; standard sections take generous vertical padding in the same spirit (weight low, air above).
+- **Two-column row:** content splits `flex-col gap-6 → sm:flex-row sm:items-end`, each column `w-full sm:w-1/2` — headline/action left, supporting matter right (right-aligned from `sm:` up). Collapse to a single column below `sm`.
+- **Measure:** a secondary strip/band caps at `max-w-4xl`; an elevated card caps at `md:max-w-[560px]` and centers.
+- **Vertical cadence inside a block:** `space-y-6` between heading / body / action at hero scale; the modal's denser form cadence is `gap-5` fields, `mt-6` body-to-form, `mt-8` to the action row.
+- **Touch targets — CURRENT (binding):** every interactive element ≥ 44px (`min-h-11`/`min-h-12` shipped).
+- **Anchors:** `section[id]` carries `scroll-margin-top: 5rem`; smooth anchor scrolling is motion-gated (`globals.css`).
+- **Responsive posture:** mobile-first; an elevated panel goes **full-screen on mobile** (`h-dvh`) and becomes a centered card at `md:` (the modal's pattern).
+
+## Motion
+
+**The contract — CURRENT (binding).** All motion is **CSS keyframes** declared in `globals.css` `@theme`, applied **`motion-safe:` only**, with full reduced-motion parity (static strip, instant visibility, no transforms). **No `motion/react` import** — the project's `no-restricted-imports` ESLint rule enforces it. Every animation must communicate something (Brand Philosophy §9).
+
+Shipped vocabulary — reuse these, at these tempos:
+
+| Pattern | Spec | Use |
+|---|---|---|
+| `rise-in` | 16px rise + fade, 700ms `cubic-bezier(0.22, 1, 0.36, 1)`, `both` | Content entrance; stagger siblings ~80–200ms via `[animation-delay:…]` (hero: 0 / 120ms / 200ms) |
+| `marquee` | continuous X-translate, `var(--duration)` linear infinite (strip: 38s), pauses on hover | The capability strip; slow enough to read |
+| `modal-in` | scale 0.97→1 + fade, 280ms `--ease-premium` | Panel/dialog open |
+| `step-in` | 12px slide-from-right + fade, 220ms `--ease-premium` | In-panel step change |
+| Micro-transitions | 150ms; hover `scale-[1.02]` on advance buttons, arrow nudge `translate-x-0.5`, border/fill color shifts | All interactive hover/focus feedback |
+
+**Easing tokens:** `--ease-premium: cubic-bezier(0.16, 1, 0.3, 1)` (expo-out — panels share one easing for motion consistency); rise-in's `cubic-bezier(0.22, 1, 0.36, 1)`. Tailwind-v4 note (shipped fix): transition the standalone `scale`/`translate` properties, not `transform`, or the hover won't animate.
+
+### Motion inventory — status
 
 | Element | Animation | Trigger | Status |
 |---------|-----------|---------|--------|
-| Capability strip | Slow continuous marquee, pauses on hover | Always | **CURRENT** (live hero) |
-| Hero content | `rise-in` (16px rise + fade, ~700ms) | Load | **CURRENT** (live hero) |
-| Modal open | Scale 0.97→1 + fade (~280ms) | Open | **CURRENT** |
-| Modal step | Slide/fade (~220ms) | Step change | **CURRENT** |
-| Hero headline | Staggered rise+fade (80ms/word) | Load | **DEFERRED** (multi-section variant) |
-| Sketch accents | SVG stroke draw-on | Scroll into view, once | **DEFERRED** |
-| Sections | 12px rise + fade, 500ms | Scroll into view | **DEFERRED** |
-| Work tiles / cards | Lift + arrow draw | Hover | **DEFERRED** |
+| Capability strip | Slow marquee, pauses on hover | Always | **CURRENT** |
+| Hero content | `rise-in`, staggered | Load | **CURRENT** |
+| Modal open | `modal-in` | Open | **CURRENT** |
+| Modal step | `step-in` | Step change | **CURRENT** |
+| New-section entrances | `rise-in` family, scroll-triggered | Scroll into view | Available to section units (same contract) |
+| Sketch-accent SVG stroke draw-on · staggered per-word headline · tile lift + arrow draw | — | — | **RETIRED** (sketch system, §Retired) |
 
-**CURRENT (binding).** All live motion is **CSS keyframes, `motion-safe`-gated** (no `motion/react` import on the hero — the project's `no-restricted-imports` rule). Reduced mode: static strip, instant visibility, no transforms; the modal animations honor the same contract. Smooth anchor scrolling is motion-gated too.
+### Planned — not yet designed — **PLANNED**
 
-## Responsive behavior
+A scroll-driven background **video with parallax** is the recorded motion ambition for the redesigned page (owner intent, 2026-07-06). It is **not designed, specced, or built**; nothing in this unit or the section units assumes it. When taken up it gets its own unit, and must satisfy the same reduced-motion contract. Do not build toward it speculatively.
 
-- **Live — CURRENT.** The single hero is fully responsive; the modal renders full-height on mobile (≤375px) and as a centered card on desktop. Touch targets ≥44px.
-- **DEFERRED.** The multi-section breakpoints (work grid 2×2 → 1-col, process expansion → accordion, nav → overlay) ship with the multi-section build.
+## Interaction vocabulary
 
-## Empty states / placeholders — **DEFERRED** (multi-section)
+The control language: **squared, hairline, flat gold**. No pills, no rounded corners, no glows. Icons are **inline SVG, never `lucide-react`** (project convention).
 
-Placeholder naming + inventory in `06-taxonomy.md` §Placeholders, layout-final fixed-aspect boxes. Belongs to the multi-section build. The live hero's one placeholder is the **interim background image** (config, not a `/public/placeholders/` asset) — replace before launch.
+- **Advance (primary) — the divided-arrow button.** Two segments on one white bar: a label segment (`px-6 py-3`) and a hairline-divided arrow box (`border-l border-ink/15`, inline SVG arrow). Surface `bg-white text-ink font-medium`, squared, `min-h-11`. Hover (motion-safe): whole button `scale-[1.02]`, arrow nudges `translate-x-0.5`, 150ms. Focus: `outline-2 outline-offset-2 outline-white`. Disabled: `opacity-40`, pointer-events off. Used for **every forward action** (hero CTA, modal Next/submit); terminal actions may drop the arrow segment.
+- **Ghost (secondary).** Squared transparent button, hairline `border-white/30`, white text, `px-6 py-3 min-h-11`; hover `border-white/60 bg-white/[0.06]`; white focus outline. Used for Back and any de-emphasized action.
+- **Selection (radios, tabs, checkboxes).** Squared hairline rows/tabs: `border-white/12 bg-white/[0.02] text-white/90`; hover `border-white/30 bg-white/[0.05]`; **selected = flat gold fill** — `border-gold bg-gold text-gold-ink` (pairing rule), no glow. Native input `sr-only`; the row styles via `has-checked:`; focus via `has-focus-visible:` gold outline. Disabled: `opacity-40`, inert. Multi-select tabs carry a small squared check box (`size-4 rounded-[2px]`, hairline → `gold-ink` mark when checked).
+- **Text controls & links.** Inline links: `text-gold underline underline-offset-4 font-medium`. Muted text buttons: `text-white/60 → hover:text-white`, optionally with the arrow-nudge. Icon buttons keep a `min-h-11 min-w-11` hit area (`text-white/60 → hover:text-white`).
+- **Inputs.** Squared: `border-white/15 bg-white/[0.03] px-4 py-3 text-white`, placeholder `white/40`, mono micro-label caption above; focus `border-gold` + gold outline. Color shifts at 150ms.
+- **Focus (binding).** Always visible: `outline-2 outline-offset-2`, **gold** on/near gold-accented controls and inputs, **white** on white-surfaced/ghost controls. Never remove the ring.
+- **Progress.** A thin segmented meter: `h-[3px] w-7` bars, `gap-1.5`; filled `bg-gold`, rest `bg-white/15`; with an `sr-only` "Step n of m". No dots.
+- **Markers.** The list/label marker is a small gold diamond: `h-1.5 w-1.5 rotate-45 bg-gold` (the strip's separator).
+
+## Live components (as-built reference)
+
+The shipped screens the system is derived from. Details: build-note 08 and the source files.
+
+- **Hero — CURRENT.** Full-bleed image band (§Surfaces level 2), bottom-anchored; wordmark-only header (no nav, no second CTA); the `max-w-4xl` capability strip; then the two-column row — `w-1/2` white display headline with two gold payoff words + divided-arrow CTA (left), gold-italic supporting line (right, right-aligned). Background image is an **interim remote Unsplash placeholder** — owner-owed: replace with a self-hosted brand asset before launch (a hero **background asset swap is tracked separately**; not part of the redesign units).
+- **Hero CTA — CURRENT.** "Start a Conversation" (Rule 3.1) as the divided-arrow button; opens the qualification modal; no-JS degrades to `mailto` (Business Rules E3).
+- **Capability strip — CURRENT.** Glass strip (level 3, light variant) marquee of the **four canonical services** (Taxonomy §1, exact casing) in mono labels with gold diamond separators. No invented numbers, no social proof (Brand Philosophy §10, Rule 4.3). Reads once to assistive tech (duplicate copies `aria-hidden`).
+- **Qualification modal — CURRENT.** The system's elevated glass card: full-screen mobile / centered `560px` card desktop; squared, hairline, `#0a0a0c/95 + backdrop-blur-xl`, deep shadow; mono captions, segmented gold progress, flat-gold selection, divided-arrow advance + ghost Back; ink-72% + 8px-blur backdrop; focus-trapped native `<dialog>`, Esc closes, scroll locked. **Flow / validation / a11y logic per `05-business-rules.md`** — two-door entry (quick door → optional four-question qualifier), off-ramp with "Stay in Touch" capture, success / off-ramp-success / failure-fallback (Rule 2.7, answers preserved). Skin and flow are as-built and untouched by the redesign.
+- **404 — CURRENT.** Light `paper` surface (the one `paper` exception, §Color), kept legible on the dark layout.
+
+## Retired: the paper / editorial / sketch-accent system — **RETIRED**
+
+The pre-pivot design language — light `paper` page, editorial multi-section scroll, pill buttons, sticky nav, hand-drawn SVG sketch accents (stroke-animated underlines, margin arrows, circled numbers, handwritten Caveat annotations), per-service accent colors — is **retired as a design direction** (2026-06-14 pivot; reconfirmed by decision-log #13 and the 2026-07-06 owner directive orphaning the non-gold accents). It must not be used as a reference for new sections; the five redesign sections are designed against the dark system above.
+
+For the record: the dormant component files (`sketch-accent.tsx`, `site-nav.tsx`, section components, the pill `<Button>` usage) and the multi-section copy in `src/content/copy.ts` still exist on disk — retiring them from *code* is a separate owner call (build-note 08, Open item 3). The one idea that survived the pivot is accenting key headline words — now the gold color treatment, not a drawn stroke. The old section-ID / placeholder taxonomies (`06-taxonomy.md` §6–7) belonged to this retired build — flagged for reviewer there, not rewritten here.
