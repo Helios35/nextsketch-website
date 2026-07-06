@@ -8,6 +8,8 @@ import { MODAL_ESCAPE_HATCH } from "@/content/modal";
 interface ModalTriggerProps {
   children: ReactNode;
   variant?: ButtonProps["variant"];
+  /** Divided-arrow advance treatment — see Button. */
+  arrow?: ButtonProps["arrow"];
   className?: string;
   /** Runs before the modal opens (e.g. close the mobile menu). */
   onBeforeOpen?: () => void;
@@ -22,6 +24,7 @@ interface ModalTriggerProps {
 export function ModalTrigger({
   children,
   variant,
+  arrow,
   className,
   onBeforeOpen,
 }: ModalTriggerProps) {
@@ -30,6 +33,7 @@ export function ModalTrigger({
   return (
     <Button
       variant={variant}
+      arrow={arrow}
       className={className}
       href={`mailto:${MODAL_ESCAPE_HATCH.email}`}
       onClick={(event: MouseEvent<HTMLAnchorElement>) => {

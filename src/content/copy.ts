@@ -23,12 +23,17 @@ export const SITE = {
 export const NAV = {
   /** Accessible name of the main nav landmark. */
   label: "Main",
+  /**
+   * The five live redesign sections (decision-log #13; anchors per
+   * Redesign Unit 02 brief). #start is reached via the CTA and the
+   * footer, not a nav item. The "Why" label is DRAFT copy pending
+   * owner approval (the held sections' old items are gone with them).
+   */
   items: [
-    { id: "process", label: "Process" },
-    { id: "work", label: "Work" },
+    { id: "why", label: "Why" },
     { id: "services", label: "Services" },
+    { id: "process", label: "Process" },
     { id: "about", label: "About" },
-    { id: "faq", label: "FAQ" },
   ] as const satisfies readonly { id: SectionId; label: string }[],
   cta: "Start a Conversation",
   /** Mobile menu toggle labels (screen-reader copy). */
@@ -124,6 +129,12 @@ export const LANDING = {
 } as const;
 
 export const MANIFESTO = {
+  /**
+   * Section eyebrow — mono micro-label above the headline (Redesign
+   * Unit 02). DRAFT in brand voice pending owner approval, as are the
+   * other section eyebrows added this unit.
+   */
+  eyebrow: "The problem",
   headline:
     "Most firms build what you ask for. We help you figure out what you actually need.",
   body: [
@@ -133,12 +144,15 @@ export const MANIFESTO = {
 } as const;
 
 export const PROCESS = {
+  /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
+  eyebrow: "How we work",
   headline: "Strategy. Build. Validate. Stay.",
   /**
-   * Handwritten margin annotation shown with the Validate phase —
-   * text from docs/04-ux-spec.md §Sketch accent system (the spec's
-   * own example for this exact placement). DRAFT pending owner
-   * approval — see briefs/build-notes/03-sections-story.md.
+   * Aside shown with the Validate phase. Originally the handwritten
+   * margin annotation of the retired sketch system; the redesign
+   * (Unit 02) reinterprets the same DRAFT text as the design system's
+   * gold-italic aside — the one sanctioned italic. Still pending
+   * owner approval.
    */
   annotation: "this is the part most firms skip",
   phases: [
@@ -198,6 +212,8 @@ export const WORK = {
  * every claim restates documented brand positioning.
  */
 export const ABOUT = {
+  /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
+  eyebrow: "Who you work with",
   headline: "NextSketch is one person. On purpose.",
   body: [
     "I'm Nathan. When you work with NextSketch, you work with me — the person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",
@@ -238,6 +254,8 @@ export const FIT = {
 } as const;
 
 export const FINAL_CTA = {
+  /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
+  eyebrow: "The next step",
   headline: "Ready to build? Let's figure out if we're the right fit.",
   body: "Start with a conversation. We'll understand what you're trying to build, where you are, and whether NextSketch is the right partner. No pitch. No pressure. Just an honest assessment.",
   cta: "Start a Conversation",

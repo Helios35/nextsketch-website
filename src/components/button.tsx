@@ -1,14 +1,28 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
+import type {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  ReactNode,
+} from "react";
 
 type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost";
 
 type AsButton = ButtonHTMLAttributes<HTMLButtonElement> & { href?: never };
 type AsAnchor = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string };
 
-export type ButtonProps = { variant?: ButtonVariant } & (AsButton | AsAnchor);
+export type ButtonProps = {
+  variant?: ButtonVariant;
+  /**
+   * Divided-arrow treatment (docs/04-ux-spec.md §Interaction
+   * vocabulary): a label segment plus a hairline-divided arrow box —
+   * the system's advance affordance, matching the hero CTA. Without
+   * it the button is the plain squared block (terminal actions drop
+   * the arrow segment).
+   */
+  arrow?: boolean;
+} & (AsButton | AsAnchor);
 
 const BASE =
-  "inline-flex min-h-11 items-center justify-center rounded-full px-7 py-3 " +
+  "group/button inline-flex min-h-11 items-center justify-center rounded-none " +
   "text-base font-medium transition-transform duration-150 " +
   "motion-safe:hover:scale-[1.02] " +
   "focus-visible:outline-2 focus-visible:outline-offset-2";
@@ -19,24 +33,89 @@ const VARIANTS: Record<ButtonVariant, string> = {
   primary: "bg-ink text-white focus-visible:outline-ink",
   secondary:
     "border border-ink bg-transparent text-ink focus-visible:outline-ink",
-  /** Primary's role on ink surfaces (final-CTA panel): white bg / ink text. */
+  /** The advance surface on ink (nav / final CTA): white bg / ink text. */
   inverse: "bg-white text-ink focus-visible:outline-white",
   /** Secondary's role on ink surfaces (dark qualification modal): white hairline. */
   ghost: "border border-white/40 bg-transparent text-white focus-visible:outline-white",
 };
 
+/** Hairline divider between the label and arrow segments, per surface. */
+const DIVIDER: Record<ButtonVariant, string> = {
+  primary: "border-white/15",
+  secondary: "border-ink/15",
+  inverse: "border-ink/15",
+  ghost: "border-white/30",
+};
+
+/** Inline arrow — the project uses inline SVG icons, never lucide. */
+function ArrowRight() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="size-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </svg>
+  );
+}
+
 /**
- * Pill button per docs/04-ux-spec.md §Component specs. Renders an
- * anchor when `href` is set (hash links at foundation stage),
- * otherwise a real <button>. Copy always comes from src/content/.
- * Hover scale is CSS-only and gated by motion-safe; the accent
- * underline-sketch on hover composes with <SketchAccent> downstream.
+ * Squared button per docs/04-ux-spec.md §Interaction vocabulary
+ * (Redesign Unit 02 re-skin — the pill is retired with the paper
+ * system). Renders an anchor when `href` is set, otherwise a real
+ * <button>. Copy always comes from src/content/. Hover scale is
+ * CSS-only and gated by motion-safe; with `arrow`, the arrow nudges
+ * on hover exactly like the hero CTA (Tailwind v4 note: the
+ * standalone scale/translate properties are what transition).
  */
-export function Button({ variant = "primary", className, ...rest }: ButtonProps) {
-  const cls = [BASE, VARIANTS[variant], className].filter(Boolean).join(" ");
+export function Button({
+  variant = "primary",
+  arrow = false,
+  className,
+  children,
+  ...rest
+}: ButtonProps) {
+  const cls = [
+    BASE,
+    VARIANTS[variant],
+    arrow ? "items-stretch" : "px-7 py-3",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const content: ReactNode = arrow ? (
+    <>
+      <span className="flex items-center px-6 py-3">{children}</span>
+      <span
+        className={`flex items-center border-l px-4 py-3 ${DIVIDER[variant]}`}
+      >
+        <span className="transition-transform duration-150 motion-safe:group-hover/button:translate-x-0.5">
+          <ArrowRight />
+        </span>
+      </span>
+    </>
+  ) : (
+    children
+  );
 
   if (rest.href !== undefined) {
-    return <a className={cls} {...(rest as AsAnchor)} />;
+    return (
+      <a className={cls} {...(rest as AsAnchor)}>
+        {content}
+      </a>
+    );
   }
-  return <button className={cls} {...(rest as AsButton)} />;
+  return (
+    <button className={cls} {...(rest as AsButton)}>
+      {content}
+    </button>
+  );
 }
