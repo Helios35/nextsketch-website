@@ -1,10 +1,10 @@
 # Business Rules — NextSketch Website Rebuild
 
-**Version:** 2.0 · **Date:** 2026-06-22 · **Status:** Active — two-door + off-ramp capture ratified (Sprint 03 doc audit)
+**Version:** 2.1 · **Date:** 2026-07-06 · **Status:** Active — aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01)
 **Answers:** What decisions does the system make?
 **References:** `06-taxonomy.md` (canonical values) · `02-prd.md` (requirements) · `07-technical-spec.md` (how the rules are implemented) · Brand Philosophy §8/§10 (voice authority) · `briefs/build-notes/12-quick-door.md` (the two-door build)
 
-> **Reconciliation tags (Sprint 03 audit, 2026-06-22):** **CURRENT** (true as-built) · **CHANGED** (rewritten to as-built) · **DEFERRED** (not shipped). Rule numbers are **stable** — briefs cite them. The Sprint 02 Unit 04 "quick door" changes, previously flagged here for ratification, are now **ratified into the rules below** (the ⚠ flag callout is retired). Cite by number ("per Rule 2.2").
+> **Reconciliation tags:** **CURRENT** (true as-built) · **CHANGED** (rewritten to match the as-built or an owner decision) · **RETIRED** (no longer planned — the rule's constraint survives if the feature ever returns). Rule numbers are **stable** — briefs cite them. The Sprint 02 Unit 04 "quick door" changes, previously flagged here for ratification, are now **ratified into the rules below** (the ⚠ flag callout is retired). Cite by number ("per Rule 2.2").
 
 ---
 
@@ -48,7 +48,7 @@ One human role: visitor (anonymous, public). One operator: owner (Nathan) — re
 - **2.5 — Signal flags — CHANGED.** The lead record + alert subject carry a signal label:
   - Qualifier: `[Lead]` default · `[Lead — needs buy-in]` if Q3 = `none` · `[Lead — build-first mindset]` if Q4 = `build_first` · `[Lead — review answers]` if both.
   - Quick door: `[Lead — quick]` (primary quick path) · `[Lead — exploring]` (off-ramp capture). Answer-less leads, so the buy-in/build-first flags don't apply; an `exploring` capture also gets a **gentler auto-reply** (no two-business-day promise), consistent with the off-ramp tone.
-- **2.6 — Escape hatch:** `hello@nextsketch.com` is visible in the modal at every step, on the off-ramp, on the success screen, and (with the multi-section build) in the site footer. It is a plain mailto link — never a form. **CURRENT.**
+- **2.6 — Escape hatch:** `hello@nextsketch.com` is visible in the modal at every step, on the off-ramp, and on the success screen — and in a site footer if one ever ships (no footer is in the redesign section set, decision-log #13). It is a plain mailto link — never a form. **CURRENT.**
 - **2.7 — Failure fallback:** if a capture does not durably succeed (validation reject, destination unreachable/unconfigured, or network error), show the escape hatch with the user's composed answers preserved on screen so nothing is lost. Never silently drop a lead, and never show success for a lead that wasn't stored. **CURRENT** (now backed by the real no-fake-success gating in `/api/qualify`).
 - **2.8 — Spam — CHANGED.** Both doors carry a **honeypot** field (`_hp`, must be empty) + a **minimum-time check** (`_t` ≥ 3000ms; reject sub-3s completions), enforced server-side. No CAPTCHA (friction budget is spent on qualification, not bot tests). **Rate limiting (the pre-pivot "5/hour per IP") was never implemented** — in-memory per-IP limiting is unreliable on Vercel serverless; deferred to its own unit with a shared store if abuse appears (build-note 09 §3). It is not a leak-stopper.
 
@@ -61,9 +61,9 @@ One human role: visitor (anonymous, public). One operator: owner (Nathan) — re
 
 ## 4. Content authority
 
-- **4.1** Messaging Kit §05 copy is canonical for hero, manifesto, process, services, who-it's-for, FAQ, final CTA. Edits to canonical copy are owner decisions, logged. **CURRENT** (the hero copy is live; the rest is dormant for the deferred sections).
-- **4.2** Testimonials render placeholder blocks until client-approved rewritten quotes exist. Fabricated or unapproved quotes never ship. **DEFERRED** (testimonials section dormant).
-- **4.3** Placeholder tiles never carry invented project names or invented outcomes. **DEFERRED** (work grid dormant); the principle holds for any future placeholder.
+- **4.1** Messaging Kit §05 copy is canonical for hero, manifesto, process, services, who-it's-for, FAQ, final CTA. Edits to canonical copy are owner decisions, logged. **CURRENT** (the hero copy is live; the planned redesign sections — decision-log #13 — re-confirm their canonical copy at their units; copy for retired sections stays dormant).
+- **4.2** Testimonials render placeholder blocks until client-approved rewritten quotes exist. Fabricated or unapproved quotes never ship. **RETIRED as a section** (not in the #13 set); the approval constraint survives verbatim if testimonials ever return.
+- **4.3** Placeholder tiles never carry invented project names or invented outcomes. Work grid **RETIRED** (not in the #13 set); the principle is **CURRENT** and holds for any future placeholder.
 - **4.4 — Email & modal copy (CHANGED/new).** The lead auto-reply + alert copy (`src/content/email.ts`) and the quick-door / off-ramp / success copy (`src/content/modal.ts`) are **DRAFT in brand voice, pending owner approval** — not from Messaging Kit §05. Approve or edit before launch (build-notes 11–12).
 
 ## Edge cases — **CURRENT**

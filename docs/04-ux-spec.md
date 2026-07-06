@@ -12,7 +12,7 @@
 
 > **REVIEW NOTES**
 > 1. **Logo — CURRENT.** Placeholder wordmark "NextSketch" set in the display sans (Space Grotesk) until asset handoff. The live hero renders a wordmark only.
-> 2. **Decision-log gap — for reviewer.** This unit was briefed against decision-log **#13** (redesign reactivated; section set above) and an owner directive of 2026-07-06 (**gold is the only accent; all other accent colors orphaned** — §Color). Neither is in `docs/decision-log.md` yet (it ends at #12). Log them at the next decision-log touch; this unit is spec-only and does not edit the log.
+> 2. *(closed)* **Decision-log gap** — resolved same unit at the owner's direction: the redesign reactivation and the gold-only accent directive are now logged as decision-log **#13** and **#14**, and `02-prd.md` / `03-site-architecture.md` / `06-taxonomy.md` were aligned to them (v2.1 each).
 
 ---
 
@@ -68,11 +68,11 @@ Gold is the **only** accent. The remaining brand tokens are **orphaned**: they k
 
 | Token(s) | Status |
 |---|---|
-| `lavender`/`lavender-ink` · `rose`/`rose-ink` · `sage`/`sage-ink` | **Orphaned.** The old per-service / per-phase accent mapping (`06-taxonomy.md` §1–2) is stale — flagged for reviewer, not rewritten here |
+| `lavender`/`lavender-ink` · `rose`/`rose-ink` · `sage`/`sage-ink` | **Orphaned.** The old per-service / per-phase accent mapping is retired (`06-taxonomy.md` §1–2, aligned; decision-log #14) |
 | `paper-bright` | **Orphaned.** |
 | `paper` | **Orphaned from the system**, with one live exception: the 404 page's light surface (**CURRENT** — code wins). Not available to sections |
 
-**No new tokens.** The 2026-07-06 inspiration reference (owner-supplied editorial screenshot) contributes *fidelity only* — its rust/orange accent is explicitly **not** adopted; where it shows a warm accent, this system uses `gold`.
+**No new tokens.** (Decision-log #14.) The 2026-07-06 inspiration reference (owner-supplied editorial screenshot) contributes *fidelity only* — its rust/orange accent is explicitly **not** adopted; where it shows a warm accent, this system uses `gold`.
 
 ## Typography
 
@@ -178,4 +178,4 @@ The shipped screens the system is derived from. Details: build-note 08 and the s
 
 The pre-pivot design language — light `paper` page, editorial multi-section scroll, pill buttons, sticky nav, hand-drawn SVG sketch accents (stroke-animated underlines, margin arrows, circled numbers, handwritten Caveat annotations), per-service accent colors — is **retired as a design direction** (2026-06-14 pivot; reconfirmed by decision-log #13 and the 2026-07-06 owner directive orphaning the non-gold accents). It must not be used as a reference for new sections; the five redesign sections are designed against the dark system above.
 
-For the record: the dormant component files (`sketch-accent.tsx`, `site-nav.tsx`, section components, the pill `<Button>` usage) and the multi-section copy in `src/content/copy.ts` still exist on disk — retiring them from *code* is a separate owner call (build-note 08, Open item 3). The one idea that survived the pivot is accenting key headline words — now the gold color treatment, not a drawn stroke. The old section-ID / placeholder taxonomies (`06-taxonomy.md` §6–7) belonged to this retired build — flagged for reviewer there, not rewritten here.
+For the record: the dormant component files (`sketch-accent.tsx`, `site-nav.tsx`, section components, the pill `<Button>` usage) and the multi-section copy in `src/content/copy.ts` still exist on disk — retiring them from *code* is a separate owner call (build-note 08, Open item 3). The one idea that survived the pivot is accenting key headline words — now the gold color treatment, not a drawn stroke. The old section-ID / placeholder taxonomies belonged to this retired build and are reconciled in `06-taxonomy.md` §6–7 (aligned this unit).

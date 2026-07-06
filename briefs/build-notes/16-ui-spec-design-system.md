@@ -29,12 +29,24 @@ Rewrote `docs/04-ux-spec.md` (v2.0 → **v3.0**) from a reconciliation-tagged co
 2. **`gold-ink`, `white`, `ink` kept.** Read the directive as targeting *accent* colors; `gold-ink` is gold's binding pairing partner (modal selection) and `ink`/`white` are the theme, so all three stay.
 3. **DEFERRED → RETIRED.** With the accents orphaned and decision-log #13 pointing the five new sections at the dark system, the old multi-section light design can no longer be "deferred, not dead" — it's retired as a direction. Dormant files/copy on disk remain a separate owner decision (build-note 08, open item 3).
 
-## Flagged for reviewer (found, not fixed — other docs are out of scope this unit)
+## Flagged for reviewer — RESOLVED same session (owner directed: "address flags now")
 
-- **`docs/decision-log.md` ends at #12.** The brief cites **#13** (redesign reactivated; section set); the **2026-07-06 orphan-all-but-gold directive** also deserves an entry. Recommend logging both at the next decision-log touch (noted in the spec's Review Note 2).
-- **`docs/06-taxonomy.md`:** §1 Services and §2 Process phases still map rose/lavender/sage accent pairs per service/phase; §5 says the non-gold accents are "DEFERRED (multi-section build)"; §9's deprecation row says the light theme is "deferred to the multi-section build". All three are stale under the orphan directive. §6 Section IDs and §7 Placeholders describe the retired build and will need revisiting when the five new sections define their anchors.
-- **`docs/02-prd.md`:** F10 still lists "scroll-triggered section reveals + handwritten sketch accents" as DEFERRED; the eleven-section framing in §Overview predates decision-log #13's five-section set.
-- **`docs/03-site-architecture.md`:** the deferred multi-section outline (and its section list) predates the #13 section set; 404-paper row is fine (matches the exception).
+The brief's "flag, don't rewrite" guardrail was lifted by the owner after the first commit; a follow-up commit on this branch aligned the stack. Still docs-only.
+
+- **`docs/decision-log.md`:** added **#13** (redesign reactivated — five-section set, per-section design against the system; old eleven-section plan superseded as a destination) and **#14** (gold-only accent; lavender/rose/sage/`paper-bright` orphaned; `paper` = 404 exception). A supersession note was appended to #12.
+- **`docs/06-taxonomy.md` → v2.1:** §1/§2 accent-pair columns removed (mappings RETIRED; sections planned per #13); §5 rewritten to gold-only + orphaned set; §6 old anchors RETIRED (per-section anchor calls, old-ID reuse as default where it fits); §7 convention kept, old inventory RETIRED; §9 deprecation log — light-theme row corrected (retired, not deferred) + two new rows (accent pairs → gold-only; eleven-section plan → five-section redesign). DEFERRED tag retired from the legend.
+- **`docs/02-prd.md` → v2.1:** Overview/tag-legend reframed around the #13 set; F4/F6/F7 → **PLANNED** (#13); F5/F8/F9 → **RETIRED** (not in the set; return requires a new decision); F10 → sketch accents RETIRED, scroll-video/parallax noted as PLANNED; review notes 1–3 and user stories retagged.
+- **`docs/03-site-architecture.md` → v2.1:** the deferred eleven-section table replaced by a **planned five-section set** table (order/anchors confirmed per-section) + a demoted RETIRED record of the old plan; nav/footer explicitly *undecided* (not in the #13 set — owner call at the section units); old scroll journeys RETIRED.
+- **`docs/04-ux-spec.md`:** Review Note 2 closed; "flagged for reviewer" cross-references updated to point at the aligned docs.
+
+A full grep sweep (DEFERRED / multi-section / eleven-section / sketch / Caveat / lavender / rose / sage) surfaced drift beyond the original flag list; also aligned:
+
+- **`docs/01-vision.md` → v2.1:** solution shape updated (page grows per #13; eleven-section storytelling RETIRED, not "deferred, not dead"); work-grid non-goal retagged RETIRED.
+- **`docs/05-business-rules.md` → v2.1:** rule numbers untouched; 2.6 footer clause reworded (no footer planned), 4.1 copy-canon note points at the #13 sections, 4.2/4.3 retagged RETIRED with their constraints preserved; DEFERRED dropped from the tag legend.
+- **`docs/07-technical-spec.md`:** the "`motion` installed for the deferred multi-section reveals" claim corrected (no planned consumer — the design system binds sections to CSS keyframes; uninstall is a future cleanup call); repo-layout comment retagged dormant/retired-plan.
+- **`docs/scope-lock-mvp.md`:** locked doc left intact; a dated **supersession banner** added (re-lock loudly): the "returns later" bucket is superseded by #13/#14 — light theme + sketch accents retired for good; pipeline, launch bar, and "Out for good" cuts unchanged.
+
+Left alone deliberately: `00-project-setup.md` + `08-runbook.md` ("deferred" there = domain cutover / rate limiting — unrelated to design); historical decision-log entries #1–#12 (records, not claims — #12 got a one-line supersession pointer); dormant code/copy (code untouched by this unit).
 
 ## Verification
 

@@ -1,10 +1,10 @@
 # Vision — NextSketch Website Rebuild
 
-**Version:** 2.0 · **Date:** 2026-06-22 · **Status:** Active — reconciled to the as-built MVP (Sprint 03 doc audit)
+**Version:** 2.1 · **Date:** 2026-07-06 · **Status:** Active — aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01)
 **Answers:** Why does this exist?
 **Upstream sources:** NextSketch Brand Philosophy v1.0, NextSketch Messaging & Branding Kit v1.0, `concept-website-rebuild.md`
 
-> **Reconciliation tags (Sprint 03 audit, 2026-06-22):** **CURRENT** (true as-built) · **CHANGED** (rewritten to as-built) · **DEFERRED** (still the plan for a later build, not shipped — preserved, not deleted). The *why* is unchanged; the *shape of the solution* pivoted (2026-06-14) from an eleven-section scrolling page to a single dark cinematic hero. The multi-section storytelling is deferred, not dead.
+> **Reconciliation tags:** **CURRENT** (true as-built) · **CHANGED** (rewritten to match the as-built or an owner decision) · **PLANNED** (redesign — decision-log #13) · **RETIRED** (no longer the plan). The *why* is unchanged; the *shape of the solution* pivoted (2026-06-14) from an eleven-section scrolling page to a single dark cinematic hero — and now grows again (2026-07-06, decision-log #13): **five sections — Manifesto, Services, Process, About, Final CTA — join the hero in the dark design-system language** (`04-ux-spec.md` v3.0). The old eleven-section light page is **retired**, not the storytelling itself.
 
 ---
 
@@ -24,7 +24,7 @@ Three buyer profiles, defined canonically in Messaging Kit §04:
 
 A website that is itself proof of capability: sleek, modern, fast, with purposeful animation — "a product, not a brochure." It tells the new story in the Messaging Kit's words and qualifies visitors through a **two-door qualification modal** instead of a contact page, self-filtering away people who are still exploring.
 
-**As-built (the live MVP):** a **single dark cinematic landing hero** — "the landing page is the entire site for now" (decision-log #1; build-note 08). One screen: headline ("From idea to production. And we stay."), a supporting line, a capability strip naming the four services, and the primary CTA that opens the modal. The eleven-section storytelling (manifesto, interactive process, work grid, services, about, testimonials, FAQ, etc.) is **DEFERRED** — its code is dormant, preserved for a later build, not deleted.
+**As-built (the live MVP):** a **single dark cinematic landing hero** — "the landing page is the entire site for now" (decision-log #1; build-note 08). One screen: headline ("From idea to production. And we stay."), a supporting line, a capability strip naming the four services, and the primary CTA that opens the modal. **PLANNED (decision-log #13):** the page grows section-by-section — Manifesto, Services, Process, About, Final CTA — each designed against the hero-derived design system. The old eleven-section light storytelling is **RETIRED** (its code dormant on disk; sections outside the #13 set return only by a new decision).
 
 ## Success metrics
 
@@ -32,11 +32,11 @@ A website that is itself proof of capability: sleek, modern, fast, with purposef
 - "Still exploring" visitors hit the soft off-ramp — and may opt into a low-pressure "Stay in Touch" capture instead of being turned away. **CHANGED** (off-ramp now captures; was a no-form dead end).
 - Zero banned language anywhere (per Business Rules §3). **CURRENT.**
 - A visitor matching any of the three profiles can articulate what NextSketch does and how engagement works **from the single hero screen**. **CHANGED** (was "after one scroll").
-- The site replaces the Webflow site on nextsketch.com (domain cutover complete). **DEFERRED** — parked (decision-log #5); the bar today is the live Vercel production URL, not the `nextsketch.com` cutover. Execution owned by the runbook / launch-readiness.
+- The site replaces the Webflow site on nextsketch.com (domain cutover complete). **CHANGED** — the cutover is **parked** (decision-log #5, a separate milestone — not retired); the bar today is the live Vercel production URL. Execution owned by the runbook / launch-readiness.
 
 ## Non-goals
 
-- Not a portfolio site — the page itself is the credibility play. **CURRENT** (more so now: the single hero *is* the proof). The "selected work" grid with placeholders is **DEFERRED** with the multi-section build.
+- Not a portfolio site — the page itself is the credibility play. **CURRENT** (more so now: the single hero *is* the proof). The "selected work" grid is **RETIRED** (not in the #13 section set).
 - Not a content/SEO play at launch — blog and newsletter are cut. **CURRENT.**
 - No pricing display, no e-commerce, no client portal, no CMS, **no backend beyond one serverless lead route — ever** (decision-log #8). **CURRENT** (hardened post-pivot).
 - Not a multi-page site — one page plus the modal. **CURRENT** (now literally one screen).

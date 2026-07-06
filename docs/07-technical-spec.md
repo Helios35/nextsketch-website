@@ -21,7 +21,7 @@ A statically-rendered **single dark landing hero** with **exactly one serverless
 |---|---|---|
 | Framework | **Next.js 16** (App Router, TypeScript) · React 19 | `/api/qualify` is a Route Handler using native `Request`/`Response` and `after()` from `next/server` |
 | Styling | **Tailwind CSS v4** | Token-based theme in `src/app/globals.css` (`@theme`); default palette cleared so only brand tokens compile (`06-taxonomy.md` §5) |
-| Animation | CSS keyframes, `motion-safe`-gated | The live hero + modal use CSS keyframes (no `motion/react` import — the `no-restricted-imports` rule). `motion` (Framer) is installed for the deferred multi-section reveals |
+| Animation | CSS keyframes, `motion-safe`-gated | The live hero + modal use CSS keyframes (no `motion/react` import — the `no-restricted-imports` rule). The design system binds the redesign sections to the same contract (`04-ux-spec.md` §Motion), so `motion` (Framer) is installed but has no planned consumer — uninstalling it is a future cleanup call |
 | Fonts | `next/font/google` | **Space Grotesk** (display/UI) + **JetBrains Mono** (mono); self-hosted at build, zero layout shift (decision-log #1) |
 | Email | **Resend** (`resend` SDK) | Lead auto-reply + Nathan's alert — **best-effort notification**, via `after()` (Rule 2.5) |
 | Lead record | Google Apps Script web-app webhook (Sheet) + Asana REST API | Plain `fetch` POSTs — **no SDK dependency added** |
@@ -121,9 +121,10 @@ src/
                     api/qualify/route.ts (the only server surface)
   components/     — hero.tsx, hero-cta.tsx, qualification-modal.tsx,
                     qualification-modal-provider.tsx, button.tsx
-                    (DORMANT, deferred: Nav, sections, SiteNav/Footer,
-                     Reveal, SketchAccent, etc. — on disk, not rendered)
-  content/        — copy.ts (SITE + LANDING live; multi-section copy dormant),
+                    (DORMANT — retired plan: Nav, sections, SiteNav/Footer,
+                     Reveal, SketchAccent, etc. — on disk, not rendered;
+                     delete vs. keep is an open owner call, build-note 08)
+  content/        — copy.ts (SITE + LANDING live; retired-plan copy dormant),
                     modal.ts, email.ts, faq.ts, services.ts
   lib/            — schema.ts (Zod union), qualify.ts (submit seam),
                     lead-delivery.ts, lead-format.ts, lead-notify.ts
