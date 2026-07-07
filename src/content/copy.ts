@@ -105,9 +105,11 @@ export const HERO = {
  *   — no invented numbers or social proof (Brand Philosophy §10, Rule 4.3).
  * - cta: the Rule 3.1 primary; opens the qualification modal.
  *
- * backgroundImage is an INTERIM remote placeholder (config, not copy) —
- * owner-owed: replace with a self-hosted brand asset before launch, see
- * briefs/build-notes/08-landing-rebuild.md.
+ * backgroundVideo/backgroundPoster are config, not copy — the
+ * owner-supplied hero orbit footage (self-hosted, Redesign Unit 03),
+ * closing the owner-owed background-asset swap that replaced the
+ * interim Unsplash placeholder (build-note 08, Open item). The poster
+ * is the clip's first frame — the reduced-motion / no-JS fallback.
  */
 export const LANDING = {
   wordmark: SITE.name,
@@ -124,8 +126,8 @@ export const LANDING = {
   cta: "Start a Conversation",
   /** Accessible name for the decorative capability strip. */
   capabilitiesLabel: "What we build",
-  backgroundImage:
-    "https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?q=80&w=2400&auto=format&fit=crop",
+  backgroundVideo: "/hero-orbit.mp4",
+  backgroundPoster: "/hero-orbit-poster.jpg",
 } as const;
 
 export const MANIFESTO = {
