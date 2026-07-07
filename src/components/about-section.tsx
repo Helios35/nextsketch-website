@@ -35,7 +35,7 @@ export function AboutSection() {
     <section
       id="about"
       aria-labelledby="about-headline"
-      className="w-full border-t border-white/10 px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
+      className="w-full px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
     >
       <div className="grid gap-10 md:grid-cols-[3fr_2fr] md:gap-16">
         <div>

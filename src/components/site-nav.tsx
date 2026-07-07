@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CloseIcon } from "@/components/close-icon";
-import { ModalTrigger } from "@/components/modal-trigger";
 import { NAV, SITE } from "@/content/copy";
 
 /** Scroll depth (px) past which the nav turns solid and shrinks. */
@@ -38,12 +37,13 @@ function BurgerIcon() {
  * wordmark itself, so the nav's #top wordmark appears only once
  * scrolled — otherwise it would double over the hero. Mobile:
  * hamburger opens a full-screen ink overlay with the anchors in the
- * display face and the CTA.
+ * display face.
  *
- * The CTA opens the qualification modal via <ModalTrigger>, which
- * degrades to the mailto escape hatch without JS (Business Rules E3).
- * Server render is the static branch (not scrolled — no wordmark —
- * menu closed), so the no-JS page keeps working anchor links.
+ * No CTA in the nav (owner direction, 2026-07-06): the hero CTA and
+ * the Final CTA (#start) carry conversion — a header button was
+ * redundant. The anchor tabs sit right via justify-between. Server
+ * render is the static branch (not scrolled — no wordmark — menu
+ * closed), so the no-JS page keeps working anchor links.
  */
 export function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
@@ -152,11 +152,6 @@ export function SiteNav() {
               </li>
             ))}
           </ul>
-          <div className="hidden md:block">
-            <ModalTrigger variant="inverse" arrow>
-              {NAV.cta}
-            </ModalTrigger>
-          </div>
           <button
             ref={toggleRef}
             type="button"
@@ -210,16 +205,6 @@ export function SiteNav() {
               </li>
             ))}
           </ul>
-          <div className="pb-10">
-            <ModalTrigger
-              className="w-full"
-              variant="inverse"
-              arrow
-              onBeforeOpen={closeMenu}
-            >
-              {NAV.cta}
-            </ModalTrigger>
-          </div>
         </div>
       )}
     </header>

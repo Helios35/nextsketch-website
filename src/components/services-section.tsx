@@ -34,7 +34,7 @@ export function ServicesSection() {
     <section
       id="services"
       aria-labelledby="services-headline"
-      className="w-full border-t border-white/10 px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
+      className="w-full px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
     >
       <div>
         <ScrollReveal>

@@ -35,7 +35,7 @@ export function FinalCtaSection() {
     <section
       id="start"
       aria-labelledby="start-headline"
-      className="w-full border-t border-white/10 px-6 pt-24 pb-28 sm:px-8 sm:pt-28 sm:pb-32 lg:px-16 lg:pt-36 lg:pb-44"
+      className="w-full px-6 pt-24 pb-28 sm:px-8 sm:pt-28 sm:pb-32 lg:px-16 lg:pt-36 lg:pb-44"
     >
       <ScrollReveal>
         <SectionHeading

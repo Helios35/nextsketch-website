@@ -52,13 +52,14 @@ export function ScrollVideo({ src }: ScrollVideoProps) {
       const target = progress() * duration;
       // Ease toward the scroll position; stop the loop (and the
       // footage) once converged — "plays" only while scrolling.
-      current += (target - current) * 0.14;
-      if (Math.abs(target - current) < 1 / 60) {
-        current = target;
-      } else {
-        frame = requestAnimationFrame(step);
-      }
-      video.currentTime = current;
+      current += (target - current) * 0.12;
+      const converged = Math.abs(target - current) < 0.02;
+      if (converged) current = target;
+      // Never queue a seek while one is in flight — stacked seeks
+      // are what reads as chop. The loop keeps running until the
+      // final frame both converged AND landed.
+      if (!video.seeking) video.currentTime = current;
+      if (!converged || video.seeking) frame = requestAnimationFrame(step);
     };
     const request = () => {
       if (frame === 0) frame = requestAnimationFrame(step);
