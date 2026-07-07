@@ -214,6 +214,12 @@ export const WORK = {
 export const ABOUT = {
   /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
   eyebrow: "Who you work with",
+  /**
+   * Accessible description of the owner-supplied portrait
+   * (public/placeholders/placeholder-about-01.jpg, delivered
+   * 2026-07-06). DRAFT pending owner approval.
+   */
+  portraitAlt: "Nathan, the person behind NextSketch",
   headline: "NextSketch is one person. On purpose.",
   body: [
     "I'm Nathan. When you work with NextSketch, you work with me — the person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",

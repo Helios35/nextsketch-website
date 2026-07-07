@@ -1,5 +1,5 @@
+import Image from "next/image";
 import { Parallax } from "@/components/parallax";
-import { Placeholder } from "@/components/placeholder";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { ABOUT } from "@/content/copy";
@@ -22,10 +22,11 @@ const ACCENT_PHRASE = "On purpose";
  * now sits flat on the full-width band with the shared gutter rhythm,
  * the mono "(04)" eyebrow, and the gold payoff phrase. Entrances are
  * the shared ScrollReveal at the hero stagger (0 / 120+i·80 / 200ms);
- * the portrait carries the section's single whisper parallax. Photo is
- * a layout-final placeholder — real photography is owner-owed at
- * launch-readiness and swaps in by taxonomy name with zero layout
- * shift (docs/06-taxonomy.md §7).
+ * the portrait carries the section's single whisper parallax. The
+ * photo is the owner-supplied portrait (delivered 2026-07-06),
+ * shipped under the taxonomy asset name it replaced
+ * (docs/06-taxonomy.md §7) in the layout-final 3/4 crop — the square
+ * source center-crops via object-cover.
  */
 export function AboutSection() {
   const headline = ABOUT.headline;
@@ -78,7 +79,14 @@ export function AboutSection() {
           className="w-full self-center md:max-w-sm md:justify-self-end"
         >
           <Parallax speed={0.06}>
-            <Placeholder section="about" index={1} ratio="3/4" surface="ink" />
+            <Image
+              src="/placeholders/placeholder-about-01.jpg"
+              alt={ABOUT.portraitAlt}
+              width={1600}
+              height={1600}
+              sizes="(min-width: 768px) 24rem, 100vw"
+              className="aspect-[3/4] w-full border border-white/15 object-cover"
+            />
           </Parallax>
         </ScrollReveal>
       </div>

@@ -31,7 +31,7 @@ All five are transparent full-width bands over the backdrop: binding gutters (`p
 - **Manifesto (`#why`)** — display statement, gold payoff "actually need" (replaces the retired rose sketch underline), body offset right in the two-column editorial rhythm, whisper parallax on the body block.
 - **Services (`#services`)** — `(02)` eyebrow + headline (gold payoff "actually works") and the four canonical engagements as **elevated-glass cards** (`border-white/15 bg-[#0a0a0c]/95 backdrop-blur-xl` — the spec's exact elevated-surface stop, review-corrected from an invented `/80 + blur-md` stop), hover border → `white/30` at 150ms, in a 1/2/4-column grid with gold diamond + mono index. Replaces the retired four-color accent cards; `accent` fields orphaned, deliberately unread.
 - **Process (`#process`)** — the native `<details name="process-phase">` exclusive accordion **reused, not rebuilt** (canonical since build-note 03; JS-free, keyboard-native, Strategy open by default). Hairline `white/10` rows (closing hairline on the container — `last:` on the rows would double the dividers, review-caught), mono numbers `white/55 → gold` on open, display-weight names, `PlusIcon` at `white/40`. `PROCESS.annotation` reinterpreted from the retired handwritten note to the **gold-italic aside**.
-- **About (`#about`)** — flat band, `(04)` eyebrow, gold payoff "On purpose", three paragraphs, portrait as `Placeholder surface="ink"` under the section's single parallax. Real photography still owner-owed.
+- **About (`#about`)** — flat band, `(04)` eyebrow, gold payoff "On purpose", three paragraphs, and the **real owner-supplied portrait** (delivered 2026-07-06: workspace `Me.png`, 2141² square, converted to a 1600px JPEG at the taxonomy asset name `public/placeholders/placeholder-about-01.jpg`) rendered via `next/image` in the layout-final 3/4 center-crop with the hairline frame, under the section's single parallax. Alt text `ABOUT.portraitAlt` is DRAFT. The About photography item is **no longer owner-owed**.
 - **Final CTA (`#start`)** — flat bottom-weighted closing band, `(05)` eyebrow, gold payoff "right fit", body, **divided-arrow `ModalTrigger`** (`variant="inverse" arrow`) — same seam, E3 mailto degrade intact; modal logic untouched.
 
 ## Nav, footer & assembly (Phase C)
@@ -92,7 +92,7 @@ Fourteen findings survived adversarial verification; all addressed or dispositio
 ## Open for Nate
 
 1. Approve/edit the **draft copy**: nav "Why" label, five section eyebrows, the annotation's survival as a gold-italic aside.
-2. **Hero background asset** and **About photography** remain owner-owed (tracked separately).
+2. **Hero background asset** remains owner-owed (tracked separately). About photography is delivered and shipped (portrait swap, 2026-07-06); approve `ABOUT.portraitAlt` with the other drafts.
 3. Footer social URLs still placeholders (decision-log #4).
 4. Review the section-level layout calls: Services card grid (1/2/4), About flat band, nav CTA over the hero, opaque footer over the backdrop.
 5. The backdrop scrubs the **10s clip across the full page height** — if you want a slower/faster feel, the mapping is one constant in `scroll-video.tsx`.
