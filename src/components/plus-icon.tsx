@@ -2,7 +2,9 @@
  * Accordion plus→× affordance shared by the <details name> exclusive
  * accordions (Process, FAQ): rotates 45° while the owning row's
  * `group` is open, gated motion-safe. Extracted from process-section
- * in unit 05 so FAQ reuses rather than forks.
+ * in unit 05 so FAQ reuses rather than forks. Color rides on
+ * currentColor so the affordance works on ink and paper alike
+ * (Redesign Unit 02) — the owning row sets the text color.
  */
 export function PlusIcon() {
   return (
@@ -15,7 +17,7 @@ export function PlusIcon() {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      className="shrink-0 self-center text-ink/40 group-open:rotate-45 motion-safe:transition-transform motion-safe:duration-200"
+      className="shrink-0 self-center group-open:rotate-45 motion-safe:transition-transform motion-safe:duration-200"
     >
       <path d="M10 3v14M3 10h14" />
     </svg>
