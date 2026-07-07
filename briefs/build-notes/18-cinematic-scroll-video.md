@@ -77,6 +77,14 @@ Owner verdict on the Seedance clips: everything perfect except the person's look
 
 Shipped Kling jobs: orbit `5daf266f` (**mode `pro` = 1920×1080** — Kling's `std` outputs 720p, so pro delivers the owner's 1080p on the money shot; backdrops `9f95571e`/`7143078a`/`263622aa` in std/720p, matching their shipped resolution). Same encode recipe; hero 4.8 MB, backdrops ~2.8 MB. Assets swapped in place again — no code changes; scrub re-verified post-swap (orbit exact at runway quarters; backdrop seek instrumentation confirms clips advance correctly through their bands). Expression across all four is now warm/approachable per directive.
 
+## Final round — back to Seedance, age-true, warm (owner feedback round 3, 2026-07-07)
+
+Owner verdict on the Kling round: movement / personality / approachability / mood / lighting / camera all **perfect** — but the likeness was way off (Kling's identity weakness, documented above). Directive: return to **Seedance 2.0** and read as **30–35**. The shipped clips merge the best of every round: Seedance's Element-true identity + the Kling round's warm approachable expression and motion language + the phase-by-phase orbit path — with explicit age direction ("early thirties, youthful, not aged") and the ageing "salt-and-pepper" phrasing dropped from all prompts.
+
+Shipped jobs (all Seedance 2.0, std, **1920×1080**, 16:9, 8s, silent, identity Element on every generation): orbit `d655c206` (full 360° frame-traced: front → back at 4s → front; warm easy smile) · strategist `519947ba` · builder `f248f9db` · partner `a6f3d047` (warm confident close to camera). Same encode recipe; hero 3.5 MB, backdrops 2.5–3.4 MB; posters re-extracted; assets swapped in place — zero code changes.
+
+**Post-swap verification note:** the new files were verified to decode and seek frame-exact (manual `currentTime` writes land at target; durations identical at 8.04s). Full interactive scrub re-verification wasn't possible at swap time because the preview window was backgrounded — Chromium suspends `requestAnimationFrame` in hidden tabs, which pauses the scrub engine by design (a real, visible visitor is unaffected; this is the "advances only while the visitor scrolls" contract's environment, not a defect). The scrub/sequence code is byte-identical to the state that passed the full browser verification earlier this unit (orbit quarters exact, seams crossfading, deep-links, zero idle decoder churn, mobile clean).
+
 ## Open for Nate
 
 1. Approve the four clips (or ask for re-rolls — the identity Element `nate-nextsketch` is reusable; each re-roll is one `generate_video` call away).
