@@ -1,60 +1,87 @@
-import { Reveal } from "@/components/reveal";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
-import { SketchAccent } from "@/components/sketch-accent";
-import { SERVICES, SERVICES_HEADLINE } from "@/content/services";
-import type { AccentName } from "@/lib/types";
+import { SERVICES, SERVICES_EYEBROW, SERVICES_HEADLINE } from "@/content/services";
 
 /**
- * Static accent→class map (Tailwind compiles literals only). Accent
- * background takes its paired -ink text — the pairing rule, binding
- * per docs/04-ux-spec.md §Color system.
+ * Presentation marker, not copy: the promise the section exists to
+ * land takes the gold payoff treatment (docs/04-ux-spec.md
+ * §Typography — at most a couple of accent words inside a white
+ * display heading). Degrades to an unaccented headline if the
+ * canonical copy changes.
  */
-const CARD_CLASS: Record<AccentName, string> = {
-  gold: "bg-gold text-gold-ink",
-  lavender: "bg-lavender text-lavender-ink",
-  rose: "bg-rose text-rose-ink",
-  sage: "bg-sage text-sage-ink",
-};
+const ACCENT_PHRASE = "actually works";
 
 /**
  * Services (#services) — name the four engagements
- * (docs/03-site-architecture.md row 6). Four cards, each on its
- * Taxonomy §1 accent with paired ink text; copy verbatim from the
- * canonical SERVICES constants (Rule 4.1). Hover: subtle lift +
- * annotation arrow draws in the corner (UX spec §Component specs).
+ * (docs/03-site-architecture.md row 6). Rebuilt in place to the
+ * hero-derived design system (Redesign Unit 02): a transparent band
+ * over the site's fixed scroll-synced video backdrop (owner
+ * direction 2026-07-06 — the footage backs the whole page, so the
+ * band mounts no video of its own). The display heading carries the
+ * licensed over-imagery text shadow (docs/04-ux-spec.md §Typography —
+ * shadows are banned on plain ink, licensed over footage). The four
+ * engagements are elevated-glass cards (§Surfaces: translucent
+ * #0a0a0c + backdrop blur, never opaque black) so they read over the
+ * moving video. This replaces the paper-era accent-block cards
+ * (accent bg + paired -ink text + sketch arrow); the per-service
+ * `accent` field is orphaned by the redesign and deliberately unread.
  */
 export function ServicesSection() {
+  const headline = SERVICES_HEADLINE;
+  const phraseStart = headline.indexOf(ACCENT_PHRASE);
+
   return (
-    <div className="py-24 md:py-32">
-      <Reveal>
-        <SectionHeading className="max-w-4xl">
-          {SERVICES_HEADLINE}
-        </SectionHeading>
-      </Reveal>
-      <div className="mt-14 grid gap-5 md:mt-20 md:grid-cols-2">
-        {SERVICES.map((service, i) => (
-          <Reveal key={service.slug} delay={i * 0.1}>
-            <div
-              className={`group relative h-full rounded-2xl p-8 md:p-10 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-1 ${CARD_CLASS[service.accent]}`}
+    <section
+      id="services"
+      aria-labelledby="services-headline"
+      className="w-full border-t border-white/10 px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
+    >
+      <div>
+        <ScrollReveal>
+          <SectionHeading
+            index="02"
+            eyebrow={SERVICES_EYEBROW}
+            className="max-w-4xl [text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
+          >
+            <span id="services-headline">
+              {phraseStart === -1 ? (
+                headline
+              ) : (
+                <>
+                  {headline.slice(0, phraseStart)}
+                  <span className="text-gold">{ACCENT_PHRASE}</span>
+                  {headline.slice(phraseStart + ACCENT_PHRASE.length)}
+                </>
+              )}
+            </span>
+          </SectionHeading>
+        </ScrollReveal>
+        <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 xl:grid-cols-4">
+          {SERVICES.map((service, i) => (
+            <ScrollReveal
+              key={service.slug}
+              delay={120 + i * 80}
+              className="h-full"
             >
-              <h3 className="max-w-[85%] text-xl font-semibold tracking-tight md:text-2xl">
-                {service.name}
-              </h3>
-              <p className="mt-4 max-w-prose leading-relaxed opacity-80 md:pb-8">
-                {service.description}
-              </p>
-              <SketchAccent
-                variant="arrow"
-                accent={service.accent}
-                tone="ink"
-                drawOn="hover"
-                strokeWidth={5}
-                className="pointer-events-none absolute right-6 bottom-6 h-auto w-8"
-              />
-            </div>
-          </Reveal>
-        ))}
+              <div className="h-full border border-white/15 bg-[#0a0a0c]/95 p-6 backdrop-blur-xl transition-colors duration-150 hover:border-white/30 md:p-8">
+                <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
+                  <span
+                    aria-hidden="true"
+                    className="h-1.5 w-1.5 rotate-45 bg-gold"
+                  />
+                  {String(i + 1).padStart(2, "0")}
+                </p>
+                <h3 className="mt-6 text-lg font-medium text-white md:text-xl">
+                  {service.name}
+                </h3>
+                <p className="mt-3 text-base leading-relaxed text-white/70">
+                  {service.description}
+                </p>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
