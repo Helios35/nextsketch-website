@@ -17,11 +17,12 @@ import { LANDING } from "@/content/copy";
  *
  * Unit 03 (owner-directed): the interim Unsplash still is replaced by
  * the owner-supplied orbit footage, scroll-scrubbed — the section is
- * a runway, the content sits on a sticky one-viewport stage
- * (`data-hero-stage`), and <HeroOrbit> stretches the runway and maps
- * scroll onto the orbit so scrolling rotates the camera around the
- * subject. No-JS / reduced-motion keep the one-viewport hero over the
- * static poster frame.
+ * a runway (`data-hero-runway`, min-height reserved in globals.css
+ * before first paint, scripting + motion-safe gated), the content
+ * sits on a sticky one-viewport stage (`data-hero-stage`), and
+ * <HeroOrbit> maps scroll onto the orbit so scrolling rotates the
+ * camera around the subject. No-JS / reduced-motion keep the
+ * one-viewport hero over the static poster frame.
  *
  * Server component; the interactive pieces are <HeroCta>, which opens
  * the qualification modal, and the decorative <HeroOrbit> backdrop.
@@ -38,12 +39,17 @@ export function Hero() {
   const words = LANDING.headline.split(" ");
 
   return (
-    <section aria-labelledby="hero-headline" className="relative">
+    <section
+      aria-labelledby="hero-headline"
+      data-hero-runway
+      className="relative"
+    >
       {/* The sticky stage: one viewport of hero content pinned while
-          the section's runway (set by <HeroOrbit>, motion-safe only)
+          the section's runway (globals.css [data-hero-runway] —
+          scripting + motion-safe gated, present before first paint)
           scrolls past underneath — scroll drives the orbit. Without
-          JS the runway is never applied and this renders exactly the
-          one-viewport hero. */}
+          JS or under reduced motion the runway never applies and this
+          renders exactly the one-viewport hero. */}
       <div
         data-hero-stage
         className="sticky top-0 flex min-h-dvh w-full flex-col items-start justify-end gap-8 overflow-hidden"

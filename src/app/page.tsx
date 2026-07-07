@@ -27,9 +27,18 @@ export default function Home() {
     <>
       <ScrollVideo
         sources={[
-          "/backdrop-strategist.mp4",
-          "/backdrop-builder.mp4",
-          "/backdrop-partner.mp4",
+          {
+            src: "/backdrop-strategist.mp4",
+            poster: "/backdrop-strategist-poster.jpg",
+          },
+          {
+            src: "/backdrop-builder.mp4",
+            poster: "/backdrop-builder-poster.jpg",
+          },
+          {
+            src: "/backdrop-partner.mp4",
+            poster: "/backdrop-partner-poster.jpg",
+          },
         ]}
       />
       <SiteNav />

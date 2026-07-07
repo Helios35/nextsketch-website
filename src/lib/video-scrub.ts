@@ -21,6 +21,7 @@ export function createVideoScrubber(video: HTMLVideoElement): VideoScrubber {
   let frame = 0;
   let current = 0;
   let progress = 0;
+  let lastWritten = -1;
 
   const step = () => {
     frame = 0;
@@ -30,8 +31,18 @@ export function createVideoScrubber(video: HTMLVideoElement): VideoScrubber {
     current += (target - current) * 0.12;
     const converged = Math.abs(target - current) < 0.02;
     if (converged) current = target;
-    if (!video.seeking) video.currentTime = current;
-    if (!converged || video.seeking) frame = requestAnimationFrame(step);
+    // Never rewrite a value that already landed: a currentTime write
+    // restarts a real seek even at the same position, so an
+    // unconditional write on the converged frame would re-arm the
+    // loop — and the decoder — forever (adversarial review, Unit 03).
+    // The landed state must be a true fixed point.
+    if (!video.seeking && current !== lastWritten) {
+      video.currentTime = current;
+      lastWritten = current;
+    }
+    if (!converged || video.seeking || current !== lastWritten) {
+      frame = requestAnimationFrame(step);
+    }
   };
 
   return {
