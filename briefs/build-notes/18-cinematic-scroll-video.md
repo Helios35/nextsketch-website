@@ -59,6 +59,15 @@ Refuted (2): a claimed stale-backdrop race after runway expansion (scroll events
 
 **Post-fix verification:** gates re-run green (`lint` · `tsc` · `next build` · `banned-terms`); browser re-checked — orbit scrub exact at 0/25/50/75/100% runway, seams crossfade, `/#services` deep-link lands on Services with the runway present pre-paint, idle CPU clean (no `seeked` events while stationary), reduced-motion emulation shows posters with no video fetch beyond metadata.
 
+## Realism regeneration (owner feedback, 2026-07-07 — same day)
+
+Owner review verdict: lighting / camera / scenes spot-on, **person not realistic enough**. All four clips regenerated with the same settings and the same `nate-nextsketch` Element, prompts rewritten for hyper-photorealism (live-action / cinema-camera language, real-skin texture direction, explicit anti-CGI constraints). Two rounds were needed for the hero:
+
+- **Round 2** (jobs `9e3e7eba` orbit · `4e26ece1` strategist · `d72e0113` builder · `6fa743d3` partner): realism excellent on all four — but the orbit **lost the 360°** (the realism-portrait language biased it into a slow front push-in; caught by frame-tracing 0–7s before install). Backdrops accepted and shipped.
+- **Round 3** (job `fe4bb8b7`, orbit only): prompt restructured to lead with the camera path spelled out phase-by-phase (front at 0s → right profile at 2s → directly behind at 4s → left profile at 6s → front at 8s, constant radius, never zooming). Full 360° confirmed by frame-tracing **and** hyper-real. Shipped.
+
+Higgsfield's "3D RENDER" preset suggestion (ironically triggered by the anti-CGI phrasing) was declined on all regenerations; the previous round's "IN THE DARK" decline stands. Shipped encodes (same recipe): hero 2.5 MB · strategist 3.6 MB · builder 3.3 MB · partner 2.6 MB; posters re-extracted. No code changed — assets swapped in place under the same names; scrub re-verified in the browser after the swap (orbit 0→8.04s exact at runway quarters, paused throughout).
+
 ## Open for Nate
 
 1. Approve the four clips (or ask for re-rolls — the identity Element `nate-nextsketch` is reusable; each re-roll is one `generate_video` call away).
