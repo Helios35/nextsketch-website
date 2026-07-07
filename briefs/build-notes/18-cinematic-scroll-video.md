@@ -68,6 +68,15 @@ Owner review verdict: lighting / camera / scenes spot-on, **person not realistic
 
 Higgsfield's "3D RENDER" preset suggestion (ironically triggered by the anti-CGI phrasing) was declined on all regenerations; the previous round's "IN THE DARK" decline stands. Shipped encodes (same recipe): hero 2.5 MB · strategist 3.6 MB · builder 3.3 MB · partner 2.6 MB; posters re-extracted. No code changed — assets swapped in place under the same names; scrub re-verified in the browser after the swap (orbit 0→8.04s exact at runway quarters, paused throughout).
 
+## Kling 3.0 regeneration (owner feedback round 2, 2026-07-07 — likeness + approachability)
+
+Owner verdict on the Seedance clips: everything perfect except the person's look — and the expression read too serious/intimidating; directive to regenerate on **Kling 3.0** with an approachable, pleasant look. Two findings from execution:
+
+1. **Kling 3.0 text-to-video cannot hold the Element identity.** Its media inputs are start/end frames only; the `nate-nextsketch` Element degrades to a text description (`kling_element_ids`), and all four straight text-to-video takes produced *different men* (caught by frame-checks before install; jobs `a606b13f`/`8043f901`/`c37206ef`/`7e6dff8d`, discarded).
+2. **The working pipeline is keyframe-first:** identity-locked hyper-photoreal stills via **Nano Banana 2** (Elements-compatible; jobs `98d3e865` orbit · `aa1ca95d` strategist · `2a4dfbcc` builder · `627cee2f` partner v2 — the first partner still had a stray phone-to-ear and was re-rolled) → each still fed to **Kling 3.0 as `start_image`** with the motion prompt (image-to-video). Identity, wardrobe, and the warm approachable expression hold through the motion; the orbit keeps the phase-by-phase 360° path (front → profile → back at 4s → profile → front, frame-traced).
+
+Shipped Kling jobs: orbit `5daf266f` (**mode `pro` = 1920×1080** — Kling's `std` outputs 720p, so pro delivers the owner's 1080p on the money shot; backdrops `9f95571e`/`7143078a`/`263622aa` in std/720p, matching their shipped resolution). Same encode recipe; hero 4.8 MB, backdrops ~2.8 MB. Assets swapped in place again — no code changes; scrub re-verified post-swap (orbit exact at runway quarters; backdrop seek instrumentation confirms clips advance correctly through their bands). Expression across all four is now warm/approachable per directive.
+
 ## Open for Nate
 
 1. Approve the four clips (or ask for re-rolls — the identity Element `nate-nextsketch` is reusable; each re-roll is one `generate_video` call away).
