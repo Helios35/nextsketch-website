@@ -14,6 +14,13 @@ interface PlaceholderProps {
    * specs). Text takes the paired -ink per the pairing rule.
    */
   accent?: AccentName;
+  /**
+   * Surface the placeholder sits on. "ink" is the redesign's dark
+   * treatment (hairline glass per docs/04-ux-spec.md §Surfaces);
+   * "paper" is the retired light default, kept for the dormant
+   * sections.
+   */
+  surface?: "paper" | "ink";
   /** Visible site copy inside the block (from a content constant). */
   label?: string;
   className?: string;
@@ -50,6 +57,7 @@ export function Placeholder({
   index,
   ratio = "16/9",
   accent,
+  surface = "paper",
   label,
   className,
 }: PlaceholderProps) {
@@ -60,10 +68,12 @@ export function Placeholder({
       data-placeholder={name}
       className={[
         RATIO_CLASS[ratio],
-        "relative grid place-items-center overflow-hidden rounded-lg border",
-        accent === undefined
-          ? "border-ink/10 bg-paper-bright text-ink"
-          : TINT_CLASS[accent],
+        "relative grid place-items-center overflow-hidden border",
+        surface === "ink"
+          ? "rounded-none border-white/15 bg-white/[0.03] text-white/55"
+          : accent === undefined
+            ? "rounded-lg border-ink/10 bg-paper-bright text-ink"
+            : `rounded-lg ${TINT_CLASS[accent]}`,
         className,
       ]
         .filter(Boolean)
@@ -81,9 +91,11 @@ export function Placeholder({
         )}
         <span
           className={
-            label === undefined
-              ? "font-hand text-xl opacity-40"
-              : "font-hand text-sm opacity-50"
+            surface === "ink"
+              ? "font-mono text-xs tracking-[0.14em] uppercase opacity-50"
+              : label === undefined
+                ? "font-hand text-xl opacity-40"
+                : "font-hand text-sm opacity-50"
           }
         >
           {name}

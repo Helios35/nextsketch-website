@@ -5,6 +5,9 @@ import type { Service } from "@/lib/types";
  * docs/06-taxonomy.md §1; descriptions verbatim from Messaging Kit §05.
  */
 
+/** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
+export const SERVICES_EYEBROW = "What we build";
+
 export const SERVICES_HEADLINE =
   "Software products and agentic systems — built for how your business actually works.";
 

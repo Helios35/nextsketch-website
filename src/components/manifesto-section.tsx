@@ -1,56 +1,66 @@
-import { Reveal } from "@/components/reveal";
+import { Parallax } from "@/components/parallax";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
-import { SketchAccent } from "@/components/sketch-accent";
 import { MANIFESTO } from "@/content/copy";
 
 /**
- * Presentation marker, not copy: underline the reframe the section
- * exists to land (docs/04-ux-spec.md §Sketch accents — underline
- * strokes beneath key headline words). Degrades to no underline if
- * the canonical copy changes.
+ * Presentation marker, not copy: the reframe phrase the section
+ * exists to land takes the gold payoff treatment (docs/04-ux-spec.md
+ * §Typography — at most a couple of accent words inside a white
+ * display heading). Degrades to an unaccented headline if the
+ * canonical copy changes.
  */
-const UNDERLINED_PHRASE = "actually need";
+const ACCENT_PHRASE = "actually need";
 
 /**
- * Manifesto (#why) — reframe the problem
- * (docs/03-site-architecture.md row 3). Statement headline with the
- * body paragraphs offset right, per the editorial rhythm of the
- * reference layout.
+ * Manifesto (#why) — reframe the problem. Rebuilt in place to the
+ * hero-derived design system (Redesign Unit 02): a full-width ink
+ * band on the shared gutter rhythm, the mono "(01)" eyebrow, a
+ * display statement with the gold payoff phrase, and the body offset
+ * right in the two-column editorial rhythm. Entrances are the shared
+ * ScrollReveal at the hero stagger (0 / 120 / 200ms); the body block
+ * carries the shared whisper parallax.
  */
 export function ManifestoSection() {
   const headline = MANIFESTO.headline;
-  const phraseStart = headline.indexOf(UNDERLINED_PHRASE);
+  const phraseStart = headline.indexOf(ACCENT_PHRASE);
 
   return (
-    <div className="py-24 md:py-36">
-      <Reveal>
-        <SectionHeading className="max-w-4xl">
-          {phraseStart === -1 ? (
-            headline
-          ) : (
-            <>
-              {headline.slice(0, phraseStart)}
-              <span className="relative inline-block">
-                {UNDERLINED_PHRASE}
-                <SketchAccent
-                  variant="underline"
-                  accent="rose"
-                  strokeWidth={5}
-                  className="absolute -bottom-1 left-0 h-auto w-full md:-bottom-2"
-                />
-              </span>
-              {headline.slice(phraseStart + UNDERLINED_PHRASE.length)}
-            </>
-          )}
+    <section
+      id="why"
+      aria-labelledby="why-headline"
+      className="w-full px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
+    >
+      <ScrollReveal>
+        <SectionHeading
+          index="01"
+          eyebrow={MANIFESTO.eyebrow}
+          className="max-w-4xl [text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
+        >
+          <span id="why-headline">
+            {phraseStart === -1 ? (
+              headline
+            ) : (
+              <>
+                {headline.slice(0, phraseStart)}
+                <span className="text-gold">{ACCENT_PHRASE}</span>
+                {headline.slice(phraseStart + ACCENT_PHRASE.length)}
+              </>
+            )}
+          </span>
         </SectionHeading>
-      </Reveal>
-      <div className="mt-12 grid gap-8 md:mt-16 md:grid-cols-2 md:gap-12 lg:ml-auto lg:max-w-4xl">
-        {MANIFESTO.body.map((paragraph, i) => (
-          <Reveal key={paragraph} delay={i * 0.1}>
-            <p className="text-lg leading-relaxed text-ink/80">{paragraph}</p>
-          </Reveal>
-        ))}
-      </div>
-    </div>
+      </ScrollReveal>
+      <Parallax className="lg:ml-auto lg:max-w-4xl">
+        <div className="mt-12 grid gap-8 md:mt-16 md:grid-cols-2 md:gap-12">
+          {MANIFESTO.body.map((paragraph, i) => (
+            <ScrollReveal key={paragraph} delay={120 + i * 80}>
+              <p className="text-base leading-relaxed text-white/70 md:text-lg">
+                {paragraph}
+              </p>
+            </ScrollReveal>
+          ))}
+        </div>
+      </Parallax>
+    </section>
   );
 }

@@ -90,9 +90,9 @@ Computed in `src/lib/lead-format.ts` (`leadSignal`). The pre-pivot set (`qualifi
 
 Token names — `paper` · `paper-bright` · `ink` · `white` · `gold`/`gold-ink` · `lavender`/`lavender-ink` · `rose`/`rose-ink` · `sage`/`sage-ink` — remain defined in `src/app/globals.css`; Tailwind theme keys use exactly these names (**CURRENT**). The design system uses four of them (**CURRENT**): `ink` (page surface), `white` (text), and **`gold`/`gold-ink` — the only accent** (decision-log #14). The rest are **orphaned** (**CHANGED**): `lavender`/`rose`/`sage` (+ `-ink` pairs) and `paper-bright` have no design role and are unavailable to new sections; `paper` is orphaned with one live exception — the 404 surface (**CURRENT**). Removing orphaned tokens from `globals.css` is a future owner-approved code change. Pairing rule (accent bg ⇒ paired `-ink` text) is **CURRENT/binding**. Full detail in `04-ux-spec.md` §Color.
 
-## 6. Section IDs (anchor names) — **RETIRED** (old set) · anchors for the redesign TBD
+## 6. Section IDs (anchor names) — **CURRENT** (redesign set) · **RETIRED** (held-section IDs)
 
-The old anchor set (`top` · `why` · `process` · `work` · `services` · `about` · `voices` · `fit` · `faq` · `start`) and the nav labels that targeted it belong to the **retired** multi-section build; the values still exist dormant in `src/content/copy.ts` (`NAV`). The live single screen has no anchor nav. The redesign sections (Manifesto, Services, Process, About, Final CTA — decision-log #13) will define their anchor IDs per-section as each is designed; where an old ID fits (`why`, `services`, `process`, `about`, `start`), reusing it is the default, but that call is made per section unit, not here.
+The live anchor set (Redesign Unit 02, decision-log #13): `top` (page top — nav/footer wordmark target, on `<main>`) · `why` (Manifesto) · `services` · `process` · `about` · `start` (Final CTA). These reuse the fitting old IDs, as this section anticipated. `NAV.items` targets `why` / `services` / `process` / `about`; `start` is reached via the CTAs and the footer, not a nav item. The remaining old IDs (`work` · `voices` · `fit` · `faq`) belong to the held sections and stay dormant with them — reactivating any requires a new decision (#13).
 
 ## 7. Placeholder assets (naming convention) — **CURRENT** (convention) · **RETIRED** (old inventory)
 

@@ -1,69 +1,97 @@
 import { PlusIcon } from "@/components/plus-icon";
-import { Reveal } from "@/components/reveal";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
-import { SketchAccent } from "@/components/sketch-accent";
 import { PROCESS } from "@/content/copy";
 
 /**
- * Process (#process) — the interactive centerpiece
- * (docs/04-ux-spec.md §Component specs): four rows, one open at a
- * time, Strategy open by default, the open phase's number circled in
- * its accent. Built on native <details name> exclusive accordions —
- * works without JS (Business Rules E3), keyboard-accessible by
- * default, and needs no animation primitive beyond the existing
- * <SketchAccent> draw-on (the circle mounts visible when its row
- * opens, which is when the viewport trigger fires). Desktop rows and
- * the mobile accordion are the same control at different type scales.
+ * Presentation marker, not copy: the retention promise the headline
+ * builds to takes the gold payoff treatment (docs/04-ux-spec.md
+ * §Typography — at most a couple of accent words inside a white
+ * display heading). The period rides along so the final beat lands
+ * as one gold unit after three white ones. Degrades to an unaccented
+ * headline if the canonical copy changes.
+ */
+const ACCENT_PHRASE = "Stay.";
+
+/**
+ * Process (#process) — the interactive centerpiece, rebuilt in place
+ * to the hero-derived design system (Redesign Unit 02): a full-width
+ * ink band on the shared gutter rhythm, the mono "(03)" eyebrow, and
+ * hairline-divided phase rows on the white alpha ladder. The native
+ * <details name> exclusive accordion is canonical (build-note 03) and
+ * survives the redesign untouched — works without JS (Business Rules
+ * E3), keyboard-accessible by default, Strategy open on load. What
+ * changed is the skin: the retired <SketchAccent> circle draw-on
+ * becomes the open row's phase number turning gold (the system's one
+ * accent doing the same "you are here" work), and the handwritten
+ * rose margin note becomes the gold-italic aside — the one sanctioned
+ * italic (docs/04-ux-spec.md §Color). Entrances swap Reveal for the
+ * shared ScrollReveal at the hero stagger (heading 0ms, rows
+ * 120 + i·80ms); no Parallax here — the interaction is the moment.
  */
 export function ProcessSection() {
+  const headline = PROCESS.headline;
+  const phraseStart = headline.indexOf(ACCENT_PHRASE);
+
   return (
-    <div className="py-24 md:py-32">
-      <Reveal>
-        <SectionHeading className="max-w-4xl">{PROCESS.headline}</SectionHeading>
-      </Reveal>
-      <div className="mt-14 md:mt-20">
+    <section
+      id="process"
+      aria-labelledby="process-headline"
+      className="w-full px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
+    >
+      <ScrollReveal>
+        <SectionHeading
+          index="03"
+          eyebrow={PROCESS.eyebrow}
+          className="max-w-4xl [text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
+        >
+          <span id="process-headline">
+            {phraseStart === -1 ? (
+              headline
+            ) : (
+              <>
+                {headline.slice(0, phraseStart)}
+                <span className="text-gold">{ACCENT_PHRASE}</span>
+                {headline.slice(phraseStart + ACCENT_PHRASE.length)}
+              </>
+            )}
+          </span>
+        </SectionHeading>
+      </ScrollReveal>
+      {/* The closing hairline lives on the container: `last:` on the
+          <details> would fire on every row (each is the sole child of
+          its ScrollReveal wrapper) and double the dividers. */}
+      <div className="mt-14 border-b border-white/10 md:mt-20">
         {PROCESS.phases.map((phase, i) => (
-          <Reveal key={phase.slug}>
+          <ScrollReveal key={phase.slug} delay={120 + i * 80}>
             <details
               name="process-phase"
               open={i === 0}
-              className="group border-t border-ink/10 last:border-b"
+              className="group border-t border-white/10"
             >
-              <summary className="flex cursor-pointer list-none items-baseline gap-5 py-6 select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink md:gap-8 md:py-8 [&::-webkit-details-marker]:hidden">
-                <span className="relative inline-flex w-10 shrink-0 justify-center text-sm font-semibold tracking-widest text-ink/60 md:w-14 md:text-base">
+              <summary className="flex cursor-pointer list-none items-baseline gap-5 py-6 select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:gap-8 md:py-8 [&::-webkit-details-marker]:hidden">
+                <span className="inline-flex w-10 shrink-0 justify-center font-mono text-sm tracking-[0.14em] text-white/55 transition-colors duration-150 group-open:text-gold md:w-14 md:text-base">
                   {phase.order}
-                  <SketchAccent
-                    variant="circle"
-                    accent={phase.accent}
-                    strokeWidth={8}
-                    className="pointer-events-none absolute top-1/2 left-1/2 hidden h-auto w-14 -translate-x-1/2 -translate-y-1/2 group-open:block md:w-18"
-                  />
                 </span>
-                <span className="grow text-2xl font-semibold tracking-tight md:text-4xl">
+                <span className="grow text-2xl font-medium tracking-tight text-white md:text-4xl">
                   {phase.name}
                 </span>
-                <PlusIcon />
+                <span className="flex shrink-0 self-center text-white/40">
+                  <PlusIcon />
+                </span>
               </summary>
               <div className="pb-8 pl-15 md:pb-10 md:pl-22">
-                <p className="max-w-prose text-base leading-relaxed text-ink/80 md:text-lg">
+                <p className="max-w-prose text-base leading-relaxed text-white/70 md:text-lg">
                   {phase.description}
                 </p>
                 {phase.slug === "validate" && (
-                  <p className="mt-5 flex items-end gap-3 font-hand text-2xl text-rose-ink">
-                    <span>{PROCESS.annotation}</span>
-                    <SketchAccent
-                      variant="arrow"
-                      accent="rose"
-                      strokeWidth={5}
-                      className="h-auto w-8 -scale-y-100"
-                    />
-                  </p>
+                  <p className="mt-5 text-gold italic">{PROCESS.annotation}</p>
                 )}
               </div>
             </details>
-          </Reveal>
+          </ScrollReveal>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
