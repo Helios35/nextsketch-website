@@ -11,7 +11,9 @@ import { NOT_FOUND } from "@/content/copy";
  */
 export default function NotFound() {
   return (
-    <main className="flex grow items-center bg-paper text-ink">
+    /* [color-scheme:light] — the site-wide dark color-scheme (globals)
+       must not leak dark scrollbars/controls onto the one light page. */
+    <main className="flex grow items-center bg-paper text-ink [color-scheme:light]">
       <Container className="py-24">
         <SectionHeading as="h1" eyebrow={NOT_FOUND.eyebrow}>
           {NOT_FOUND.headline}

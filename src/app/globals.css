@@ -114,6 +114,15 @@
   }
 }
 
+/*
+ * The page is ink — tell the browser so native UI (scrollbars,
+ * form controls) renders dark instead of clashing white against the
+ * full-page dark surface (Redesign Unit 02).
+ */
+html {
+  color-scheme: dark;
+}
+
 section[id] {
   scroll-margin-top: 5rem;
 }

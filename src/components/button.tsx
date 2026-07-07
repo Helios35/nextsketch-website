@@ -35,8 +35,10 @@ const VARIANTS: Record<ButtonVariant, string> = {
     "border border-ink bg-transparent text-ink focus-visible:outline-ink",
   /** The advance surface on ink (nav / final CTA): white bg / ink text. */
   inverse: "bg-white text-ink focus-visible:outline-white",
-  /** Secondary's role on ink surfaces (dark qualification modal): white hairline. */
-  ghost: "border border-white/40 bg-transparent text-white focus-visible:outline-white",
+  /** Secondary's role on ink surfaces (§Interaction vocabulary): white hairline. */
+  ghost:
+    "border border-white/30 bg-transparent text-white transition-colors " +
+    "hover:border-white/60 hover:bg-white/[0.06] focus-visible:outline-white",
 };
 
 /** Hairline divider between the label and arrow segments, per surface. */

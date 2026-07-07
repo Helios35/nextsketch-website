@@ -36,9 +36,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full bg-ink antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-ink font-sans text-white">
+      {/* The page surface lives on <html> (the canvas) so the fixed
+          -z-10 scroll-video backdrop paints above it while staying
+          below all in-flow content. */}
+      <body className="flex min-h-full flex-col font-sans text-white">
         <QualificationModalProvider>{children}</QualificationModalProvider>
         <Analytics />
       </body>

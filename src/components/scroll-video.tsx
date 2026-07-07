@@ -6,96 +6,85 @@ import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 interface ScrollVideoProps {
   /** Self-hosted asset under /public (never a remote URL). */
   src: string;
-  className?: string;
 }
 
 /**
- * Scroll-play background video (Redesign Unit 02, owner-approved:
- * ambient play + parallax). The muted loop plays only while its band
- * is on screen and drifts with a gentle parallax inside the
- * `scale-110` headroom, under the hero's image-band treatment
- * (`ink/40` overlay + bottom scrim) so foreground text stays legible.
- * Decorative by contract: aria-hidden, no audio, no controls.
+ * Scroll-synced background video (Redesign Unit 02, owner-directed
+ * revision 2026-07-06 — supersedes the ambient-play/Services-band
+ * checkpoint call): the footage is the site's fixed backdrop and its
+ * timeline is driven by scroll. Each animation frame eases
+ * currentTime toward the page's scroll progress, so frames advance
+ * only while the visitor scrolls and freeze the moment scrolling
+ * stops. The element never play()s — no autoplay, no audio, no
+ * controls; decorative by contract (aria-hidden).
  *
- * Fallbacks: reduced-motion never calls play() (static first frame,
- * no drift); without JS the <video> never plays and the overlays keep
- * the band legible over the poster frame.
+ * Painting: fixed inset-0 at -z-10 — above the root ink canvas
+ * (globals.css moves the page surface to <html> for exactly this),
+ * below all in-flow content. The hero's own image band covers it for
+ * the first viewport; below that, the hero's image-band treatment
+ * (ink/40 overlay + bottom scrim, built in here) keeps foreground
+ * text legible over the footage.
+ *
+ * Fallbacks: reduced-motion never scrubs (static first frame under
+ * the same overlays — no motion, ever); no-JS gets the same static
+ * frame; before metadata loads the ink canvas shows through.
  */
-export function ScrollVideo({ src, className }: ScrollVideoProps) {
+export function ScrollVideo({ src }: ScrollVideoProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const reduceMotion = usePrefersReducedMotion();
 
-  // Ambient play/pause — plays only while the band is on screen.
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video === null || reduceMotion) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          void video.play().catch(() => {
-            // Autoplay rejection (browser policy) degrades to the
-            // static poster frame — the reduced-motion state.
-          });
-        } else {
-          video.pause();
-        }
-      },
-      { threshold: 0.1 },
-    );
-    observer.observe(video);
-    return () => {
-      observer.disconnect();
-      video.pause();
-    };
-  }, [reduceMotion]);
-
-  // Parallax drift within the scale-110 headroom (transform composes
-  // with the standalone Tailwind `scale` property, so the class and
-  // the inline translate never fight).
   useEffect(() => {
     const video = videoRef.current;
     if (video === null || reduceMotion) return;
 
     let frame = 0;
-    const update = () => {
-      frame = 0;
-      const rect = video.getBoundingClientRect();
-      const viewportCenter = window.innerHeight / 2;
-      const bandCenter = rect.top + rect.height / 2;
-      const progress = (viewportCenter - bandCenter) / window.innerHeight;
-      const shift = Math.max(-24, Math.min(24, progress * 48));
-      video.style.transform = `translate3d(0, ${shift.toFixed(2)}px, 0)`;
-    };
-    const request = () => {
-      if (frame === 0) frame = requestAnimationFrame(update);
+    let current = 0;
+
+    const progress = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
     };
 
-    update();
+    const step = () => {
+      frame = 0;
+      const duration = video.duration;
+      if (!Number.isFinite(duration) || duration <= 0) return;
+      const target = progress() * duration;
+      // Ease toward the scroll position; stop the loop (and the
+      // footage) once converged — "plays" only while scrolling.
+      current += (target - current) * 0.14;
+      if (Math.abs(target - current) < 1 / 60) {
+        current = target;
+      } else {
+        frame = requestAnimationFrame(step);
+      }
+      video.currentTime = current;
+    };
+    const request = () => {
+      if (frame === 0) frame = requestAnimationFrame(step);
+    };
+
+    request();
     window.addEventListener("scroll", request, { passive: true });
     window.addEventListener("resize", request, { passive: true });
+    video.addEventListener("loadedmetadata", request);
     return () => {
       if (frame !== 0) cancelAnimationFrame(frame);
       window.removeEventListener("scroll", request);
       window.removeEventListener("resize", request);
-      video.style.transform = "";
+      video.removeEventListener("loadedmetadata", request);
     };
   }, [reduceMotion]);
 
   return (
-    <div
-      aria-hidden="true"
-      className={["absolute inset-0 overflow-hidden", className]
-        .filter(Boolean)
-        .join(" ")}
-    >
+    <div aria-hidden="true" className="fixed inset-0 -z-10">
       <video
         ref={videoRef}
         src={src}
         muted
-        loop
         playsInline
-        preload="metadata"
-        className="absolute inset-0 h-full w-full scale-110 object-cover"
+        preload="auto"
+        className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-ink/40" />
       <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
