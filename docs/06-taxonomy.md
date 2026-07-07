@@ -96,7 +96,7 @@ The live anchor set (Redesign Unit 02, decision-log #13): `top` (page top — na
 
 ## 7. Placeholder assets (naming convention) — **CURRENT** (convention) · **RETIRED** (old inventory)
 
-The naming convention stands for any future section asset: `placeholder-{section}-{nn}.{ext}` in `/public/placeholders/`, fixed aspect ratio, swap-in at handoff. The old multi-section placeholder *inventory* (work tiles, testimonial blocks) is **RETIRED** with that build; redesign sections define their asset needs per-section (#13). The live site's only placeholder is the **interim remote hero background image** (`LANDING.backgroundImage`, config not a copy asset) — owner-owed before launch.
+The naming convention stands for any future section asset: `placeholder-{section}-{nn}.{ext}` in `/public/placeholders/`, fixed aspect ratio, swap-in at handoff. The old multi-section placeholder *inventory* (work tiles, testimonial blocks) is **RETIRED** with that build; redesign sections define their asset needs per-section (#13). The interim remote hero background image is **CLOSED** (Unit 03, decision-log #15): the hero and site backdrops are now **shipped brand assets**, not placeholders — `hero-orbit.mp4` / `hero-orbit-poster.jpg` and `backdrop-{strategist,builder,partner}.mp4` + `-poster.jpg` in `/public/` (kebab-case per §8; referenced via `LANDING.backgroundVideo` / `backgroundPoster` and `page.tsx`, config not copy assets).
 
 ## 8. Naming conventions — **CURRENT**
 

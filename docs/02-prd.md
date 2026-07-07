@@ -80,4 +80,4 @@ See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-piv
 1. ~~Stat strip content~~ — closed (Review Note 1: dropped, repurposed to capability strip).
 2. ~~Footer socials~~ — closed (decision-log #4).
 3. OG/social share image — still needs a designed asset at handoff. **Open** (launch-readiness).
-4. Live background image is an interim Unsplash placeholder — replace with a self-hosted brand asset before launch (build-note 08). **Open** (owner-owed).
+4. ~~Live background image is an interim Unsplash placeholder~~ — closed (Unit 03, decision-log #15: self-hosted hero orbit footage + poster shipped, build-note 18).
