@@ -124,6 +124,8 @@ Generalized from the hero's composition and the modal's density:
 
 **The contract — CURRENT (binding).** All motion is **CSS keyframes** declared in `globals.css` `@theme`, applied **`motion-safe:` only**, with full reduced-motion parity (static strip, instant visibility, no transforms). **No `motion/react` import** — the project's `no-restricted-imports` ESLint rule enforces it. Every animation must communicate something (Brand Philosophy §9).
 
+**Scroll-motion architecture — CHANGED (owner-approved at the Unit 02 checkpoint, 2026-07-06).** Scroll-driven motion is **native browser JS triggering CSS** — no motion library, the `motion/react` ban stands. The shared primitives are the only scroll entry points: `ScrollReveal` (IntersectionObserver flips the `rise-in` class — JS triggers, the CSS keyframe animates), `Parallax` (passive scroll listener + rAF writes a transform-only whisper drift, default speed 0.06, used at most once per section), and `ScrollVideo` (the fixed site backdrop whose timeline is **driven by scroll** — see below). Each primitive carries its own reduced-motion and no-JS parity: server HTML is always fully visible, reduced-motion never sees a transform or a moving video.
+
 Shipped vocabulary — reuse these, at these tempos:
 
 | Pattern | Spec | Use |
@@ -144,12 +146,15 @@ Shipped vocabulary — reuse these, at these tempos:
 | Hero content | `rise-in`, staggered | Load | **CURRENT** |
 | Modal open | `modal-in` | Open | **CURRENT** |
 | Modal step | `step-in` | Step change | **CURRENT** |
-| New-section entrances | `rise-in` family, scroll-triggered | Scroll into view | Available to section units (same contract) |
+| Section entrances (all five redesign sections) | `rise-in` via `ScrollReveal`, hero stagger (0 / 120 / 200ms; lists 120 + i·80ms) | Scroll into view | **CURRENT** (Unit 02) |
+| Section depth | `Parallax` whisper drift (speed 0.06, max one per section — Manifesto body, About portrait) | Scroll | **CURRENT** (Unit 02) |
+| Site video backdrop | `ScrollVideo` — fixed `-z-10` backdrop; `currentTime` eased toward scroll progress each frame, so footage advances only while scrolling and freezes when idle; never `play()`s | Scroll | **CURRENT** (Unit 02, owner-revised) |
+| Process open state | Phase number `white/55 → gold` at 150ms (replaces the retired circle draw-on) | Row open | **CURRENT** (Unit 02) |
 | Sketch-accent SVG stroke draw-on · staggered per-word headline · tile lift + arrow draw | — | — | **RETIRED** (sketch system, §Retired) |
 
-### Planned — not yet designed — **PLANNED**
+### Scroll-synced background video — **CHANGED → CURRENT (Unit 02, owner-revised)**
 
-A scroll-driven background **video with parallax** is the recorded motion ambition for the redesigned page (owner intent, 2026-07-06). It is **not designed, specced, or built**; nothing in this unit or the section units assumes it. When taken up it gets its own unit, and must satisfy the same reduced-motion contract. Do not build toward it speculatively.
+The recorded ambition shipped in Redesign Unit 02 and was **revised by the owner the same day** (2026-07-06, superseding the checkpoint's ambient-play/Services-band call): the owner-supplied footage (`public/consulting-video.mp4`, self-hosted) is the **site's fixed backdrop** (`fixed inset-0 -z-10`, above the `html` ink canvas, below all content) and its timeline is **scroll-synced** — each animation frame eases `currentTime` toward the page's scroll progress, so the footage advances only while the visitor scrolls and **freezes the moment scrolling stops**. The element never `play()`s (no autoplay, ever). It sits under the hero's image-band treatment (`ink/40` overlay + bottom viewport scrim) so foreground text stays legible; the hero's own image band covers it for the first viewport. Reduced-motion and no-JS both degrade to the same static first frame under the same overlays.
 
 ## Interaction vocabulary
 
@@ -173,6 +178,7 @@ The shipped screens the system is derived from. Details: build-note 08 and the s
 - **Capability strip — CURRENT.** Glass strip (level 3, light variant) marquee of the **four canonical services** (Taxonomy §1, exact casing) in mono labels with gold diamond separators. No invented numbers, no social proof (Brand Philosophy §10, Rule 4.3). Reads once to assistive tech (duplicate copies `aria-hidden`).
 - **Qualification modal — CURRENT.** The system's elevated glass card: full-screen mobile / centered `560px` card desktop; squared, hairline, `#0a0a0c/95 + backdrop-blur-xl`, deep shadow; mono captions, segmented gold progress, flat-gold selection, divided-arrow advance + ghost Back; ink-72% + 8px-blur backdrop; focus-trapped native `<dialog>`, Esc closes, scroll locked. **Flow / validation / a11y logic per `05-business-rules.md`** — two-door entry (quick door → optional four-question qualifier), off-ramp with "Stay in Touch" capture, success / off-ramp-success / failure-fallback (Rule 2.7, answers preserved). Skin and flow are as-built and untouched by the redesign.
 - **404 — CURRENT.** Light `paper` surface (the one `paper` exception, §Color), kept legible on the dark layout.
+- **Redesign sections (Unit 02) — CURRENT.** The scroll-synced **video backdrop** behind the whole page (§Motion), then Manifesto (`#why`), Services (`#services` — elevated-glass service cards over the backdrop), Process (`#process` — native `<details>` exclusive accordion, gold-on-open numbers), About (`#about` — ink-surface portrait placeholder), Final CTA (`#start` — divided-arrow `ModalTrigger`), plus the re-skinned **fixed nav** (transparent over the hero → elevated glass `#0a0a0c/95 + blur` past 80px, carried on an inner div so the backdrop-filter never clips the mobile overlay; wordmark appears only once scrolled, the hero owns it at top) and **footer** (mono micro-label links, gold display-scale mailto). All five sections are transparent bands over the backdrop: top hairline `white/10`, binding gutters, mono `(0n)` eyebrow via `SectionHeading`, one gold payoff phrase per headline, display headings carrying the licensed over-imagery text shadow. As-built record: build-note 17.
 
 ## Retired: the paper / editorial / sketch-accent system — **RETIRED**
 
