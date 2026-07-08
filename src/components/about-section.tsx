@@ -26,7 +26,15 @@ const ACCENT_PHRASE = "On purpose";
  * photo is the owner-supplied portrait (delivered 2026-07-06),
  * shipped under the taxonomy asset name it replaced
  * (docs/06-taxonomy.md §7) in the layout-final 3/4 crop — the square
- * source center-crops via object-cover.
+ * source center-crops via object-cover. The portrait sits in the
+ * hairline ink-surface frame (white/15 border, white/[0.03] fill)
+ * under the image-band bottom scrim (docs/04-ux-spec.md §Surfaces)
+ * so it carries the same ink grade as the page's footage — untreated,
+ * it read as an outlier (owner feedback, 2026-07-07). The flat ink/40
+ * layer is deliberately omitted: it exists for text legibility over
+ * full-bleed backdrops, and no text rides this image — a judgment
+ * call generalized from the hero recipe per 04-ux-spec §How to build
+ * a new section.
  */
 export function AboutSection() {
   const headline = ABOUT.headline;
@@ -71,22 +79,28 @@ export function AboutSection() {
         </div>
         {/*
           Grid-item placement lives on the ScrollReveal because it is
-          the element the grid actually positions; the wrapped
-          Placeholder fills it.
+          the element the grid actually positions; the framed portrait
+          fills it.
         */}
         <ScrollReveal
           delay={200}
           className="w-full self-center md:max-w-sm md:justify-self-end"
         >
           <Parallax speed={0.06}>
-            <Image
-              src="/placeholders/placeholder-about-01.jpg"
-              alt={ABOUT.portraitAlt}
-              width={1600}
-              height={1600}
-              sizes="(min-width: 768px) 24rem, 100vw"
-              className="aspect-[3/4] w-full border border-white/15 object-cover"
-            />
+            <div className="relative overflow-hidden border border-white/15 bg-white/[0.03]">
+              <Image
+                src="/placeholders/placeholder-about-01.jpg"
+                alt={ABOUT.portraitAlt}
+                width={1600}
+                height={1600}
+                sizes="(min-width: 768px) 24rem, 100vw"
+                className="aspect-[3/4] w-full object-cover"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent"
+              />
+            </div>
           </Parallax>
         </ScrollReveal>
       </div>
