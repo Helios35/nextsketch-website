@@ -55,7 +55,7 @@ export const FOOTER = {
   label: "Footer",
   socials: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/nathan-ivy" },
-    { label: "Behance", href: "https://www.behance.net/nate" },
+    { label: "Behance", href: "https://www.behance.net/nateivy" },
   ],
 } as const;
 
