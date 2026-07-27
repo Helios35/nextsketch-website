@@ -44,17 +44,18 @@ export const NAV = {
 } as const;
 
 /**
- * Footer-only strings. Social platform set locked per
- * docs/decision-log.md #4; hrefs are placeholders — real URLs are
- * owner-owed before launch (launch-readiness check).
+ * Footer-only strings. Social platform set narrowed to the two
+ * accounts that carry real content (owner call 2026-07-27,
+ * superseding docs/decision-log.md #4) — X/Twitter and Instagram are
+ * held back until there is content to link to. Both hrefs are the
+ * owner's real profiles, closing the URLs-owed launch-readiness item.
  */
 export const FOOTER = {
   /** Accessible name of the footer nav landmark. */
   label: "Footer",
   socials: [
-    { label: "LinkedIn", href: "#" },
-    { label: "X / Twitter", href: "#" },
-    { label: "Instagram", href: "#" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/nathan-ivy" },
+    { label: "Behance", href: "https://www.behance.net/nate" },
   ],
 } as const;
 
