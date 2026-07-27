@@ -3,9 +3,9 @@ import { FOOTER, NAV, SITE } from "@/content/copy";
 /**
  * Site footer per docs/03-site-architecture.md §Navigation: the same
  * anchors as the nav, the visible mailto escape hatch (Business
- * Rules 2.6), the legal line (casing per Taxonomy §8), and the three
- * social links per docs/decision-log.md #4 (placeholder hrefs; real
- * URLs owner-owed before launch).
+ * Rules 2.6), the legal line (casing per Taxonomy §8), and the
+ * social links (set + real URLs per FOOTER.socials in
+ * src/content/copy.ts).
  *
  * Dark re-skin (Redesign Unit 02, docs/04-ux-spec.md v3.0): the
  * shared <Container> gives way to the full-width band on the hero
