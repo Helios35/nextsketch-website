@@ -310,6 +310,14 @@ const MAILTO = `mailto:${MODAL_ESCAPE_HATCH.email}`;
 interface QualificationModalProps {
   /** Fired after the native dialog closes; the provider unmounts us. */
   onClose: () => void;
+  /**
+   * Preselects one quick-door need — the service-card CTAs carry their
+   * card's service in here. Seeds initial state only: the visitor can
+   * clear or change it like any other selection, and its conflicting
+   * partner grays out through the same NEED_CONFLICTS path a manual
+   * pick takes.
+   */
+  initialNeed?: NeedValue;
 }
 
 /**
@@ -326,7 +334,10 @@ interface QualificationModalProps {
  * @/lib/qualify. Styling matches the landing template (squared,
  * hairline, glassy, mono labels, flat gold accent).
  */
-export function QualificationModal({ onClose }: QualificationModalProps) {
+export function QualificationModal({
+  onClose,
+  initialNeed,
+}: QualificationModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   /** Modal-open timestamp for the minimum-time check (Rule 2.8); set on mount. */
@@ -335,7 +346,14 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
   /** Open to the quick door (Unit 04 — the low-friction primary path). */
   const [screen, setScreen] = useState<Screen>("quick");
   const [answers, setAnswers] = useState<Answers>({});
-  const [contact, setContact] = useState<ContactFields>(EMPTY_CONTACT);
+  /* Lazy initial state, not an effect: the preselection is there on
+     first paint, so the tab never flashes unselected. Mounting fresh
+     per open (E2) is what keeps this a seed rather than a lock. */
+  const [contact, setContact] = useState<ContactFields>(() =>
+    initialNeed === undefined
+      ? EMPTY_CONTACT
+      : { ...EMPTY_CONTACT, projectTypes: [initialNeed] },
+  );
   const [submitting, setSubmitting] = useState(false);
   /**
    * The form a submit came from — so the failure-fallback's Back returns
