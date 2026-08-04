@@ -81,7 +81,16 @@ export function ServicesSection() {
                   />
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <h3 className="mt-6 text-lg font-medium text-white md:text-xl">
+                {/* One line at every breakpoint (owner direction
+                    2026-08-04). nowrap is the guarantee; the xl step
+                    back down to text-lg is what keeps that guarantee
+                    from becoming an overflow. The 4-up grid starts at
+                    xl, where cards are at their narrowest — at 20px
+                    the longest name cleared the card by under 4px,
+                    which the swap-in font fallback would have eaten.
+                    At 18px it clears by ~24px. 1- and 2-up layouts
+                    have room to spare and keep the larger size. */}
+                <h3 className="mt-6 text-lg font-medium whitespace-nowrap text-white md:text-xl xl:text-lg">
                   {service.name}
                 </h3>
                 <p className="mt-3 text-base leading-relaxed text-white/70">

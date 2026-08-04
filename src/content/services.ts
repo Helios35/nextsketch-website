@@ -2,8 +2,17 @@ import type { ProjectType } from "@/lib/schema";
 import type { Service, ServiceSlug } from "@/lib/types";
 
 /**
- * The four canonical services — names, slugs, and accent pairs per
+ * The four canonical services — slugs and accent pairs per
  * docs/06-taxonomy.md §1; descriptions verbatim from Messaging Kit §05.
+ *
+ * Names shortened to the card forms (owner decision 2026-08-04) so
+ * each card heading holds one line at every breakpoint — the long
+ * forms wrapped to two lines in the four-column layout. This is a
+ * deliberate divergence from Taxonomy §1, which still records the long
+ * forms as CURRENT, and from LANDING.capabilities in copy.ts, where
+ * the hero strip keeps the long forms (a marquee has the room, and the
+ * owner scoped this change to the cards). Both are owner calls to
+ * reconcile — flagged, not silently resolved.
  */
 
 /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
@@ -42,7 +51,7 @@ export const SERVICE_NEED: Record<ServiceSlug, ProjectType> = {
 export const SERVICES = [
   {
     slug: "new-product",
-    name: "New Products from Scratch",
+    name: "New Product",
     description:
       "You have an idea. We validate it, define the scope, and build it into a working product in production.",
     accent: "gold",
@@ -56,14 +65,14 @@ export const SERVICES = [
   },
   {
     slug: "agentic",
-    name: "Agentic Systems Integration",
+    name: "Agentic Systems",
     description:
       "Your product or operations need intelligence built in. We assess where agents create real value and build them in — not because it's trendy, but because it solves the problem.",
     accent: "lavender",
   },
   {
     slug: "partnership",
-    name: "Ongoing Product Partnership",
+    name: "Ongoing Partnership",
     description:
       "The product is live. Now it needs to grow. We stay on retainer to evolve it, maintain it, and build what comes next.",
     accent: "sage",
