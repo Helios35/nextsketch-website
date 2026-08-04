@@ -1,3 +1,4 @@
+import { BrandWordmark } from "@/components/brand-wordmark";
 import { FOOTER, NAV, SITE } from "@/content/copy";
 
 /**
@@ -26,9 +27,9 @@ export function SiteFooter() {
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <a
             href="#top"
-            className="inline-flex min-h-11 items-center font-sans text-lg font-bold tracking-tight text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
-            {SITE.name}
+            <BrandWordmark className="h-7 w-auto" />
           </a>
           <nav aria-label={FOOTER.label}>
             <ul className="flex flex-wrap items-center gap-x-8 gap-y-1">
