@@ -9,6 +9,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { CloseIcon } from "@/components/close-icon";
 import {
   MODAL_CONTACT,
@@ -225,25 +226,6 @@ const GHOST_CLASS =
   "text-base font-medium text-white transition-colors duration-150 " +
   "hover:border-white/60 hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
-/** Inline arrow — the project uses inline SVG icons, never lucide. */
-function ArrowIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="size-[18px]"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-}
-
 /** Inline checkmark — fills the tab's check box when a need is selected. */
 function CheckIcon() {
   return (
@@ -270,7 +252,7 @@ function AdvanceInner({ label, arrow = true }: { label: ReactNode; arrow?: boole
       {arrow && (
         <span className="flex items-center border-l border-ink/15 px-3.5 py-3">
           <span className="transition-[translate] duration-150 motion-safe:group-hover/adv:translate-x-0.5">
-            <ArrowIcon />
+            <ArrowIcon className="size-[18px]" />
           </span>
         </span>
       )}
@@ -713,7 +695,7 @@ export function QualificationModal({
             >
               {MODAL_QUICK.toQualifier}
               <span className="transition-[translate] duration-150 motion-safe:group-hover/more:translate-x-0.5">
-                <ArrowIcon />
+                <ArrowIcon className="size-[18px]" />
               </span>
             </button>
           </>

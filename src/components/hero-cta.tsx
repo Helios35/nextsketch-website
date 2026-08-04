@@ -1,27 +1,9 @@
 "use client";
 
 import type { MouseEvent } from "react";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useQualificationModal } from "@/components/qualification-modal-provider";
 import { MODAL_ESCAPE_HATCH } from "@/content/modal";
-
-/** Inline arrow — the project uses inline SVG icons, never lucide. */
-function ArrowRight() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="size-5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-}
 
 /**
  * Hero CTA — the template's divided-arrow button (a label segment and
@@ -47,7 +29,7 @@ export function HeroCta({ label }: { label: string }) {
       <span className="flex items-center px-6 py-3">{label}</span>
       <span className="flex items-center border-l border-ink/15 px-4 py-3">
         <span className="transition-transform duration-150 motion-safe:group-hover/cta:translate-x-0.5">
-          <ArrowRight />
+          <ArrowIcon className="size-5" />
         </span>
       </span>
     </a>
