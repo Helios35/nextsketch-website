@@ -33,6 +33,12 @@ export const PROJECT_TYPE_VALUES = [
   "partnership",
 ] as const;
 
+/**
+ * The canonical project type as a type — so the service cards can name
+ * the need their CTA preselects without re-declaring the union.
+ */
+export type ProjectType = (typeof PROJECT_TYPE_VALUES)[number];
+
 /** Contact + anti-bot guards every door shares (Business Rules 1.5, 2.8). */
 const leadContact = {
   name: z.string().trim().min(1).max(100),

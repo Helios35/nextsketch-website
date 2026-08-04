@@ -8,9 +8,16 @@ import {
   type ReactNode,
 } from "react";
 import { QualificationModal } from "@/components/qualification-modal";
+import type { ProjectType } from "@/lib/schema";
 
 interface QualificationModalContextValue {
-  openModal: () => void;
+  /**
+   * `need` preselects that project type in the quick door's "What do
+   * you need?" selector — how the service cards carry their card's
+   * service into the form. Omitted, the modal opens with nothing
+   * selected, exactly as every other CTA does.
+   */
+  openModal: (need?: ProjectType) => void;
 }
 
 const QualificationModalContext =
@@ -41,12 +48,27 @@ export function QualificationModalProvider({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const value = useMemo(() => ({ openModal: () => setOpen(true) }), []);
+  /** Preselection for the next open; cleared by the unmount on close. */
+  const [need, setNeed] = useState<ProjectType | undefined>(undefined);
+  const value = useMemo(
+    () => ({
+      openModal: (need?: ProjectType) => {
+        setNeed(need);
+        setOpen(true);
+      },
+    }),
+    [],
+  );
 
   return (
     <QualificationModalContext.Provider value={value}>
       {children}
-      {open && <QualificationModal onClose={() => setOpen(false)} />}
+      {open && (
+        <QualificationModal
+          initialNeed={need}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </QualificationModalContext.Provider>
   );
 }

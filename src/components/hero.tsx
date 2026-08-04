@@ -1,4 +1,5 @@
 import { Fragment, type CSSProperties } from "react";
+import { BrandWordmark } from "@/components/brand-wordmark";
 import { HeroCta } from "@/components/hero-cta";
 import { HeroOrbit } from "@/components/hero-orbit";
 import { LANDING } from "@/content/copy";
@@ -61,11 +62,12 @@ export function Hero() {
           poster={LANDING.backgroundPoster}
         />
 
-        {/* Wordmark — confident restraint, no nav. */}
+        {/* Wordmark — confident restraint, no nav. The brand lockup
+            carries the same legibility treatment the text wordmark had
+            over the footage, as a drop-shadow (text-shadow does not
+            reach SVG fills). */}
         <header className="absolute top-0 left-0 z-10 px-6 py-6 sm:px-8 lg:px-16">
-          <span className="font-sans text-lg font-bold tracking-tight text-white [text-shadow:0_1px_16px_rgba(0,0,0,0.6)]">
-            {LANDING.wordmark}
-          </span>
+          <BrandWordmark className="h-7 w-auto [filter:drop-shadow(0_1px_16px_rgba(0,0,0,0.6))]" />
         </header>
 
         {/* Capability strip — the template's stats marquee, repurposed.

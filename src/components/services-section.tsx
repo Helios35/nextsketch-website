@@ -1,6 +1,13 @@
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
-import { SERVICES, SERVICES_EYEBROW, SERVICES_HEADLINE } from "@/content/services";
+import { ServiceCta } from "@/components/service-cta";
+import {
+  SERVICE_NEED,
+  SERVICES,
+  SERVICES_CTA,
+  SERVICES_EYEBROW,
+  SERVICES_HEADLINE,
+} from "@/content/services";
 
 /**
  * Presentation marker, not copy: the promise the section exists to
@@ -63,7 +70,10 @@ export function ServicesSection() {
               delay={120 + i * 80}
               className="h-full"
             >
-              <div className="h-full border border-white/15 bg-[#0a0a0c]/95 p-6 backdrop-blur-xl transition-colors duration-150 hover:border-white/30 md:p-8">
+              {/* flex-col + mt-auto on the CTA row so the four CTAs
+                  line up across cards whose copy runs to different
+                  lengths. */}
+              <div className="flex h-full flex-col border border-white/15 bg-[#0a0a0c]/95 p-6 backdrop-blur-xl transition-colors duration-150 hover:border-white/30 md:p-8">
                 <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
                   <span
                     aria-hidden="true"
@@ -71,12 +81,28 @@ export function ServicesSection() {
                   />
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <h3 className="mt-6 text-lg font-medium text-white md:text-xl">
+                {/* One line at every breakpoint (owner direction
+                    2026-08-04). nowrap is the guarantee; the xl step
+                    back down to text-lg is what keeps that guarantee
+                    from becoming an overflow. The 4-up grid starts at
+                    xl, where cards are at their narrowest — at 20px
+                    the longest name cleared the card by under 4px,
+                    which the swap-in font fallback would have eaten.
+                    At 18px it clears by ~24px. 1- and 2-up layouts
+                    have room to spare and keep the larger size. */}
+                <h3 className="mt-6 text-lg font-medium whitespace-nowrap text-white md:text-xl xl:text-lg">
                   {service.name}
                 </h3>
                 <p className="mt-3 text-base leading-relaxed text-white/70">
                   {service.description}
                 </p>
+                <div className="mt-auto pt-6">
+                  <ServiceCta
+                    label={SERVICES_CTA}
+                    need={SERVICE_NEED[service.slug]}
+                    service={service.name}
+                  />
+                </div>
               </div>
             </ScrollReveal>
           ))}

@@ -9,6 +9,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { CloseIcon } from "@/components/close-icon";
 import {
   MODAL_CONTACT,
@@ -225,25 +226,6 @@ const GHOST_CLASS =
   "text-base font-medium text-white transition-colors duration-150 " +
   "hover:border-white/60 hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
-/** Inline arrow — the project uses inline SVG icons, never lucide. */
-function ArrowIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="size-[18px]"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-}
-
 /** Inline checkmark — fills the tab's check box when a need is selected. */
 function CheckIcon() {
   return (
@@ -270,7 +252,7 @@ function AdvanceInner({ label, arrow = true }: { label: ReactNode; arrow?: boole
       {arrow && (
         <span className="flex items-center border-l border-ink/15 px-3.5 py-3">
           <span className="transition-[translate] duration-150 motion-safe:group-hover/adv:translate-x-0.5">
-            <ArrowIcon />
+            <ArrowIcon className="size-[18px]" />
           </span>
         </span>
       )}
@@ -310,6 +292,14 @@ const MAILTO = `mailto:${MODAL_ESCAPE_HATCH.email}`;
 interface QualificationModalProps {
   /** Fired after the native dialog closes; the provider unmounts us. */
   onClose: () => void;
+  /**
+   * Preselects one quick-door need — the service-card CTAs carry their
+   * card's service in here. Seeds initial state only: the visitor can
+   * clear or change it like any other selection, and its conflicting
+   * partner grays out through the same NEED_CONFLICTS path a manual
+   * pick takes.
+   */
+  initialNeed?: NeedValue;
 }
 
 /**
@@ -326,7 +316,10 @@ interface QualificationModalProps {
  * @/lib/qualify. Styling matches the landing template (squared,
  * hairline, glassy, mono labels, flat gold accent).
  */
-export function QualificationModal({ onClose }: QualificationModalProps) {
+export function QualificationModal({
+  onClose,
+  initialNeed,
+}: QualificationModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   /** Modal-open timestamp for the minimum-time check (Rule 2.8); set on mount. */
@@ -335,7 +328,14 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
   /** Open to the quick door (Unit 04 — the low-friction primary path). */
   const [screen, setScreen] = useState<Screen>("quick");
   const [answers, setAnswers] = useState<Answers>({});
-  const [contact, setContact] = useState<ContactFields>(EMPTY_CONTACT);
+  /* Lazy initial state, not an effect: the preselection is there on
+     first paint, so the tab never flashes unselected. Mounting fresh
+     per open (E2) is what keeps this a seed rather than a lock. */
+  const [contact, setContact] = useState<ContactFields>(() =>
+    initialNeed === undefined
+      ? EMPTY_CONTACT
+      : { ...EMPTY_CONTACT, projectTypes: [initialNeed] },
+  );
   const [submitting, setSubmitting] = useState(false);
   /**
    * The form a submit came from — so the failure-fallback's Back returns
@@ -695,7 +695,7 @@ export function QualificationModal({ onClose }: QualificationModalProps) {
             >
               {MODAL_QUICK.toQualifier}
               <span className="transition-[translate] duration-150 motion-safe:group-hover/more:translate-x-0.5">
-                <ArrowIcon />
+                <ArrowIcon className="size-[18px]" />
               </span>
             </button>
           </>

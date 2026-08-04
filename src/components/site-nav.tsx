@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { BrandWordmark } from "@/components/brand-wordmark";
 import { CloseIcon } from "@/components/close-icon";
-import { NAV, SITE } from "@/content/copy";
+import { NAV } from "@/content/copy";
 
 /** Scroll depth (px) past which the nav turns solid and shrinks. */
 const SHRINK_SCROLL_Y = 80;
@@ -130,9 +131,9 @@ export function SiteNav() {
           {scrolled ? (
             <a
               href="#top"
-              className="inline-flex min-h-11 items-center font-sans text-lg font-bold tracking-tight text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              {SITE.name}
+              <BrandWordmark className="h-7 w-auto" />
             </a>
           ) : (
             /* The hero owns the wordmark until the bar turns solid;
@@ -178,9 +179,9 @@ export function SiteNav() {
             <a
               href="#top"
               onClick={closeMenu}
-              className="inline-flex min-h-11 items-center font-sans text-lg font-bold tracking-tight text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              {SITE.name}
+              <BrandWordmark className="h-7 w-auto" />
             </a>
             <button
               ref={closeRef}
