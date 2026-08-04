@@ -1,4 +1,5 @@
 import { BrandWordmark } from "@/components/brand-wordmark";
+import { SocialIcon } from "@/components/social-icon";
 import { FOOTER, NAV, SITE } from "@/content/copy";
 
 /**
@@ -41,9 +42,16 @@ import { FOOTER, NAV, SITE } from "@/content/copy";
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
-  /** Shared mono micro-label treatment — anchors and socials alike. */
-  const microLink =
+  /** Mono micro-label treatment — the section anchors. */
+  const anchorLink =
     "inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.14em] text-white/60 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+
+  /**
+   * Icon-only socials: same white/60 -> white as the anchors, but a
+   * square 44px target since there is no label to give it width.
+   */
+  const socialLink =
+    "inline-flex min-h-11 min-w-11 items-center justify-center text-white/60 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
   return (
     <footer className="bg-ink text-white">
@@ -55,22 +63,25 @@ export function SiteFooter() {
           >
             <BrandWordmark className="h-7 w-auto" />
           </a>
-          <ul className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1 md:mt-0">
+          {/* -mx-3 cancels the icons' own 12px of target padding so the
+              first and last glyphs sit optically on the gutters the
+              lockup and the legal line align to. */}
+          <ul className="-mx-3 mt-2 flex flex-wrap items-center gap-y-1 md:mt-0">
             {FOOTER.socials.map(({ label, href }) => (
               <li key={label}>
-                <a href={href} className={microLink}>
-                  {label}
+                <a href={href} aria-label={label} className={socialLink}>
+                  <SocialIcon label={label} />
                 </a>
               </li>
             ))}
           </ul>
         </div>
-        <div className="mt-14 border-t border-white/10 pt-8 lg:grid lg:grid-cols-10 lg:items-center">
+        <div className="mt-8 border-t border-white/10 pt-8 lg:grid lg:grid-cols-10 lg:items-center">
           <nav aria-label={FOOTER.label} className="lg:col-[4/11] lg:row-[1]">
             <ul className="flex flex-wrap items-center gap-x-8 gap-y-1 lg:justify-end">
               {NAV.items.map(({ id, label }) => (
                 <li key={id}>
-                  <a href={`#${id}`} className={microLink}>
+                  <a href={`#${id}`} className={anchorLink}>
                     {label}
                   </a>
                 </li>
