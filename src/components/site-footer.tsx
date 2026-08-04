@@ -3,20 +3,23 @@ import { FOOTER, NAV, SITE } from "@/content/copy";
 
 /**
  * Site footer per docs/03-site-architecture.md §Navigation: the same
- * anchors as the nav, the visible mailto escape hatch (Business
- * Rules 2.6), the legal line (casing per Taxonomy §8), and the
- * social links (set + real URLs per FOOTER.socials in
+ * anchors as the nav, the legal line (casing per Taxonomy §8), and
+ * the social links (set + real URLs per FOOTER.socials in
  * src/content/copy.ts).
+ *
+ * The mailto centerpiece was dropped here (owner direction
+ * 2026-08-04). Business Rules 2.6 is unaffected: it binds the escape
+ * hatch to the modal — every step, the off-ramp, the success screen —
+ * and makes the footer instance conditional ("in a site footer if one
+ * ever ships"). The modal carries it from src/content/modal.ts.
  *
  * Dark re-skin (Redesign Unit 02, docs/04-ux-spec.md v3.0): the
  * shared <Container> gives way to the full-width band on the hero
  * gutter rhythm (px-6 / sm:px-8 / lg:px-16) with the section-opening
- * top hairline; anchors and socials take the mono micro-label voice;
- * the mailto centerpiece becomes the system's gold link treatment at
- * display scale (§Color — links are gold, underlined). All hovers are
- * the 150ms micro-transition; hairlines come from the white alpha
- * ladder (/10). Server component — no interactivity beyond plain
- * anchors.
+ * top hairline; anchors and socials take the mono micro-label voice.
+ * All hovers are the 150ms micro-transition; hairlines come from the
+ * white alpha ladder (/10). Server component — no interactivity
+ * beyond plain anchors.
  *
  * Layout restructured (owner-supplied reference, 2026-08-04) — the
  * reference contributed structure only; every token, face and hover
@@ -24,10 +27,6 @@ import { FOOTER, NAV, SITE } from "@/content/copy";
  * - Identity band: brand lockup left, socials right, md:items-start.
  *   The socials move up out of the legal row, which is what gives the
  *   band a right-hand anchor and the closing row its calm.
- * - The mailto keeps its display-scale centerpiece slot between the
- *   bands — the reference has no equivalent, and demoting it would
- *   cost both the design system's one gold display link and the
- *   Business Rules 2.6 visibility the doc above names.
  * - Closing band: a 10-column grid on lg — legal line held in the
  *   left three columns, section anchors right-aligned across the
  *   remaining seven. Below lg the grid collapses to normal flow.
@@ -66,12 +65,6 @@ export function SiteFooter() {
             ))}
           </ul>
         </div>
-        <a
-          href={`mailto:${SITE.email}`}
-          className="mt-14 inline-block py-1.5 text-2xl font-medium tracking-tight text-gold underline underline-offset-8 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold md:text-4xl"
-        >
-          {SITE.email}
-        </a>
         <div className="mt-14 border-t border-white/10 pt-8 lg:grid lg:grid-cols-10 lg:items-center">
           <nav aria-label={FOOTER.label} className="lg:col-[4/11] lg:row-[1]">
             <ul className="flex flex-wrap items-center gap-x-8 gap-y-1 lg:justify-end">
