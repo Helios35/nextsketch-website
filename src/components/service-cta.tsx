@@ -1,6 +1,7 @@
 "use client";
 
 import type { MouseEvent } from "react";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useQualificationModal } from "@/components/qualification-modal-provider";
 import { MODAL_ESCAPE_HATCH } from "@/content/modal";
 import type { ProjectType } from "@/lib/schema";
@@ -19,25 +20,6 @@ import type { ProjectType } from "@/lib/schema";
  * Forcing it through Button would mean bending Button's padding and
  * hover for one caller.
  */
-
-/** Inline arrow — the project uses inline SVG icons, never lucide. */
-function ArrowIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-}
 
 interface ServiceCtaProps {
   label: string;
@@ -66,7 +48,7 @@ export function ServiceCta({ label, need, service }: ServiceCtaProps) {
     >
       {label}
       <span className="transition-[translate] duration-150 motion-safe:group-hover/cta:translate-x-0.5">
-        <ArrowIcon />
+        <ArrowIcon className="size-4" />
       </span>
     </a>
   );

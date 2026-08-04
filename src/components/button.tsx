@@ -3,6 +3,7 @@ import type {
   ButtonHTMLAttributes,
   ReactNode,
 } from "react";
+import { ArrowIcon } from "@/components/arrow-icon";
 
 type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost";
 
@@ -49,25 +50,6 @@ const DIVIDER: Record<ButtonVariant, string> = {
   ghost: "border-white/30",
 };
 
-/** Inline arrow — the project uses inline SVG icons, never lucide. */
-function ArrowRight() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="size-5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-}
-
 /**
  * Squared button per docs/04-ux-spec.md §Interaction vocabulary
  * (Redesign Unit 02 re-skin — the pill is retired with the paper
@@ -100,7 +82,7 @@ export function Button({
         className={`flex items-center border-l px-4 py-3 ${DIVIDER[variant]}`}
       >
         <span className="transition-transform duration-150 motion-safe:group-hover/button:translate-x-0.5">
-          <ArrowRight />
+          <ArrowIcon className="size-5" />
         </span>
       </span>
     </>
