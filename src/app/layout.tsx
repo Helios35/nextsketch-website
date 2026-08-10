@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { ApolloTracker } from "@/components/apollo-tracker";
 import { QualificationModalProvider } from "@/components/qualification-modal-provider";
 import { SITE } from "@/content/copy";
 import "./globals.css";
@@ -43,7 +44,13 @@ export default function RootLayout({
           below all in-flow content. */}
       <body className="flex min-h-full flex-col font-sans text-white">
         <QualificationModalProvider>{children}</QualificationModalProvider>
+        {/* Both trackers sit together for readability, but they mount
+            differently: <Analytics /> is the first-party cookieless
+            pageview tracker and renders here, while <ApolloTracker />
+            self-hoists into <head> (beforeInteractive) regardless of
+            where it sits in this tree. */}
         <Analytics />
+        <ApolloTracker />
       </body>
     </html>
   );
