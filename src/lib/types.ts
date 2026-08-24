@@ -72,6 +72,35 @@ export type WorkItem = {
   /** Live product URL. Omitted when the work has no public link. */
   readonly href?: string;
 } & (
-  | { readonly image: string; readonly alt: string }
-  | { readonly image?: undefined; readonly alt?: undefined }
+  | {
+      readonly image: string;
+      readonly alt: string;
+      /**
+       * Which edge the 16/9 crop holds when the source is taller than
+       * the frame. "center" (default) suits mockups whose subject is
+       * vertically centered; "top" suits a full-page screenshot whose
+       * content sits at the top over trailing whitespace.
+       */
+      readonly focal?: "center" | "top";
+      /**
+       * The screenshot's own key, which decides how hard the grading
+       * mask works on it. "light" (default) is a screenshot on a white
+       * or pale ground — it takes the heavier mask so it doesn't glare
+       * against the ink band. "dark" is a screenshot that is already
+       * near-black; it takes almost no mask and a small lift, because
+       * darkening it further would erase it.
+       *
+       * A single uniform overlay cannot do this job: it multiplies, so
+       * it scales every image down together and leaves a white
+       * dashboard roughly nine times brighter than a black CAD tool.
+       * Bringing them to one key means treating them differently.
+       */
+      readonly tone?: "light" | "dark";
+    }
+  | {
+      readonly image?: undefined;
+      readonly alt?: undefined;
+      readonly focal?: undefined;
+      readonly tone?: undefined;
+    }
 );

@@ -85,23 +85,36 @@ export const WORK_ITEMS = [
     name: "Project one",
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
+    image: "/work/work-01.jpg",
+    alt: "A blue handheld kids device beside a phone showing its companion app, with mascot avatars and activity cards.",
   },
   {
     id: "work-02",
     name: "Project two",
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
+    image: "/work/work-02.jpg",
+    alt: "A project planning dashboard with deliverable cards above a team timeline of milestones.",
+    // Content sits at the top over trailing whitespace — a centered
+    // crop would cut the header and the cards under it.
+    focal: "top",
   },
   {
     id: "work-03",
     name: "Project three",
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
+    image: "/work/work-03.jpg",
+    alt: "A dark 3D CAD workspace showing a gear model beside an AI assistant panel.",
+    // The one already-dark screenshot — the light mask would erase it.
+    tone: "dark",
   },
   {
     id: "work-04",
     name: "Project four",
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
+    image: "/work/work-04.jpg",
+    alt: "Two phones showing a media app's sign-in screen and its browsing grid.",
   },
 ] as const satisfies readonly WorkItem[];

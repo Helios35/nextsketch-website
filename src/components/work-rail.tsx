@@ -268,6 +268,46 @@ export function WorkRail({ items, children }: WorkRailProps) {
 }
 
 /**
+ * The grading mask, per screenshot key (owner direction 2026-08-24:
+ * the screenshots arrive in four unrelated palettes — light
+ * periwinkle, white, near-black, white/violet — and read as four loose
+ * stickers on the ink band). It is the §Surfaces image-band recipe
+ * applied for visual consistency rather than text legibility, so it is
+ * split by tone instead of applied flat.
+ *
+ * Measured on the real sources: raw luminance runs 0.99 (the white
+ * dashboard) down to 0.11 (the CAD tool). A single overlay multiplies,
+ * so it drags all four down together and leaves that ratio untouched —
+ * which is why "light" and "dark" carry different masks. A gentle
+ * `contrast` pull does equalize, but it does so by washing UI detail
+ * toward grey, and the screenshots are the section's whole proof, so
+ * it is kept mild and the remaining spread is accepted.
+ *
+ * Static maps, not interpolation: Tailwind only compiles class
+ * literals (the ACCENT_CLASS precedent in sketch-accent.tsx).
+ *
+ * Hover clears the mask entirely — full colour, no grade — so the work
+ * itself is the reward for engaging. Colour and filter shifts run at
+ * the system's micro-transition tempo; only the scale lift is
+ * `motion-safe`-gated, since a value change is not motion.
+ */
+const IMAGE_TONE: Record<"light" | "dark", string> = {
+  /** White or pale ground: desaturate, ease contrast, hold it back. */
+  light:
+    "saturate-[0.78] contrast-[0.95] brightness-[0.95] " +
+    "group-hover/card:saturate-100 group-hover/card:contrast-100 group-hover/card:brightness-100",
+  /** Already near-black: barely touch it, lift it just off the floor. */
+  dark:
+    "saturate-[0.9] brightness-[1.18] " +
+    "group-hover/card:saturate-100 group-hover/card:brightness-100",
+};
+
+const OVERLAY_TONE: Record<"light" | "dark", string> = {
+  light: "bg-ink/45 group-hover/card:bg-ink/5",
+  dark: "bg-ink/10 group-hover/card:bg-transparent",
+};
+
+/**
  * One work card. Linking is per-item: a project with a public URL is a
  * real anchor carrying the gold link affordance and the arrow nudge; a
  * project without one renders the identical card as a plain container,
@@ -277,13 +317,12 @@ export function WorkRail({ items, children }: WorkRailProps) {
  */
 function WorkCard({ item, index }: { item: WorkItem; index: number }) {
   const linked = item.href !== undefined;
+  const tone = item.tone ?? "light";
 
   const body = (
     <>
       {/* Fixed 16/9 frame, independent of the screenshot's real size —
-          every card matches (owner requirement, 2026-08-24). Tall
-          screenshots crop from the top, where a product's meaningful
-          UI lives. */}
+          every card matches (owner requirement, 2026-08-24). */}
       <div className="relative aspect-video overflow-hidden border-b border-white/10 bg-white/[0.03]">
         {item.image !== undefined ? (
           <Image
@@ -292,20 +331,28 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
             width={1600}
             height={900}
             sizes="(min-width: 1024px) 26rem, (min-width: 640px) 24rem, 82vw"
-            className="h-full w-full object-cover object-top transition-transform duration-300 motion-safe:group-hover/card:scale-105"
+            className={`h-full w-full object-cover transition-[scale,filter] duration-300 motion-safe:group-hover/card:scale-105 ${IMAGE_TONE[tone]} ${
+              item.focal === "top" ? "object-top" : "object-center"
+            }`}
           />
         ) : (
           <span className="absolute inset-0 grid place-items-center font-mono text-xs tracking-[0.14em] text-white/40 uppercase">
             {WORK_PLACEHOLDER_LABEL}
           </span>
         )}
-        {/* The §Surfaces bottom scrim, at the reduced weight an
-            unwritten-on image takes (the About portrait precedent):
-            it grades the screenshot into the card, and no text rides
-            it, so the full ink/85 stop would only mute the proof. */}
+        {/* Flat grade, weighted by the screenshot's key (IMAGE_TONE). */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent"
+          className={`absolute inset-0 transition-colors duration-300 ${OVERLAY_TONE[tone]}`}
+        />
+        {/* The §Surfaces bottom scrim, confined to the lower two
+            thirds: it dissolves the image's bottom edge into the card
+            instead of stopping at a hard line above the copy. A
+            full-height `via-ink/25` was tried first and compounded
+            with the flat layer into a muddy middle. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/90 to-transparent"
         />
       </div>
       <div className="flex grow flex-col p-6 md:p-8">
