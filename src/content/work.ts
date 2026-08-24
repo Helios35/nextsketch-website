@@ -40,19 +40,34 @@ export const WORK_EYEBROW = "Work in production";
 export const WORK_HEADLINE =
   "Real Products doing the job they were built to do";
 
-/** Supporting line under the headline. DRAFT pending owner approval. */
+/**
+ * Supporting line under the headline — owner-specified verbatim
+ * (2026-08-24), replacing a DRAFT line that asserted every screen was
+ * live and still running. Two of the four linked projects read as case
+ * studies rather than shipped products, so that claim was not one this
+ * section could stand behind; authorship is.
+ *
+ * NOTE: the brand renders here as "Next Sketch" (two words) because
+ * that is the owner's exact wording. It diverges from
+ * docs/06-taxonomy.md §8, which makes "NextSketch" binding for all
+ * copy and reserves the spaced form for the legal name ("Next Sketch
+ * LLC"). Flagged rather than silently corrected — it is a one-word
+ * change either way, and the owner's call.
+ */
 export const WORK_INTRO =
-  "Every screen here is live software. Built, shipped, and still running.";
+  "Every screen is built and designed by Next Sketch";
 
 /**
- * Per-card link label. Deliberately NOT from the Rule 3.1 CTA set:
- * that set is exhaustive for *conversion* CTAs, and this control is
- * navigation to a live product, not a conversion action — the same
- * reasoning the off-ramp's "Stay in Touch" carve-out records in Rule
- * 3.1. It also avoids the Rule 3.2 banned read-on phrasing by name.
- * DRAFT pending owner approval.
+ * Per-card link label — owner-specified verbatim (2026-08-24).
+ *
+ * Deliberately NOT from the Rule 3.1 CTA set: that set is exhaustive
+ * for *conversion* CTAs, and this control is navigation to the
+ * project's case study, not a conversion action — the same reasoning
+ * the off-ramp's "Stay in Touch" carve-out records in Rule 3.1. It is
+ * also distinct from the Rule 3.2 banned read-on phrasing, which bans
+ * one exact string this is not.
  */
-export const WORK_LINK = "See it live";
+export const WORK_LINK = "See More";
 
 /** Accessible names for the rail and its controls (screen-reader copy). */
 export const WORK_RAIL = {
