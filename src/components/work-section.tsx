@@ -14,7 +14,7 @@ import {
  * most a couple of accent words inside a white display heading).
  * Degrades to an unaccented headline if the canonical copy changes.
  */
-const ACCENT_PHRASE = "in production";
+const ACCENT_PHRASE = "Real Products";
 
 /**
  * Selected work (#work) — the proof band (owner direction 2026-08-24).

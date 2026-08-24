@@ -13,11 +13,10 @@ import type { WorkItem } from "@/lib/types";
  * approval — the same status as the other section eyebrows and the
  * modal/email copy (Rule 4.4).
  *
- * Rule 4.3 (no invented project names or outcomes) is binding and is
- * why WORK_ITEMS ships as owner-owed entries rather than plausible
- * filler: the names, summaries, screenshots and links below are the
- * owner's to supply. Until an item has an `image`, its card renders
- * the layout-final ink placeholder, so the real screenshot swaps in
+ * Rule 4.3 (no invented project names or outcomes) is binding: names,
+ * screenshots and links are the owner's, and the summaries describe
+ * only what each product is. An item with no `image` renders the
+ * layout-final ink placeholder instead, so a later screenshot swaps in
  * with zero layout shift (docs/06-taxonomy.md §7).
  */
 
@@ -25,15 +24,21 @@ import type { WorkItem } from "@/lib/types";
 export const WORK_EYEBROW = "Work in production";
 
 /**
- * Display headline. "in production" takes the gold payoff treatment in
- * the section component (docs/04-ux-spec.md §Typography) and echoes
- * the hero's locked promise ("From idea to production") and the
- * Validate phase's "working software doing the job it was built to
- * do" — the proof band restates the promise as evidence rather than
- * introducing a new claim. DRAFT pending owner approval.
+ * Display headline, owner-specified verbatim (2026-08-24) — the em
+ * dash and "in production" both dropped. It still echoes the Validate
+ * phase's "working software doing the job it was built to do", so the
+ * proof band restates the promise as evidence rather than introducing
+ * a new claim.
+ *
+ * "Real Products" takes the gold payoff treatment in the section
+ * component (docs/04-ux-spec.md §Typography — at most a couple of
+ * words). That phrase is a judgment call, not owner-specified: the
+ * old accent ("in production") is gone with the rewrite, and the
+ * system requires one payoff phrase per headline. It follows the
+ * owner's own capitalisation, which is the emphasis they marked.
  */
 export const WORK_HEADLINE =
-  "Real products in production — doing the job they were built to do.";
+  "Real Products doing the job they were built to do";
 
 /** Supporting line under the headline. DRAFT pending owner approval. */
 export const WORK_INTRO =
@@ -64,14 +69,15 @@ export const WORK_RAIL = {
  * The rail's trailing card — a single control to the full archive
  * instead of a screenshot (owner direction 2026-08-24).
  *
- * The destination is owner-owed ("I will provide all links later"), so
- * `href` is deliberately absent: until it is set the card renders its
- * button in the system's documented disabled state rather than as an
- * anchor pointing nowhere. Adding the URL here is the only change
- * needed to make it live.
+ * Points at the owner's Behance profile (supplied 2026-08-24) — the
+ * same URL the footer's Behance social link already uses. `href` stays
+ * optional on the type: with it unset the card renders its button in
+ * the system's documented disabled state rather than as an anchor
+ * pointing nowhere.
  */
 export const WORK_VIEW_ALL: { label: string; href?: string } = {
   label: "View all",
+  href: "https://www.behance.net/nateivy",
 };
 
 /** Placeholder caption shown on a card whose screenshot is still owed. */
@@ -80,12 +86,22 @@ export const WORK_PLACEHOLDER_LABEL = "Screenshot pending";
 /**
  * The work inventory, in display order.
  *
- * OWNER-OWED (2026-08-24): `name`, `summary`, `image`, `alt` and the
- * optional `href` are the owner's to supply — the screenshots were
- * promised once the section structure existed. The four entries below
- * hold the layout at its final shape; they carry no invented project
- * names or outcomes (Rule 4.3), which is why `name` reads as an
- * explicit slot rather than a plausible client name.
+ * Names and links are the owner's, supplied 2026-08-24; the summaries
+ * are DRAFT, written from each linked project and pending approval.
+ *
+ * `name` is the project's own Behance title rather than the product
+ * name shown inside the screenshot (Genioo, Caddy), because the
+ * Behance title is what the owner published the work under — and
+ * asserting a client's product name on a card would be a claim the
+ * source doesn't make. Two of the four are therefore generic ("SaaS
+ * Platform", "Agentic Platform") and the specifics live in the
+ * summary. Easy to swap if the owner prefers the product names.
+ *
+ * Summaries say only what each product *is*, never how it performed:
+ * the linked pages carry no written description at all (tags and
+ * imagery only), so any outcome claim would be invented (Rule 4.3).
+ * They also sit near 60 characters so they hold two lines at the
+ * narrowest card width, which is the length the owner specified.
  *
  * Screenshots are shipped brand assets, not placeholders, so they land
  * in `/public/work/{id}.{ext}` (kebab-case per Taxonomy §8) — the
@@ -98,17 +114,17 @@ export const WORK_PLACEHOLDER_LABEL = "Screenshot pending";
 export const WORK_ITEMS = [
   {
     id: "work-01",
-    name: "Project one",
-    summary:
-      "Owner-owed: one line on what this product does and who it does it for.",
+    name: "Mascot",
+    summary: "An AI companion device for kids, and the app parents run it.",
+    href: "https://www.behance.net/gallery/197568297/Mascot",
     image: "/work/work-01.webp",
     alt: "A blue handheld kids device beside a phone showing its companion app, with mascot avatars and activity cards.",
   },
   {
     id: "work-02",
-    name: "Project two",
-    summary:
-      "Owner-owed: one line on what this product does and who it does it for.",
+    name: "SaaS Platform",
+    summary: "A team workspace for tracking deliverables and milestones.",
+    href: "https://www.behance.net/gallery/176781989/Saas-Platform",
     image: "/work/work-02.webp",
     alt: "A laptop showing a project planning dashboard with deliverable cards above a team timeline of milestones.",
     // No `focal`: the mockup is 2:1, wider than the 16/9 frame, so the
@@ -120,18 +136,18 @@ export const WORK_ITEMS = [
   },
   {
     id: "work-03",
-    name: "Project three",
-    summary:
-      "Owner-owed: one line on what this product does and who it does it for.",
+    name: "Agentic Platform",
+    summary: "A CAD tool where an embedded agent drafts parts.",
+    href: "https://www.behance.net/gallery/226572695/Agentic-Platform",
     image: "/work/work-03.webp",
     alt: "A laptop showing a dark 3D CAD workspace with a gear model beside an AI assistant panel.",
   },
   {
     id: "work-04",
-    name: "Project four",
-    summary:
-      "Owner-owed: one line on what this product does and who it does it for.",
+    name: "Parcell",
+    summary: "A mobile app for discovering and collecting digital art.",
+    href: "https://www.behance.net/gallery/176762755/Parcell",
     image: "/work/work-04.webp",
-    alt: "Two phones showing a media app's sign-in screen and its browsing grid.",
+    alt: "Two phones showing a digital art app's sign-in screen and its browsing grid.",
   },
 ] as const satisfies readonly WorkItem[];

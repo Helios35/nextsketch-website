@@ -441,10 +441,17 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
           <span aria-hidden="true" className="h-1.5 w-1.5 rotate-45 bg-gold" />
           {String(index + 1).padStart(2, "0")}
         </p>
-        <h3 className="mt-6 text-lg font-medium text-white md:text-xl">
+        {/* One line of title over two of body, fixed (owner
+            requirement, 2026-08-24) — the clamps are a guarantee, not
+            the mechanism: the copy in src/content/work.ts is written
+            to sit inside both at the narrowest card width, so neither
+            ellipsis should ever appear. They exist so a later copy
+            edit can lengthen a card without silently pushing the rail
+            out of alignment. */}
+        <h3 className="mt-6 line-clamp-1 text-lg font-medium text-white md:text-xl">
           {item.name}
         </h3>
-        <p className="mt-3 text-base leading-relaxed text-white/70">
+        <p className="mt-3 line-clamp-2 text-base leading-relaxed text-white/70">
           {item.summary}
         </p>
         {linked && (
