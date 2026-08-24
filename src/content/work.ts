@@ -72,12 +72,12 @@ export const WORK_PLACEHOLDER_LABEL = "Screenshot pending";
  * explicit slot rather than a plausible client name.
  *
  * Screenshots are shipped brand assets, not placeholders, so they land
- * in `/public/work/{id}.jpg` (kebab-case per Taxonomy §8) — the same
- * treatment the hero and backdrop footage got in Unit 03. Any source
- * resolution works: the card frame is a fixed 16/9 box and the image
- * center-crops from the top via object-cover, so every card matches
- * regardless of the screenshot's real dimensions (owner requirement,
- * 2026-08-24).
+ * in `/public/work/{id}.{ext}` (kebab-case per Taxonomy §8) — the
+ * same treatment the hero and backdrop footage got in Unit 03, in
+ * whatever format the owner supplied rather than re-encoded. Any
+ * source resolution works: the card frame is a fixed 16/9 box and the
+ * image crops via object-cover, so every card matches regardless of
+ * the screenshot's real dimensions (owner requirement, 2026-08-24).
  */
 export const WORK_ITEMS = [
   {
@@ -85,7 +85,7 @@ export const WORK_ITEMS = [
     name: "Project one",
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
-    image: "/work/work-01.jpg",
+    image: "/work/work-01.webp",
     alt: "A blue handheld kids device beside a phone showing its companion app, with mascot avatars and activity cards.",
   },
   {
@@ -93,28 +93,29 @@ export const WORK_ITEMS = [
     name: "Project two",
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
-    image: "/work/work-02.jpg",
+    image: "/work/work-02.png",
     alt: "A project planning dashboard with deliverable cards above a team timeline of milestones.",
     // Content sits at the top over trailing whitespace — a centered
     // crop would cut the header and the cards under it.
     focal: "top",
+    // Measured mean luminance 0.92 — the only near-white screenshot in
+    // the set, and the only one that glares under the base grade.
+    tone: "bright",
   },
   {
     id: "work-03",
     name: "Project three",
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
-    image: "/work/work-03.jpg",
+    image: "/work/work-03.webp",
     alt: "A dark 3D CAD workspace showing a gear model beside an AI assistant panel.",
-    // The one already-dark screenshot — the light mask would erase it.
-    tone: "dark",
   },
   {
     id: "work-04",
     name: "Project four",
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
-    image: "/work/work-04.jpg",
+    image: "/work/work-04.webp",
     alt: "Two phones showing a media app's sign-in screen and its browsing grid.",
   },
 ] as const satisfies readonly WorkItem[];

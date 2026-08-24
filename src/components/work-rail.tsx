@@ -275,13 +275,24 @@ export function WorkRail({ items, children }: WorkRailProps) {
  * applied for visual consistency rather than text legibility, so it is
  * split by tone instead of applied flat.
  *
- * Measured on the real sources: raw luminance runs 0.99 (the white
- * dashboard) down to 0.11 (the CAD tool). A single overlay multiplies,
- * so it drags all four down together and leaves that ratio untouched —
- * which is why "light" and "dark" carry different masks. A gentle
- * `contrast` pull does equalize, but it does so by washing UI detail
- * toward grey, and the screenshots are the section's whole proof, so
- * it is kept mild and the remaining spread is accepted.
+ * Measured on the shipped sources rather than eyeballed. Mean
+ * luminance over the unscrimmed top of each frame: 0.57 (kids device),
+ * 0.92 (dashboard), 0.40 (CAD tool), 0.76 (phone mockups). Only the
+ * dashboard is a real outlier, so one base grade carries the set and
+ * `bright` holds that single card back harder — which lands all four
+ * inside a 0.18 band, against 0.52 raw.
+ *
+ * A stronger `contrast` pull would equalize further, but only by
+ * washing UI detail toward grey, and the screenshots are the section's
+ * whole proof — so the pull stays mild and the residual spread is
+ * accepted deliberately.
+ *
+ * There is no "dark" variant, despite the CAD tool reading as dark: it
+ * is bimodal — a near-black app inside a light grey canvas — so
+ * lifting it blows that canvas out and makes it the second-brightest
+ * card in the rail. It takes the base grade like everything else. A
+ * genuinely near-black screenshot would need its own variant; none of
+ * the current set is one.
  *
  * Static maps, not interpolation: Tailwind only compiles class
  * literals (the ACCENT_CLASS precedent in sketch-accent.tsx).
@@ -291,20 +302,19 @@ export function WorkRail({ items, children }: WorkRailProps) {
  * the system's micro-transition tempo; only the scale lift is
  * `motion-safe`-gated, since a value change is not motion.
  */
-const IMAGE_TONE: Record<"light" | "dark", string> = {
-  /** White or pale ground: desaturate, ease contrast, hold it back. */
-  light:
-    "saturate-[0.78] contrast-[0.95] brightness-[0.95] " +
-    "group-hover/card:saturate-100 group-hover/card:contrast-100 group-hover/card:brightness-100",
-  /** Already near-black: barely touch it, lift it just off the floor. */
-  dark:
-    "saturate-[0.9] brightness-[1.18] " +
-    "group-hover/card:saturate-100 group-hover/card:brightness-100",
+const CLEAR =
+  "group-hover/card:saturate-100 group-hover/card:contrast-100 group-hover/card:brightness-100";
+
+const IMAGE_TONE: Record<"light" | "bright", string> = {
+  /** The base grade — mid-toned and mixed screenshots alike. */
+  light: `saturate-[0.85] contrast-[0.95] brightness-[0.95] ${CLEAR}`,
+  /** Near-white screenshot: pulled down harder so it doesn't glare. */
+  bright: `saturate-[0.85] contrast-[0.92] brightness-[0.86] ${CLEAR}`,
 };
 
-const OVERLAY_TONE: Record<"light" | "dark", string> = {
+const OVERLAY_TONE: Record<"light" | "bright", string> = {
   light: "bg-ink/45 group-hover/card:bg-ink/5",
-  dark: "bg-ink/10 group-hover/card:bg-transparent",
+  bright: "bg-ink/50 group-hover/card:bg-ink/5",
 };
 
 /**

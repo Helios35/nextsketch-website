@@ -83,19 +83,24 @@ export type WorkItem = {
        */
       readonly focal?: "center" | "top";
       /**
-       * The screenshot's own key, which decides how hard the grading
-       * mask works on it. "light" (default) is a screenshot on a white
-       * or pale ground — it takes the heavier mask so it doesn't glare
-       * against the ink band. "dark" is a screenshot that is already
-       * near-black; it takes almost no mask and a small lift, because
-       * darkening it further would erase it.
+       * How hard the grading mask works on this screenshot. "light"
+       * (default) suits anything from a mid-toned mockup to a mixed
+       * one; "bright" is for a near-white screenshot that would
+       * otherwise glare against the ink band.
        *
-       * A single uniform overlay cannot do this job: it multiplies, so
-       * it scales every image down together and leaves a white
-       * dashboard roughly nine times brighter than a black CAD tool.
-       * Bringing them to one key means treating them differently.
+       * Measured, not guessed — the four shipped screenshots run
+       * 0.40–0.92 mean luminance, and only the white dashboard (0.92)
+       * needs the stronger hold-back. Under one flat mask its card
+       * reads noticeably hotter than the rest; with "bright" the set
+       * lands inside a 0.18 band.
+       *
+       * There is deliberately no "dark" variant. A genuinely near-black
+       * screenshot would need one, but none of the current set is: the
+       * CAD tool looks dark yet is bimodal — a near-black app inside a
+       * light grey canvas — so lifting it would blow that canvas out
+       * and make it the second-brightest card in the rail.
        */
-      readonly tone?: "light" | "dark";
+      readonly tone?: "light" | "bright";
     }
   | {
       readonly image?: undefined;
