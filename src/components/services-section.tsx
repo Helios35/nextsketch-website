@@ -46,7 +46,7 @@ export function ServicesSection() {
       <div>
         <ScrollReveal>
           <SectionHeading
-            index="02"
+            index="03"
             eyebrow={SERVICES_EYEBROW}
             className="max-w-4xl [text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
           >

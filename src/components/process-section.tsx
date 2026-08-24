@@ -16,7 +16,7 @@ const ACCENT_PHRASE = "Stay.";
 /**
  * Process (#process) — the interactive centerpiece, rebuilt in place
  * to the hero-derived design system (Redesign Unit 02): a full-width
- * ink band on the shared gutter rhythm, the mono "(03)" eyebrow, and
+ * ink band on the shared gutter rhythm, the mono "(04)" eyebrow, and
  * hairline-divided phase rows on the white alpha ladder. The native
  * <details name> exclusive accordion is canonical (build-note 03) and
  * survives the redesign untouched — works without JS (Business Rules
@@ -41,7 +41,7 @@ export function ProcessSection() {
     >
       <ScrollReveal>
         <SectionHeading
-          index="03"
+          index="04"
           eyebrow={PROCESS.eyebrow}
           className="max-w-4xl [text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
         >

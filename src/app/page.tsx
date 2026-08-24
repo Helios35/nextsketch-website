@@ -7,6 +7,7 @@ import { ScrollVideo } from "@/components/scroll-video";
 import { ServicesSection } from "@/components/services-section";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
+import { WorkSection } from "@/components/work-section";
 
 /**
  * The single scrolling page (Redesign Unit 02, decision-log #13):
@@ -44,6 +45,7 @@ export default function Home() {
       <SiteNav />
       <main id="top" className="grow">
         <Hero />
+        <WorkSection />
         <ManifestoSection />
         <ServicesSection />
         <ProcessSection />

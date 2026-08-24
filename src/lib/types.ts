@@ -50,3 +50,28 @@ export interface FaqItem {
   readonly question: string;
   readonly answer: string;
 }
+
+/**
+ * One card in the selected-work rail (#work). Content lives in
+ * src/content/work.ts; Rule 4.3 forbids invented names or outcomes, so
+ * every field here is owner-supplied.
+ *
+ * `image`/`alt` and `href` are optional on purpose, and independently:
+ * a project whose screenshot is still owed renders the layout-final
+ * ink placeholder in the same 16/9 frame (zero layout shift on
+ * swap-in), and a project with no public URL renders as a non-linking
+ * tile rather than a dead link. `alt` is required whenever `image` is
+ * set — enforced by the union below, so a screenshot can never ship
+ * without its accessible description.
+ */
+export type WorkItem = {
+  /** Stable key; also the screenshot's file name under /public/work/. */
+  readonly id: string;
+  readonly name: string;
+  readonly summary: string;
+  /** Live product URL. Omitted when the work has no public link. */
+  readonly href?: string;
+} & (
+  | { readonly image: string; readonly alt: string }
+  | { readonly image?: undefined; readonly alt?: undefined }
+);

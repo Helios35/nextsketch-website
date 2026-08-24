@@ -24,12 +24,20 @@ export const NAV = {
   /** Accessible name of the main nav landmark. */
   label: "Main",
   /**
-   * The five live redesign sections (decision-log #13; anchors per
-   * Redesign Unit 02 brief). #start is reached via the CTA and the
-   * footer, not a nav item. The "Why" label is DRAFT copy pending
-   * owner approval (the held sections' old items are gone with them).
+   * The live section anchors (decision-log #13; anchors per Redesign
+   * Unit 02 brief). #start is reached via the CTA and the footer, not
+   * a nav item. The "Why" label is DRAFT copy pending owner approval
+   * (the held sections' old items are gone with them).
+   *
+   * #work leads (decision-log #16, 2026-08-24): the proof band ships
+   * as the first section under the hero, so it also takes the first
+   * nav tab — a visitor who came for evidence should be one click from
+   * it, which is the whole reason the section exists. This is the
+   * judgment call attached to that unit, not owner-specified: drop
+   * this item and the section is still reachable by scrolling.
    */
   items: [
+    { id: "work", label: "Work" },
     { id: "why", label: "Why" },
     { id: "services", label: "Services" },
     { id: "process", label: "Process" },
@@ -194,18 +202,13 @@ export const PROCESS = {
   ] as const satisfies readonly ProcessPhase[],
 } as const;
 
-/**
- * Selected-work (#work) strings — no canonical copy exists for this
- * section (architecture row 5 defers to the Taxonomy §7 placeholder
- * spec). Headline is DRAFT in brand voice; tileLabel is the UX spec's
- * own placeholder-treatment text (docs/04-ux-spec.md §Component
- * specs, Rule 4.3: no invented project names or outcomes). Both
- * pending owner approval — see briefs/build-notes/04-sections-proof.md.
+/*
+ * Selected-work (#work) copy moved to src/content/work.ts when the
+ * section went live (decision-log #16, 2026-08-24) — it carries a
+ * structured item inventory now, which is the src/content/services.ts
+ * precedent for a section outgrowing this file. The retired
+ * placeholder-tile strings went with the paper-era grid.
  */
-export const WORK = {
-  headline: "Selected work",
-  tileLabel: "Case study — coming in build",
-} as const;
 
 /**
  * About (#about) copy — the solo "about me" (architecture row 7:

@@ -1,83 +1,94 @@
-import { Placeholder } from "@/components/placeholder";
-import { Reveal } from "@/components/reveal";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
-import { SketchAccent } from "@/components/sketch-accent";
-import { WORK } from "@/content/copy";
-import type { AccentName } from "@/lib/types";
-
-interface WorkTile {
-  /** 1-based taxonomy asset index (placeholder-work-{nn}). */
-  index: number;
-  accent: AccentName;
-  ratio: "4/3" | "1/1";
-}
+import { WorkRail } from "@/components/work-rail";
+import {
+  WORK_EYEBROW,
+  WORK_HEADLINE,
+  WORK_INTRO,
+  WORK_ITEMS,
+} from "@/content/work";
 
 /**
- * Presentational tile inventory: four placeholder tiles, accents
- * cycling the Taxonomy §5 pairs, mixed ratios for the asymmetric
- * grid. No project names, no outcomes (Rule 4.3) — the real case
- * studies swap in by file name (Taxonomy §7).
+ * Presentation marker, not copy: the proof the section exists to land
+ * takes the gold payoff treatment (docs/04-ux-spec.md §Typography — at
+ * most a couple of accent words inside a white display heading).
+ * Degrades to an unaccented headline if the canonical copy changes.
  */
-const TILE_COLUMNS: readonly (readonly WorkTile[])[] = [
-  [
-    { index: 1, accent: "gold", ratio: "4/3" },
-    { index: 2, accent: "lavender", ratio: "1/1" },
-  ],
-  [
-    { index: 3, accent: "rose", ratio: "1/1" },
-    { index: 4, accent: "sage", ratio: "4/3" },
-  ],
-];
-
-function Tile({ tile, delay }: { tile: WorkTile; delay: number }) {
-  return (
-    <Reveal delay={delay}>
-      <div className="group relative motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-1">
-        <Placeholder
-          section="work"
-          index={tile.index}
-          ratio={tile.ratio}
-          accent={tile.accent}
-          label={WORK.tileLabel}
-        />
-        <SketchAccent
-          variant="arrow"
-          accent={tile.accent}
-          tone="ink"
-          drawOn="hover"
-          strokeWidth={5}
-          className="pointer-events-none absolute right-4 bottom-4 h-auto w-8"
-        />
-      </div>
-    </Reveal>
-  );
-}
+const ACCENT_PHRASE = "in production";
 
 /**
- * Selected work (#work) — visual credibility on placeholders
- * (docs/03-site-architecture.md row 5): 2×2 asymmetric grid per the
- * reference layout, accent-tinted hatched tiles per the UX spec's
- * placeholder treatment. Hover: tile lifts, sketch arrow draws in
- * the corner.
+ * Selected work (#work) — the proof band (owner direction 2026-08-24).
+ * Reactivated from the dormant set: decision-log #13 held `#work` back
+ * and required a new decision to bring it live, and this is it
+ * (decision-log #16) — visitors were reaching the site and leaving
+ * with nothing on the page demonstrating proof of work or authority.
+ * The retired paper-era grid this file used to hold (accent-tinted
+ * hatched tiles, sketch arrows, the lavender/rose/sage rotation) is
+ * gone with the design system that produced it (§Retired); the section
+ * is rebuilt against the dark system from an owner-supplied reference
+ * gallery, adapted in <WorkRail>.
+ *
+ * Placement and surface are owner-directed: the band sits immediately
+ * below the hero — proof before the argument — and is **opaque
+ * `bg-ink`, matching the footer**. That makes it the one section on
+ * the page that is not a transparent band over the scroll-synced
+ * footage, which is a deliberate divergence from the Unit 02 rule,
+ * flagged rather than silently resolved: the screenshots are the
+ * section's whole job and moving footage behind them competed with
+ * them. Two consequences are handled rather than inherited:
+ *
+ * - **No text shadow on the heading.** The other four sections carry
+ *   the licensed over-imagery shadow because they sit on footage; this
+ *   one sits on plain ink, where §Typography bans it.
+ * - **The backdrop keeps its cadence.** An opaque band would otherwise
+ *   spend a slice of the sequence behind itself, unseen. ScrollVideo
+ *   excludes this section's height from the scroll range it maps
+ *   (`data-backdrop-hidden`), so the footage still opens on its first
+ *   frame and lands on its last, at the tempo it has today.
+ *
+ * Vertical padding drops the `sm:` step the other sections carry: the
+ * rail's cards bring their own height, and the full ladder left the
+ * band floating. Horizontal gutters live on the children, not the
+ * section, because the rail is deliberately full-bleed — it runs off
+ * the right edge to signal there is more to scroll.
+ *
+ * Server component; the rail's controls are the only interactive part.
  */
 export function WorkSection() {
+  const headline = WORK_HEADLINE;
+  const phraseStart = headline.indexOf(ACCENT_PHRASE);
+
   return (
-    <div className="py-24 md:py-32">
-      <Reveal>
-        <SectionHeading className="max-w-4xl">{WORK.headline}</SectionHeading>
-      </Reveal>
-      <div className="mt-14 grid gap-6 md:mt-20 md:grid-cols-2 md:gap-8">
-        {TILE_COLUMNS.map((column, c) => (
-          <div
-            key={c}
-            className={`flex flex-col gap-6 md:gap-8 ${c === 1 ? "md:pt-16" : ""}`}
-          >
-            {column.map((tile, t) => (
-              <Tile key={tile.index} tile={tile} delay={(c + t) * 0.1} />
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
+    <section
+      id="work"
+      aria-labelledby="work-headline"
+      data-backdrop-hidden
+      className="w-full bg-ink py-24 lg:py-32"
+    >
+      <WorkRail items={WORK_ITEMS}>
+        <div className="max-w-3xl">
+          <ScrollReveal>
+            <SectionHeading index="01" eyebrow={WORK_EYEBROW}>
+              <span id="work-headline">
+                {phraseStart === -1 ? (
+                  headline
+                ) : (
+                  <>
+                    {headline.slice(0, phraseStart)}
+                    <span className="text-gold">{ACCENT_PHRASE}</span>
+                    {headline.slice(phraseStart + ACCENT_PHRASE.length)}
+                  </>
+                )}
+              </span>
+            </SectionHeading>
+          </ScrollReveal>
+          <ScrollReveal delay={120}>
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/70 md:text-lg">
+              {WORK_INTRO}
+            </p>
+          </ScrollReveal>
+        </div>
+      </WorkRail>
+    </section>
   );
 }
