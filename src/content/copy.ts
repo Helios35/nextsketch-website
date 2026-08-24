@@ -259,7 +259,7 @@ export const ABOUT = {
     "Digital was the same job with faster feedback. Agents were the next step: systems that do the work, not just display it. Different material, same discipline.",
     "When you work with NextSketch, you work with me. The person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",
     "NextSketch runs agent-native. The same embedded agents and AI-accelerated workflow I build for clients run this business every day. It's how one person ships what used to take a team. I eat my own cooking.",
-    "Launch isn't the end of the engagement. It's the start of the part that matters: a working product, in production, with a partner who is there with you.",
+    "Launch isn't the end. It's the start of the part that matters: a working product, in production, with a partner who is there with you.",
   ],
 } as const;
 
