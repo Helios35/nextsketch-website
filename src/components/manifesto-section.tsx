@@ -15,7 +15,7 @@ const ACCENT_PHRASE = "actually need";
 /**
  * Manifesto (#why) — reframe the problem. Rebuilt in place to the
  * hero-derived design system (Redesign Unit 02): a full-width ink
- * band on the shared gutter rhythm, the mono "(01)" eyebrow, a
+ * band on the shared gutter rhythm, the mono "(02)" eyebrow, a
  * display statement with the gold payoff phrase, and the body offset
  * right in the two-column editorial rhythm. Entrances are the shared
  * ScrollReveal at the hero stagger (0 / 120 / 200ms); the body block
@@ -33,7 +33,7 @@ export function ManifestoSection() {
     >
       <ScrollReveal>
         <SectionHeading
-          index="01"
+          index="02"
           eyebrow={MANIFESTO.eyebrow}
           className="max-w-4xl [text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
         >

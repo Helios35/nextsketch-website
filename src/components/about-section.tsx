@@ -20,7 +20,7 @@ const ACCENT_PHRASE = "On purpose";
  * hero-derived design system (Redesign Unit 02): the old contained
  * rounded ink panel was redundant on an all-ink page, so the section
  * now sits flat on the full-width band with the shared gutter rhythm,
- * the mono "(04)" eyebrow, and the gold payoff phrase. Entrances are
+ * the mono "(05)" eyebrow, and the gold payoff phrase. Entrances are
  * the shared ScrollReveal at the hero stagger (0 / 120+i·80 / 200ms);
  * the portrait carries the section's single whisper parallax. The
  * photo is the owner-supplied portrait (delivered 2026-07-06),
@@ -50,7 +50,7 @@ export function AboutSection() {
         <div>
           <ScrollReveal>
             <SectionHeading
-              index="04"
+              index="05"
               eyebrow={ABOUT.eyebrow}
               className="[text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
             >

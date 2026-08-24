@@ -31,13 +31,14 @@
 
 | Section | Job | Canonical copy source |
 |---------|-----|----------------------|
+| **Selected Work** (`#work`) — **CHANGED, live (decision-log #16)** | **Prove the work is real — the conversion-recovery band, first below the hero** | **None; DRAFT brand voice in `src/content/work.ts`. Names/summaries/screenshots/URLs owner-owed (Rule 4.3)** |
 | Manifesto | Reframe the problem | "Most firms build what you ask for…" (`src/content/copy.ts`, dormant — re-confirm at the unit) |
 | Services | Name the four engagements (Taxonomy §1) | Messaging Kit §05 Services |
 | Process | Show the workflow + differentiator (Taxonomy §2) | "Strategy. Build. Validate. Stay." four-phase |
 | About | The person behind it (solo) | New copy, Brand Philosophy §8 |
 | Final CTA | Convert → modal | "Ready to build?…" |
 
-**Retired section plan (the old eleven-section page — RETIRED).** Nav, `#top` hero (shipped re-skinned — the one survivor), Manifesto `#why`, Process `#process`, Selected work `#work`, Services `#services`, About `#about`, Testimonials `#voices`, Who it's for `#fit`, FAQ `#faq`, Final CTA `#start`, Footer. Recorded so it can't be mistaken for the plan: five of its sections have **successors** in the #13 set (designed fresh, dark — the old layouts don't carry over); Selected work, Testimonials, Who it's for, FAQ, nav and footer do **not** — returning any of them requires a new decision. Dormant copy stays in `src/content/copy.ts`.
+**Retired section plan (the old eleven-section page — RETIRED).** Nav, `#top` hero (shipped re-skinned — the one survivor), Manifesto `#why`, Process `#process`, Selected work `#work`, Services `#services`, About `#about`, Testimonials `#voices`, Who it's for `#fit`, FAQ `#faq`, Final CTA `#start`, Footer. Recorded so it can't be mistaken for the plan: five of its sections have **successors** in the #13 set (designed fresh, dark — the old layouts don't carry over); **Selected work has since returned on exactly that basis — a new decision (#16, 2026-08-24), designed fresh as a dark card rail, nothing of the paper-era tile grid carried over**. Testimonials, Who it's for, FAQ, nav and footer still do **not** — returning any of them requires a new decision. Dormant copy stays in `src/content/copy.ts`.
 
 ## User flows — **CHANGED**
 

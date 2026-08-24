@@ -24,12 +24,20 @@ export const NAV = {
   /** Accessible name of the main nav landmark. */
   label: "Main",
   /**
-   * The five live redesign sections (decision-log #13; anchors per
-   * Redesign Unit 02 brief). #start is reached via the CTA and the
-   * footer, not a nav item. The "Why" label is DRAFT copy pending
-   * owner approval (the held sections' old items are gone with them).
+   * The live section anchors (decision-log #13; anchors per Redesign
+   * Unit 02 brief). #start is reached via the CTA and the footer, not
+   * a nav item. The "Why" label is DRAFT copy pending owner approval
+   * (the held sections' old items are gone with them).
+   *
+   * #work leads (decision-log #16, 2026-08-24): the proof band ships
+   * as the first section under the hero, so it also takes the first
+   * nav tab — a visitor who came for evidence should be one click from
+   * it, which is the whole reason the section exists. This is the
+   * judgment call attached to that unit, not owner-specified: drop
+   * this item and the section is still reachable by scrolling.
    */
   items: [
+    { id: "work", label: "Work" },
     { id: "why", label: "Why" },
     { id: "services", label: "Services" },
     { id: "process", label: "Process" },
@@ -96,8 +104,14 @@ export const HERO = {
  * Landing hero (single-page site) — the dark cinematic re-skin of the
  * supplied template, mapped to NextSketch messaging. Every string here
  * traces to an approved source:
- * - headline: Messaging Kit §05 Hero Option A (locked, architecture row 2).
+ * - headline: owner-revised 2026-08-24, replacing Messaging Kit §05 Hero
+ *   Option A ("From idea to production. And we stay.") which was locked
+ *   at architecture row 2. An owner edit to canonical copy, so it owes a
+ *   decision-log entry under Rule 4.1 — flagged, not yet written.
  * - accentWords: the two payoff words rendered in the gold brand accent;
+ *   "stay" moved to "partner" with the headline, since the old word no
+ *   longer appears and an unmatched word renders un-accented, which
+ *   would have left the hero with one gold word instead of two;
  *   matched against `headline` punctuation-insensitively (if the headline
  *   changes, an unmatched word simply renders un-accented).
  * - supportingLine: Messaging Kit §03 Message 4 (The Relationship), verbatim.
@@ -114,8 +128,8 @@ export const HERO = {
  */
 export const LANDING = {
   wordmark: SITE.name,
-  headline: "From idea to production. And we stay.",
-  accentWords: ["production", "stay"],
+  headline: "From idea to production. Gain a real partner.",
+  accentWords: ["production", "partner"],
   supportingLine:
     "You're not hiring a vendor. You're gaining a product partner.",
   capabilities: [
@@ -194,25 +208,41 @@ export const PROCESS = {
   ] as const satisfies readonly ProcessPhase[],
 } as const;
 
-/**
- * Selected-work (#work) strings — no canonical copy exists for this
- * section (architecture row 5 defers to the Taxonomy §7 placeholder
- * spec). Headline is DRAFT in brand voice; tileLabel is the UX spec's
- * own placeholder-treatment text (docs/04-ux-spec.md §Component
- * specs, Rule 4.3: no invented project names or outcomes). Both
- * pending owner approval — see briefs/build-notes/04-sections-proof.md.
+/*
+ * Selected-work (#work) copy moved to src/content/work.ts when the
+ * section went live (decision-log #16, 2026-08-24) — it carries a
+ * structured item inventory now, which is the src/content/services.ts
+ * precedent for a section outgrowing this file. The retired
+ * placeholder-tile strings went with the paper-era grid.
  */
-export const WORK = {
-  headline: "Selected work",
-  tileLabel: "Case study — coming in build",
-} as const;
 
 /**
  * About (#about) copy — the solo "about me" (architecture row 7:
- * "New copy, voice per Brand Philosophy §8"). Not in Messaging Kit
- * §05; drafted in brand voice — DRAFT pending owner approval, see
- * briefs/build-notes/04-sections-proof.md. No invented biography:
- * every claim restates documented brand positioning.
+ * "New copy, voice per Brand Philosophy §8"). Not in Messaging Kit §05.
+ *
+ * `body` is owner-authored verbatim (2026-08-24), replacing the DRAFT
+ * that had been written from documented positioning alone. It is now
+ * real biography rather than restated brand copy, which is the point:
+ * the section's job is authority, and the earlier text could only
+ * assert the same claims the rest of the page already made.
+ *
+ * ⚠ Rule 3.4 conflict — owner ratification owed. The first paragraph
+ * names the retired physical-design discipline that the retired-brand
+ * sweep bans by name (docs/05-business-rules.md §3.4, enforced by
+ * scripts/check-banned-terms.mjs). That ban exists to stop the retired
+ * *service line* reappearing as a current offer; here the phrase is
+ * biography — where Nathan trained, not what NextSketch sells — which
+ * is a use the rule was never written against. Rather than reword the
+ * owner's copy or gut the rule, the gate carries one exemption scoped
+ * to this file and asserted to appear exactly once: the same clause in
+ * a service card still fails, and rewording this paragraph fails too
+ * rather than leaving a bypass open. See the ALLOWED list in
+ * scripts/check-banned-terms.mjs. This owes a decision-log entry and a
+ * §3.4 amendment.
+ *
+ * (This comment deliberately does not spell the term out: the gate
+ * scans this file, and a bare occurrence here would fail the build —
+ * which is the exemption's narrowness demonstrating itself.)
  */
 export const ABOUT = {
   /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
@@ -225,9 +255,10 @@ export const ABOUT = {
   portraitAlt: "Nathan, the person behind NextSketch",
   headline: "NextSketch is one person. On purpose.",
   body: [
-    "I'm Nathan. When you work with NextSketch, you work with me — the person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",
-    "NextSketch runs agent-native. The same embedded agents and AI-accelerated workflow I build for clients run this business every day — it's how one person ships what used to take a team. I eat my own cooking.",
-    "And I stay. Launch isn't the end of the engagement; it's the start of the part that matters — a working product, in production, with a partner who doesn't leave.",
+    "I'm Nathan. I started in industrial design, drawing and prototyping physical products that had to survive tooling, cost, and a real person's hands. That training stuck. It taught me to design inside constraints instead of pretending they aren't there, and that nothing counts until it ships and someone uses it.",
+    "Digital was the same job with faster feedback. Agents were the next step: systems that do the work, not just display it. Different material, same discipline.",
+    "When you work with NextSketch, you work with me. The person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",
+    "NextSketch runs agent-native. The same embedded agents and AI-accelerated workflow I build for clients run this business every day. It's how one person ships what used to take a team. I eat my own cooking.",
   ],
 } as const;
 

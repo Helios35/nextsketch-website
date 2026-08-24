@@ -50,3 +50,62 @@ export interface FaqItem {
   readonly question: string;
   readonly answer: string;
 }
+
+/**
+ * One card in the selected-work rail (#work). Content lives in
+ * src/content/work.ts; Rule 4.3 forbids invented names or outcomes, so
+ * every field here is owner-supplied.
+ *
+ * `image`/`alt` and `href` are optional on purpose, and independently:
+ * a project whose screenshot is still owed renders the layout-final
+ * ink placeholder in the same 16/9 frame (zero layout shift on
+ * swap-in), and a project with no public URL renders as a non-linking
+ * tile rather than a dead link. `alt` is required whenever `image` is
+ * set — enforced by the union below, so a screenshot can never ship
+ * without its accessible description.
+ */
+export type WorkItem = {
+  /** Stable key; also the screenshot's file name under /public/work/. */
+  readonly id: string;
+  readonly name: string;
+  readonly summary: string;
+  /** Live product URL. Omitted when the work has no public link. */
+  readonly href?: string;
+} & (
+  | {
+      readonly image: string;
+      readonly alt: string;
+      /**
+       * Which edge the 16/9 crop holds when the source is taller than
+       * the frame. "center" (default) suits mockups whose subject is
+       * vertically centered; "top" suits a full-page screenshot whose
+       * content sits at the top over trailing whitespace.
+       */
+      readonly focal?: "center" | "top";
+      /**
+       * How hard the grading mask works on this screenshot. "light"
+       * (default) suits anything from a mid-toned mockup to a mixed
+       * one; "bright" is for a near-white screenshot that would
+       * otherwise glare against the ink band.
+       *
+       * Measured, not guessed — the four shipped screenshots run
+       * 0.40–0.92 mean luminance, and only the white dashboard (0.92)
+       * needs the stronger hold-back. Under one flat mask its card
+       * reads noticeably hotter than the rest; with "bright" the set
+       * lands inside a 0.18 band.
+       *
+       * There is deliberately no "dark" variant. A genuinely near-black
+       * screenshot would need one, but none of the current set is: the
+       * CAD tool looks dark yet is bimodal — a near-black app inside a
+       * light grey canvas — so lifting it would blow that canvas out
+       * and make it the second-brightest card in the rail.
+       */
+      readonly tone?: "light" | "bright";
+    }
+  | {
+      readonly image?: undefined;
+      readonly alt?: undefined;
+      readonly focal?: undefined;
+      readonly tone?: undefined;
+    }
+);

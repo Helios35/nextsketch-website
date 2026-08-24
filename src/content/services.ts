@@ -3,7 +3,15 @@ import type { Service, ServiceSlug } from "@/lib/types";
 
 /**
  * The four canonical services — slugs and accent pairs per
- * docs/06-taxonomy.md §1; descriptions verbatim from Messaging Kit §05.
+ * docs/06-taxonomy.md §1; descriptions from Messaging Kit §05.
+ *
+ * Owner edit 2026-08-24: the section headline was rewritten and every
+ * em dash removed from this section's rendered copy — the headline's,
+ * and one inside the `agentic` description, which became a comma so
+ * the sentence keeps its meaning. Both are edits to canonical §05
+ * copy, so they owe a decision-log entry under Rule 4.1 — flagged, not
+ * yet written. (Em dashes remain in the doc blocks here; those are
+ * developer notes, not site copy.)
  *
  * Names shortened to the card forms (owner decision 2026-08-04) so
  * each card heading holds one line at every breakpoint — the long
@@ -19,7 +27,7 @@ import type { Service, ServiceSlug } from "@/lib/types";
 export const SERVICES_EYEBROW = "What we build";
 
 export const SERVICES_HEADLINE =
-  "Software products and agentic systems — built for how your business actually works.";
+  "Products and agentic systems, built for how your business actually works.";
 
 /**
  * Per-card CTA (owner direction 2026-08-04): opens the qualification
@@ -67,7 +75,7 @@ export const SERVICES = [
     slug: "agentic",
     name: "Agentic Systems",
     description:
-      "Your product or operations need intelligence built in. We assess where agents create real value and build them in — not because it's trendy, but because it solves the problem.",
+      "Your product or operations need intelligence built in. We assess where agents create real value and build them in, not because it's trendy, but because it solves the problem.",
     accent: "lavender",
   },
   {
