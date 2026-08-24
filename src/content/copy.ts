@@ -104,8 +104,14 @@ export const HERO = {
  * Landing hero (single-page site) — the dark cinematic re-skin of the
  * supplied template, mapped to NextSketch messaging. Every string here
  * traces to an approved source:
- * - headline: Messaging Kit §05 Hero Option A (locked, architecture row 2).
+ * - headline: owner-revised 2026-08-24, replacing Messaging Kit §05 Hero
+ *   Option A ("From idea to production. And we stay.") which was locked
+ *   at architecture row 2. An owner edit to canonical copy, so it owes a
+ *   decision-log entry under Rule 4.1 — flagged, not yet written.
  * - accentWords: the two payoff words rendered in the gold brand accent;
+ *   "stay" moved to "partner" with the headline, since the old word no
+ *   longer appears and an unmatched word renders un-accented, which
+ *   would have left the hero with one gold word instead of two;
  *   matched against `headline` punctuation-insensitively (if the headline
  *   changes, an unmatched word simply renders un-accented).
  * - supportingLine: Messaging Kit §03 Message 4 (The Relationship), verbatim.
@@ -122,8 +128,8 @@ export const HERO = {
  */
 export const LANDING = {
   wordmark: SITE.name,
-  headline: "From idea to production. And we stay.",
-  accentWords: ["production", "stay"],
+  headline: "From idea to production. Gain a real partner.",
+  accentWords: ["production", "partner"],
   supportingLine:
     "You're not hiring a vendor. You're gaining a product partner.",
   capabilities: [
