@@ -56,7 +56,23 @@ export const WORK_RAIL = {
   next: "Next work",
   /** `{n}` is replaced with the 1-based card number. */
   goTo: "Go to work {n}",
+  /** The trailing card is not a numbered work, so it names itself. */
+  goToViewAll: "Go to view all",
 } as const;
+
+/**
+ * The rail's trailing card — a single control to the full archive
+ * instead of a screenshot (owner direction 2026-08-24).
+ *
+ * The destination is owner-owed ("I will provide all links later"), so
+ * `href` is deliberately absent: until it is set the card renders its
+ * button in the system's documented disabled state rather than as an
+ * anchor pointing nowhere. Adding the URL here is the only change
+ * needed to make it live.
+ */
+export const WORK_VIEW_ALL: { label: string; href?: string } = {
+  label: "View all",
+};
 
 /** Placeholder caption shown on a card whose screenshot is still owed. */
 export const WORK_PLACEHOLDER_LABEL = "Screenshot pending";
@@ -93,13 +109,13 @@ export const WORK_ITEMS = [
     name: "Project two",
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
-    image: "/work/work-02.png",
-    alt: "A project planning dashboard with deliverable cards above a team timeline of milestones.",
-    // Content sits at the top over trailing whitespace — a centered
-    // crop would cut the header and the cards under it.
-    focal: "top",
-    // Measured mean luminance 0.92 — the only near-white screenshot in
-    // the set, and the only one that glares under the base grade.
+    image: "/work/work-02.webp",
+    alt: "A laptop showing a project planning dashboard with deliverable cards above a team timeline of milestones.",
+    // No `focal`: the mockup is 2:1, wider than the 16/9 frame, so the
+    // crop takes width and a vertical focal point would do nothing.
+    // Measured mean luminance 0.87 — the brightest of the set by a
+    // clear margin (88% of the frame in the top luminance band), and
+    // the only one that glares under the base grade.
     tone: "bright",
   },
   {
@@ -108,7 +124,7 @@ export const WORK_ITEMS = [
     summary:
       "Owner-owed: one line on what this product does and who it does it for.",
     image: "/work/work-03.webp",
-    alt: "A dark 3D CAD workspace showing a gear model beside an AI assistant panel.",
+    alt: "A laptop showing a dark 3D CAD workspace with a gear model beside an AI assistant panel.",
   },
   {
     id: "work-04",

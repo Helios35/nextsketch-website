@@ -3,10 +3,12 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowIcon } from "@/components/arrow-icon";
+import { Button } from "@/components/button";
 import {
   WORK_LINK,
   WORK_PLACEHOLDER_LABEL,
   WORK_RAIL,
+  WORK_VIEW_ALL,
 } from "@/content/work";
 import type { WorkItem } from "@/lib/types";
 import { useMounted } from "@/lib/use-mounted";
@@ -178,6 +180,21 @@ export function WorkRail({ items, children }: WorkRailProps) {
 
   const showControls = mounted && scrollable;
 
+  /**
+   * Meter positions, which are the rail's snap positions — the work
+   * cards plus the trailing View all card. Derived from the same list
+   * the track renders so the two can't drift: a bar count short of the
+   * card count would leave the last position with nothing lit, since
+   * `sync` pins `active` to the final target at the scroll end.
+   */
+  const slides = [
+    ...items.map((item, i) => ({
+      key: item.id,
+      label: WORK_RAIL.goTo.replace("{n}", String(i + 1)),
+    })),
+    { key: "view-all", label: WORK_RAIL.goToViewAll },
+  ];
+
   return (
     <>
       {/* Heading left, advance controls right — the reference's row.
@@ -235,6 +252,12 @@ export function WorkRail({ items, children }: WorkRailProps) {
               <WorkCard item={item} index={i} />
             </li>
           ))}
+          {/* The trailing slide closes the rail with the archive link
+              rather than a screenshot. It is a real snap position, so
+              it carries a meter bar of its own (see `slides`). */}
+          <li className="w-[82vw] shrink-0 snap-start sm:w-[24rem] lg:w-[26rem]">
+            <ViewAllCard />
+          </li>
         </ul>
       </div>
 
@@ -243,12 +266,12 @@ export function WorkRail({ items, children }: WorkRailProps) {
           44px target. */}
       {showControls && (
         <div className="mt-8 flex justify-center gap-1.5 px-6 sm:px-8 lg:px-16">
-          {items.map((item, i) => (
+          {slides.map((slide, i) => (
             <button
-              key={item.id}
+              key={slide.key}
               type="button"
               onClick={() => scrollToCard(i)}
-              aria-label={WORK_RAIL.goTo.replace("{n}", String(i + 1))}
+              aria-label={slide.label}
               aria-current={i === active}
               className="group/bar inline-flex min-h-11 min-w-7 items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
             >
@@ -316,6 +339,54 @@ const OVERLAY_TONE: Record<"light" | "bright", string> = {
   light: "bg-ink/45 group-hover/card:bg-ink/5",
   bright: "bg-ink/50 group-hover/card:bg-ink/5",
 };
+
+/**
+ * The rail's trailing card: one control to the full archive instead of
+ * a screenshot (owner direction 2026-08-24). It takes the same
+ * surface, width and stretched height as a work card, so it closes the
+ * set rather than reading as an afterthought, and the button sits
+ * centred in it.
+ *
+ * Ghost, not the white divided-arrow advance: that surface is the
+ * page's conversion affordance (the hero CTA and #start), and browsing
+ * to an archive is exactly the de-emphasized action ghost exists for
+ * (§Interaction vocabulary). It keeps the advance button scarce, the
+ * same way gold is kept scarce.
+ *
+ * The destination is owner-owed, so with no `href` the control renders
+ * as a genuinely disabled button in the system's documented disabled
+ * state (§Interaction vocabulary: `opacity-40`, pointer-events off) —
+ * honest about not being wired rather than an anchor pointing nowhere,
+ * and inert to keyboard and pointer alike. The card also drops its
+ * hover border in that state, since nothing there responds. Setting
+ * `href` in src/content/work.ts is the only change needed to make it
+ * live.
+ */
+function ViewAllCard() {
+  const { label, href } = WORK_VIEW_ALL;
+  const surface =
+    "flex h-full items-center justify-center border border-white/15 " +
+    "bg-[#0a0a0c] p-6 md:p-8";
+
+  if (href === undefined) {
+    return (
+      <div className={surface}>
+        <Button variant="ghost" arrow disabled className="opacity-40">
+          {label}
+        </Button>
+      </div>
+    );
+  }
+  return (
+    <div
+      className={`${surface} transition-colors duration-150 hover:border-white/30`}
+    >
+      <Button variant="ghost" arrow href={href}>
+        {label}
+      </Button>
+    </div>
+  );
+}
 
 /**
  * One work card. Linking is per-item: a project with a public URL is a
