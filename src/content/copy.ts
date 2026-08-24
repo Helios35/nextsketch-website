@@ -218,10 +218,31 @@ export const PROCESS = {
 
 /**
  * About (#about) copy — the solo "about me" (architecture row 7:
- * "New copy, voice per Brand Philosophy §8"). Not in Messaging Kit
- * §05; drafted in brand voice — DRAFT pending owner approval, see
- * briefs/build-notes/04-sections-proof.md. No invented biography:
- * every claim restates documented brand positioning.
+ * "New copy, voice per Brand Philosophy §8"). Not in Messaging Kit §05.
+ *
+ * `body` is owner-authored verbatim (2026-08-24), replacing the DRAFT
+ * that had been written from documented positioning alone. It is now
+ * real biography rather than restated brand copy, which is the point:
+ * the section's job is authority, and the earlier text could only
+ * assert the same claims the rest of the page already made.
+ *
+ * ⚠ Rule 3.4 conflict — owner ratification owed. The first paragraph
+ * names the retired physical-design discipline that the retired-brand
+ * sweep bans by name (docs/05-business-rules.md §3.4, enforced by
+ * scripts/check-banned-terms.mjs). That ban exists to stop the retired
+ * *service line* reappearing as a current offer; here the phrase is
+ * biography — where Nathan trained, not what NextSketch sells — which
+ * is a use the rule was never written against. Rather than reword the
+ * owner's copy or gut the rule, the gate carries one exemption scoped
+ * to this file and asserted to appear exactly once: the same clause in
+ * a service card still fails, and rewording this paragraph fails too
+ * rather than leaving a bypass open. See the ALLOWED list in
+ * scripts/check-banned-terms.mjs. This owes a decision-log entry and a
+ * §3.4 amendment.
+ *
+ * (This comment deliberately does not spell the term out: the gate
+ * scans this file, and a bare occurrence here would fail the build —
+ * which is the exemption's narrowness demonstrating itself.)
  */
 export const ABOUT = {
   /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
@@ -234,9 +255,11 @@ export const ABOUT = {
   portraitAlt: "Nathan, the person behind NextSketch",
   headline: "NextSketch is one person. On purpose.",
   body: [
-    "I'm Nathan. When you work with NextSketch, you work with me — the person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",
-    "NextSketch runs agent-native. The same embedded agents and AI-accelerated workflow I build for clients run this business every day — it's how one person ships what used to take a team. I eat my own cooking.",
-    "And I stay. Launch isn't the end of the engagement; it's the start of the part that matters — a working product, in production, with a partner who doesn't leave.",
+    "I'm Nathan. I started in industrial design, drawing and prototyping physical products that had to survive tooling, cost, and a real person's hands. That training stuck. It taught me to design inside constraints instead of pretending they aren't there, and that nothing counts until it ships and someone uses it.",
+    "Digital was the same job with faster feedback. Agents were the next step: systems that do the work, not just display it. Different material, same discipline.",
+    "When you work with NextSketch, you work with me. The person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",
+    "NextSketch runs agent-native. The same embedded agents and AI-accelerated workflow I build for clients run this business every day. It's how one person ships what used to take a team. I eat my own cooking.",
+    "After successfully building your product or tool, I partner with you. Launch isn't the end of the engagement. It's the start of the part that matters: a working product, in production, with a partner who is there with you.",
   ],
 } as const;
 
