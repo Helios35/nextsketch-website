@@ -1,4 +1,5 @@
-import type { AccentName, ProcessPhase, SectionId } from "@/lib/types";
+import { ROUTES, sectionHref } from "@/lib/types";
+import type { AccentName, ProcessPhase } from "@/lib/types";
 
 /**
  * Canonical site copy — Messaging Kit §05 (Rule 4.1: edits are owner
@@ -24,27 +25,46 @@ export const NAV = {
   /** Accessible name of the main nav landmark. */
   label: "Main",
   /**
-   * The live section anchors (decision-log #13; anchors per Redesign
-   * Unit 02 brief). #start is reached via the CTA and the footer, not
-   * a nav item. The "Why" label is DRAFT copy pending owner approval
-   * (the held sections' old items are gone with them).
+   * Where both wordmarks point. Root-relative, so the lockup reaches
+   * the top of the home page from `/pricing` too — a bare `#top`
+   * there resolves to `/pricing#top`, which is nothing.
+   */
+  home: sectionHref("top"),
+  /**
+   * The menu items, in page order (decision-log #13; anchors per
+   * Redesign Unit 02 brief). #start is reached via the CTA and the
+   * footer, not a nav item. The "Why" label is DRAFT copy pending
+   * owner approval (the held sections' old items are gone with them).
    *
-   * #work leads (decision-log #16, 2026-08-24): the proof band ships
-   * as the first section under the hero, so it also takes the first
-   * nav tab — a visitor who came for evidence should be one click from
-   * it, which is the whole reason the section exists. This is the
-   * judgment call attached to that unit, not owner-specified: drop
-   * this item and the section is still reachable by scrolling.
+   * #work leads (decision-log #16 / #21, 2026-08-24): the proof band
+   * ships as the first section under the hero, so it also takes the
+   * first slot — a visitor who came for evidence should be one click
+   * from it, which is the whole reason the section exists. Shipped as
+   * the builder's judgment call in PR #27 and **ratified as the
+   * owner's decision** by #21, so it is not a call to quietly reverse.
+   *
+   * Pricing takes the last slot (decision-log #24, 2026-08-25). It is
+   * the only item that leaves the page, and the one a visitor looks
+   * for on purpose, so it reads as the end of the list rather than an
+   * interruption in the middle of the page order.
+   *
+   * Items carry a finished `href`, not a `SectionId` the components
+   * derive a hash from (decision-log #23). A route has no section id,
+   * so the old shape could not express Pricing at all — and the
+   * derived `#${id}` broke every other item the moment a second route
+   * existed. `sectionHref` keeps the anchors typo-proof: the literal
+   * survives, so a bad id still fails typecheck.
    */
   items: [
-    { id: "work", label: "Work" },
-    { id: "why", label: "Why" },
-    { id: "services", label: "Services" },
-    { id: "process", label: "Process" },
-    { id: "about", label: "About" },
-  ] as const satisfies readonly { id: SectionId; label: string }[],
+    { href: sectionHref("work"), label: "Work" },
+    { href: sectionHref("why"), label: "Why" },
+    { href: sectionHref("services"), label: "Services" },
+    { href: sectionHref("process"), label: "Process" },
+    { href: sectionHref("about"), label: "About" },
+    { href: ROUTES.pricing, label: "Pricing" },
+  ] as const satisfies readonly { href: string; label: string }[],
   cta: "Start a Conversation",
-  /** Mobile menu toggle labels (screen-reader copy). */
+  /** Menu toggle labels (screen-reader copy). */
   menu: {
     open: "Open menu",
     close: "Close menu",

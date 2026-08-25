@@ -32,19 +32,45 @@ function BurgerIcon() {
  * without pushing it down: transparent over the hero, elevated ink
  * glass (bg-ink/80 + backdrop-blur, white/10 hairline) with reduced
  * height after 80px of scroll. The shrink is plain CSS transitions
- * gated by motion-safe. Anchors ride NAV.items — the live redesign
- * sections (decision-log #13: why / services / process / about; #start
- * is reached via the CTA, not a nav item). The hero renders the brand
- * wordmark itself, so the nav's #top wordmark appears only once
- * scrolled — otherwise it would double over the hero. Mobile:
- * hamburger opens a full-screen ink overlay with the anchors in the
- * display face.
+ * gated by motion-safe. Items ride NAV.items — the live redesign
+ * sections (decision-log #13: work / why / services / process / about;
+ * #start is reached via the CTA, not a nav item) plus Pricing, the one
+ * item that leaves the page (#23/#24). The hero renders the brand
+ * wordmark itself, so the nav's wordmark appears only once scrolled —
+ * otherwise it would double over the hero. `/pricing` has no hero, so
+ * that page renders the same above-the-fold lockup for itself; this
+ * bar is route-agnostic and stays that way.
+ *
+ * **Hamburger at every breakpoint — decision-log #22 (2026-08-25).**
+ * The visible desktop tab row is retired: the bar is the wordmark slot
+ * and one right-justified burger at every width, and the full-screen
+ * ink overlay (focus trap, Escape, scroll lock, focus return) is the
+ * only place the items render. A sixth item made the row crowd the
+ * lockup at md, and the overlay was already carrying the whole set on
+ * mobile — so this deletes a surface rather than adding one. The
+ * overlay takes the bar's gutter ladder (px-6 / sm:px-8 / lg:px-16) so
+ * its lockup lands on the gutter the bar's does at every width.
+ * The overlay was px-6 flat, which already drifted 8px from the bar
+ * between sm and md; opening it at every width would have made that a
+ * visible sideways jump of up to 40px at lg.
  *
  * No CTA in the nav (owner direction, 2026-07-06): the hero CTA and
  * the Final CTA (#start) carry conversion — a header button was
- * redundant. The anchor tabs sit right via justify-between. Server
- * render is the static branch (not scrolled — no wordmark — menu
- * closed), so the no-JS page keeps working anchor links.
+ * redundant. The burger sits right via justify-between, against the
+ * wordmark slot on the left. Every href is root-relative (NAV.home,
+ * NAV.items) so it resolves from `/pricing` as well as `/`; a bare
+ * `#work` would mean `/pricing#work` there, which is nothing.
+ *
+ * Server render is the static branch: not scrolled (no wordmark),
+ * menu closed. **Closed means the items are not in the SSR HTML**, so
+ * without JS this bar is a wordmark slot and an inert burger. That is
+ * a real narrowing — the retired tab row was the nav's no-JS surface —
+ * and it is deliberate rather than overlooked: `<SiteFooter>` maps the
+ * same `NAV.items` as plain anchors on every page, so all six
+ * destinations stay reachable with scripting off, and the burger was
+ * already inert without JS at mobile widths. A `@media (scripting:
+ * none)` fallback row is the fix if the owner wants the nav itself to
+ * carry them; flagged in build-note 22, not built.
  */
 export function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
@@ -130,7 +156,7 @@ export function SiteNav() {
         >
           {scrolled ? (
             <a
-              href="#top"
+              href={NAV.home}
               className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               <BrandWordmark className="h-7 w-auto" />
@@ -141,25 +167,13 @@ export function SiteNav() {
                the links. */
             <span aria-hidden="true" />
           )}
-          <ul className="hidden items-center gap-8 md:flex">
-            {NAV.items.map(({ id, label }) => (
-              <li key={id}>
-                <a
-                  href={`#${id}`}
-                  className="inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.14em] text-white/60 [text-shadow:0_1px_16px_rgba(0,0,0,0.6)] transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
           <button
             ref={toggleRef}
             type="button"
             aria-expanded={open}
             aria-label={NAV.menu.open}
             onClick={() => setOpen(true)}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:hidden"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             <BurgerIcon />
           </button>
@@ -171,13 +185,13 @@ export function SiteNav() {
           role="dialog"
           aria-modal="true"
           aria-label={NAV.label}
-          className="fixed inset-0 z-50 flex flex-col bg-[#0a0a0c]/95 px-6 text-white backdrop-blur-xl md:hidden"
+          className="fixed inset-0 z-50 flex flex-col bg-[#0a0a0c]/95 px-6 text-white backdrop-blur-xl sm:px-8 lg:px-16"
         >
           <div className="flex items-center justify-between py-5">
             {/* The overlay covers the hero, so its wordmark always
                renders (no doubling risk here). */}
             <a
-              href="#top"
+              href={NAV.home}
               onClick={closeMenu}
               className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
@@ -194,10 +208,10 @@ export function SiteNav() {
             </button>
           </div>
           <ul className="flex grow flex-col justify-center gap-2">
-            {NAV.items.map(({ id, label }) => (
-              <li key={id}>
+            {NAV.items.map(({ href, label }) => (
+              <li key={href}>
                 <a
-                  href={`#${id}`}
+                  href={href}
                   onClick={closeMenu}
                   className="block py-3 text-3xl font-medium tracking-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
