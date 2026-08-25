@@ -5,13 +5,15 @@ import type { Service, ServiceSlug } from "@/lib/types";
  * The four canonical services — slugs and accent pairs per
  * docs/06-taxonomy.md §1; descriptions from Messaging Kit §05.
  *
- * Owner edit 2026-08-24: the section headline was rewritten and every
- * em dash removed from this section's rendered copy — the headline's,
- * and one inside the `agentic` description, which became a comma so
- * the sentence keeps its meaning. Both are edits to canonical §05
- * copy, so they owe a decision-log entry under Rule 4.1 — flagged, not
- * yet written. (Em dashes remain in the doc blocks here; those are
- * developer notes, not site copy.)
+ * Decision-log #19 (2026-08-24) — no em dashes in rendered site copy,
+ * a standing rule. It rewrote the section headline and replaced the one
+ * em dash inside the `agentic` description with a comma. Both are edits
+ * to canonical §05 copy, so Rule 4.1 now traces the headline to #19
+ * rather than to the Kit; the four descriptions are otherwise §05 as
+ * written. Em dashes remain in the doc blocks here — developer notes,
+ * not site copy, and explicitly exempt under #19. The rule is not
+ * enforced mechanically: adding an em-dash scan to the banned-terms
+ * gate is an open owner call.
  *
  * Names shortened to the card forms (owner decision 2026-08-04) so
  * each card heading holds one line at every breakpoint — the long
