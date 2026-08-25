@@ -20,9 +20,17 @@ import type { PricingTier, PricingTierSlug } from "@/lib/types";
  * below is that principle in the site's voice, not a new claim.
  *
  * **The term is said out loud, on every card and once above the grid.**
- * $298 per month, required for the first year, optional after. A price
- * that hides a commitment is exactly the surprise invoice §6 rejects,
- * so it is not tucked into a footnote.
+ * $298 per month, required for the first three months, optional after
+ * (owner call, 2026-08-25, reducing an initial twelve). A price that
+ * hides a commitment is exactly the surprise invoice §6 rejects, so it
+ * is not tucked into a footnote.
+ *
+ * **Save Your Project carries no required term at all** — a two month
+ * trial with no contractual obligation (owner call, same date). It is
+ * the tier whose visitor has already been burned by one firm, so asking
+ * them to commit before seeing anything works is the wrong ask. The
+ * page-level term names the exception rather than stating a blanket
+ * commitment its own cards contradict.
  *
  * Naming: the first tier is **"AI Workflow Integration"** (owner call,
  * 2026-08-25). The owner's working name for it ended in the word Rule
@@ -62,7 +70,7 @@ export const PRICING = {
    * (#25). This is the sentence the brief exists to protect.
    */
   term:
-    "The $298 monthly partnership is required for the first year. After that it is optional, and staying on is your call.",
+    "The $298 monthly partnership is required for the first three months. After that it is optional, and staying on is your call. Save Your Project is the exception: it starts as a two month trial with no contractual obligation.",
   /**
    * Accessible name for the tier grid (screen-reader only). The grid is
    * a landmark region with no visible heading of its own — the page's
@@ -124,8 +132,24 @@ export const PRICING_CTA_CUSTOM = "Let's See if We're a Fit";
 /**
  * The four tiers, in owner-settled order (#25).
  *
- * Descriptions trace to Brand Philosophy §4 ("What We Build"), reworded
- * only to fit the card measure and to drop §4's em dashes (#19).
+ * Descriptions for Save Your Project and Custom Product trace to Brand
+ * Philosophy §4 ("What We Build"), reworded only to fit the card measure
+ * and to drop §4's em dashes (#19).
+ *
+ * The first two are **owner-authored scope** (2026-08-25) and
+ * deliberately diverge from §4, because §4's service lines are broader
+ * than these tiers: "AI Workflow Integration" is strictly agents
+ * integrated into existing business processes, not the customer-facing
+ * half of §4's Agentic Systems Integration; and "Internal Tool"
+ * (renamed from "AI Tool", same call) is a platform the client owns and
+ * runs internally, not §4's New Products from Scratch. §4 is the
+ * authority on voice here, not on scope.
+ *
+ * The workflow tier's copy says "embedded agents", never the phrase
+ * Brand Philosophy §12 and Taxonomy §9 retired for exactly this idea.
+ * The tier *name* keeps the word Workflow because that is the owner's
+ * settled commercial name; the retired phrase is the two-word one, and
+ * it does not appear.
  *
  * **`features` is empty on every tier, deliberately.** The bullets are
  * drafted and posted for owner approval; until that lands, each card
@@ -139,22 +163,22 @@ export const PRICING_TIERS = [
     slug: "workflow",
     name: "AI Workflow Integration",
     description:
-      "Embedded agents inside the product you already run, or inside the operations that run your business. We assess where agents create real value and build them in.",
+      "Embedded agents integrated into the processes your business already runs. We assess where they create real value in the day to day, then build them into the work itself.",
     upfront: "$3,998",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
     ongoing: "$298 per month",
-    ongoingNote: "Required the first year, optional after.",
+    ongoingNote: "Required the first three months, optional after.",
     features: [],
   },
   {
     slug: "tool",
-    name: "AI Tool",
+    name: "Internal Tool",
     description:
-      "You have an idea. We validate it, define the scope, and build it into a working product running in production.",
+      "A custom internal platform or agent built for your specific business processes. A real tool that you own, built around how your team actually works.",
     upfront: "$7,998",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
     ongoing: "$298 per month",
-    ongoingNote: "Required the first year, optional after.",
+    ongoingNote: "Required the first three months, optional after.",
     features: [],
   },
   {
@@ -165,7 +189,7 @@ export const PRICING_TIERS = [
     upfront: "No upfront",
     upfrontNote: "The partnership starts on day one instead.",
     ongoing: "$298 per month",
-    ongoingNote: "Required the first year, optional after.",
+    ongoingNote: "Two month trial. No contractual obligation.",
     features: [],
   },
   {
