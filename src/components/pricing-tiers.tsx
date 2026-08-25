@@ -56,11 +56,42 @@ import {
  * reason. Surface colour is unchanged, so these read as one family with
  * the Services cards.
  *
- * **The CTA is pinned to the bottom** with `mt-auto`, where the
- * reference puts it above the feature list. Four cards whose copy and
- * list lengths differ would otherwise scatter their buttons down the
- * grid; the Services cards solve this the same way, and it is the one
- * place the reference's ordering was overridden.
+ * **The CTA sits last**, where the reference puts it above the feature
+ * list. It is the one place the reference's ordering was overridden.
+ *
+ * **Every band starts on the same line across the row — CSS subgrid.**
+ * The four descriptions run three to five lines, so a plain flex column
+ * staggers `Upfront` and `Ongoing` down the row and only the
+ * `mt-auto` CTA lines up (owner feedback, 2026-08-25). Each card is
+ * therefore a **six-row subgrid** — name, description, upfront,
+ * ongoing, included, CTA — sharing its neighbours' row tracks, so each
+ * band's track is the tallest across the row and every card's bands
+ * start together. Content-driven, so it survives a copy edit, a font
+ * swap and every breakpoint; a `min-h` in pixels or `lh` survives none
+ * of those, and clamping would truncate a price description.
+ *
+ * Two things were measured in-browser rather than assumed, because both
+ * decide the markup:
+ *
+ * 1. **A subgrid cannot reliably override the row gap it inherits.**
+ *    Setting `row-gap: 0` on the subgrid produced inconsistent gaps
+ *    (20px then 40px against a 40px parent), not zero. So the **parent**
+ *    carries `gap-x-4 gap-y-0` and the row separation is a uniform
+ *    `mb-4` on the cards — uniform because a `last:mb-0` would inflate
+ *    the final row's track for its siblings and leave that one card
+ *    taller than the rest.
+ * 2. **Identical padding on every card preserves alignment.** A
+ *    subgrid's tracks are positioned inside its own content box, so
+ *    padding shifts them; all four cards carry the same `p-6 md:p-8`,
+ *    so they shift identically and stay aligned with each other.
+ *
+ * The `Included` row is rendered even when a tier has no approved
+ * bullets: every card must span the same six rows or the subgrids stop
+ * lining up. Empty, its track collapses to nothing.
+ *
+ * Alignment is per grid row, which is what matters visually — the four
+ * cards at `xl`, each visible pair at `md`. `mt-auto` is gone; the CTA
+ * no longer needs pinning because its row is shared.
  *
  * Server component — `<ModalTrigger>` is the only interactive part, and
  * it carries each tier's `need` so the modal opens with that tier
@@ -75,13 +106,15 @@ export function PricingTiers() {
       <h2 id="pricing-tiers-heading" className="sr-only">
         {PRICING.tiersHeading}
       </h2>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-x-4 gap-y-0 md:grid-cols-2 xl:grid-cols-4">
         {PRICING_TIERS.map((tier) => (
-          /* flex-col + mt-auto on the CTA row so the four CTAs line up
-             across cards whose copy and lists run to different lengths. */
+          /* Six-row subgrid: the row tracks are the parent's, so every
+             card's bands start on the same line as its neighbours'. The
+             mb-4 is the row separation the parent's zeroed row-gap no
+             longer provides, and is uniform on purpose. */
           <div
             key={tier.slug}
-            className="flex h-full flex-col border border-white/15 bg-[#0a0a0c] p-6 transition-colors duration-150 hover:border-white/30 md:p-8"
+            className="row-span-6 mb-4 grid grid-rows-subgrid border border-white/15 bg-[#0a0a0c] p-6 transition-colors duration-150 hover:border-white/30 md:p-8 xl:mb-0"
           >
             <h3 className="text-lg font-medium text-white md:text-xl">
               {tier.name}
@@ -117,30 +150,35 @@ export function PricingTiers() {
               </p>
             </div>
 
-            {/* Owner-owed (Rule 4.3): a tier with no approved bullets
-                renders no list rather than an invented one. */}
-            {tier.features.length > 0 && (
-              <div className="mt-8">
-                <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
-                  {PRICING.featuresLabel}
-                </p>
-                <ul className="mt-4 space-y-3">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex gap-3">
-                      <span
-                        aria-hidden="true"
-                        className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
-                      />
-                      <span className="text-base leading-relaxed text-white/70">
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {/* Row five. Always rendered, even empty: the six-row spans
+                must match across cards or the subgrids stop aligning.
+                Owner-owed (Rule 4.3) — a tier with no approved bullets
+                shows no list rather than an invented one, and its cell
+                collapses to nothing. */}
+            <div className={tier.features.length > 0 ? "mt-8" : undefined}>
+              {tier.features.length > 0 && (
+                <>
+                  <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
+                    {PRICING.featuresLabel}
+                  </p>
+                  <ul className="mt-4 space-y-3">
+                    {tier.features.map((feature) => (
+                      <li key={feature} className="flex gap-3">
+                        <span
+                          aria-hidden="true"
+                          className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
+                        />
+                        <span className="text-base leading-relaxed text-white/70">
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
 
-            <div className="mt-auto pt-8">
+            <div className="mt-8">
               <ModalTrigger
                 variant="ghost"
                 need={PRICING_NEED[tier.slug]}
