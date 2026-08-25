@@ -14,13 +14,12 @@ type AsAnchor = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string };
 export type ButtonProps = {
   variant?: ButtonVariant;
   /**
-   * "compact" is a **responsive** step, not a fixed smaller button: the
-   * tighter scale holds until `sm`, then the default takes over. It
-   * exists for dense surfaces like the nav bar, where the full size
-   * crowds the lockup and the burger on a phone but has room to spare
-   * on a desktop. `min-h-11` in BASE is outside the size table on
-   * purpose, so no size can drop a control under the binding 44px touch
-   * target (§Layout).
+   * "compact" is the bar scale: a **38px** control against default's
+   * 50px, so it sits inside the nav without dominating the 44px burger
+   * beside it. Its *visible* box is under the binding 44px touch target
+   * (§Layout), so it carries a transparent `::after` that extends the
+   * hit area back to 44px — thinner to look at, unchanged to tap. Use
+   * it for dense chrome, never for a page's primary action.
    */
   size?: ButtonSize;
   /**
@@ -34,10 +33,22 @@ export type ButtonProps = {
 } & (AsButton | AsAnchor);
 
 const BASE =
-  "group/button inline-flex min-h-11 items-center justify-center rounded-none " +
+  "group/button inline-flex items-center justify-center rounded-none " +
   "font-medium transition-transform duration-150 " +
   "motion-safe:hover:scale-[1.02] " +
   "focus-visible:outline-2 focus-visible:outline-offset-2";
+
+/**
+ * The hit-area extension that lets a control be shorter than the
+ * binding 44px touch target without actually shrinking the target
+ * (§Layout). A transparent `::after` is part of the element's own hit
+ * region, so the tap area stays 44px tall while the painted box is
+ * 38px. `inset-x-0` keeps it inside the button's own width, so it never
+ * reaches sideways over a neighbouring control.
+ */
+const HIT_AREA =
+  "relative after:absolute after:inset-x-0 after:top-1/2 " +
+  "after:h-11 after:-translate-y-1/2 after:content-['']";
 
 /**
  * Type scale and padding travel together, and both live here rather
@@ -56,16 +67,23 @@ const SIZES: Record<
   { plain: string; arrow: string; arrowLabel: string; arrowBox: string }
 > = {
   default: {
-    plain: "text-base px-7 py-3",
-    arrow: "text-base items-stretch",
+    plain: "min-h-11 text-base px-7 py-3",
+    arrow: "min-h-11 text-base items-stretch",
     arrowLabel: "px-6 py-3",
     arrowBox: "px-4 py-3",
   },
+  /**
+   * 38px painted (14px text on 8px of vertical padding, plus the
+   * hairline), 44px tapped. Deliberately flat across breakpoints: the
+   * earlier responsive step existed only to stop the full-size button
+   * crowding a phone bar, and a control that is the right height
+   * everywhere does not need it.
+   */
   compact: {
-    plain: "text-sm px-4 py-2 sm:text-base sm:px-7 sm:py-3",
-    arrow: "text-sm items-stretch sm:text-base",
-    arrowLabel: "px-4 py-2 sm:px-6 sm:py-3",
-    arrowBox: "px-3 py-2 sm:px-4 sm:py-3",
+    plain: `${HIT_AREA} text-sm px-4 py-2`,
+    arrow: `${HIT_AREA} text-sm items-stretch`,
+    arrowLabel: "px-4 py-2",
+    arrowBox: "px-3 py-2",
   },
 };
 
@@ -92,6 +110,11 @@ const DIVIDER: Record<ButtonVariant, string> = {
 };
 
 /**
+ * `min-h-11` lives in the size table, not BASE, because "compact" is
+ * deliberately shorter than it. Every size that is not hit-extended
+ * must carry it, or the control silently drops under the binding 44px
+ * touch target.
+ *
  * Squared button per docs/04-ux-spec.md §Interaction vocabulary
  * (Redesign Unit 02 re-skin — the pill is retired with the paper
  * system). Renders an anchor when `href` is set, otherwise a real
