@@ -137,3 +137,35 @@ export const ROUTES = {
  * shape gave and a plain href string would have thrown away.
  */
 export const sectionHref = <T extends SectionId>(id: T): `/#${T}` => `/#${id}`;
+
+/** Pricing tier slugs per docs/06-taxonomy.md, ordered, exactly four. */
+export type PricingTierSlug = "workflow" | "tool" | "rescue" | "custom";
+
+/**
+ * One tier on `/pricing` (decision-log #25). Copy lives in
+ * `src/content/pricing.ts`; nothing here is rendered from a component
+ * literal.
+ *
+ * `upfront` and `ongoing` are **display strings, not numbers**. Two of
+ * the four tiers have no numeric upfront at all (one is retainer-only,
+ * one is quoted), so a `number` would have forced a sentinel and every
+ * consumer would have had to re-derive the label from it. The figure a
+ * visitor reads is the figure in content.
+ *
+ * `features` is `readonly string[]` and may be empty: a tier renders no
+ * list rather than an invented one (Rule 4.3). Bullets are owner-owed.
+ */
+export interface PricingTier {
+  readonly slug: PricingTierSlug;
+  readonly name: string;
+  readonly description: string;
+  /** Headline figure, e.g. "$3,998" / "No upfront" / "Quoted". */
+  readonly upfront: string;
+  /** Caption under the headline figure. */
+  readonly upfrontNote: string;
+  /** The retainer figure, e.g. "$298 per month". */
+  readonly ongoing: string;
+  /** Caption under the retainer figure — where the term is said out loud. */
+  readonly ongoingNote: string;
+  readonly features: readonly string[];
+}
