@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BrandWordmark } from "@/components/brand-wordmark";
+import { Button } from "@/components/button";
 import { CloseIcon } from "@/components/close-icon";
 import { NAV } from "@/content/copy";
 
@@ -54,9 +55,39 @@ function BurgerIcon() {
  * between sm and md; opening it at every width would have made that a
  * visible sideways jump of up to 40px at lg.
  *
- * No CTA in the nav (owner direction, 2026-07-06): the hero CTA and
- * the Final CTA (#start) carry conversion — a header button was
- * redundant. The burger sits right via justify-between, against the
+ * **The bar carries one button, beside the burger** (owner direction,
+ * 2026-08-25; decision-log #26): `NAV.featured`, which is Pricing. It
+ * is the shared `<Button>` at the `ghost` variant — §Interaction
+ * vocabulary's de-emphasized action on ink — deliberately not the white
+ * divided-arrow advance the hero CTA owns. This narrowly supersedes the
+ * 2026-07-06 "no CTA in the nav" direction: that call was about
+ * conversion, and this is navigation to a page, so the nav still has no
+ * conversion CTA. Pricing keeps its menu row too, so the button is a
+ * shortcut rather than the only way to reach it.
+ *
+ * It hides below 375px, the smoke-test width (build-note 07), because
+ * that is where it measurably stops fitting. Scrolled, the bar carries
+ * the lockup (128px), the button (112px) and the burger (44px) plus
+ * gaps, needing ~320px inside the gutters. At 375 the burger lands
+ * exactly on its 24px gutter; at 360 it creeps 7px inside it, which the
+ * binding gutter rhythm does not allow; at 320 it is pushed 23px
+ * off-screen entirely.
+ * The gate lives on a **wrapper**, not the button: `<Button>`'s base
+ * class already sets `inline-flex`, and `hidden` on the same element
+ * loses to it — same specificity, so stylesheet order decides, not
+ * class order. Measured, not assumed; the first attempt did nothing at
+ * all. The menu carries Pricing at every width regardless.
+ *
+ * **The bar does not intercept pointer events; only its controls do.**
+ * `<header>` is fixed, full-width and `z-40`, so its box sat over the
+ * page's own above-the-fold lockup and swallowed every click on it —
+ * which is why that lockup shipped un-linked in Unit 22. The bar is now
+ * `pointer-events-none` with `pointer-events-auto` restored on the
+ * wordmark link, the button, the burger and the overlay, so a page can
+ * put a real link under the transparent bar. Nothing about the bar's
+ * appearance or the 80px handoff changes.
+ *
+ * The burger sits right via justify-between, against the
  * wordmark slot on the left. Every href is root-relative (NAV.home,
  * NAV.items) so it resolves from `/pricing` as well as `/`; a bare
  * `#work` would mean `/pricing#work` there, which is nothing.
@@ -130,7 +161,7 @@ export function SiteNav() {
   return (
     <header
       className={[
-        "fixed inset-x-0 top-0 z-40 border-b",
+        "pointer-events-none fixed inset-x-0 top-0 z-40 border-b",
         "motion-safe:transition-colors motion-safe:duration-300",
         scrolled ? "border-white/10" : "border-transparent",
       ].join(" ")}
@@ -157,7 +188,7 @@ export function SiteNav() {
           {scrolled ? (
             <a
               href={NAV.home}
-              className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="pointer-events-auto inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               <BrandWordmark className="h-7 w-auto" />
             </a>
@@ -167,16 +198,29 @@ export function SiteNav() {
                the links. */
             <span aria-hidden="true" />
           )}
-          <button
-            ref={toggleRef}
-            type="button"
-            aria-expanded={open}
-            aria-label={NAV.menu.open}
-            onClick={() => setOpen(true)}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          >
-            <BurgerIcon />
-          </button>
+          {/* Grouped so justify-between still pins both to the right
+              against the wordmark slot. */}
+          <div className="flex items-center gap-3">
+            <div className="max-[374px]:hidden">
+              <Button
+                variant="ghost"
+                href={NAV.featured.href}
+                className="pointer-events-auto"
+              >
+                {NAV.featured.label}
+              </Button>
+            </div>
+            <button
+              ref={toggleRef}
+              type="button"
+              aria-expanded={open}
+              aria-label={NAV.menu.open}
+              onClick={() => setOpen(true)}
+              className="pointer-events-auto inline-flex min-h-11 min-w-11 items-center justify-center text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <BurgerIcon />
+            </button>
+          </div>
         </nav>
       </div>
       {open && (
@@ -185,7 +229,7 @@ export function SiteNav() {
           role="dialog"
           aria-modal="true"
           aria-label={NAV.label}
-          className="fixed inset-0 z-50 flex flex-col bg-[#0a0a0c]/95 px-6 text-white backdrop-blur-xl sm:px-8 lg:px-16"
+          className="pointer-events-auto fixed inset-0 z-50 flex flex-col bg-[#0a0a0c]/95 px-6 text-white backdrop-blur-xl sm:px-8 lg:px-16"
         >
           <div className="flex items-center justify-between py-5">
             {/* The overlay covers the hero, so its wordmark always

@@ -21,9 +21,33 @@ export const SITE = {
     "NextSketch builds software products and agentic systems from idea to production — and stays. A product development partner for founders and small-to-medium businesses.",
 } as const;
 
+/**
+ * Pricing, held as one object so the bar button and the menu row are
+ * literally the same item rather than two strings that can drift
+ * (decision-log #26). It appears twice on screen and once in source.
+ */
+const PRICING_ITEM = { href: ROUTES.pricing, label: "Pricing" } as const;
+
 export const NAV = {
   /** Accessible name of the main nav landmark. */
   label: "Main",
+  /**
+   * The single item promoted to a button in the bar, beside the burger
+   * (owner direction, 2026-08-25). Today that is Pricing: it is the one
+   * destination that leaves the page, and the one a visitor goes
+   * looking for on purpose, so it earns a surface of its own instead of
+   * being one row down inside the menu.
+   *
+   * This **supersedes the 2026-07-06 "no CTA in the nav" direction**,
+   * narrowly. That call was about conversion — the hero CTA and #start
+   * carry it, and a third conversion button was redundant. This is
+   * navigation to a page, not a conversion affordance, so it takes the
+   * de-emphasized ghost variant rather than the hero's white advance
+   * surface, and the nav still has no conversion CTA.
+   *
+   * It stays in `items` as well, so the menu keeps its Pricing row.
+   */
+  featured: PRICING_ITEM,
   /**
    * Where both wordmarks point. Root-relative, so the lockup reaches
    * the top of the home page from `/pricing` too — a bare `#top`
@@ -61,7 +85,7 @@ export const NAV = {
     { href: sectionHref("services"), label: "Services" },
     { href: sectionHref("process"), label: "Process" },
     { href: sectionHref("about"), label: "About" },
-    { href: ROUTES.pricing, label: "Pricing" },
+    PRICING_ITEM,
   ] as const satisfies readonly { href: string; label: string }[],
   cta: "Start a Conversation",
   /** Menu toggle labels (screen-reader copy). */

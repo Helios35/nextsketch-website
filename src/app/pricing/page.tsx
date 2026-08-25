@@ -4,6 +4,7 @@ import { PricingTiers } from "@/components/pricing-tiers";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
+import { NAV } from "@/content/copy";
 import { PRICING } from "@/content/pricing";
 
 export const metadata: Metadata = {
@@ -58,10 +59,18 @@ const ACCENT_PHRASE = "upfront";
  * section's **first child with no top padding above it** — the padding
  * lives on the content block, or the lockup would start 128px low.
  *
- * Not a link, deliberately: the fixed nav bar spans the top band at
- * `z-40` and would swallow every click on it, so a linked lockup here
- * would be a link that cannot be clicked. Going home is carried by the
- * nav's own wordmark past 80px, the footer's, and the menu.
+ * **It is a link** to `NAV.home` (`/#top`), so the lockup returns the
+ * visitor to the top of the home page from anywhere on this page
+ * (owner direction, 2026-08-25). Unit 22 shipped it un-linked because
+ * the fixed bar spans the top band at `z-40` and swallowed every click
+ * on it; `site-nav.tsx` is now `pointer-events-none` except on its own
+ * controls, so the link underneath is reachable. Past 80px the bar's
+ * own wordmark takes over and answers the same click.
+ *
+ * The gutter padding lives on the anchor, not the `<header>`, for two
+ * reasons at once: the lockup still paints at the hero's exact 24px
+ * offset, and the hit area becomes 76px tall, clearing the binding
+ * 44px minimum that wrapping the bare 28px mark would have missed.
  *
  * Server component throughout — the tier CTAs are the only interactive
  * parts and bring their own client boundary. The intro entrance is the
@@ -81,8 +90,13 @@ export default function Pricing() {
           className="relative flex w-full flex-col bg-ink"
         >
           <div className="sticky top-0 z-10 h-0">
-            <header className="px-6 py-6 sm:px-8 lg:px-16">
-              <BrandWordmark className="h-7 w-auto" />
+            <header>
+              <a
+                href={NAV.home}
+                className="pointer-events-auto inline-flex px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-8 lg:px-16"
+              >
+                <BrandWordmark className="h-7 w-auto" />
+              </a>
             </header>
           </div>
           <div className="w-full px-6 pt-32 pb-16 sm:px-8 sm:pt-40 lg:px-16 lg:pt-48 lg:pb-20">
