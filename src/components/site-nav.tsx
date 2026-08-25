@@ -204,6 +204,7 @@ export function SiteNav() {
             <div className="max-[374px]:hidden">
               <Button
                 variant="ghost"
+                size="compact"
                 href={NAV.featured.href}
                 className="pointer-events-auto"
               >

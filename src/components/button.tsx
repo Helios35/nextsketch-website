@@ -6,12 +6,23 @@ import type {
 import { ArrowIcon } from "@/components/arrow-icon";
 
 type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost";
+type ButtonSize = "default" | "compact";
 
 type AsButton = ButtonHTMLAttributes<HTMLButtonElement> & { href?: never };
 type AsAnchor = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string };
 
 export type ButtonProps = {
   variant?: ButtonVariant;
+  /**
+   * "compact" is a **responsive** step, not a fixed smaller button: the
+   * tighter scale holds until `sm`, then the default takes over. It
+   * exists for dense surfaces like the nav bar, where the full size
+   * crowds the lockup and the burger on a phone but has room to spare
+   * on a desktop. `min-h-11` in BASE is outside the size table on
+   * purpose, so no size can drop a control under the binding 44px touch
+   * target (§Layout).
+   */
+  size?: ButtonSize;
   /**
    * Divided-arrow treatment (docs/04-ux-spec.md §Interaction
    * vocabulary): a label segment plus a hairline-divided arrow box —
@@ -24,9 +35,39 @@ export type ButtonProps = {
 
 const BASE =
   "group/button inline-flex min-h-11 items-center justify-center rounded-none " +
-  "text-base font-medium transition-transform duration-150 " +
+  "font-medium transition-transform duration-150 " +
   "motion-safe:hover:scale-[1.02] " +
   "focus-visible:outline-2 focus-visible:outline-offset-2";
+
+/**
+ * Type scale and padding travel together, and both live here rather
+ * than in BASE so a size *replaces* them instead of competing with
+ * them. That is not stylistic: `text-sm` and `text-base` are the same
+ * specificity, so a caller appending one via `className` would win or
+ * lose on Tailwind's stylesheet order, not on class order. Selecting
+ * one string per size removes the tie entirely.
+ *
+ * `arrow` splits its padding across the two segments (§Interaction
+ * vocabulary's divided-arrow), so each size carries the segment
+ * paddings too and the treatment scales as one piece.
+ */
+const SIZES: Record<
+  ButtonSize,
+  { plain: string; arrow: string; arrowLabel: string; arrowBox: string }
+> = {
+  default: {
+    plain: "text-base px-7 py-3",
+    arrow: "text-base items-stretch",
+    arrowLabel: "px-6 py-3",
+    arrowBox: "px-4 py-3",
+  },
+  compact: {
+    plain: "text-sm px-4 py-2 sm:text-base sm:px-7 sm:py-3",
+    arrow: "text-sm items-stretch sm:text-base",
+    arrowLabel: "px-4 py-2 sm:px-6 sm:py-3",
+    arrowBox: "px-3 py-2 sm:px-4 sm:py-3",
+  },
+};
 
 /* Outline color lives with the variant: the focus ring must contrast
  * with the surface the button sits on (ink ring is invisible on ink). */
@@ -61,15 +102,17 @@ const DIVIDER: Record<ButtonVariant, string> = {
  */
 export function Button({
   variant = "primary",
+  size = "default",
   arrow = false,
   className,
   children,
   ...rest
 }: ButtonProps) {
+  const scale = SIZES[size];
   const cls = [
     BASE,
     VARIANTS[variant],
-    arrow ? "items-stretch" : "px-7 py-3",
+    arrow ? scale.arrow : scale.plain,
     className,
   ]
     .filter(Boolean)
@@ -77,9 +120,11 @@ export function Button({
 
   const content: ReactNode = arrow ? (
     <>
-      <span className="flex items-center px-6 py-3">{children}</span>
+      <span className={`flex items-center ${scale.arrowLabel}`}>
+        {children}
+      </span>
       <span
-        className={`flex items-center border-l px-4 py-3 ${DIVIDER[variant]}`}
+        className={`flex items-center border-l ${scale.arrowBox} ${DIVIDER[variant]}`}
       >
         <span className="transition-transform duration-150 motion-safe:group-hover/button:translate-x-0.5">
           <ArrowIcon className="size-5" />
