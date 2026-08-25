@@ -13,7 +13,7 @@
 
 ## System overview — **CHANGED**
 
-A statically-rendered **single dark landing hero** with **exactly one serverless API route** for lead submission (`POST /api/qualify`). **No database, no auth, no CMS, and no backend beyond that one route — ever** (decision-log #8). Content is code (typed constants in `src/content/*.ts`), since canonical copy is locked and changes are owner decisions. The durable lead record is an external **Google Sheet** (+ a best-effort Asana task); the site stores nothing server-side.
+**Two statically-prerendered pages** — the dark scrolling home page and `/pricing` (decision-log #23, 2026-08-25) — with **exactly one serverless API route** for lead submission (`POST /api/qualify`). Adding a route did **not** add a server surface: `/pricing` prerenders to static HTML at build and sells nothing. **No database, no auth, no CMS, and no backend beyond that one route — ever** (decision-log #8, unchanged by #23). Content is code (typed constants in `src/content/*.ts`), since canonical copy is locked and changes are owner decisions. The durable lead record is an external **Google Sheet** (+ a best-effort Asana task); the site stores nothing server-side.
 
 ## Tech stack — **CURRENT** (versions as-built)
 
@@ -116,17 +116,26 @@ Resend (email — best-effort, via `after()`) · **Google Apps Script webhook** 
 
 ```
 src/
-  app/            — layout.tsx (dark ink shell, fonts), page.tsx (hero),
+  app/            — layout.tsx (dark ink shell, fonts, modal provider),
+                    page.tsx (home: hero + six sections),
+                    pricing/page.tsx (the standalone route, #23),
                     globals.css (Tailwind v4 theme), not-found.tsx,
                     api/qualify/route.ts (the only server surface)
-  components/     — hero.tsx, hero-cta.tsx, qualification-modal.tsx,
-                    qualification-modal-provider.tsx, button.tsx
-                    (DORMANT — retired plan: Nav, sections, SiteNav/Footer,
-                     Reveal, SketchAccent, etc. — on disk, not rendered;
-                     delete vs. keep is an open owner call, build-note 08)
-  content/        — copy.ts (SITE + LANDING live; retired-plan copy dormant),
-                    modal.ts, email.ts, faq.ts, services.ts
-  lib/            — schema.ts (Zod union), qualify.ts (submit seam),
+  components/     — hero.tsx + hero-orbit.tsx + hero-cta.tsx, site-nav.tsx,
+                    site-footer.tsx, the six section components,
+                    work-rail.tsx, scroll-video.tsx, scroll-reveal.tsx,
+                    parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
+                    qualification-modal(-provider).tsx, button.tsx
+                    (DORMANT — retired paper plan: hero-section.tsx,
+                     sketch-accent.tsx, the held sections, Reveal, etc. —
+                     on disk, not rendered; delete vs. keep is an open
+                     owner call, build-note 08)
+  content/        — copy.ts (SITE + NAV + LANDING live; retired-plan copy
+                    dormant), work.ts, pricing.ts, services.ts,
+                    modal.ts, email.ts, faq.ts
+  lib/            — types.ts (SectionId, ROUTES, sectionHref), schema.ts
+                    (Zod union), qualify.ts (submit seam), video-scrub.ts,
                     lead-delivery.ts, lead-format.ts, lead-notify.ts
 scripts/          — inbound-leads.gs (the Apps Script reference copy; build-note 14)
+                    check-banned-terms.mjs (the Rule 3.2/3.4 gate)
 ```

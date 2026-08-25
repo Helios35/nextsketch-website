@@ -109,3 +109,31 @@ export type WorkItem = {
       readonly tone?: undefined;
     }
 );
+
+/**
+ * The routes the site serves (docs/03-site-architecture.md §Sitemap).
+ * `/` is the single scrolling page; `/pricing` is the one standalone
+ * route (decision-log #23). `/api/qualify` is POST-only and has no
+ * page, so it is not a destination anything links to.
+ */
+export const ROUTES = {
+  home: "/",
+  pricing: "/pricing",
+} as const;
+
+/**
+ * Root-relative anchor for a section — `/#work`, never `#work`.
+ *
+ * A bare hash is resolved against the *current* route, so `#work` on
+ * `/pricing` means `/pricing#work`, which is nothing. Every nav and
+ * footer link now leaves the page it is on, so all of them must be
+ * root-relative (decision-log #23). On `/` the two forms behave
+ * identically: same document, same fragment navigation, same
+ * motion-gated smooth scroll.
+ *
+ * Generic rather than `(id: SectionId) => string` so the literal
+ * survives — a mistyped anchor fails typecheck instead of shipping a
+ * dead link, which is the guarantee the old `id`-plus-derived-hash
+ * shape gave and a plain href string would have thrown away.
+ */
+export const sectionHref = <T extends SectionId>(id: T): `/#${T}` => `/#${id}`;

@@ -4,9 +4,17 @@ import { FOOTER, NAV, SITE } from "@/content/copy";
 
 /**
  * Site footer per docs/03-site-architecture.md §Navigation: the same
- * anchors as the nav, the legal line (casing per Taxonomy §8), and
+ * items as the nav, the legal line (casing per Taxonomy §8), and
  * the social links (set + real URLs per FOOTER.socials in
  * src/content/copy.ts).
+ *
+ * It maps the same `NAV.items` the nav does, which is why the Pricing
+ * item and the root-relative hrefs land here for free (decision-log
+ * #23/#24) — the array is the single source, and a footer that
+ * derived its own `#${id}` would have silently grown a dead link the
+ * moment one item became a route. The wordmark's target moves to
+ * `NAV.home` for the same reason: from `/pricing`, a bare `#top`
+ * means `/pricing#top`, which is nothing.
  *
  * The mailto centerpiece was dropped here (owner direction
  * 2026-08-04). Business Rules 2.6 is unaffected: it binds the escape
@@ -58,7 +66,7 @@ export function SiteFooter() {
       <div className="px-6 py-16 sm:px-8 md:py-20 lg:px-16">
         <div className="md:flex md:items-start md:justify-between">
           <a
-            href="#top"
+            href={NAV.home}
             className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             <BrandWordmark className="h-7 w-auto" />
@@ -79,9 +87,9 @@ export function SiteFooter() {
         <div className="mt-8 border-t border-white/10 pt-8 lg:grid lg:grid-cols-10 lg:items-center">
           <nav aria-label={FOOTER.label} className="lg:col-[4/11] lg:row-[1]">
             <ul className="flex flex-wrap items-center gap-x-8 gap-y-1 lg:justify-end">
-              {NAV.items.map(({ id, label }) => (
-                <li key={id}>
-                  <a href={`#${id}`} className={anchorLink}>
+              {NAV.items.map(({ href, label }) => (
+                <li key={href}>
+                  <a href={href} className={anchorLink}>
                     {label}
                   </a>
                 </li>
