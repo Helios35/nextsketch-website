@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 2.1 · **Date:** 2026-07-06 · **Status:** Active — aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01)
+**Version:** 2.2 · **Date:** 2026-08-25 · **Status:** Active — routes and the nav item set reconciled to decision-log #22–#24
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code)
 
@@ -15,7 +15,7 @@
 3. Modal answers (label → payload mapping)
 4. Lead types & signals
 5. Color tokens
-6. Section IDs
+6. Routes, section IDs and the nav item set
 7. Placeholder assets
 8. Naming conventions
 9. Deprecation log
@@ -90,9 +90,38 @@ Computed in `src/lib/lead-format.ts` (`leadSignal`). The pre-pivot set (`qualifi
 
 Token names — `paper` · `paper-bright` · `ink` · `white` · `gold`/`gold-ink` · `lavender`/`lavender-ink` · `rose`/`rose-ink` · `sage`/`sage-ink` — remain defined in `src/app/globals.css`; Tailwind theme keys use exactly these names (**CURRENT**). The design system uses four of them (**CURRENT**): `ink` (page surface), `white` (text), and **`gold`/`gold-ink` — the only accent** (decision-log #14). The rest are **orphaned** (**CHANGED**): `lavender`/`rose`/`sage` (+ `-ink` pairs) and `paper-bright` have no design role and are unavailable to new sections; `paper` is orphaned with one live exception — the 404 surface (**CURRENT**). Removing orphaned tokens from `globals.css` is a future owner-approved code change. Pairing rule (accent bg ⇒ paired `-ink` text) is **CURRENT/binding**. Full detail in `04-ux-spec.md` §Color.
 
-## 6. Section IDs (anchor names) — **CURRENT** (redesign set) · **RETIRED** (held-section IDs)
+## 6. Routes and section IDs — **CHANGED** (a second route; nav items carry hrefs) · **RETIRED** (held-section IDs)
 
-The live anchor set: `top` (page top — nav/footer wordmark target, on `<main>`) · **`work` (Selected Work)** · `why` (Manifesto) · `services` · `process` · `about` · `start` (Final CTA). These reuse the fitting old IDs, as this section anticipated. `NAV.items` targets `work` / `why` / `services` / `process` / `about`; `start` is reached via the CTAs and the footer, not a nav item.
+### Routes — **CHANGED (decision-log #23, 2026-08-25)**
+
+| Route | What it is | Status |
+|---|---|---|
+| `/` | The home page — hero + six sections, one scroll | **CURRENT** |
+| `/pricing` | Standalone pricing page, statically prerendered | **CHANGED (new, #23)** |
+| `/api/qualify` | POST-only lead endpoint, no page | **CURRENT** (see `07-technical-spec.md`) |
+
+Route paths are kebab-case per §8. `/pricing` is a **page, not a server surface** — decision #8 is untouched. Canonical in `src/lib/types.ts` → `ROUTES`.
+
+### Section IDs (anchor names)
+
+The live anchor set, all on `/`: `top` (page top — wordmark target, on `<main>`) · **`work` (Selected Work)** · `why` (Manifesto) · `services` · `process` · `about` · `start` (Final CTA). These reuse the fitting old IDs, as this section anticipated. `start` is reached via the CTAs, not a nav item.
+
+### Nav item set and order — **CHANGED (decision-log #22–#24, 2026-08-25)**
+
+Six items, in this order, rendered by both `SiteNav`'s overlay and `SiteFooter` from the same `NAV.items` array:
+
+| # | Label | Destination | Kind |
+|---|---|---|---|
+| 1 | Work | `/#work` | section anchor — leads the set (#21) |
+| 2 | Why | `/#why` | section anchor |
+| 3 | Services | `/#services` | section anchor |
+| 4 | Process | `/#process` | section anchor |
+| 5 | About | `/#about` | section anchor |
+| 6 | **Pricing** | **`/pricing`** | **route** — last slot (#24) |
+
+**Destinations are root-relative, never bare hashes** (#23). A bare `#work` resolves against the current route, so on `/pricing` it would mean `/pricing#work` — nothing. `NAV.items` therefore carries a finished `href` per item rather than a `SectionId` the components turn into `#${id}`; anchors are built by `sectionHref()` in `src/lib/types.ts`, which keeps the `SectionId` literal so a mistyped anchor still fails typecheck. Both wordmark targets are `NAV.home` = `/#top`.
+
+**The nav is a hamburger at every breakpoint** (#22): there is no visible tab row at any width, and the overlay is the only place these six render.
 
 **`work` reactivated — CHANGED (decision-log #16, 2026-08-24).** It was dormant under #13, which required a new decision to bring it back; the owner made that call to fix a conversion problem (nothing on the page demonstrated proof of work). It ships as the **first section below the hero** and takes the **(01)** structural index, renumbering the rest to (02)–(06). The remaining old IDs (`voices` · `fit` · `faq`) stay dormant with their held sections — reactivating any still requires a new decision (#13).
 

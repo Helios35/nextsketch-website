@@ -15,7 +15,7 @@
 
 ## Overview — **CHANGED**
 
-A marketing site for NextSketch on Next.js/Vercel, replacing the Webflow site. **As-built: a single dark cinematic landing hero** with a **two-door** branching qualification modal as the structured lead path. **Planned (decision-log #13):** five sections — Manifesto, Services, Process, About, Final CTA — added to the page one unit at a time, each designed against the hero-derived design system (`04-ux-spec.md`). The old eleven-section scrolling page is **RETIRED** (dormant in code, not a destination). The lead path writes to a durable Google Sheet + best-effort Asana, with transactional email — not a single notification email (see `07-technical-spec.md`).
+A marketing site for NextSketch on Next.js/Vercel, replacing the Webflow site. **As-built: a dark cinematic home page (hero + six sections) and a standalone `/pricing` route** (**decision-log #23**, 2026-08-25 — the site is no longer single-page), with a **two-door** branching qualification modal as the structured lead path. **Shipped (decision-log #13, extended by #16):** Selected Work, Manifesto, Services, Process, About and Final CTA, added one unit at a time, each designed against the hero-derived design system (`04-ux-spec.md`). *(Prose in this doc stack still says "five sections" in places — pre-existing drift from #16; flagged, not reconciled in the #22 unit.)* The old eleven-section scrolling page is **RETIRED** (dormant in code, not a destination). The lead path writes to a durable Google Sheet + best-effort Asana, with transactional email — not a single notification email (see `07-technical-spec.md`).
 
 ## Background — **CURRENT**
 
