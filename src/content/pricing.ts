@@ -79,6 +79,12 @@ export const PRICING = {
   tiersHeading: "Pricing tiers",
   /** Mono micro-labels inside each card. */
   upfrontLabel: "Upfront",
+  /**
+   * Screen-reader prefix for the struck former price. The strikethrough
+   * is a purely visual signal, so without this a non-sighted visitor
+   * hears two prices with nothing to tell them which one they pay.
+   */
+  upfrontWasLabel: "Down from",
   ongoingLabel: "Ongoing",
   featuresLabel: "Included",
   /**
@@ -165,6 +171,7 @@ export const PRICING_TIERS = [
     description:
       "Embedded agents integrated into the processes your business already runs. We assess where they create real value in the day to day, then build them into the work itself.",
     upfront: "$3,998",
+    upfrontWas: "$5,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
     ongoing: "$298 per month",
     ongoingNote: "Required the first three months, optional after.",
@@ -176,6 +183,7 @@ export const PRICING_TIERS = [
     description:
       "A custom internal platform or agent built for your specific business processes. A real tool that you own, built around how your team actually works.",
     upfront: "$7,998",
+    upfrontWas: "$10,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
     ongoing: "$298 per month",
     ongoingNote: "Required the first three months, optional after.",

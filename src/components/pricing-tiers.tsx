@@ -6,6 +6,7 @@ import {
   PRICING_NEED,
   PRICING_TIERS,
 } from "@/content/pricing";
+import type { PricingTier } from "@/lib/types";
 
 /**
  * The four pricing tiers (`/pricing`) — decision-log #25.
@@ -107,7 +108,11 @@ export function PricingTiers() {
         {PRICING.tiersHeading}
       </h2>
       <div className="grid gap-x-4 gap-y-0 md:grid-cols-2 xl:grid-cols-4">
-        {PRICING_TIERS.map((tier) => (
+        {/* Widened to PricingTier: `as const satisfies` narrows each entry
+            to its own literal type, so `upfrontWas` would not exist on the
+            two tiers that omit it. The component reads the interface, not
+            the content's literals, which is the right coupling anyway. */}
+        {PRICING_TIERS.map((tier: PricingTier) => (
           /* Six-row subgrid: the row tracks are the parent's, so every
              card's bands start on the same line as its neighbours'. The
              mb-4 is the row separation the parent's zeroed row-gap no
@@ -131,8 +136,22 @@ export function PricingTiers() {
               <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
                 {PRICING.upfrontLabel}
               </p>
-              <p className="mt-2 text-3xl leading-[1.05] font-medium tracking-tight text-white">
-                {tier.upfront}
+              {/* The struck former price sits to the right of the figure,
+                  baseline-aligned and at the white/55 caption stop (not
+                  /40 — it is real text and must clear AA contrast on
+                  ink, the same call the footer's legal line records).
+                  Gold is not used: it is the scarce payoff accent, and
+                  the figure a visitor actually pays is the white one. */}
+              <p className="mt-2 flex flex-wrap items-baseline gap-x-3">
+                <span className="text-3xl leading-[1.05] font-medium tracking-tight text-white">
+                  {tier.upfront}
+                </span>
+                {tier.upfrontWas !== undefined && (
+                  <s className="text-base leading-[1.05] text-white/55 line-through">
+                    <span className="sr-only">{PRICING.upfrontWasLabel} </span>
+                    {tier.upfrontWas}
+                  </s>
+                )}
               </p>
               <p className="mt-2 text-sm leading-relaxed text-white/55">
                 {tier.upfrontNote}

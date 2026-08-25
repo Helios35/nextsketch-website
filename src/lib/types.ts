@@ -161,6 +161,14 @@ export interface PricingTier {
   readonly description: string;
   /** Headline figure, e.g. "$3,998" / "No upfront" / "Quoted". */
   readonly upfront: string;
+  /**
+   * The struck former figure shown beside `upfront`, e.g. "$5,000".
+   * Optional and present on only the tiers the owner has discounted, so
+   * a tier without one renders no strikethrough rather than an empty
+   * slot. A display string like `upfront`, and it carries its own
+   * currency symbol.
+   */
+  readonly upfrontWas?: string;
   /** Caption under the headline figure. */
   readonly upfrontNote: string;
   /** The retainer figure, e.g. "$298 per month". */
