@@ -25,13 +25,13 @@
 
 ## Page structure — **CHANGED**
 
-**Live (as-built):** one screen — the dark cinematic hero (`src/components/hero.tsx`): wordmark, headline ("From idea to production. And we stay." — Hero Option A, gold accent on the payoff words), Messaging Kit §03 Message 4 supporting line, the capability strip (four services), and the CTA → modal. Detail in `04-ux-spec.md` §Live components.
+**Live (as-built):** the dark cinematic hero (`src/components/hero.tsx`): wordmark, headline ("From idea to production. Gain a real partner." — **decision-log #18**, gold accent on "production" / "partner"), Messaging Kit §03 Message 4 supporting line, the capability strip (four services), and the CTA → modal — followed by the section set below. Messaging Kit §05 **Hero Option A** ("From idea to production. And we stay."), which this row previously recorded as locked, is **superseded** (#18); it survives on disk only in the dormant `HERO.headline`. Detail in `04-ux-spec.md` §Live components.
 
 **Planned section set (the redesign — PLANNED, decision-log #13).** Five sections join the hero on the single page, built one unit at a time against `04-ux-spec.md`; page order and each section's anchor/layout are confirmed per-section with the owner:
 
 | Section | Job | Canonical copy source |
 |---------|-----|----------------------|
-| **Selected Work** (`#work`) — **CHANGED, live (decision-log #16)** | **Prove the work is real — the conversion-recovery band, first below the hero** | **None; DRAFT brand voice in `src/content/work.ts`. Names/summaries/screenshots/URLs owner-owed (Rule 4.3)** |
+| **Selected Work** (`#work`) — **CHANGED, live (decision-log #16)** | **Prove the work is real — the conversion-recovery band, first below the hero; leads the nav (#21)** | **None in Messaging Kit. `src/content/work.ts` — owner-supplied names, links and screenshots delivered 2026-08-24; summaries DRAFT in brand voice (Rule 4.3)** |
 | Manifesto | Reframe the problem | "Most firms build what you ask for…" (`src/content/copy.ts`, dormant — re-confirm at the unit) |
 | Services | Name the four engagements (Taxonomy §1) | Messaging Kit §05 Services |
 | Process | Show the workflow + differentiator (Taxonomy §2) | "Strategy. Build. Validate. Stay." four-phase |

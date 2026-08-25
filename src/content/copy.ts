@@ -80,7 +80,12 @@ export const NOT_FOUND = {
 } as const;
 
 export const HERO = {
-  /** Headline Option A — locked in docs/03-site-architecture.md. */
+  /**
+   * Messaging Kit §05 Hero Option A. **Superseded** by decision-log
+   * #18 (2026-08-24) and retained here only because this whole `HERO`
+   * const is dormant — the live hero reads `LANDING.headline`. Kept,
+   * not deleted, per the log's convention for superseded material.
+   */
   headline: "From idea to production. And we stay.",
   subheadline:
     "NextSketch takes software ideas from concept to production — and stays with you. We figure out what needs to be built, build it correctly, validate it works, and partner with you through what comes next. No handoff. No fluff. A real partner.",
@@ -104,10 +109,10 @@ export const HERO = {
  * Landing hero (single-page site) — the dark cinematic re-skin of the
  * supplied template, mapped to NextSketch messaging. Every string here
  * traces to an approved source:
- * - headline: owner-revised 2026-08-24, replacing Messaging Kit §05 Hero
- *   Option A ("From idea to production. And we stay.") which was locked
- *   at architecture row 2. An owner edit to canonical copy, so it owes a
- *   decision-log entry under Rule 4.1 — flagged, not yet written.
+ * - headline: decision-log #18 (2026-08-24), superseding Messaging Kit
+ *   §05 Hero Option A ("From idea to production. And we stay."), which
+ *   architecture row 2 had recorded as locked. Rule 4.1 no longer
+ *   traces the hero to §05 — do not "correct" this back to Option A.
  * - accentWords: the two payoff words rendered in the gold brand accent;
  *   "stay" moved to "partner" with the headline, since the old word no
  *   longer appears and an unmatched word renders un-accented, which
@@ -226,19 +231,20 @@ export const PROCESS = {
  * the section's job is authority, and the earlier text could only
  * assert the same claims the rest of the page already made.
  *
- * ⚠ Rule 3.4 conflict — owner ratification owed. The first paragraph
- * names the retired physical-design discipline that the retired-brand
- * sweep bans by name (docs/05-business-rules.md §3.4, enforced by
- * scripts/check-banned-terms.mjs). That ban exists to stop the retired
- * *service line* reappearing as a current offer; here the phrase is
- * biography — where Nathan trained, not what NextSketch sells — which
- * is a use the rule was never written against. Rather than reword the
- * owner's copy or gut the rule, the gate carries one exemption scoped
- * to this file and asserted to appear exactly once: the same clause in
- * a service card still fails, and rewording this paragraph fails too
- * rather than leaving a bypass open. See the ALLOWED list in
- * scripts/check-banned-terms.mjs. This owes a decision-log entry and a
- * §3.4 amendment.
+ * Rule 3.4 exemption — decision-log #20 (2026-08-24). The first
+ * paragraph names the retired physical-design discipline that the
+ * retired-brand sweep bans by name (docs/05-business-rules.md §3.4,
+ * enforced by scripts/check-banned-terms.mjs). That ban stops the
+ * retired *service line* reappearing as a current offer; here the
+ * phrase is biography — where Nathan trained, not what NextSketch
+ * sells. §3.4 now records that distinction, and the gate carries one
+ * exemption scoped to this file and asserted to appear exactly once:
+ * the same clause in a service card still fails, and rewording this
+ * paragraph fails too rather than leaving a bypass open. See the
+ * ALLOWED list in scripts/check-banned-terms.mjs.
+ *
+ * The closing paragraph was removed at the owner's direction; where
+ * its "we stay" promise lands is an open owner call (#20).
  *
  * (This comment deliberately does not spell the term out: the gate
  * scans this file, and a bare occurrence here would fail the build —

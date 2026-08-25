@@ -88,7 +88,7 @@ The system has exactly **three type roles**; their cadence (display → mono lab
 
 Two shipped display accents, available to sections:
 
-- **Gold payoff words** — accent words inside a white display heading take `text-gold` (the hero's "production" / "stay"). At most a couple of words; the heading stays white.
+- **Gold payoff words** — accent words inside a white display heading take `text-gold` (the hero's **"production" / "partner"**, decision-log #18; the retired pair was "production" / "stay"). At most a couple of words; the heading stays white. The words are matched against the headline string, so a headline rewrite must move `accentWords` with it or the accent silently disappears.
 - **Gold-italic aside** — a supporting line may be `text-gold italic` (hero's right column). This is the *only* italic in the system.
 
 Over imagery, text carries a soft shadow for legibility (shipped values: headline `[text-shadow:0_2px_30px_rgba(0,0,0,0.5)]`, wordmark `0 1px 16px rgba(0,0,0,0.6)`, supporting line `0 1px 20px rgba(0,0,0,0.7)`). On plain `ink` or a panel, no text shadow.
