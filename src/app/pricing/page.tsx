@@ -17,7 +17,7 @@ export const metadata: Metadata = {
  * most a couple of accent words inside a white display heading).
  * Degrades to an unaccented headline if the copy changes.
  */
-const ACCENT_PHRASE = "publish";
+const ACCENT_PHRASE = "upfront";
 
 /**
  * `/pricing` — the site's one standalone route (decision-log #23,

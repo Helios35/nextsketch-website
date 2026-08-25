@@ -58,7 +58,7 @@ export const PRICING = {
     "Scoped upfront engagements and a $298 monthly product partnership, published in plain numbers. No hourly billing and no surprise invoices.",
   /** Mono micro-label above the heading (docs/04-ux-spec.md §Typography). */
   eyebrow: "Pricing",
-  headline: "We publish what we charge.",
+  headline: "NextSketch puts the price upfront.",
   /**
    * Brand Philosophy §6 in the site's voice. "No meter running during
    * meetings" and "no surprise invoices" are §6 verbatim.
