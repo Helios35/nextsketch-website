@@ -194,7 +194,7 @@ export const PRICING_TIERS = [
     name: "Save Your Project",
     description:
       "Someone got you 70% there and disappeared. We assess what was built, validate the direction, and get you to launch.",
-    upfront: "No upfront",
+    upfront: "Quoted",
     upfrontNote: "The partnership starts on day one instead.",
     ongoing: "$298 per month",
     ongoingNote: "Two month trial. No contractual obligation.",
@@ -204,7 +204,7 @@ export const PRICING_TIERS = [
     slug: "custom",
     name: "Custom Product",
     description:
-      "Scope that does not fit the tiers above. We define it with you first, then price it to the work rather than to the hours.",
+      "Scope that does not fit the tiers above. We define it with you first, then price it to the deliverable, so you get a flat rate that does not change. We deliver a working product in 6–8 weeks.",
     upfront: "Quoted",
     upfrontNote: "Priced once the scope is defined with you.",
     ongoing: "Quoted monthly",
