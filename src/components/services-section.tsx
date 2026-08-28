@@ -3,6 +3,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { ServiceCta } from "@/components/service-cta";
 import {
   SERVICE_NEED,
+  SERVICE_PAGE_HREF,
   SERVICES,
   SERVICES_CTA,
   SERVICES_EYEBROW,
@@ -90,8 +91,30 @@ export function ServicesSection() {
                     which the swap-in font fallback would have eaten.
                     At 18px it clears by ~24px. 1- and 2-up layouts
                     have room to spare and keep the larger size. */}
+                {/* The name is the card's second affordance
+                    (decision-log #30): the CTA below still opens the
+                    modal on this service, and the name now opens the
+                    service route at this service's block. Root-relative
+                    by construction — `SERVICE_PAGE_HREF` builds every
+                    href through `serviceBlockHref`, so nothing here is
+                    a hand-written hash.
+
+                    Deliberately not the §Interaction-vocabulary gold
+                    text link: gold on the card heading would put a
+                    second gold element above the gold CTA and spend the
+                    page's one accent twice per card. It rests as the
+                    white heading it already was under a white/25
+                    hairline underline, and takes gold only on hover and
+                    focus, where the accent is doing "you are here"
+                    work. An underline adds no width, so the measured
+                    one-line nowrap guarantee above still holds. */}
                 <h3 className="mt-6 text-lg font-medium whitespace-nowrap text-white md:text-xl xl:text-lg">
-                  {service.name}
+                  <a
+                    href={SERVICE_PAGE_HREF[service.slug]}
+                    className="underline decoration-white/25 underline-offset-4 transition-colors duration-150 hover:text-gold hover:decoration-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  >
+                    {service.name}
+                  </a>
                 </h3>
                 <p className="mt-3 text-base leading-relaxed text-white/70">
                   {service.description}

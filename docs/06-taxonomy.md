@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 2.3 · **Date:** 2026-08-28 · **Status:** Active — one service vocabulary across every surface (decision-log #27–#29)
+**Version:** 2.4 · **Date:** 2026-08-28 · **Status:** Active — one service vocabulary across every surface, and the slugs now double as route segments (decision-log #27–#30)
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code)
 
@@ -31,7 +31,7 @@
 | Product Support | `product-support` | `partnership` | **CHANGED** (#27, was "Ongoing Product Partnership" / `partnership`) |
 | Agentic System | `agentic-system` | `agentic` | **CHANGED** (#27, was "Agentic Systems Integration" / `agentic`) |
 
-**Three vocabularies, and only one of them renames.** The *display name* is what a visitor reads. The *slug* is kebab-case (§8), matches the display name one-for-one, and is what unit 26's service routes are built on. The *payload value* is snake_case (§3), is written to the lead record, and is a **contract that does not move with a rename** — which is why `product-support` still stores as `partnership`. Canonical in `src/lib/types.ts` → `ServiceSlug`, `src/content/services.ts` → `SERVICES` + `SERVICE_NEED`, and `src/lib/schema.ts` → `PROJECT_TYPE_VALUES`.
+**Three vocabularies, and only one of them renames.** The *display name* is what a visitor reads. The *slug* is kebab-case (§8), matches the display name one-for-one, and is now **live in URLs** — three of the four are anchors on `/services/product` and the fourth, `agentic-system`, is a route segment (#30, §6). The *payload value* is snake_case (§3), is written to the lead record, and is a **contract that does not move with a rename** — which is why `product-support` still stores as `partnership`. Canonical in `src/lib/types.ts` → `ServiceSlug`, `src/content/services.ts` → `SERVICES` + `SERVICE_NEED`, and `src/lib/schema.ts` → `PROJECT_TYPE_VALUES`.
 
 This closes a divergence open since **2026-08-04**, when the cards took short names while this table and `LANDING.capabilities` kept long ones. Aligning the capability strip is a **Rule 4.1 edit to Messaging Kit §05** canonical copy and carries its own row (#28) — like the hero headline under #18, **do not "correct" the strip back to the Kit's long forms.**
 
@@ -46,7 +46,7 @@ The service **descriptions** are still §05 as written; a rename is not permissi
 | **AI Workflow Integration** | Agents and custom tools dropped into processes the business already runs. Workflow level, no product wrapped around them. | `agentic` |
 | **Internal Tool** | A full product with a real interface and agents behind it, owned by the client and logged into by their team. | `agentic` |
 
-The modal asks a visitor **what they need, not how deep they want to go** — the depth is what the two price points express. This is positioning language, not an implementation note: unit 26's service routes depend on it.
+The modal asks a visitor **what they need, not how deep they want to go** — the depth is what the two price points express. This is positioning language, not an implementation note, and the service routes now consume it: **the two depths are the two anchored blocks on `/services/agentic-system`** (`#ai-workflow-integration`, `#internal-tool`), rendering the tier names and tier descriptions from `src/content/pricing.ts` with no price (#30).
 
 ## 2. Process phases (ordered, exactly four) — **CURRENT** (model) · **RETIRED** (accent mapping)
 
@@ -107,21 +107,38 @@ Computed in `src/lib/lead-format.ts` (`leadSignal`). The pre-pivot set (`qualifi
 
 Token names — `paper` · `paper-bright` · `ink` · `white` · `gold`/`gold-ink` · `lavender`/`lavender-ink` · `rose`/`rose-ink` · `sage`/`sage-ink` — remain defined in `src/app/globals.css`; Tailwind theme keys use exactly these names (**CURRENT**). The design system uses four of them (**CURRENT**): `ink` (page surface), `white` (text), and **`gold`/`gold-ink` — the only accent** (decision-log #14). The rest are **orphaned** (**CHANGED**): `lavender`/`rose`/`sage` (+ `-ink` pairs) and `paper-bright` have no design role and are unavailable to new sections; `paper` is orphaned with one live exception — the 404 surface (**CURRENT**). Removing orphaned tokens from `globals.css` is a future owner-approved code change. Pairing rule (accent bg ⇒ paired `-ink` text) is **CURRENT/binding**. Full detail in `04-ux-spec.md` §Color.
 
-## 6. Routes and section IDs — **CHANGED** (a second route; nav items carry hrefs) · **RETIRED** (held-section IDs)
+## 6. Routes and section IDs — **CHANGED** (four routes; service slugs are now route segments) · **RETIRED** (held-section IDs)
 
-### Routes — **CHANGED (decision-log #23, 2026-08-25)**
+### Routes — **CHANGED (decision-log #23, 2026-08-25; #30, 2026-08-28)**
 
 | Route | What it is | Status |
 |---|---|---|
 | `/` | The home page — hero + six sections, one scroll | **CURRENT** |
 | `/pricing` | Standalone pricing page, statically prerendered | **CHANGED (new, #23)** |
+| `/services/product` | New Product · Product Completion · Product Support, as anchored blocks | **CHANGED (new, #30)** |
+| `/services/agentic-system` | Agentic System, at its two depths | **CHANGED (new, #30)** |
 | `/api/qualify` | POST-only lead endpoint, no page | **CURRENT** (see `07-technical-spec.md`) |
 
-Route paths are kebab-case per §8. `/pricing` is a **page, not a server surface** — decision #8 is untouched. Canonical in `src/lib/types.ts` → `ROUTES`.
+Route paths are kebab-case per §8. **None of these is a server surface** — all four pages prerender to static HTML, so decision #8 is untouched. Canonical in `src/lib/types.ts` → `ROUTES` (the two static paths) and `serviceRoute` (the service segments, built from `ServicePageSlug` so the segment and the slug cannot disagree).
+
+**There is no `/services` index route** (#30): the home page's `#services` section is the hub.
+
+### Service page slugs and block anchors — **CURRENT (#30)**
+
+A **service page slug is not a `ServiceSlug`.** Two pages cover four services, so one of them is a group:
+
+| Page slug | Route | Blocks (anchor ids) |
+|---|---|---|
+| `product` | `/services/product` | `new-product` · `product-completion` · `product-support` — the §1 slugs, one per service |
+| `agentic-system` | `/services/agentic-system` | `ai-workflow-integration` · `internal-tool` — the two depths of §1's "Two kinds of agentic system" |
+
+`agentic-system` is spelled exactly like its `ServiceSlug` because that page *is* that service; `product` is a group name with no service behind it. The agentic blocks are kebab-cased from the **tier names**, not the terse tier slugs (`workflow` / `tool`), because these appear in the URL. Canonical in `src/lib/types.ts` → `ServicePageSlug`, `ServiceBlockId`, `SERVICE_BLOCK_PAGE`, and `src/content/service-pages.ts` → `SERVICE_PAGES`.
+
+Every inbound link is built by `serviceBlockHref`, which looks a block's page out of `SERVICE_BLOCK_PAGE`, so a link can never pair a block with a page that does not carry it and every href is root-relative by construction.
 
 ### Section IDs (anchor names)
 
-The live anchor set, all on `/`: `top` (page top — wordmark target, on `<main>`) · **`work` (Selected Work)** · `why` (Manifesto) · `services` · `process` · `about` · `start` (Final CTA). These reuse the fitting old IDs, as this section anticipated. `start` is reached via the CTAs, not a nav item.
+The live anchor set, all on `/`: `top` (page top — wordmark target, on `<main>`) · **`work` (Selected Work)** · `why` (Manifesto) · `services` · `process` · `about` · `start` (Final CTA). These reuse the fitting old IDs, as this section anticipated. `start` is reached via the CTAs, not a nav item. **The service routes carry their own anchor set** (`ServiceBlockId`, above), which is deliberately separate from `SectionId`: these ids exist on `/services/*`, not on `/`, and typing them together would let a `/#new-product` ship.
 
 ### Nav item set and order — **CHANGED (decision-log #22–#24, 2026-08-25)**
 
@@ -135,6 +152,8 @@ Six items, in this order, rendered by both `SiteNav`'s overlay and `SiteFooter` 
 | 4 | Process | `/#process` | section anchor |
 | 5 | About | `/#about` | section anchor |
 | 6 | **Pricing** | **`/pricing`** | **route** — last slot (#24) |
+
+**The two service routes are not nav items (#30).** The nav is settled (#22, #24, #26) and this unit does not reopen it: the service pages are reached from the `#services` cards, where each card's **name** links to that service's block. Adding them to `NAV.items` is a separate owner call.
 
 **Destinations are root-relative, never bare hashes** (#23). A bare `#work` resolves against the current route, so on `/pricing` it would mean `/pricing#work` — nothing. `NAV.items` therefore carries a finished `href` per item rather than a `SectionId` the components turn into `#${id}`; anchors are built by `sectionHref()` in `src/lib/types.ts`, which keeps the `SectionId` literal so a mistyped anchor still fails typecheck. Both wordmark targets are `NAV.home` = `/#top`.
 

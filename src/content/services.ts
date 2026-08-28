@@ -1,4 +1,5 @@
 import type { ProjectType } from "@/lib/schema";
+import { serviceBlockHref, serviceRoute } from "@/lib/types";
 import type { Service, ServiceSlug } from "@/lib/types";
 
 /**
@@ -70,6 +71,35 @@ export const SERVICE_NEED: Record<ServiceSlug, ProjectType> = {
   "product-completion": "rescue",
   "product-support": "partnership",
   "agentic-system": "agentic",
+};
+
+/**
+ * Service slug -> the page (or the anchored block on it) that card
+ * opens. Decision-log **#30** (2026-08-28).
+ *
+ * The unit-26 brief left "how the home-page service cards reach these
+ * pages" open as an owner call. The owner answered it with the route
+ * shape: two pages, each covering a group, and a click "goes to the
+ * sections covering each topic clicked" (2026-08-28). So three cards
+ * carry a block anchor and the fourth carries the page itself, because
+ * `/services/agentic-system` *is* the Agentic System service and its
+ * two blocks are depths of it, not the service.
+ *
+ * Nothing here is a hand-written hash. `serviceBlockHref` looks each
+ * block's page out of `SERVICE_BLOCK_PAGE`, so a card can never point
+ * at an anchor the page it names does not carry, and every href is
+ * root-relative by construction — the trap the brief says this unit
+ * multiplies by four.
+ *
+ * Typed as a total map over ServiceSlug: a new service without a
+ * destination fails typecheck instead of shipping a card that goes
+ * nowhere, the same guarantee `SERVICE_NEED` gives above.
+ */
+export const SERVICE_PAGE_HREF: Record<ServiceSlug, string> = {
+  "new-product": serviceBlockHref("new-product"),
+  "product-completion": serviceBlockHref("product-completion"),
+  "product-support": serviceBlockHref("product-support"),
+  "agentic-system": serviceRoute("agentic-system"),
 };
 
 export const SERVICES = [
