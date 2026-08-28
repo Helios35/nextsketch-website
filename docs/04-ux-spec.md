@@ -146,7 +146,7 @@ Shipped vocabulary — reuse these, at these tempos:
 | Hero content | `rise-in`, staggered | Load | **CURRENT** |
 | Modal open | `modal-in` | Open | **CURRENT** |
 | Modal step | `step-in` | Step change | **CURRENT** |
-| Section entrances (all five redesign sections) | `rise-in` via `ScrollReveal`, hero stagger (0 / 120 / 200ms; lists 120 + i·80ms) | Scroll into view | **CURRENT** (Unit 02) |
+| Section entrances (all six sections below the hero) | `rise-in` via `ScrollReveal`, hero stagger (0 / 120 / 200ms; lists 120 + i·80ms) | Scroll into view | **CURRENT** (Unit 02) |
 | Section depth | `Parallax` whisper drift (speed 0.06, max one per section — Manifesto body, About portrait) | Scroll | **CURRENT** (Unit 02) |
 | Site video backdrop | `ScrollVideo` — fixed `-z-10` backdrop; a **three-clip sequence** (Strategist → Builder → Partner) segmented across the below-hero scroll range, each clip's `currentTime` eased toward its segment progress, crossfading at the seams; footage advances only while scrolling and freezes when idle; never `play()`s | Scroll | **CURRENT** (Unit 03, owner-directed) |
 | Hero orbit | `HeroOrbit` — the hero section is a 260vh runway with a sticky one-viewport stage; the orbit clip's timeline is eased toward runway progress, so scrolling rotates the camera around the subject; never `play()`s; no-JS / reduced-motion keep the one-viewport hero on the static poster | Scroll | **CURRENT** (Unit 03, owner-directed) |

@@ -1,6 +1,6 @@
 # Site Architecture — NextSketch Website Rebuild
 
-**Version:** 2.2 · **Date:** 2026-08-25 · **Status:** Active — the site is now two routes (decision-log #22–#24, adhoc Unit 22)
+**Version:** 2.3 · **Date:** 2026-08-28 · **Status:** Active — the site is two routes, `/pricing` carries the tiers, and the bar carries one featured button (decision-log #22–#26)
 **Answers:** How is it structured?
 **References:** `02-prd.md` (what) · `04-ux-spec.md` (how each section looks) · `05-business-rules.md` (modal logic)
 
@@ -20,11 +20,11 @@
 
 **CHANGED.** `/` carries the hero plus its six sections (Taxonomy §6 anchors), and `/pricing` is now a second route (**decision-log #23**) — the first time the site has had more than one page since the 2026-06-14 pivot. `/pricing` is **statically prerendered and sells nothing**: it is a page, not a server surface, so **decision #8 stands untouched** and `/api/qualify` is still the entire server-side footprint. Because a second route exists, **every nav and footer link is root-relative** (`/#work`, not `#work`): a bare hash resolves against the current route, so `#work` on `/pricing` would mean `/pricing#work`, which is nothing (#23). Old Webflow routes (`/projects`, `/about-us`, `/contact-us`, `/projects/*`) get permanent redirects to `/` — configured for the domain cutover, which is **parked** (decision-log #5; runbook §Redirects). The modal is an overlay with no route (no `/start` deep-link was added).
 
-## Navigation structure — **CHANGED** (hamburger at every breakpoint)
+## Navigation structure — **CHANGED** (hamburger plus one featured button, at every breakpoint)
 
 **CURRENT (as-built).** `SiteNav` and `SiteFooter` are both live and mount **per page** (`page.tsx` and `pricing/page.tsx`), not in `src/app/layout.tsx`, so the 404 keeps its own light paper surface. *(This section previously recorded them as RETIRED and unmounted — that was true of the 2026-06-14 pivot and was left stale when Redesign Unit 02 remounted them. Corrected here.)*
 
-**The bar** is fixed, transparent over the hero, and turns to elevated glass with reduced height past 80px of scroll. It holds the brand lockup on the left and **one right-justified hamburger** — **at every screen size** (**decision-log #22**, 2026-08-25). The visible desktop tab row is **RETIRED**; the full-screen ink overlay is now the only place the items render, at all widths. There is **no CTA in the nav** (owner direction 2026-07-06 — the hero CTA and `#start` carry conversion), and the bar is deliberately **not route-aware**.
+**The bar** is fixed, transparent over the hero, and turns to elevated glass with reduced height past 80px of scroll. It holds the brand lockup on the left and **one right-justified hamburger** — **at every screen size** (**decision-log #22**, 2026-08-25). The visible desktop tab row is **RETIRED**; the full-screen ink overlay is now the only place the items render, at all widths. Beside the burger it carries **one button — `NAV.featured`, which is Pricing** (**decision-log #26**, 2026-08-25), the shared `<Button>` at the de-emphasized `ghost` variant in the `compact` size. That **narrowly supersedes** the 2026-07-06 "no CTA in the nav" direction, which was about *conversion*: this is navigation to a page, so **the nav still has no conversion CTA** and the hero CTA and `#start` still carry it. The button hides below 375px, where the bar measurably stops fitting; the menu carries Pricing at every width regardless, and bar and menu read the **same object** so the two cannot drift. The bar is `pointer-events-none` with `pointer-events-auto` restored on its own controls, so a page can put a real link under the transparent bar (#26) — which is what lets `/pricing` link its own above-the-fold lockup. The bar is deliberately **not route-aware**.
 
 **The lockup** appears in the bar only once scrolled, because above the fold it belongs to the page: `hero.tsx` renders it on `/`, and `pricing/page.tsx` renders its own for the same reason (no hero there to supply one). Both sit on the same gutter at the same size, so the bar's takes over at 80px without a jump or a blink.
 
@@ -36,7 +36,7 @@
 
 **Live (as-built):** the dark cinematic hero (`src/components/hero.tsx`): wordmark, headline ("From idea to production. Gain a real partner." — **decision-log #18**, gold accent on "production" / "partner"), Messaging Kit §03 Message 4 supporting line, the capability strip (four services), and the CTA → modal — followed by the section set below. Messaging Kit §05 **Hero Option A** ("From idea to production. And we stay."), which this row previously recorded as locked, is **superseded** (#18); it survives on disk only in the dormant `HERO.headline`. Detail in `04-ux-spec.md` §Live components.
 
-**Section set on the home page (decision-log #13, extended by #16).** The five redesign sections join the hero on `/`, built one unit at a time against `04-ux-spec.md`, with Selected Work added ahead of them by #16. *(The prose elsewhere in the doc stack still says "five sections" in places — pre-existing drift from #16, which made it six; flagged, not reconciled in this unit.)* Pricing is **not** in this set: #23 moved it to its own route.
+**Section set on the home page (decision-log #13, extended by #16).** **Six sections** join the hero on `/`, built one unit at a time against `04-ux-spec.md`: Selected Work (01, added by #16), then the five of #13 — Manifesto (02), Services (03), Process (04), About (05), Final CTA (06). *(#13 named five; #16 added Work ahead of them and renumbered the rest. Reconciled across the doc stack 2026-08-28.)* Pricing is **not** in this set: #23 moved it to its own route.
 
 | Section | Job | Canonical copy source |
 |---------|-----|----------------------|

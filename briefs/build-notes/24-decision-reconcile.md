@@ -1,7 +1,7 @@
 # Build Note 24 — Decision-Log Reconcile & Pricing As-Built
 
 **Date:** 2026-08-28 · **Branch:** `adhoc/decision-reconcile` · **Base:** `main` @ `ff9e875`
-**Status:** Committed and pushed; **no PR** (owner policy — Nate opens it). Documentation unit. **Zero rendered diff** — nothing under `src/` is in the diff, so the site is byte-identical to `main`.
+**Status:** Committed; **no PR** (owner policy — Nate pushes and opens it). Documentation unit. **Zero rendered diff** — nothing under `src/` is in the diff, so the site is byte-identical to `main`.
 
 ## The gap this closes
 
@@ -69,40 +69,55 @@ Two things worth recording about the count itself:
 
 **Nothing was changed.** That is shipped, owner-approved copy, Rule 4.1 makes editing it an owner decision, and whether #19 gets enforced or narrowed is not this unit's call.
 
-## Docs corrected beyond the decision log
+## Docs aligned to the build
 
-The brief named `docs/decision-log.md` as the whole surface and told me to grep for anything else describing `/pricing` as empty or layout-final. The grep found more than that — claims that #25 and #26 make false outright. The rule I applied: **fix what #25/#26 falsify; flag what an earlier decision falsified and an earlier unit missed.**
+Two passes. The first fixed what #25 and #26 falsify; the second, on the owner's instruction to align the docs with what we have rather than flag anything, closed the drift earlier units had left in place.
 
-**`docs/04-ux-spec.md` (v3.2 → v3.3):**
+**`docs/04-ux-spec.md` (v3.2 → v3.3)**
 
-- §`/pricing` was headed **"layout-final placeholder"** and closed with **"The page carries no prices, tiers or feature bullets."** Both replaced with the tier grid as-built.
+- §`/pricing` was headed **"layout-final placeholder"** and closed with **"The page carries no prices, tiers or feature bullets."** Replaced with the tier grid as-built.
 - The same section said the lockup **"is not a link"** and explained why one would be unclickable. It is a link now (#26 made it reachable) — leaving that would have told the next agent to *remove* a link the owner asked for.
 - The intro band is no longer the bottom-anchored `min-h-dvh` the spec described.
-- §Nav ended **"and no CTA"**, and the §Live-components entry said **"no nav CTA"**. Both falsified by #26. §Nav gains two bullets — the featured button, and the `pointer-events-none` bar — and its heading now cites #22 *and* #26.
+- §Nav ended **"and no CTA"**, and the §Live-components entry said **"no nav CTA"**. Both falsified by #26. §Nav gains two bullets — the featured button and the `pointer-events-none` bar — and its heading now cites #22 *and* #26.
+- The motion table's entrance row said **"all five redesign sections"**. `work-section.tsx` uses the same `ScrollReveal` stagger, so it is six.
 
-**`docs/01-vision.md`:** the Non-goals line read **"No pricing display, no e-commerce, no client portal, no CMS…"** tagged **CURRENT**. The site publishes four tiers and their figures. The clause is tagged **CHANGED** with a one-sentence note citing #23/#25, and the note says explicitly that the page still sells nothing and takes no payment, so **#8 is untouched**. The rest of the line is unchanged.
+**`docs/03-site-architecture.md` (v2.2 → v2.3)**
 
-**Revert any of these if you would rather they lived only in this note.** They are the note-21 and note-22 precedent — the footer's and the spec's job is to reflect reality — but they are beyond the brief's named surface and are flagged rather than slipped in.
+- §Navigation said **"There is no CTA in the nav"**. Replaced with the featured button and the pointer-events change, both citing #26, and the heading now says "hamburger plus one featured button".
+- §Page structure said **"the five redesign sections join the hero"** with a parenthetical flagging the drift as unreconciled. It is six, named and numbered, and the parenthetical now records that #13 named five and #16 added Work ahead of them.
+
+**`docs/01-vision.md`**
+
+- Non-goals said **"No pricing display"**, tagged **CURRENT**. The site publishes four tiers and their figures, so the clause is **CHANGED** with a note citing #23/#25 — and the note says explicitly that the page still sells nothing and takes no payment, so **#8 is untouched**.
+- Non-goals said the **"selected work" grid is RETIRED**. Decision #16 brought it back on 2026-08-24 as the proof band; the same bullet also claimed "the single hero *is* the proof", which is precisely what #16 says was not working. Now **CHANGED**, with the principle kept: one proof band on the page, not a portfolio site, and per-project case-study pages still unplanned.
+- Non-goals also said **"Not a multi-page site — one page plus the modal. CURRENT (now literally one screen)."** Falsified by #23 back in Unit 22 and missed there. Now **CHANGED**, naming both routes, keeping the principle (no sprawl, no CMS, the modal is still the lead path) and noting that unit 26's service routes are the next test of it.
+
+**`docs/02-prd.md`** — already said "six sections"; its parenthetical flagging the rest of the stack as unreconciled is now false and is removed.
+
+**`docs/07-technical-spec.md`** — the project tree predates the pricing build. Added `pricing-tiers.tsx` and `modal-trigger.tsx` to `components/`, noted that `button.tsx` now carries a variant *and* a size, and added `PricingTier` + `PricingTierSlug` to the `lib/types.ts` line.
 
 ## Deliberately not changed
 
 - **Rows #1–#24.** Not renumbered, not reworded, not improved. Row #23's "Unit 22 ships the route layout-final and empty" is a true statement about what Unit 22 shipped and stays as written; the *footer* is where the current status lives.
 - **The "Resolved this session" line.** Preserved byte-identical, verified by diff. It says "pending review/merge" about a Sprint 03 branch that merged long ago, which is stale — but it is explicitly a record of that session, and rewriting it would falsify history. **Flagged, not touched.**
-- **Everything under `src/`.** Not a comment, not a typo. Including the two stale lines below, which is the frustrating part.
+- **Everything under `src/`.** Not a comment, not a typo, per the brief's hard guardrail. Including the stale lines below, which is the frustrating part.
+- **`docs/06-taxonomy.md` §1.** It carries the four *service* names and slugs, not the tier slugs, so `src/lib/types.ts:141` cites it for a table it does not have. **Left alone on purpose:** unit 25 owns §1, renames two tiers and rewrites that table, so a tier table written here would be churn the next unit has to undo.
 - **The em-dash copy**, the tier feature bullets, the `custom` tier slug, and `scripts/check-banned-terms.mjs`. All out of scope by name.
 
 ## Found in the sweep, not fixed
 
-- **`src/components/pricing-tiers.tsx:33` says the retainer is "required for the first year (#25)".** The term was cut to three months in commit `96a4f34`; the content module, the rendered page and row #25 all say three months. This comment is the only thing left in the repo saying twelve, **and it cites #25 while contradicting it.** It is exactly the class of defect this unit exists to remove, and this unit may not touch `src/`. **Recommend unit 25 fix it in passing** — it is a two-word comment edit in a file that unit is already opening.
-- **`src/lib/types.ts:141` cites `docs/06-taxonomy.md` for tier slugs that document does not carry.** A citation pointing at nothing, the same shape as the `build-note 20` citation note 21 repaired. Recorded in the footer; resolving it means deciding whether the taxonomy grows a tier table or the citation is dropped, which is unit 25's.
-- **`docs/01-vision.md` Non-goals still says "Not a multi-page site — one page plus the modal. CURRENT."** Falsified by #23 in Unit 22, not by anything in the pricing work. Pre-existing drift, one line above a line I did change. **Flagged rather than fixed**, per the rule above — but it is a one-clause fix if you want it.
-- **The "five sections" drift** (#16 made it six) is still in `01-vision.md` and parts of `02-prd.md` / `03-site-architecture.md`. Flagged by note 22, still true, still nobody's unit.
+Everything here is under `src/`, which this unit may not touch — so these are recorded, not repaired.
+
+- **`src/components/pricing-tiers.tsx:33` says the retainer is "required for the first year (#25)".** The term was cut to three months in commit `96a4f34`; the content module, the rendered page and row #25 all say three months. This comment is the only thing left in the repo saying twelve, **and it cites #25 while contradicting it.** It is exactly the class of defect this unit exists to remove. **Recommend unit 25 fix it in passing** — it is a two-word comment edit in a file that unit is already opening.
+- **The doc block above `PRICING_NEED` argues that `custom` → `partnership` is deliberate rather than mistaken — and that reasoning is the builder's, not an owner call on record.** Row #25 was drafted quoting it, which would have made the log a *second* defender of the mapping. The row now records the mapping **as as-built only** and says the rationale is unconfirmed. A comment that pre-emptively tells the next reader not to correct something is precisely what stops a wrong mapping being caught, so this is flagged rather than blessed.
+- **`src/lib/types.ts:141` cites `docs/06-taxonomy.md` for tier slugs that document does not carry.** A citation pointing at nothing, the same shape as the `build-note 20` citation note 21 repaired. Resolving it means deciding whether the taxonomy grows a tier table or the citation is dropped — unit 25's, per its own spec-updates list.
 
 ## Verification
 
 - **`npm run typecheck`, `npm run lint`, `npm run build`, `npm run banned-terms` — all green.** This unit should not have moved them, and it did not.
-- **`git diff --name-only` contains no file under `src/`.** Three docs and two new build notes, nothing else.
+- **`git diff --name-only` contains no file under `src/`.** Six docs and two new build notes, nothing else.
 - **All seven files citing #25/#26 checked hit by hit** — every citation now resolves to a real row, and the row says what the comment claims it says, with the single exception of `pricing-tiers.tsx:33` above, which is recorded rather than fixed because the guardrail forbids the edit.
+- **Both doc passes re-verified after editing** — gates re-run green, and every replacement asserted a unique match before applying, so no edit landed on the wrong line or twice.
 - **The em-dash count was produced by an actual scan**, not an estimate: block comments and whole-line `//` comments blanked, then em dashes counted per file. The same scan against `0340544` returns the same 35, confirming the pricing work added none.
 - **Rows #1–#24 are untouched** — `git diff -U0` on the log shows exactly one deleted line, the old "Still open (owner)" footer.
 - The log runs **#1–#26 with no gaps**, and the next row is #27.
