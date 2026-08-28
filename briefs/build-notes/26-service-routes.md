@@ -34,7 +34,7 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 | `src/app/services/product/page.tsx` | The route + its metadata. Thin, like `pricing/page.tsx`. |
 | `src/app/services/agentic-system/page.tsx` | Same. |
 | `src/components/service-page.tsx` | Hero, the "what you get" split rows, and the close. |
-| `src/components/service-block-visual.tsx` | The tile cluster — the visual half of each row. |
+| `src/components/service-block-visual.tsx` | The five wireframe mocks — the visual half of each row. |
 | `src/components/service-process.tsx` | The "how it works" numbered card grid. |
 | `src/content/service-pages.ts` | Both pages' content. |
 
@@ -89,11 +89,29 @@ It has been rebuilt twice at the owner's direction, against two different refere
 
 ### What ships
 
-Each block is a two-column row. The text side runs mono index → panel-scale name → description → gold-diamond deliverables list → `ghost` `ModalTrigger`. The visual side is a **2-3-2 cluster of squared hairline tiles** on solid `#0a0a0c`, one emphasized tile in the middle row, behind a **radial fade** that dissolves the cluster's edges into the page.
+Each block is a two-column row. The text side runs mono index → panel-scale name → description → gold-diamond deliverables list → `ghost` `ModalTrigger`. The visual side is a **wireframe mock built for that block**.
 
 **The sides alternate down the page** (owner direction) — that is what stops three or five rows reading as one table. The **text is always first in the DOM**; `lg:order-*` does the swapping, so the reading order and the single-column mobile stack both put substance before decoration.
 
-**Each block gets its own mark arrangement**, because the owner asked for the visual to suit the service rather than repeat: the agentic blocks lead with the hub and branch marks, `product-completion` with the notched square (got you 70% there), `product-support` with the step line. One vocabulary, five readings.
+### Five visuals, not five shuffles
+
+The first cut of this pass gave every block the same 2-3-2 tile cluster with the marks reordered. The owner's verdict was blunt and correct — "all the visuals are the same" — and he named what four of them should be. Only AI Workflow Integration keeps the cluster, which is the one block it actually suits:
+
+| Block | Visual | Reads as |
+|---|---|---|
+| New Product | **Product UI** — window chrome, content column, one gold primary action, a page region below | The working product in production the §05 line promises |
+| Product Completion | **Developer workspace** — tab strip with a gold active tab, line-number gutter, indented code lines that thin out and stop, a parked caret | "Someone got you 70% there and disappeared" |
+| Product Support | **Live-product ops panel** (owner left this one to me) — uptime ticks with the newest two in gold, a release timeline with the newest marker filled | "The product is live. Now it needs to grow." |
+| AI Workflow Integration | **The tile cluster — KEPT** (owner direction) | Agents dropped into processes the business already runs |
+| Internal Tool | **Dashboard UI** — sidebar with a gold active item, top bar, a data table with an agent-run marker | "A real tool that you own", denser than the New Product window so the two never read as one mock |
+
+Two things were explicitly ruled out and are worth recording: the mocks must **not look like app tiles** (owner, twice), which is why New Product's lower region is a wide-plus-narrow page layout rather than three equal squares; and the tile cluster is now used **once**, not as a house style.
+
+### The mocks assert nothing — a Rule 4.3 requirement, not a style choice
+
+**Not one of the five contains a readable string, a numeral, a metric, a logo or a product name.** A chart with an axis, a dashboard with figures, or a row of integration logos would assert things nobody has approved, on the two pages a search visitor lands on first. Decision **#5** is the precedent: the retired stat strip's invented numbers. Skeleton bars assert nothing, and every visual is `aria-hidden` so it says nothing to assistive tech either.
+
+Surfaces are the system's: framed mocks are hairline `white/15` over solid `#0a0a0c` (solid, not §Surfaces' translucent-plus-blur, because no `ScrollVideo` is mounted here and there is nothing to blur), skeleton matter rides the white alpha ladder, and **`gold` appears once per mock** on the element that is the point of it — never as a second accent (#14). Framed mocks carry §Surfaces' own bottom scrim so they bleed into the page the way the cluster's radial fade does.
 
 ### What the reference contributed, and what it did not
 
@@ -108,7 +126,7 @@ Each block is a two-column row. The text side runs mono index → panel-scale na
 
 ### The marks — a flagged judgment call
 
-§Interaction vocabulary settles the *list marker* (the gold diamond) and bans `lucide-react`, but it does not cover a decorative tile cluster. The spec's own instruction for that case is to generalize from shipped code and flag, not invent silently. So the set is built **only from shapes the system already uses** — the rotated square, the hairline, the squared frame — on the white alpha ladder, with `gold` reserved for the one emphasized tile per cluster. No new token, no new colour, no third accent. Nine marks: `diamond`, `frame`, `grid`, `notch`, `stack`, `hub`, `branch`, `step`, `field`.
+§Interaction vocabulary settles the *list marker* (the gold diamond) and bans `lucide-react`, but it does not cover a decorative wireframe. The spec's own instruction for that case is to generalize from shipped code and flag, not invent silently. So everything is built **only from shapes the system already uses** — the rotated square, the hairline, the squared frame — on the white alpha ladder, with `gold` reserved for the one emphasized tile per cluster. No new token, no new colour, no third accent. The tile cluster's eight marks are `diamond`, `frame`, `grid`, `stack`, `hub`, `branch`, `step`, `field`; the four framed mocks are built from the squared frame, the hairline and the bar alone.
 
 ### Motion
 
@@ -117,8 +135,8 @@ Each block is a two-column row. The text side runs mono index → panel-scale na
 | Interaction | What it does |
 |---|---|
 | Text reveal | Each row's text reveals as one block; the deliverables land at `120 + j·70ms`. |
-| Cluster assembly | Tiles reveal row by row at `120 + r·90 + n·60ms`, so the visual **builds** rather than appears. Shared `ScrollReveal`, so JS only triggers and the CSS `rise-in` animates. |
-| **Deep-link target** | The rows are tall, so arriving from a service card has to say *which* one you arrived at. The block's **index goes gold** and the cluster's **emphasized tile takes a gold hairline**, both at the 150ms tempo — the Process accordion's open-row treatment doing identical work, with gold on only those two elements so the accent stays scarce. **Pure CSS `:target`** — holds with no JS, adds no transform for reduced motion to suppress. |
+| Mock assembly | Each visual reveals region by region, so it **builds** rather than appears — the cluster tile by tile, the IDE line by line, the dashboard row by row. Shared `ScrollReveal`, so JS only triggers and the CSS `rise-in` animates. |
+| **Deep-link target** | The rows are tall, so arriving from a service card has to say *which* one you arrived at. The block's **index goes gold**, and on the agentic block the cluster's **emphasized tile takes a gold hairline**, both at the 150ms tempo — the Process accordion's open-row treatment doing identical work, with gold on only those two elements so the accent stays scarce. **Pure CSS `:target`** — holds with no JS, adds no transform for reduced motion to suppress. |
 
 Deliberately **not** added: hover states on the rows or tiles. They are not interactive, and a hover response on non-interactive content is decoration for its own sake, which Brand Philosophy §9 rejects.
 
