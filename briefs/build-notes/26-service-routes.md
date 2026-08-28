@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-28 · **Branch:** `adhoc/service-routes` · **Base:** `main` @ `4582c75`
 **Status:** Built, not merged. PR opened by the owner. Adhoc, per `briefs/26-service-routes-adhoc.md`.
-**Two sessions.** The routes were built first; the owner then supplied a second reference for the "what you get" band and it was rebuilt into columns. Both are recorded below.
+**Three passes at one band.** The routes were built first. The owner then supplied a reference for the "what you get" band and it was rebuilt into flat columns; he scrapped that and supplied a third reference, and it was rebuilt again into alternating split rows. Only the third ships — the first two are recorded so nobody re-proposes them.
 **Follows:** PR #33 / build-note 25 (the service-name alignment this unit had to wait for).
 
 ---
@@ -24,7 +24,7 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 
 | | Files | Lines |
 |---|---|---|
-| New | 5 | — |
+| New | 6 | — |
 | Changed | 3 source + 5 docs | — |
 
 **New:**
@@ -33,7 +33,8 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 |---|---|
 | `src/app/services/product/page.tsx` | The route + its metadata. Thin, like `pricing/page.tsx`. |
 | `src/app/services/agentic-system/page.tsx` | Same. |
-| `src/components/service-page.tsx` | Hero, the "what you get" columns, and the close. |
+| `src/components/service-page.tsx` | Hero, the "what you get" split rows, and the close. |
+| `src/components/service-block-visual.tsx` | The tile cluster — the visual half of each row. |
 | `src/components/service-process.tsx` | The "how it works" numbered card grid. |
 | `src/content/service-pages.ts` | Both pages' content. |
 
@@ -46,7 +47,7 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 | `src/lib/types.ts` | `ServicePageSlug`, `serviceRoute`, `ServiceBlockId`, `SERVICE_BLOCK_PAGE`, `serviceBlockHref`, `ServicePageBlock`, `ServicePageContent` |
 | `src/content/service-pages.ts` | `SERVICE_PAGES` |
 | `src/content/services.ts` | `SERVICE_PAGE_HREF` |
-| `src/components/` | `ServicePage`, `ServiceProcess` |
+| `src/components/` | `ServicePage`, `ServiceProcess`, `ServiceBlockVisual` |
 
 `src/lib/types.ts` gains one import it did not have: `type ProjectType` from `src/lib/schema.ts`, so `ServicePageBlock` can carry the need its CTA preselects. Type-only, erased at compile, and `schema.ts` does not import `types.ts`, so there is no cycle.
 
@@ -68,7 +69,7 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 ## The four blocks
 
 1. **Hero** — `/pricing`'s intro band, reproduced: sticky lockup, mono eyebrow, `display`-scale `<h1>` with a gold payoff word, description, divided-arrow `ModalTrigger`. Load-time `rise-in` at 0 / 120 / 200ms, not a scroll trigger, because it is above the fold.
-2. **"What you get"** — the topic blocks as side-by-side columns (see below), one `<section id>` each.
+2. **"What you get"** — the topic blocks as alternating split rows (see below), one `<section id>` each.
 3. **How it works** — the four canonical phases as a numbered card grid, from the owner-supplied reference.
 4. **Close** — `FINAL_CTA` heading with its gold phrase, the CTA repeated, and one gold link to `/pricing`.
 
@@ -76,45 +77,56 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 
 **It is deliberately not `<ProcessSection>`.** That component is the home page's `#process` accordion and carries the page's `(04)` section index. Mounting it here would put a second `id="process"` on a route that also links to `/#process`. The *content* is reused — same `PROCESS.phases`, same headline, same gold-italic aside — so a phase edit still lands in one place.
 
-## The "what you get" band (second session)
+## The "what you get" band — three passes, one survivor
 
-The owner supplied a two-column reference — a bold promise heading per column over an icon bullet list — and scoped it explicitly: **this band only, on both service pages, structural reference only, content relevant to each page.**
+It has been rebuilt twice at the owner's direction, against two different references. **Only the third ships.** The first two are recorded so nobody re-proposes them:
 
-**Before:** a vertical stack of full-width glass cards, each running name → description → CTA with the bullet list as a second column inside the card. **After:** a flat multi-column band, one column per topic, no card chrome.
+| Pass | Shape | Verdict |
+|---|---|---|
+| 1 | A vertical stack of full-width glass cards, bullet list as a second column inside each card | Scrapped |
+| 2 | A flat multi-column band, one column per topic, no card chrome, top hairline per column | Scrapped — "does not fit" |
+| 3 | **Alternating split rows: text one side, a fading tile cluster the other** | **Ships** |
 
-| Route | Columns |
-|---|---|
-| `/services/agentic-system` | 2 — AI Workflow Integration, Internal Tool. Exactly the reference's shape. |
-| `/services/product` | 3 — New Product, Product Completion, Product Support. Steps `md:2 → lg:3`; a third column at `md` puts the longest §05 description on five lines. |
+### What ships
 
-Each column: top hairline → gold diamond + mono index → panel-scale name → description → deliverables list → `ServiceCta`.
+Each block is a two-column row. The text side runs mono index → panel-scale name → description → gold-diamond deliverables list → `ghost` `ModalTrigger`. The visual side is a **2-3-2 cluster of squared hairline tiles** on solid `#0a0a0c`, one emphasized tile in the middle row, behind a **radial fade** that dissolves the cluster's edges into the page.
 
-**Adopted from the reference:** the column count, the heading-over-list rhythm, the icon gutter, and the **absence of card chrome** — which is what makes this band read as air against the process cards below it instead of a second grid of the same thing.
+**The sides alternate down the page** (owner direction) — that is what stops three or five rows reading as one table. The **text is always first in the DOM**; `lg:order-*` does the swapping, so the reading order and the single-column mobile stack both put substance before decoration.
 
-**Refused, and why:**
+**Each block gets its own mark arrangement**, because the owner asked for the visual to suit the service rather than repeat: the agentic blocks lead with the hub and branch marks, `product-completion` with the notched square (got you 70% there), `product-support` with the step line. One vocabulary, five readings.
 
-- **Its four line-art glyphs.** §Interaction vocabulary already settles this: "The list/label marker is a small gold diamond." Icons here are inline SVG only. A new four-icon set would be inventing a pattern the spec explicitly covers, so the diamond sits in the reference's icon gutter instead.
-- **Its light surface and grey body text.** The page is `ink`; body is the `white/70` step.
-- **Dropping the description and the CTA.** The reference has neither. But the §05 descriptions are the only approved copy the grouped route carries, and the per-block CTA is the preselect seam the home page's cards use — removing either would be deleting working content to match a layout.
-- **Its vertical rule between columns.** A **top rule per column** instead: the Process accordion's own device, it survives the wrap from three columns to two to one with no first-child gymnastics, and it gives the target treatment somewhere to live.
+### What the reference contributed, and what it did not
 
-### Motion and micro-interactions
+**Contributed:** the split, the alternation, the 2-3-2 stack, the single emphasized tile, and the radial fade.
 
-**No keyframe was added; `globals.css` is untouched.** Everything below is the shipped vocabulary.
+**Refused:**
+
+- **Every one of its dependencies.** The reference is shadcn: `Card`, `Button`, `lucide-react`, `@radix-ui/react-slot`, `class-variance-authority`, a `cn()` helper and a `/components/ui` directory. **Nothing was installed and nothing ships.** The standing posture is zero new dependencies (build-note 23), §Interaction vocabulary is explicit that "icons are inline SVG, never `lucide-react`", components live flat in `src/components/`, and class composition is the repo's array join. Its outline button became the shared `<Button>` at `ghost` through `<ModalTrigger>`.
+- **Its third-party product logos** — GitHub, Slack, Notion, Figma, Discord, VS Code. This was the one refusal that mattered: rendering those asserts integrations nobody has approved, which is precisely the invented claim Rule 4.3 exists to stop, on the two pages a search visitor lands on first. The tiles carry **abstract geometric marks** instead, and the whole cluster is `aria-hidden` so it makes no claim to assistive tech either.
+- **`rounded-xl`, `shadow-black-950/10`, `bg-muted`, the `dark:` variants and the shadcn token palette.** Squared is the shape of the brand, the page is `ink`, there is no light mode, and the default Tailwind palette is cleared in `globals.css` so only brand tokens compile.
+- **Dropping the deliverables list.** The reference's text column is heading + body + button, because its substance is in the tiles. Ours is decorative, so the section that is *called* "what you get" would have been left saying only what each service is.
+
+### The marks — a flagged judgment call
+
+§Interaction vocabulary settles the *list marker* (the gold diamond) and bans `lucide-react`, but it does not cover a decorative tile cluster. The spec's own instruction for that case is to generalize from shipped code and flag, not invent silently. So the set is built **only from shapes the system already uses** — the rotated square, the hairline, the squared frame — on the white alpha ladder, with `gold` reserved for the one emphasized tile per cluster. No new token, no new colour, no third accent. Nine marks: `diamond`, `frame`, `grid`, `notch`, `stack`, `hub`, `branch`, `step`, `field`.
+
+### Motion
+
+**No keyframe was added; `globals.css` is untouched.**
 
 | Interaction | What it does |
 |---|---|
-| Column stagger | Each column's head reveals at `i·120ms`, its rows at `i·120 + 120 + j·70ms`, its CTA at `i·120 + 200ms`. The columns fill left to right instead of in lockstep and each list reads as it lands — the §Motion-inventory list rhythm (120 + i·80ms), tightened because these rows are shorter than a card. Shared `ScrollReveal`, so JS only triggers and the CSS `rise-in` animates. |
-| **Deep-link target** | The one new interaction, and it earns its place: side by side, three anchors land at nearly the same scroll offset, so arriving has to say *which* column you arrived at. The targeted column's **index goes gold** and its **rule brightens `white/15 → white/40`**, both at the 150ms micro-transition tempo. Gold on the index alone, not both, is the Process accordion's open-row treatment exactly (§Motion inventory: "phase number `white/55` to gold"), and it keeps the accent scarce on a band already spending it on every marker. **Pure CSS `:target`** — holds with no JS, adds no transform for reduced motion to suppress. |
-| CTA arrow nudge | Already in `ServiceCta`, unchanged. |
+| Text reveal | Each row's text reveals as one block; the deliverables land at `120 + j·70ms`. |
+| Cluster assembly | Tiles reveal row by row at `120 + r·90 + n·60ms`, so the visual **builds** rather than appears. Shared `ScrollReveal`, so JS only triggers and the CSS `rise-in` animates. |
+| **Deep-link target** | The rows are tall, so arriving from a service card has to say *which* one you arrived at. The block's **index goes gold** and the cluster's **emphasized tile takes a gold hairline**, both at the 150ms tempo — the Process accordion's open-row treatment doing identical work, with gold on only those two elements so the accent stays scarce. **Pure CSS `:target`** — holds with no JS, adds no transform for reduced motion to suppress. |
 
-Deliberately **not** added: hover states on the columns. They are not interactive, and a hover response on non-interactive content is decoration for its own sake, which Brand Philosophy §9 rejects.
+Deliberately **not** added: hover states on the rows or tiles. They are not interactive, and a hover response on non-interactive content is decoration for its own sake, which Brand Philosophy §9 rejects.
 
-> **Verification note.** The Browser pane does not advance CSS *transitions* while it is not painting, so a naive `getComputedStyle` read of the target treatment returns the pre-transition value forever and reads as a bug. Confirmed correct by disabling the transition inline and re-reading: targeted column `border-top-color: white/0.40` and index `rgb(228,185,118)` (the `gold` token); untargeted columns `white/0.15` and `white/0.55`. Both `target:` and `group-target:` compile in the production CSS.
+> **Verification note.** The Browser pane does not advance CSS *transitions* while it is not painting, so a naive `getComputedStyle` read of the target treatment returns the pre-transition value forever and reads as a bug. Confirmed correct by disabling transitions inline and re-reading: the targeted row's index is `rgb(228,185,118)` (the `gold` token) and its emphasized tile's hairline is gold at 60%; untargeted rows read `white/0.55` and `white/0.45`.
 
-### The bullets now ship
+### The bullets ship as DRAFT
 
-`included` was empty on all five blocks. It is not any more, and this is the one judgment call of the session: the owner asked for this layout built and said the content should be relevant to each page, and **a layout with nothing in it cannot be reviewed.** The bullets are the ones drafted for approval in this note (below, unchanged in substance, trimmed to four per column so the columns balance the way the reference's do), marked **DRAFT pending owner approval** in `src/content/service-pages.ts` — the flag every other drafted string in this repo carries (`NOT_FOUND`, `SERVICES_EYEBROW`, `PROCESS.eyebrow`, the `work.ts` summaries). Emptying an array again restores the render-nothing behaviour exactly.
+`included` was empty on all five blocks. It is not any more, and this is the one judgment call carried over from pass 2: the owner asked for the layout built with content relevant to each page, and **a layout with nothing in it cannot be reviewed.** The bullets are the ones drafted for approval in this note (below), marked **DRAFT pending owner approval** in `src/content/service-pages.ts` — the flag every other drafted string in this repo carries. Emptying an array restores the render-nothing behaviour exactly.
 
 ## Copy: nothing was written for the page
 
@@ -161,7 +173,7 @@ There is no approved group-level description for three services, so that hero ca
 
 ### 3. The "what you get" bullets (`included`) — SHIPPED AS DRAFT, ratify or rewrite
 
-Live on the page as of the second session (see above). Deliverables, not adjectives, per the brief. Four per column so the columns balance:
+Live on the page (see above). Deliverables, not adjectives, per the brief. Four per block so the rows balance against their tile clusters:
 
 **New Product**
 - A validated scope you sign off on before a line is written
@@ -206,11 +218,11 @@ Live on the page as of the second session (see above). Deliverables, not adjecti
 
 **3. "One line each, scoped to this service" was not done.** The owner's layout asked the four phases to be scoped per service. That is five sets of new copy, so the band renders the existing approved `phase.description` instead. Scoped one-liners are a separate copy pass; say the word and they are drafted.
 
-**4. The reference's visual panels are absent.** No asset exists for a phase and inventing one is Rule 4.3. If real ones arrive the card already has the slot.
+**4. The "how it works" reference's visual panels are absent.** No asset exists for a phase and inventing one is Rule 4.3. If real ones arrive the card already has the slot.
 
 **5. Neither route is in the nav.** #22/#24/#26 settled the six items and this unit does not reopen them. Consequence, recorded rather than resolved: **a visitor on one service route cannot reach the other from the chrome** — only via `/#services`. Adding them is a separate owner call.
 
-**6. Inherited, not introduced: em dashes render on these pages.** `PROCESS.phases` carries two (`"No wasted effort — we move into build"`, `"what comes next — as long as"`), and `ServiceCta`'s `aria-label` builds `"{label} — {service}"`. All three predate decision #19 and render identically on `/`; #19 is not enforced mechanically and rewording canonical copy is an owner call (Rule 4.1). Flagged, not touched.
+**6. Inherited, not introduced: em dashes render on these pages.** `PROCESS.phases` carries two (`"No wasted effort — we move into build"`, `"what comes next — as long as"`). Both predate decision #19 and render identically on `/`; #19 is not enforced mechanically and rewording canonical copy is an owner call (Rule 4.1). Flagged, not touched. (`ServiceCta`'s `aria-label` carries a third, but that component no longer renders on these routes — the blocks use `ModalTrigger` now. It still renders on the home page's cards.)
 
 ## Verification
 

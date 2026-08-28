@@ -62,7 +62,7 @@ Old Webflow routes (`/projects`, `/about-us`, `/contact-us`, `/projects/*`) get 
 | Block | Job | Canonical copy source |
 |---|---|---|
 | **Hero** | Name the page and open the modal | Eyebrow + `<h1>` fallback = Taxonomy §1 vocabulary. `/services/agentic-system` carries the Agentic System §05 description; `/services/product` groups three services and has no group-level approved copy, so it carries none. **The one-line promise is owner-owed.** |
-| **What you get** (the topic blocks, as columns) | Land a visitor on the thing they clicked, and say what it delivers | `/services/product`: the three §05 service descriptions (`src/content/services.ts`). `/services/agentic-system`: the two tier descriptions (`src/content/pricing.ts`, read not copied). **Deliverable bullets are DRAFT** (`src/content/service-pages.ts`). |
+| **What you get** (the topic blocks, as alternating split rows) | Land a visitor on the thing they clicked, and say what it delivers | `/services/product`: the three §05 service descriptions (`src/content/services.ts`). `/services/agentic-system`: the two tier descriptions (`src/content/pricing.ts`, read not copied). **Deliverable bullets are DRAFT** (`src/content/service-pages.ts`). |
 | **How it works** | Show the workflow | `PROCESS.phases` — the same four phases the home page's `#process` accordion renders, as a numbered card grid |
 | **Close** | Convert, and point at price | `FINAL_CTA` heading and CTA; the `/pricing` link's label is `PRICING.headline` |
 
