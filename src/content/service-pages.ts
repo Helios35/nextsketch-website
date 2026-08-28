@@ -44,10 +44,19 @@ import type { PricingTierSlug, ServicePageContent, ServicePageSlug, ServiceSlug 
  * - `intro` on `/services/product` — there is no approved *group*
  *   description for three services, so that hero carries none. The
  *   agentic route's is its §05 line, which covers the whole page.
- * - `included` on all five blocks — the "what you get" bullets. Empty,
- *   so each block renders no list rather than an invented one. The
- *   component already lays the list out, so approved bullets drop in
- *   here and nowhere else, exactly like the `/pricing` tiers.
+ *
+ * **`included` was empty on all five blocks and is no longer.** The
+ * owner asked for the "what you get" band to be built against a
+ * supplied two-column reference (2026-08-28, second session), and a
+ * layout with nothing in it cannot be reviewed. The bullets are the
+ * ones drafted for approval in `briefs/build-notes/26-service-routes.md`
+ * and are **DRAFT pending owner approval**, flagged the way every other
+ * drafted string in this repo is (`NOT_FOUND`, `SERVICES_EYEBROW`,
+ * `PROCESS.eyebrow`, the `work.ts` summaries). They are deliverables,
+ * not adjectives, per the owner's brief, and four per column so the
+ * columns balance the way the reference's do. Edit them here and
+ * nowhere else; a block whose array is emptied again renders no list
+ * and no frame, exactly as before.
  *
  * `title` and `description` are the exception the brief names out loud:
  * "Real metadata on all four. Own title and description each, in the
@@ -89,14 +98,6 @@ const TIER = {
 };
 
 /**
- * Mono micro-label above each block's bullet list. Deliberately
- * `PRICING.featuresLabel`'s word rather than a second one: the owner
- * asked for the pricing card's `Included` list, and two labels for one
- * list is how the service names drifted in the first place (#27).
- */
-export const SERVICE_PAGE_INCLUDED_LABEL = "Included";
-
-/**
  * The two pages, keyed by route slug. Total over `ServicePageSlug`, so
  * a third route cannot be added without content.
  */
@@ -129,21 +130,36 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
         name: SERVICE["new-product"].name,
         description: SERVICE["new-product"].description,
         need: SERVICE_NEED["new-product"],
-        included: [],
+        included: [
+          "A validated scope you sign off on before we build",
+          "A working product in production, not a demo",
+          "Everything handed over: code, accounts, deployment",
+          "A partner still there the week after launch",
+        ],
       },
       {
         id: "product-completion",
         name: SERVICE["product-completion"].name,
         description: SERVICE["product-completion"].description,
         need: SERVICE_NEED["product-completion"],
-        included: [],
+        included: [
+          "A written assessment of what was built and what to keep",
+          "The direction validated before more money goes in",
+          "Remaining work scoped and priced as one flat figure",
+          "Two months to decide whether we stay",
+        ],
       },
       {
         id: "product-support",
         name: SERVICE["product-support"].name,
         description: SERVICE["product-support"].description,
         need: SERVICE_NEED["product-support"],
-        included: [],
+        included: [
+          "A retainer that covers evolution, not just uptime",
+          "Monthly work agreed with you, never billed by the hour",
+          "The product maintained, monitored and kept current",
+          "Whatever comes next, built by the people who built it",
+        ],
       },
     ],
   },
@@ -171,14 +187,24 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
         name: TIER.workflow.name,
         description: TIER.workflow.description,
         need: PRICING_NEED.workflow,
-        included: [],
+        included: [
+          "An assessment of where agents create real value in your day to day",
+          "Embedded agents built into the processes you already run",
+          "Custom tools where an agent alone will not do the job",
+          "Validated in production, on your real work",
+        ],
       },
       {
         id: "internal-tool",
         name: TIER.tool.name,
         description: TIER.tool.description,
         need: PRICING_NEED.tool,
-        included: [],
+        included: [
+          "A tool your team logs into, built around how they work",
+          "Agents behind a real interface, not a chat window",
+          "Built on your processes, not on a template",
+          "Yours to own, with everything handed over",
+        ],
       },
     ],
   },

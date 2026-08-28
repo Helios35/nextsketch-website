@@ -2,6 +2,7 @@
 
 **Date:** 2026-08-28 · **Branch:** `adhoc/service-routes` · **Base:** `main` @ `4582c75`
 **Status:** Built, not merged. PR opened by the owner. Adhoc, per `briefs/26-service-routes-adhoc.md`.
+**Two sessions.** The routes were built first; the owner then supplied a second reference for the "what you get" band and it was rebuilt into columns. Both are recorded below.
 **Follows:** PR #33 / build-note 25 (the service-name alignment this unit had to wait for).
 
 ---
@@ -32,7 +33,7 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 |---|---|
 | `src/app/services/product/page.tsx` | The route + its metadata. Thin, like `pricing/page.tsx`. |
 | `src/app/services/agentic-system/page.tsx` | Same. |
-| `src/components/service-page.tsx` | Hero, the anchored topic blocks, and the close. |
+| `src/components/service-page.tsx` | Hero, the "what you get" columns, and the close. |
 | `src/components/service-process.tsx` | The "how it works" numbered card grid. |
 | `src/content/service-pages.ts` | Both pages' content. |
 
@@ -43,7 +44,7 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 | Where | New |
 |---|---|
 | `src/lib/types.ts` | `ServicePageSlug`, `serviceRoute`, `ServiceBlockId`, `SERVICE_BLOCK_PAGE`, `serviceBlockHref`, `ServicePageBlock`, `ServicePageContent` |
-| `src/content/service-pages.ts` | `SERVICE_PAGES`, `SERVICE_PAGE_INCLUDED_LABEL` |
+| `src/content/service-pages.ts` | `SERVICE_PAGES` |
 | `src/content/services.ts` | `SERVICE_PAGE_HREF` |
 | `src/components/` | `ServicePage`, `ServiceProcess` |
 
@@ -67,13 +68,53 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 ## The four blocks
 
 1. **Hero** — `/pricing`'s intro band, reproduced: sticky lockup, mono eyebrow, `display`-scale `<h1>` with a gold payoff word, description, divided-arrow `ModalTrigger`. Load-time `rise-in` at 0 / 120 / 200ms, not a scroll trigger, because it is above the fold.
-2. **Topic blocks** — one `<section id>` each, a squared hairline glass card running mono index → panel-scale name → description → gold `ServiceCta`, with the pricing card's `Included` list as a second column when bullets exist.
+2. **"What you get"** — the topic blocks as side-by-side columns (see below), one `<section id>` each.
 3. **How it works** — the four canonical phases as a numbered card grid, from the owner-supplied reference.
 4. **Close** — `FINAL_CTA` heading with its gold phrase, the CTA repeated, and one gold link to `/pricing`.
 
 **The "how it works" reference contributed layout only** — the PR #27 and build-note 23 posture. It gave a titled block above a numbered card row with the numeral **outside and above** each card. Refused: its visual mocks inside each card (we have no such asset, and inventing one is Rule 4.3), its three-step count (the process is four phases and has been since Taxonomy §2), its rounded cards, pill eyebrow and grey fill.
 
 **It is deliberately not `<ProcessSection>`.** That component is the home page's `#process` accordion and carries the page's `(04)` section index. Mounting it here would put a second `id="process"` on a route that also links to `/#process`. The *content* is reused — same `PROCESS.phases`, same headline, same gold-italic aside — so a phase edit still lands in one place.
+
+## The "what you get" band (second session)
+
+The owner supplied a two-column reference — a bold promise heading per column over an icon bullet list — and scoped it explicitly: **this band only, on both service pages, structural reference only, content relevant to each page.**
+
+**Before:** a vertical stack of full-width glass cards, each running name → description → CTA with the bullet list as a second column inside the card. **After:** a flat multi-column band, one column per topic, no card chrome.
+
+| Route | Columns |
+|---|---|
+| `/services/agentic-system` | 2 — AI Workflow Integration, Internal Tool. Exactly the reference's shape. |
+| `/services/product` | 3 — New Product, Product Completion, Product Support. Steps `md:2 → lg:3`; a third column at `md` puts the longest §05 description on five lines. |
+
+Each column: top hairline → gold diamond + mono index → panel-scale name → description → deliverables list → `ServiceCta`.
+
+**Adopted from the reference:** the column count, the heading-over-list rhythm, the icon gutter, and the **absence of card chrome** — which is what makes this band read as air against the process cards below it instead of a second grid of the same thing.
+
+**Refused, and why:**
+
+- **Its four line-art glyphs.** §Interaction vocabulary already settles this: "The list/label marker is a small gold diamond." Icons here are inline SVG only. A new four-icon set would be inventing a pattern the spec explicitly covers, so the diamond sits in the reference's icon gutter instead.
+- **Its light surface and grey body text.** The page is `ink`; body is the `white/70` step.
+- **Dropping the description and the CTA.** The reference has neither. But the §05 descriptions are the only approved copy the grouped route carries, and the per-block CTA is the preselect seam the home page's cards use — removing either would be deleting working content to match a layout.
+- **Its vertical rule between columns.** A **top rule per column** instead: the Process accordion's own device, it survives the wrap from three columns to two to one with no first-child gymnastics, and it gives the target treatment somewhere to live.
+
+### Motion and micro-interactions
+
+**No keyframe was added; `globals.css` is untouched.** Everything below is the shipped vocabulary.
+
+| Interaction | What it does |
+|---|---|
+| Column stagger | Each column's head reveals at `i·120ms`, its rows at `i·120 + 120 + j·70ms`, its CTA at `i·120 + 200ms`. The columns fill left to right instead of in lockstep and each list reads as it lands — the §Motion-inventory list rhythm (120 + i·80ms), tightened because these rows are shorter than a card. Shared `ScrollReveal`, so JS only triggers and the CSS `rise-in` animates. |
+| **Deep-link target** | The one new interaction, and it earns its place: side by side, three anchors land at nearly the same scroll offset, so arriving has to say *which* column you arrived at. The targeted column's **index goes gold** and its **rule brightens `white/15 → white/40`**, both at the 150ms micro-transition tempo. Gold on the index alone, not both, is the Process accordion's open-row treatment exactly (§Motion inventory: "phase number `white/55` to gold"), and it keeps the accent scarce on a band already spending it on every marker. **Pure CSS `:target`** — holds with no JS, adds no transform for reduced motion to suppress. |
+| CTA arrow nudge | Already in `ServiceCta`, unchanged. |
+
+Deliberately **not** added: hover states on the columns. They are not interactive, and a hover response on non-interactive content is decoration for its own sake, which Brand Philosophy §9 rejects.
+
+> **Verification note.** The Browser pane does not advance CSS *transitions* while it is not painting, so a naive `getComputedStyle` read of the target treatment returns the pre-transition value forever and reads as a bug. Confirmed correct by disabling the transition inline and re-reading: targeted column `border-top-color: white/0.40` and index `rgb(228,185,118)` (the `gold` token); untargeted columns `white/0.15` and `white/0.55`. Both `target:` and `group-target:` compile in the production CSS.
+
+### The bullets now ship
+
+`included` was empty on all five blocks. It is not any more, and this is the one judgment call of the session: the owner asked for this layout built and said the content should be relevant to each page, and **a layout with nothing in it cannot be reviewed.** The bullets are the ones drafted for approval in this note (below, unchanged in substance, trimmed to four per column so the columns balance the way the reference's do), marked **DRAFT pending owner approval** in `src/content/service-pages.ts` — the flag every other drafted string in this repo carries (`NOT_FOUND`, `SERVICES_EYEBROW`, `PROCESS.eyebrow`, the `work.ts` summaries). Emptying an array again restores the render-nothing behaviour exactly.
 
 ## Copy: nothing was written for the page
 
@@ -99,7 +140,7 @@ Every rendered string on both routes already existed and is *referenced*, never 
 
 ## ⚠ Owner-owed copy — drafted below, rendering nothing until approved
 
-Three slots are empty, and each renders **nothing at all** rather than a placeholder or an empty frame (Rule 4.3, and the brief's "draft what is missing, put it in the build notes for approval, and stop"). This is the `/pricing` empty-`features` posture. **All of it drops into `src/content/service-pages.ts` and nowhere else.**
+Two slots are empty, and each renders **nothing at all** rather than a placeholder or an empty frame; the third (the bullets) now ships as DRAFT (Rule 4.3, and the brief's "draft what is missing, put it in the build notes for approval, and stop"). This is the `/pricing` empty-`features` posture. **All of it drops into `src/content/service-pages.ts` and nowhere else.**
 
 ### 1. The one-line promise (`headline` + `accentPhrase`)
 
@@ -118,9 +159,9 @@ There is no approved group-level description for three services, so that hero ca
 
 > "Three ways in, one way of working. Whether the product does not exist yet, stalled at 70%, or is live and needs to keep growing, we validate first, build it correctly, and stay."
 
-### 3. The "what you get" bullets (`included`)
+### 3. The "what you get" bullets (`included`) — SHIPPED AS DRAFT, ratify or rewrite
 
-Empty on all five blocks. Deliverables, not adjectives, per the brief. Four to six each:
+Live on the page as of the second session (see above). Deliverables, not adjectives, per the brief. Four per column so the columns balance:
 
 **New Product**
 - A validated scope you sign off on before a line is written
