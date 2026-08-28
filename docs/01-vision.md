@@ -36,8 +36,8 @@ A website that is itself proof of capability: sleek, modern, fast, with purposef
 
 ## Non-goals
 
-- Not a portfolio site — the page itself is the credibility play. **CURRENT** (more so now: the single hero *is* the proof). The "selected work" grid is **RETIRED** (not in the #13 section set).
+- Not a portfolio site — the page itself is the credibility play. **CHANGED** — the "selected work" grid is **no longer RETIRED**: decision-log #16 (2026-08-24) brought `#work` back as the proof band, first section under the hero, because nothing on the page was demonstrating proof of work. The principle holds — it is one band on the page, not a portfolio site, and per-project case-study pages are still not planned.
 - Not a content/SEO play at launch — blog and newsletter are cut. **CURRENT.**
-- No pricing display, no e-commerce, no client portal, no CMS, **no backend beyond one serverless lead route — ever** (decision-log #8). **CURRENT** (hardened post-pivot).
-- Not a multi-page site — one page plus the modal. **CURRENT** (now literally one screen).
+- No e-commerce, no client portal, no CMS, **no backend beyond one serverless lead route — ever** (decision-log #8). **CURRENT** (hardened post-pivot). *"No pricing display" is* **CHANGED** *— `/pricing` publishes the four tiers and their figures (decision-log #23/#25, 2026-08-25). The page still sells nothing and takes no payment: it qualifies, so #8 is untouched.*
+- Not a multi-page site — one page plus the modal. **CHANGED** — the site is **two routes** since decision-log #23 (2026-08-25): the scrolling home page and `/pricing`. The principle holds (no sprawl, no CMS, the modal is still the lead path); the literal count does not. Unit 26's service routes are the next test of it.
 - No lead nurture infrastructure (CRM, sequences) at launch. **CURRENT** — note the durable record is a Google Sheet + best-effort Asana task with transactional email, not a CRM (decision-log #7/#8).

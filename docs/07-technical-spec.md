@@ -123,9 +123,11 @@ src/
                     api/qualify/route.ts (the only server surface)
   components/     — hero.tsx + hero-orbit.tsx + hero-cta.tsx, site-nav.tsx,
                     site-footer.tsx, the six section components,
+                    pricing-tiers.tsx (the /pricing grid, #25),
                     work-rail.tsx, scroll-video.tsx, scroll-reveal.tsx,
                     parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
-                    qualification-modal(-provider).tsx, button.tsx
+                    qualification-modal(-provider).tsx, modal-trigger.tsx,
+                    button.tsx (variant + size, #26)
                     (DORMANT — retired paper plan: hero-section.tsx,
                      sketch-accent.tsx, the held sections, Reveal, etc. —
                      on disk, not rendered; delete vs. keep is an open
@@ -133,7 +135,8 @@ src/
   content/        — copy.ts (SITE + NAV + LANDING live; retired-plan copy
                     dormant), work.ts, pricing.ts, services.ts,
                     modal.ts, email.ts, faq.ts
-  lib/            — types.ts (SectionId, ROUTES, sectionHref), schema.ts
+  lib/            — types.ts (SectionId, ROUTES, sectionHref,
+                    PricingTier + PricingTierSlug), schema.ts
                     (Zod union), qualify.ts (submit seam), video-scrub.ts,
                     lead-delivery.ts, lead-format.ts, lead-notify.ts
 scripts/          — inbound-leads.gs (the Apps Script reference copy; build-note 14)
