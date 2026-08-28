@@ -167,6 +167,13 @@ export const HERO = {
  * - capabilities: the four canonical services (Taxonomy §1, exact casing),
  *   shown as the slow capability strip sanctioned in UX spec §Motion inventory
  *   — no invented numbers or social proof (Brand Philosophy §10, Rule 4.3).
+ *   **Aligned to the quick door's names by decision-log #28 (2026-08-28).**
+ *   The strip carried the long Messaging Kit §05 forms while the cards
+ *   carried short ones and the modal carried a third set; a visitor read
+ *   three names for one thing before being asked to pick. This is a Rule
+ *   4.1 edit to canonical §05 copy, so — like the hero headline under #18
+ *   — **do not "correct" these back to the Kit's long forms.** The Kit
+ *   lives outside this repo and is owner-owned to reconcile.
  * - cta: the Rule 3.1 primary; opens the qualification modal.
  *
  * backgroundVideo/backgroundPoster are config, not copy — the
@@ -182,10 +189,10 @@ export const LANDING = {
   supportingLine:
     "You're not hiring a vendor. You're gaining a product partner.",
   capabilities: [
-    "New Products from Scratch",
-    "Rescue & Completion",
-    "Agentic Systems Integration",
-    "Ongoing Product Partnership",
+    "New Product",
+    "Product Completion",
+    "Product Support",
+    "Agentic System",
   ],
   cta: "Start a Conversation",
   /** Accessible name for the decorative capability strip. */

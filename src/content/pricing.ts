@@ -2,8 +2,9 @@ import type { ProjectType } from "@/lib/schema";
 import type { PricingTier, PricingTierSlug } from "@/lib/types";
 
 /**
- * Pricing page (`/pricing`) copy — decision-log #23 (the route) and
- * **#25** (the tier structure, the term, and the naming).
+ * Pricing page (`/pricing`) copy — decision-log #23 (the route),
+ * **#25** (the tier structure, the term, and the naming) and **#27**
+ * (two tiers renamed onto the site's one service vocabulary).
  *
  * Pricing ships as a **standalone route, not a section**. Decision #16
  * named it "the next section in this effort"; the owner's 2026-08-24
@@ -25,7 +26,7 @@ import type { PricingTier, PricingTierSlug } from "@/lib/types";
  * hides a commitment is exactly the surprise invoice §6 rejects, so it
  * is not tucked into a footnote.
  *
- * **Save Your Project carries no required term at all** — a two month
+ * **Product Completion carries no required term at all** — a two month
  * trial with no contractual obligation (owner call, same date). It is
  * the tier whose visitor has already been burned by one firm, so asking
  * them to commit before seeing anything works is the wrong ask. The
@@ -70,7 +71,7 @@ export const PRICING = {
    * (#25). This is the sentence the brief exists to protect.
    */
   term:
-    "The $298 monthly partnership is required for the first three months. After that it is optional, and staying on is your call. Save Your Project is the exception: it starts as a two month trial with no contractual obligation.",
+    "The $298 monthly partnership is required for the first three months. After that it is optional, and staying on is your call. Product Completion is the exception: it starts as a two month trial with no contractual obligation.",
   /**
    * Accessible name for the tier grid (screen-reader only). The grid is
    * a landmark region with no visible heading of its own — the page's
@@ -101,31 +102,54 @@ export const PRICING = {
  * modal's "What do you need?" selector. The `SERVICE_NEED` precedent in
  * `src/content/services.ts`, applied to the tiers.
  *
- * Spelled out rather than derived: the tier names are the owner's
- * commercial framing and deliberately do **not** match the service
- * slugs one-for-one. "Custom Product" maps to `partnership` (owner
- * call, #25), which is the mapping a reader is most likely to assume is
- * a mistake and is not. Typed as a total map over PricingTierSlug, so a
- * new tier without a need fails typecheck rather than shipping a button
+ * **Two entries were wrong and are corrected here (decision-log #29,
+ * 2026-08-28).** `tool` preselected `new_product` and `custom`
+ * preselected `partnership`, so a visitor clicked a tier and landed on
+ * an option that did not match it. This is a shipped bug fixed, not a
+ * change of mind — and the paragraph that stood here previously argued
+ * the `custom` mapping was deliberate and told the reader not to
+ * correct it, which is what kept it alive. Decision-log #25 records the
+ * old mapping as as-built only and never ratified that reasoning.
+ *
+ * **The top two tiers share `agentic` on purpose.** They differ in
+ * depth, not category: AI Workflow Integration is agents and custom
+ * tools dropped into processes the business already runs, at workflow
+ * level with no product wrapped around them; Internal Tool is a full
+ * product with a real interface and agents behind it, something the
+ * client owns and their team logs into. The modal asks a visitor what
+ * they need, not how deep they want to go — the depth is what the two
+ * price points express. Positioning language, so it lives in Taxonomy
+ * §1 as well as here.
+ *
+ * Still spelled out rather than derived: display slugs are kebab-case
+ * (§8), payload values snake_case (§3), and two tiers legitimately
+ * share one type. Typed as a total map over PricingTierSlug, so a new
+ * tier without a need fails typecheck rather than shipping a button
  * that preselects nothing.
+ *
+ * **The tier slugs are not renamed with the names** (#27 scope).
+ * `custom` now carries "New Product" and `rescue` carries "Product
+ * Completion", so both are fossils of retired names. Recorded rather
+ * than resolved: renaming them is a separate owner call.
  */
 export const PRICING_NEED: Record<PricingTierSlug, ProjectType> = {
   workflow: "agentic",
-  tool: "new_product",
+  tool: "agentic",
   rescue: "rescue",
-  custom: "partnership",
+  custom: "new_product",
 };
 
 /**
  * Per-tier CTA labels, both from the Rule 3.1 exhaustive set.
  *
  * "Qualify Your Project" carries the three scoped tiers and "Let's See
- * if We're a Fit" carries Custom Product. Both were the set's two
- * unused members, so neither dilutes the hero's primary ("Start a
- * Conversation") or the services cards' ("Build With Us") — the same
- * reasoning `SERVICES_CTA` used when it picked its label.
+ * if We're a Fit" carries the quoted New Product tier (`custom`). Both
+ * were the set's two unused members, so neither dilutes the hero's
+ * primary ("Start a Conversation") or the services cards' ("Build With
+ * Us") — the same reasoning `SERVICES_CTA` used when it picked its
+ * label.
  *
- * Custom Product needed the different label because its scope is not
+ * That tier needed the different label because its scope is not
  * defined yet: "Qualify Your Project" presumes a project to qualify,
  * and §6 permits a quote only where "scope genuinely requires it".
  * The owner's shorthand for this CTA was "call", and every natural
@@ -136,11 +160,21 @@ export const PRICING_CTA = "Qualify Your Project";
 export const PRICING_CTA_CUSTOM = "Let's See if We're a Fit";
 
 /**
- * The four tiers, in owner-settled order (#25).
+ * The four tiers, in owner-settled order (#25). **"Save Your Project"
+ * and "Custom Product" were renamed to Product Completion and New
+ * Product by #27**, onto the same four names the cards, the hero strip
+ * and the modal now use. Nothing else about these entries moved: not a
+ * price, not a struck former price, not a description, not a note, not
+ * the order, not the empty `features` arrays.
  *
- * Descriptions for Save Your Project and Custom Product trace to Brand
- * Philosophy §4 ("What We Build"), reworded only to fit the card measure
- * and to drop §4's em dashes (#19).
+ * Descriptions for the last two tiers trace to Brand Philosophy §4
+ * ("What We Build"), reworded only to fit the card measure and to drop
+ * §4's em dashes (#19). A rename is not permission to reword canonical
+ * copy (Rule 4.1), and none of it is reworded here. **Flagged for the
+ * owner:** the New Product tier's description still opens "Scope that
+ * does not fit the tiers above", which read naturally under the name
+ * "Custom Product" and reads less naturally under this one. Left alone
+ * deliberately; that is a copy decision, not a naming one.
  *
  * The first two are **owner-authored scope** (2026-08-25) and
  * deliberately diverge from §4, because §4's service lines are broader
@@ -191,7 +225,7 @@ export const PRICING_TIERS = [
   },
   {
     slug: "rescue",
-    name: "Save Your Project",
+    name: "Product Completion",
     description:
       "Someone got you 70% there and disappeared. We assess what was built, validate the direction, and get you to launch.",
     upfront: "Quoted",
@@ -202,7 +236,7 @@ export const PRICING_TIERS = [
   },
   {
     slug: "custom",
-    name: "Custom Product",
+    name: "New Product",
     description:
       "Scope that does not fit the tiers above. We define it with you first, then price it to the deliverable, so you get a flat rate that does not change. We deliver a working product in 6–8 weeks.",
     upfront: "Quoted",
