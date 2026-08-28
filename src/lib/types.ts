@@ -25,7 +25,24 @@ export const ACCENT_NAMES = ["gold", "lavender", "rose", "sage"] as const;
 export type AccentName = (typeof ACCENT_NAMES)[number];
 
 /** Service slugs per Taxonomy §1. */
-export type ServiceSlug = "new-product" | "rescue" | "agentic" | "partnership";
+/**
+ * The four service slugs, kebab-case per docs/06-taxonomy.md §8 and
+ * matching the display names one-for-one (decision-log #27).
+ *
+ * A slug is never a fossil of a retired name: `rescue`, `agentic` and
+ * `partnership` were the 2026-06 names and outlived them by two
+ * renames. These are what unit 26's service routes will be built on,
+ * so they are the display names slugified and nothing else.
+ *
+ * Distinct from `ProjectType` in `src/lib/schema.ts`, which is the
+ * stored payload vocabulary (snake_case, §3) and does **not** change
+ * with a rename — the lead record's values are a contract.
+ */
+export type ServiceSlug =
+  | "new-product"
+  | "product-completion"
+  | "product-support"
+  | "agentic-system";
 
 export interface Service {
   readonly slug: ServiceSlug;

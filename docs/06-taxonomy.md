@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 2.2 · **Date:** 2026-08-25 · **Status:** Active — routes and the nav item set reconciled to decision-log #22–#24
+**Version:** 2.3 · **Date:** 2026-08-28 · **Status:** Active — one service vocabulary across every surface (decision-log #27–#29)
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code)
 
@@ -20,16 +20,33 @@
 8. Naming conventions
 9. Deprecation log
 
-## 1. Services (canonical names, exact casing) — **CURRENT** (names) · **RETIRED** (accent mapping)
+## 1. Services (canonical names, exact casing) — **CHANGED (decision-log #27–#28, 2026-08-28)** · **RETIRED** (accent mapping)
 
-The four service names are live: the dark hero's **capability strip** renders them verbatim (`src/content/copy.ts` → `LANDING.capabilities`, exact casing). A **Services section** is in the redesign set (decision-log #13), designed later against `04-ux-spec.md` — **gold is its only accent** (decision-log #14). The old per-service accent pairs (gold/rose/lavender/sage) and the paper-design service cards are **RETIRED**.
+**These four names are what the site says everywhere a visitor can read them** — the Services cards, the hero **capability strip**, the `/pricing` tiers, and the modal's quick-door selector. The quick door is the reference: it is the only surface a visitor reaches *after* choosing, so a name it does not use is a name that disappears mid-conversion.
 
-| Display name | Slug | Status |
+| Display name | Slug | Payload value (§3) | Status |
+|---|---|---|---|
+| New Product | `new-product` | `new_product` | **CURRENT** (#27) |
+| Product Completion | `product-completion` | `rescue` | **CHANGED** (#27, was "Rescue & Completion" / `rescue`) |
+| Product Support | `product-support` | `partnership` | **CHANGED** (#27, was "Ongoing Product Partnership" / `partnership`) |
+| Agentic System | `agentic-system` | `agentic` | **CHANGED** (#27, was "Agentic Systems Integration" / `agentic`) |
+
+**Three vocabularies, and only one of them renames.** The *display name* is what a visitor reads. The *slug* is kebab-case (§8), matches the display name one-for-one, and is what unit 26's service routes are built on. The *payload value* is snake_case (§3), is written to the lead record, and is a **contract that does not move with a rename** — which is why `product-support` still stores as `partnership`. Canonical in `src/lib/types.ts` → `ServiceSlug`, `src/content/services.ts` → `SERVICES` + `SERVICE_NEED`, and `src/lib/schema.ts` → `PROJECT_TYPE_VALUES`.
+
+This closes a divergence open since **2026-08-04**, when the cards took short names while this table and `LANDING.capabilities` kept long ones. Aligning the capability strip is a **Rule 4.1 edit to Messaging Kit §05** canonical copy and carries its own row (#28) — like the hero headline under #18, **do not "correct" the strip back to the Kit's long forms.**
+
+The service **descriptions** are still §05 as written; a rename is not permission to reword them (Rule 4.1). Gold is the only accent (#14); the old per-service accent pairs (gold/rose/lavender/sage) and the paper-design service cards are **RETIRED**, and the dormant `accent` field is dead data.
+
+### Two kinds of agentic system — **CURRENT (#29)**
+
+`/pricing` sells the Agentic System service at **two depths**, which is why two tiers share one project type rather than one of them being mis-mapped:
+
+| Tier | What it is | Preselects |
 |---|---|---|
-| New Products from Scratch | `new-product` | name **CURRENT** (capability strip); section planned (#13) |
-| Rescue & Completion | `rescue` | name **CURRENT**; section planned (#13) |
-| Agentic Systems Integration | `agentic` | name **CURRENT**; section planned (#13) |
-| Ongoing Product Partnership | `partnership` | name **CURRENT**; section planned (#13) |
+| **AI Workflow Integration** | Agents and custom tools dropped into processes the business already runs. Workflow level, no product wrapped around them. | `agentic` |
+| **Internal Tool** | A full product with a real interface and agents behind it, owned by the client and logged into by their team. | `agentic` |
+
+The modal asks a visitor **what they need, not how deep they want to go** — the depth is what the two price points express. This is positioning language, not an implementation note: unit 26's service routes depend on it.
 
 ## 2. Process phases (ordered, exactly four) — **CURRENT** (model) · **RETIRED** (accent mapping)
 
@@ -148,6 +165,9 @@ The naming convention stands for any future section asset: `placeholder-{section
 | Lead type **`off_ramp`** ("not a lead, not emailed, not counted") | **`exploring`** (a captured lead from the off-ramp) | Sprint 02 Unit 04 — off-ramp now captures an email | No data to migrate; honest "exploring" signal instead of a non-lead |
 | "Leads exist only as emails" / single email to `hello@nextsketch.com` | **Google Sheet system of record** (+ best-effort Asana) with Resend **notification** | Sprint 02 Units 02–03 | See `07-technical-spec.md` §Data model |
 | Services: Industrial Design, UI/UX Design, Mechanical Design | §1 services | Repositioning, June 2026 | None to migrate; must not appear (Rule 3.4) |
+| Service names: "New Products from Scratch", "Rescue & Completion", "Agentic Systems Integration", "Ongoing Product Partnership" (and the 2026-08-04 card short forms "Agentic Systems" / "Ongoing Partnership") | §1 names — New Product, Product Completion, Product Support, Agentic System | Decision-log #27–#28 (2026-08-28): one vocabulary, the quick door's | Display only. **Payload values are unchanged**, so no lead data migrates and no `/api/qualify` contract moves |
+| Service slugs `rescue`, `agentic`, `partnership` | `product-completion`, `agentic-system`, `product-support` | Decision-log #27 — a slug should not be a fossil of a retired name | Internal only; never appeared in a URL or a payload. **Pricing tier slugs are NOT renamed** — `custom` ("New Product") and `rescue` ("Product Completion") stay as they are, and the mismatch is a separate owner call |
+| Pricing tier names "Save Your Project", "Custom Product" | "Product Completion", "New Product" | Decision-log #27 | Display only; prices, descriptions, notes, order and the empty `features` arrays are untouched |
 | Brand: Autonomous Whales | NextSketch (single brand) | DBA retired | Banned term (Rule 3.4) |
 | Term: "automations" / "agentic workflows" | "embedded agents" / "agentic systems" | Brand Philosophy changelog | Banned term (Rule 3.2) |
 | CTA: "Book a free chat" + Calendly links | Modal + Rule 3.1 CTA set | Qualification mindset | Calendly removed entirely |
