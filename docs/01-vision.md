@@ -38,6 +38,6 @@ A website that is itself proof of capability: sleek, modern, fast, with purposef
 
 - Not a portfolio site — the page itself is the credibility play. **CURRENT** (more so now: the single hero *is* the proof). The "selected work" grid is **RETIRED** (not in the #13 section set).
 - Not a content/SEO play at launch — blog and newsletter are cut. **CURRENT.**
-- No pricing display, no e-commerce, no client portal, no CMS, **no backend beyond one serverless lead route — ever** (decision-log #8). **CURRENT** (hardened post-pivot).
+- No e-commerce, no client portal, no CMS, **no backend beyond one serverless lead route — ever** (decision-log #8). **CURRENT** (hardened post-pivot). *"No pricing display" is* **CHANGED** *— `/pricing` publishes the four tiers and their figures (decision-log #23/#25, 2026-08-25). The page still sells nothing and takes no payment: it qualifies, so #8 is untouched.*
 - Not a multi-page site — one page plus the modal. **CURRENT** (now literally one screen).
 - No lead nurture infrastructure (CRM, sequences) at launch. **CURRENT** — note the durable record is a Google Sheet + best-effort Asana task with transactional email, not a CRM (decision-log #7/#8).
