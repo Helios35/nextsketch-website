@@ -113,7 +113,7 @@ Three changes came back on the mocks, and one of them needed a decision row:
 
 - **More interface detail.** Every mock now carries real chrome — window bar, nav row, tab strip, status bar, sidebar, top bar — and a **profile chip top-right**, which the owner named specifically.
 - **Colour.** See below; recorded as **#31**.
-- **One box, one fade.** All five sit in the same `4/3` frame so the rows line up down the page, and all five carry the tile cluster's **radial fade** rather than the earlier bottom scrim, so each dissolves into the page from every edge. The fade was tuned twice: the first value (`transparent 40% → ink 94%`, `farthest-corner`) swallowed the new chrome and the profile chip, which defeated the point of adding them. It is now an explicit `ellipse 112% 112%` with the clear zone out to 58%, so the detail survives and only the outer edge dissolves.
+- **One box, one fade.** All five sit in the same `4/3` frame so the rows line up down the page, and all five carry the tile cluster's **radial fade** rather than the earlier bottom scrim, so each dissolves into the page from every edge. The fade was tuned twice and then put back. Softening it (`ellipse 112% 112%`, clear out to 58%) kept the new chrome and profile chip legible at the edges, but the owner asked for the fade back, so it is the **full-strength** `transparent 40% → ink 94%` again. That is a deliberate trade, recorded so nobody re-softens it: these are atmosphere, not diagrams, and a mock reading as a hard rectangle pasted on the page is the thing the fade exists to prevent. Anything that has to stay legible therefore belongs toward the centre of a mock — which is where each one's gold element already sits.
 
 ### Colour — decision #31, a narrow supersession of #14
 
