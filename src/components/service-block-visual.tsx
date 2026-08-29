@@ -619,8 +619,17 @@ function WorkflowVisual() {
     <div className={SHELL}>
       {/* Same 4/3 box as the framed mocks, so all five rows line up.
           Frameless on purpose: this one is a cluster, not a screen. */}
-      <div className="relative flex aspect-[4/3] items-center justify-center">
-        <div>
+      <div className="flex aspect-[4/3] items-center justify-center">
+        {/* **The fade rides the cluster's own box, not the 4/3 frame.**
+            This is load-bearing and it regressed once: `inset-0` on the
+            outer frame scales the gradient's radius to 448x336, and the
+            cluster is only ~240px across, so every tile landed inside
+            the clear zone and the dissolve vanished while the CSS still
+            looked correct. The framed mocks fill their frame, so theirs
+            can sit on it; this one cannot. Values are the original
+            circle stops, unchanged. */}
+        <div className="relative mx-auto w-fit">
+          <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,transparent_30%,var(--color-ink)_78%)]" />
           {ROWS.map((row, r) => (
             <div
               key={r}
@@ -638,7 +647,6 @@ function WorkflowVisual() {
             </div>
           ))}
         </div>
-        <Fade />
       </div>
     </div>
   );
