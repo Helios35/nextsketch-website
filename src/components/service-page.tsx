@@ -140,155 +140,170 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
    */
   const headline = page.headline ?? page.name;
   const accent = page.accentPhrase;
-  const accentStart =
-    accent === undefined ? -1 : headline.indexOf(accent);
+  const accentStart = accent === undefined ? -1 : headline.indexOf(accent);
 
   const closeHeadline = FINAL_CTA.headline;
   const closeAccentStart = closeHeadline.indexOf(CLOSE_ACCENT_PHRASE);
 
   return (
     <>
-      <section
-        aria-labelledby="service-headline"
-        className="relative flex w-full flex-col bg-ink"
-      >
-        {/* Load-bearing. See the doc block — do not flatten the h-0
+      {/* Hero + the band under it, sharing one stacking context so the
+          gold light can bleed across both. `isolate` is what makes the
+          `-z-10` glow stay inside this wrapper: without it the negative
+          layer escapes to the root and paints behind `html`'s `bg-ink`,
+          which is invisible. Neither child carries `bg-ink` any more —
+          `layout.tsx` puts it on `<html>`, so the surface is unchanged
+          and an opaque child would simply cover the light. Deliberately
+          **no `overflow-hidden`**: the glow is meant to run past the
+          hero (owner direction), and clipping is the whole thing being
+          asked for here. It is sized `inset-x-0`, so it bleeds
+          vertically without ever widening the page. */}
+      <div className="relative isolate">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 -top-56 -z-10 h-[62rem] bg-[radial-gradient(ellipse_58%_44%_at_36%_46%,var(--color-gold)_0%,transparent_70%)] opacity-[0.19]"
+        />
+        <section
+          aria-labelledby="service-headline"
+          className="relative flex w-full flex-col"
+        >
+          {/* Load-bearing. See the doc block — do not flatten the h-0
             sticky wrapper, and do not add padding above it. */}
-        <div className="sticky top-0 z-10 h-0">
-          <header>
-            <a
-              href={NAV.home}
-              className="pointer-events-auto inline-flex px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-8 lg:px-16"
-            >
-              <BrandWordmark className="h-7 w-auto" />
-            </a>
-          </header>
-        </div>
-        <div className="w-full px-6 pt-32 pb-16 sm:px-8 sm:pt-40 lg:px-16 lg:pt-48 lg:pb-20">
-          <SectionHeading
-            as="h1"
-            eyebrow={page.eyebrow}
-            className="motion-safe:animate-rise-in"
-          >
-            <span id="service-headline">
-              {accent === undefined || accentStart === -1 ? (
-                headline
-              ) : (
-                <>
-                  {headline.slice(0, accentStart)}
-                  <span className="text-gold">{accent}</span>
-                  {headline.slice(accentStart + accent.length)}
-                </>
-              )}
-            </span>
-          </SectionHeading>
-          {/* Absent on the grouped route, which has no approved
-              group-level description (Rule 4.3). */}
-          {page.intro !== undefined && (
-            <p
-              className={`mt-8 max-w-2xl motion-safe:animate-rise-in [animation-delay:120ms] ${BODY_CLASS}`}
-            >
-              {page.intro}
-            </p>
-          )}
-          <div className="mt-10 motion-safe:animate-rise-in [animation-delay:200ms]">
-            <ModalTrigger variant="inverse" arrow need={page.need}>
-              {LANDING.cta}
-            </ModalTrigger>
+          <div className="sticky top-0 z-10 h-0">
+            <header>
+              <a
+                href={NAV.home}
+                className="pointer-events-auto inline-flex px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-8 lg:px-16"
+              >
+                <BrandWordmark className="h-7 w-auto" />
+              </a>
+            </header>
           </div>
-        </div>
-      </section>
+          <div className="w-full px-6 pt-32 pb-16 sm:px-8 sm:pt-40 lg:px-16 lg:pt-48 lg:pb-20">
+            <SectionHeading
+              as="h1"
+              eyebrow={page.eyebrow}
+              className="motion-safe:animate-rise-in"
+            >
+              <span id="service-headline">
+                {accent === undefined || accentStart === -1 ? (
+                  headline
+                ) : (
+                  <>
+                    {headline.slice(0, accentStart)}
+                    <span className="text-gold">{accent}</span>
+                    {headline.slice(accentStart + accent.length)}
+                  </>
+                )}
+              </span>
+            </SectionHeading>
+            {/* Absent on the grouped route, which has no approved
+              group-level description (Rule 4.3). */}
+            {page.intro !== undefined && (
+              <p
+                className={`mt-8 max-w-2xl motion-safe:animate-rise-in [animation-delay:120ms] ${BODY_CLASS}`}
+              >
+                {page.intro}
+              </p>
+            )}
+            <div className="mt-10 motion-safe:animate-rise-in [animation-delay:200ms]">
+              <ModalTrigger variant="inverse" arrow need={page.need}>
+                {LANDING.cta}
+              </ModalTrigger>
+            </div>
+          </div>
+        </section>
 
-      {/* "What you get" — alternating split rows. See the doc block
+        {/* "What you get" — alternating split rows. See the doc block
           above for what the reference contributed and what it did not.
           Each block is a real <section id>, so `globals.css`'s
           `section[id] { scroll-margin-top: 5rem }` clears the fixed bar
           on a deep link with no extra CSS. */}
-      <div className="w-full bg-ink px-6 pb-24 sm:px-8 sm:pb-28 lg:px-16 lg:pb-32">
-        <div className="flex flex-col gap-24 md:gap-32">
-          {page.blocks.map((block, i) => {
-            /* Sides alternate (owner direction): the visual leads on
+        <div className="w-full px-6 pb-24 sm:px-8 sm:pb-28 lg:px-16 lg:pb-32">
+          <div className="flex flex-col gap-24 md:gap-32">
+            {page.blocks.map((block, i) => {
+              /* Sides alternate (owner direction): the visual leads on
                odd rows and follows on even ones. The text is always
                **first in the DOM**, so the reading order and the
                single-column stack put the substance before the
                decoration; `lg:order-*` does the swapping, which is
                presentation only and leaves assistive tech alone. */
-            const visualLeads = i % 2 === 1;
+              const visualLeads = i % 2 === 1;
 
-            return (
-              <section
-                key={block.id}
-                id={block.id}
-                aria-labelledby={`${block.id}-heading`}
-                /* `group` + `target:` is the deep-link answer: the rows
+              return (
+                <section
+                  key={block.id}
+                  id={block.id}
+                  aria-labelledby={`${block.id}-heading`}
+                  /* `group` + `target:` is the deep-link answer: the rows
                    are tall, so arriving needs to *say* which one you
                    arrived at. The index turns gold and the emphasized
                    tile's hairline follows it, which is the Process
                    accordion's open-row treatment (§Motion inventory)
                    doing the same "you are here" work. CSS only, so it
                    survives no-JS and reduced motion. */
-                className="group grid items-center gap-12 lg:grid-cols-2 lg:gap-16"
-              >
-                <div className={visualLeads ? "lg:order-2" : "lg:order-1"}>
-                  <ScrollReveal>
-                    <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55 transition-colors duration-150 group-target:text-gold">
-                      <span
-                        aria-hidden="true"
-                        className="h-1.5 w-1.5 rotate-45 bg-gold"
-                      />
-                      {String(i + 1).padStart(2, "0")}
-                    </p>
-                    {/* Panel display scale (§Typography), not the
+                  className="group grid items-center gap-12 lg:grid-cols-2 lg:gap-16"
+                >
+                  <div className={visualLeads ? "lg:order-2" : "lg:order-1"}>
+                    <ScrollReveal>
+                      <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55 transition-colors duration-150 group-target:text-gold">
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 rotate-45 bg-gold"
+                        />
+                        {String(i + 1).padStart(2, "0")}
+                      </p>
+                      {/* Panel display scale (§Typography), not the
                         section scale: these sit under the page's own
                         <h1>, and the reference's column heading is the
                         same weight relative to its body. */}
-                    <h2
-                      id={`${block.id}-heading`}
-                      className="mt-5 max-w-lg text-2xl font-medium tracking-tight text-balance text-white md:text-3xl"
-                    >
-                      {block.name}
-                    </h2>
-                    <p className={`mt-4 max-w-lg ${BODY_CLASS}`}>
-                      {block.description}
-                    </p>
-                  </ScrollReveal>
-                  {/* The deliverables. Owner-owed (Rule 4.3): a block
+                      <h2
+                        id={`${block.id}-heading`}
+                        className="mt-5 max-w-lg text-2xl font-medium tracking-tight text-balance text-white md:text-3xl"
+                      >
+                        {block.name}
+                      </h2>
+                      <p className={`mt-4 max-w-lg ${BODY_CLASS}`}>
+                        {block.description}
+                      </p>
+                    </ScrollReveal>
+                    {/* The deliverables. Owner-owed (Rule 4.3): a block
                       with no approved bullets renders no list *and no
                       frame*, so the row simply ends at its description.
                       They live in `src/content/service-pages.ts`. */}
-                  {block.included.length > 0 && (
-                    <ul className="mt-8 max-w-lg space-y-4">
-                      {block.included.map((item, j) => (
-                        <li key={item}>
-                          {/* The §Motion-inventory list rhythm
+                    {block.included.length > 0 && (
+                      <ul className="mt-8 max-w-lg space-y-4">
+                        {block.included.map((item, j) => (
+                          <li key={item}>
+                            {/* The §Motion-inventory list rhythm
                               (120 + i·80ms), tightened because these
                               rows are shorter than a card. The reveal
                               is the shared `rise-in` keyframe; JS only
                               triggers it, and reduced motion gets
                               instant visibility. */}
-                          <ScrollReveal
-                            delay={120 + j * 70}
-                            className="flex gap-4"
-                          >
-                            {/* The system's list marker
+                            <ScrollReveal
+                              delay={120 + j * 70}
+                              className="flex gap-4"
+                            >
+                              {/* The system's list marker
                                 (§Interaction vocabulary: "a small gold
                                 diamond"). The reference's lucide
                                 glyphs are not reproduced — icons here
                                 are inline SVG only and this marker is
                                 settled vocabulary. */}
-                            <span
-                              aria-hidden="true"
-                              className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
-                            />
-                            <span className="text-base leading-relaxed text-white/70">
-                              {item}
-                            </span>
-                          </ScrollReveal>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {/* The home page's service-card CTA, exactly
+                              <span
+                                aria-hidden="true"
+                                className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
+                              />
+                              <span className="text-base leading-relaxed text-white/70">
+                                {item}
+                              </span>
+                            </ScrollReveal>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {/* The home page's service-card CTA, exactly
                       (owner direction, 2026-08-28): `<ServiceCta>`, the
                       §Interaction-vocabulary gold underlined text link.
                       A service's CTA now looks the same wherever a
@@ -297,20 +312,21 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                       reference's outline button, which was the shared
                       <Button> at `ghost`; same seam, same `need`, same
                       Rule 3.1 label, different affordance. */}
-                  <div className="mt-10">
-                    <ServiceCta
-                      label={SERVICES_CTA}
-                      need={block.need}
-                      service={block.name}
-                    />
+                    <div className="mt-10">
+                      <ServiceCta
+                        label={SERVICES_CTA}
+                        need={block.need}
+                        service={block.name}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className={visualLeads ? "lg:order-1" : "lg:order-2"}>
-                  <ServiceBlockVisual block={block.id} />
-                </div>
-              </section>
-            );
-          })}
+                  <div className={visualLeads ? "lg:order-1" : "lg:order-2"}>
+                    <ServiceBlockVisual block={block.id} />
+                  </div>
+                </section>
+              );
+            })}
+          </div>
         </div>
       </div>
 
