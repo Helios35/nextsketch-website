@@ -71,7 +71,7 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 1. **Hero** — `/pricing`'s intro band, reproduced: sticky lockup, mono eyebrow, `display`-scale `<h1>` with a gold payoff word, description, divided-arrow `ModalTrigger`. Load-time `rise-in` at 0 / 120 / 200ms, not a scroll trigger, because it is above the fold.
 2. **"What you get"** — the topic blocks as alternating split rows (see below), one `<section id>` each.
 3. **How it works** — the four canonical phases as a numbered card grid, from the owner-supplied reference.
-4. **Close** — `FINAL_CTA` heading with its gold phrase, the CTA repeated, and one gold link to `/pricing`.
+4. **Close** — `FINAL_CTA` heading with its gold phrase and the CTA repeated. The gold `/pricing` link it briefly carried was **removed by the owner** (2026-08-28); `/pricing` stays reachable from the nav bar's featured button and the footer on every page.
 
 **The "how it works" reference contributed layout only** — the PR #27 and build-note 23 posture. It gave a titled block above a numbered card row with the numeral **outside and above** each card. Refused: its visual mocks inside each card (we have no such asset, and inventing one is Rule 4.3), its three-step count (the process is four phases and has been since Taxonomy §2), its rounded cards, pill eyebrow and grey fill.
 
@@ -89,7 +89,9 @@ It has been rebuilt twice at the owner's direction, against two different refere
 
 ### What ships
 
-Each block is a two-column row. The text side runs mono index → panel-scale name → description → gold-diamond deliverables list → `ghost` `ModalTrigger`. The visual side is a **wireframe mock built for that block**.
+Each block is a two-column row. The text side runs mono index → panel-scale name → description → gold-diamond deliverables list → **`<ServiceCta>`**. The visual side is a **wireframe mock built for that block**.
+
+**The block CTA is the home page's service-card CTA, exactly** (owner direction, 2026-08-28). It shipped as the reference's outline button — the shared `<Button>` at `ghost` through `<ModalTrigger>` — and is now `<ServiceCta>`, the §Interaction-vocabulary gold underlined text link, so a service's CTA looks the same on the card that sends a visitor here and on the block they land on. Same seam, same `need`, same Rule 3.1 label; only the affordance changed.
 
 **The sides alternate down the page** (owner direction) — that is what stops three or five rows reading as one table. The **text is always first in the DOM**; `lg:order-*` does the swapping, so the reading order and the single-column mobile stack both put substance before decoration.
 
@@ -253,7 +255,7 @@ Live on the page (see above). Deliverables, not adjectives, per the brief. Four 
 
 **1. The card name became a link — the one change to a shipped component.** The brief calls the card affordance an owner call; the owner answered it with "goes to the sections covering each topic clicked", and without it the pages are unreachable from the site. The name rests as the white heading it already was under a `white/25` hairline underline and takes gold only on hover and focus. Deliberately **not** the §Interaction-vocabulary gold text link: gold on the heading would put a second gold element directly above the card's gold CTA and spend the page's one accent twice per card. An underline adds no width, so the measured one-line `nowrap` guarantee is intact. **The card's existing CTA is untouched** — same modal, same preselect. Six lines, trivially reverted.
 
-**2. `PRICING.headline` is the `/pricing` link's label.** The brief asked for "one line linking to `/pricing`". Authoring that line is new copy; `PRICING.headline` is approved copy that says exactly what is on the other end, so the link's accessible name is its own destination and nothing is invented.
+**2. The close's `/pricing` link is gone — RESOLVED.** The brief asked for "one line linking to `/pricing`", and it shipped as `PRICING.headline` used as the link text (approved copy that named its own destination, so nothing was authored). The owner removed it on 2026-08-28. The close now carries one action, and `/pricing` is still reachable from the nav bar's featured button and the footer on every page.
 
 **3. "One line each, scoped to this service" was not done.** The owner's layout asked the four phases to be scoped per service. That is five sets of new copy, so the band renders the existing approved `phase.description` instead. Scoped one-liners are a separate copy pass; say the word and they are drafted.
 

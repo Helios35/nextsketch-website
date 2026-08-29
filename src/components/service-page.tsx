@@ -3,11 +3,11 @@ import { ModalTrigger } from "@/components/modal-trigger";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { ServiceBlockVisual } from "@/components/service-block-visual";
+import { ServiceCta } from "@/components/service-cta";
 import { ServiceProcess } from "@/components/service-process";
 import { FINAL_CTA, LANDING, NAV } from "@/content/copy";
-import { PRICING } from "@/content/pricing";
 import { SERVICES_CTA } from "@/content/services";
-import { ROUTES, type ServicePageContent } from "@/lib/types";
+import type { ServicePageContent } from "@/lib/types";
 
 /**
  * Presentation marker, not copy: the qualification promise the close
@@ -28,9 +28,11 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
  *
  * **Four blocks, owner-specified (2026-08-28):** hero → the anchored
  * topic blocks → how it works → close. Nothing else. No proof band, no
- * FAQ, no testimonials, and **no price on the page** — three of those
- * have no approved content and the fourth is `/pricing`'s job, which
- * the close links to rather than restates.
+ * FAQ, no testimonials, and **no price and no pricing link** — three of
+ * those have no approved content, and the close's link to `/pricing`
+ * was removed by the owner (2026-08-28) so the close carries one
+ * action. `/pricing` is still reached from the nav bar's featured
+ * button and the footer, on every page.
  *
  * **The wordmark handoff is `/pricing`'s, reproduced exactly, and the
  * brief says so in as many words.** A page with no hero has to render
@@ -93,15 +95,17 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
  * finished paths, block anchors are same-document, and inbound links
  * come from `serviceBlockHref`.
  *
- * **Conversion goes through the existing seam.** Every action on the
- * page is `<ModalTrigger>`: the hero and close at the `inverse` advance
- * variant, each block at `ghost` (the reference's outline button, and
- * the `/pricing` tiers' variant). Each carries the block's `need`
- * through the modal provider already in the layout. No new mapping, no
- * second modal entry point, no new CTA strings: the hero and close are
- * `LANDING.cta` / `FINAL_CTA.cta` and the blocks are `SERVICES_CTA`,
- * all three from the Rule 3.1 exhaustive set. `<ServiceCta>`'s gold
- * text link is unchanged and still carries the home page's cards.
+ * **Conversion goes through the existing seam.** The hero and close are
+ * `<ModalTrigger>` at the `inverse` advance variant; each block is
+ * `<ServiceCta>`, the §Interaction-vocabulary gold underlined text
+ * link — **the same CTA the home page's service cards carry** (owner
+ * direction, 2026-08-28), so a service's CTA looks identical on the
+ * card that sends a visitor here and on the block they land on. Both
+ * components share one modal provider, already in the layout, and both
+ * carry the block's `need`. No new mapping, no second modal entry
+ * point, no new CTA strings: the hero and close are `LANDING.cta` /
+ * `FINAL_CTA.cta` and the blocks are `SERVICES_CTA`, all three from the
+ * Rule 3.1 exhaustive set.
  *
  * **Motion is the shipped vocabulary and nothing else** (§Motion: CSS
  * keyframes only, `motion-safe:` gated, reduced-motion parity, no
@@ -284,17 +288,21 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                       ))}
                     </ul>
                   )}
-                  {/* The reference's outline button, in this system's
-                      terms: the shared <Button> at the `ghost` variant
-                      through <ModalTrigger>, carrying the block's
-                      `need` into the modal the layout already
-                      provides. The label is the Rule 3.1 set's
-                      services member — no new CTA string, no second
-                      modal entry point. */}
+                  {/* The home page's service-card CTA, exactly
+                      (owner direction, 2026-08-28): `<ServiceCta>`, the
+                      §Interaction-vocabulary gold underlined text link.
+                      A service's CTA now looks the same wherever a
+                      visitor meets it — the card that sent them here
+                      and the block they landed on. This replaces the
+                      reference's outline button, which was the shared
+                      <Button> at `ghost`; same seam, same `need`, same
+                      Rule 3.1 label, different affordance. */}
                   <div className="mt-10">
-                    <ModalTrigger variant="ghost" need={block.need}>
-                      {SERVICES_CTA}
-                    </ModalTrigger>
+                    <ServiceCta
+                      label={SERVICES_CTA}
+                      need={block.need}
+                      service={block.name}
+                    />
                   </div>
                 </div>
                 <div className={visualLeads ? "lg:order-1" : "lg:order-2"}>
@@ -333,24 +341,15 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             </span>
           </SectionHeading>
         </ScrollReveal>
-        {/* The CTA repeated, and the one line to `/pricing`. The line is
-            `PRICING.headline` itself rather than an authored connector:
-            it is approved copy that says exactly what is on the other
-            end, so the link's accessible name is its own destination and
-            nothing is invented (Rule 4.3). */}
-        <ScrollReveal
-          delay={120}
-          className="mt-10 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-8"
-        >
+        {/* The CTA repeated, and nothing beside it. The close carried
+            a gold text link to `/pricing` labelled `PRICING.headline`;
+            the owner removed it (2026-08-28), so the close is the one
+            action again. `/pricing` is still reached from the nav bar's
+            featured button and the footer on every page. */}
+        <ScrollReveal delay={120} className="mt-10">
           <ModalTrigger variant="inverse" arrow need={page.need}>
             {FINAL_CTA.cta}
           </ModalTrigger>
-          <a
-            href={ROUTES.pricing}
-            className="inline-flex min-h-11 items-center text-base font-medium text-gold underline underline-offset-4 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-          >
-            {PRICING.headline}
-          </a>
         </ScrollReveal>
       </section>
     </>
