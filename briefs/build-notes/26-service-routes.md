@@ -107,11 +107,32 @@ The first cut of this pass gave every block the same 2-3-2 tile cluster with the
 
 Two things were explicitly ruled out and are worth recording: the mocks must **not look like app tiles** (owner, twice), which is why New Product's lower region is a wide-plus-narrow page layout rather than three equal squares; and the tile cluster is now used **once**, not as a house style.
 
+### Detail, colour and one shared box (third round of owner feedback)
+
+Three changes came back on the mocks, and one of them needed a decision row:
+
+- **More interface detail.** Every mock now carries real chrome — window bar, nav row, tab strip, status bar, sidebar, top bar — and a **profile chip top-right**, which the owner named specifically.
+- **Colour.** See below; recorded as **#31**.
+- **One box, one fade.** All five sit in the same `4/3` frame so the rows line up down the page, and all five carry the tile cluster's **radial fade** rather than the earlier bottom scrim, so each dissolves into the page from every edge. The fade was tuned twice: the first value (`transparent 40% → ink 94%`, `farthest-corner`) swallowed the new chrome and the profile chip, which defeated the point of adding them. It is now an explicit `ellipse 112% 112%` with the clear zone out to 58%, so the detail survives and only the outer edge dissolves.
+
+### Colour — decision #31, a narrow supersession of #14
+
+The owner asked for colour "in the same colour range as our palette (reds greens and others)". That palette is `rose`, `sage` and `lavender` — **the three tokens decision #14 orphaned, and which this unit's own brief repeats a ban on.** Raised with him, reaffirmed, implemented, and narrowed on the way in the way **#26** narrowed "no CTA in the nav":
+
+| Guardrail | How it holds |
+|---|---|
+| Chrome only | Syntax highlighting, status dots, an avatar chip, tinted cluster marks. Never a brand accent, never on a real control, never outside a mock |
+| Never per-service | No block owns a colour. The `accent` field in `src/content/services.ts` is still unread and still dead data; the retired accent-block card vocabulary stays retired |
+| Gold still the only emphasis | Spent at full strength exactly once per mock — the primary action, the active tab, the current release, the active nav item, the centre tile. The three chrome colours sit at 45–85% alpha beneath it |
+| No new token | #14's "no new tokens" clause is untouched |
+
+**The alphas and the mark stroke were measured, not guessed.** `sage` (#aebbba) and `lavender` (#bbb2ce) are deliberately desaturated pastels: below roughly 70% alpha, or at the hairline 1.25px stroke, they resolve to plain grey on a near-black tile. The cluster's marks went to **1.75px** for exactly this reason. Above ~85% they start competing with gold. `04-ux-spec.md` §Orphaned colors is amended to match, so the next agent does not read the old blanket ban and "fix" this.
+
 ### The mocks assert nothing — a Rule 4.3 requirement, not a style choice
 
 **Not one of the five contains a readable string, a numeral, a metric, a logo or a product name.** A chart with an axis, a dashboard with figures, or a row of integration logos would assert things nobody has approved, on the two pages a search visitor lands on first. Decision **#5** is the precedent: the retired stat strip's invented numbers. Skeleton bars assert nothing, and every visual is `aria-hidden` so it says nothing to assistive tech either.
 
-Surfaces are the system's: framed mocks are hairline `white/15` over solid `#0a0a0c` (solid, not §Surfaces' translucent-plus-blur, because no `ScrollVideo` is mounted here and there is nothing to blur), skeleton matter rides the white alpha ladder, and **`gold` appears once per mock** on the element that is the point of it — never as a second accent (#14). Framed mocks carry §Surfaces' own bottom scrim so they bleed into the page the way the cluster's radial fade does.
+Surfaces are the system's: framed mocks are hairline `white/15` over solid `#0a0a0c` (solid, not §Surfaces' translucent-plus-blur, because no `ScrollVideo` is mounted here and there is nothing to blur), skeleton matter rides the white alpha ladder, and **`gold` appears once per mock** on the element that is the point of it.
 
 ### What the reference contributed, and what it did not
 
