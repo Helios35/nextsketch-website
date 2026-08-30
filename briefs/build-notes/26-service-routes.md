@@ -206,6 +206,22 @@ The owner asked for colour "in the same colour range as our palette (reds greens
 
 **The alphas and the mark stroke were measured, not guessed.** `sage` (#aebbba) and `lavender` (#bbb2ce) are deliberately desaturated pastels: below roughly 70% alpha, or at the hairline 1.25px stroke, they resolve to plain grey on a near-black tile. The cluster's marks went to **1.75px** for exactly this reason. Above ~85% they start competing with gold. `04-ux-spec.md` §Orphaned colors is amended to match, so the next agent does not read the old blanket ban and "fix" this.
 
+### 01 New Product: a bento dashboard (2026-08-30)
+
+The single window mock read as a generic skeleton box, so it is replaced with a **bento mosaic** — seven tiles across three columns, adapted from an owner-supplied dashboard reference. **This block only;** the other four visuals and the shared `Fade` / `FRAME` are untouched.
+
+Adopted: the three-column bento, the headline-figure-over-area-chart tile, the gridded two-series line chart, the progress-track goal card, the ranked category bars, the three-figure stat row, and the two divided list cards.
+
+Refused: **every figure, label, brand mark and emoji in it.** A dashboard printing invented balances and third-party logos is precisely the claim decision #5 retired the stat strip over. All of it is bars. Rounded corners, the light chrome and the gradient pills go too.
+
+Three things worth keeping:
+
+- **It is deliberately not wrapped in `FRAME`.** A bento cropped by a hard outer border reads as a screenshot, which is the thing being replaced. Each tile carries its own hairline and the grid dissolves at the box edge instead.
+- **Its own fade, sized to the box.** `MosaicFade` uses `ellipse 50% 50%` so the ramp ends on all four mid-edges (owner: "fades on all sides"). The shared `Fade` keeps the default `farthest-corner` form, because the other four visuals are framed cards whose border is meant to read as an edge — out of scope here.
+- **`min-w-0` + `overflow-hidden` on the tiles is load-bearing.** A grid item defaults to `min-width: auto`, so a fixed-width bar in a narrow column pushes the track wider, the grid wider, and the page wider — a horizontal scrollbar on a phone, caused by a decorative mock. With these the content clips, which the fade hides anyway. **Caveat:** the preview pane would not render below 466px this session, so the narrow case is guarded structurally rather than measured. Worth an eyeball on a real phone.
+
+`gold` appears once, on the area chart. Everything else is chrome (#31) or the white alpha ladder. Scroll entrance preserved and extended: the seven tiles stagger 120 → 490ms on the shared `ScrollReveal`.
+
 ### The mocks assert nothing — a Rule 4.3 requirement, not a style choice
 
 **Not one of the five contains a readable string, a numeral, a metric, a logo or a product name.** A chart with an axis, a dashboard with figures, or a row of integration logos would assert things nobody has approved, on the two pages a search visitor lands on first. Decision **#5** is the precedent: the retired stat strip's invented numbers. Skeleton bars assert nothing, and every visual is `aria-hidden` so it says nothing to assistive tech either.
