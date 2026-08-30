@@ -18,6 +18,30 @@ import type { ServicePageContent } from "@/lib/types";
  */
 const CLOSE_ACCENT_PHRASE = "right fit";
 
+/**
+ * Content measure for the service routes (owner direction, 2026-08-30).
+ *
+ * The bands stay full-width and keep the binding gutter ladder
+ * (`px-6 → sm:px-8 → lg:px-16`, §Layout); this centres their **content**
+ * so every row stops at the same edge. Without it the two-column rows
+ * spread to the full viewport on a wide screen: the `max-w-lg` text
+ * column hugged the left gutter while the `max-w-md` visual centred
+ * itself in a very wide track, so no two rows lined up and nothing
+ * agreed with the band above it.
+ *
+ * `max-w-6xl` is the value `<Container>` already uses, so no new measure
+ * is invented. It sits on an inner wrapper rather than on the band
+ * itself because `box-sizing: border-box` would otherwise subtract the
+ * gutters from the measure and shrink the content at `lg:` by 128px.
+ *
+ * **The hero lockup is deliberately outside it.** It has to stay on the
+ * viewport gutter, because the nav bar's wordmark is there and the two
+ * must land in the same place across the 80px handoff. Centring it with
+ * the content would reintroduce the jump the zero-height sticky wrapper
+ * exists to prevent.
+ */
+const MEASURE = "mx-auto w-full max-w-6xl";
+
 /** Shared measure for a block's supporting paragraph. */
 const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
 
@@ -180,36 +204,38 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             </header>
           </div>
           <div className="w-full px-6 pt-32 pb-16 sm:px-8 sm:pt-40 lg:px-16 lg:pt-48 lg:pb-20">
-            <SectionHeading
-              as="h1"
-              eyebrow={page.eyebrow}
-              className="motion-safe:animate-rise-in"
-            >
-              <span id="service-headline">
-                {accent === undefined || accentStart === -1 ? (
-                  headline
-                ) : (
-                  <>
-                    {headline.slice(0, accentStart)}
-                    <span className="text-gold">{accent}</span>
-                    {headline.slice(accentStart + accent.length)}
-                  </>
-                )}
-              </span>
-            </SectionHeading>
-            {/* Absent on the grouped route, which has no approved
-              group-level description (Rule 4.3). */}
-            {page.intro !== undefined && (
-              <p
-                className={`mt-8 max-w-2xl motion-safe:animate-rise-in [animation-delay:120ms] ${BODY_CLASS}`}
+            <div className={MEASURE}>
+              <SectionHeading
+                as="h1"
+                eyebrow={page.eyebrow}
+                className="motion-safe:animate-rise-in"
               >
-                {page.intro}
-              </p>
-            )}
-            <div className="mt-10 motion-safe:animate-rise-in [animation-delay:200ms]">
-              <ModalTrigger variant="inverse" arrow need={page.need}>
-                {LANDING.cta}
-              </ModalTrigger>
+                <span id="service-headline">
+                  {accent === undefined || accentStart === -1 ? (
+                    headline
+                  ) : (
+                    <>
+                      {headline.slice(0, accentStart)}
+                      <span className="text-gold">{accent}</span>
+                      {headline.slice(accentStart + accent.length)}
+                    </>
+                  )}
+                </span>
+              </SectionHeading>
+              {/* Absent on the grouped route, which has no approved
+              group-level description (Rule 4.3). */}
+              {page.intro !== undefined && (
+                <p
+                  className={`mt-8 max-w-2xl motion-safe:animate-rise-in [animation-delay:120ms] ${BODY_CLASS}`}
+                >
+                  {page.intro}
+                </p>
+              )}
+              <div className="mt-10 motion-safe:animate-rise-in [animation-delay:200ms]">
+                <ModalTrigger variant="inverse" arrow need={page.need}>
+                  {LANDING.cta}
+                </ModalTrigger>
+              </div>
             </div>
           </div>
         </section>
@@ -220,7 +246,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
           `section[id] { scroll-margin-top: 5rem }` clears the fixed bar
           on a deep link with no extra CSS. */}
         <div className="w-full px-6 pb-24 sm:px-8 sm:pb-28 lg:px-16 lg:pb-32">
-          <div className="flex flex-col gap-24 md:gap-32">
+          <div className={`${MEASURE} flex flex-col gap-24 md:gap-32`}>
             {page.blocks.map((block, i) => {
               /* Sides alternate (owner direction): the visual leads on
                odd rows and follows on even ones. The text is always
@@ -336,37 +362,39 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
         aria-labelledby="service-close-headline"
         className="w-full bg-ink px-6 pb-28 sm:px-8 sm:pb-32 lg:px-16 lg:pb-44"
       >
-        <ScrollReveal>
-          <SectionHeading
-            as="h2"
-            eyebrow={FINAL_CTA.eyebrow}
-            className="max-w-3xl"
-          >
-            <span id="service-close-headline">
-              {closeAccentStart === -1 ? (
-                closeHeadline
-              ) : (
-                <>
-                  {closeHeadline.slice(0, closeAccentStart)}
-                  <span className="text-gold">{CLOSE_ACCENT_PHRASE}</span>
-                  {closeHeadline.slice(
-                    closeAccentStart + CLOSE_ACCENT_PHRASE.length,
-                  )}
-                </>
-              )}
-            </span>
-          </SectionHeading>
-        </ScrollReveal>
-        {/* The CTA repeated, and nothing beside it. The close carried
+        <div className={MEASURE}>
+          <ScrollReveal>
+            <SectionHeading
+              as="h2"
+              eyebrow={FINAL_CTA.eyebrow}
+              className="max-w-3xl"
+            >
+              <span id="service-close-headline">
+                {closeAccentStart === -1 ? (
+                  closeHeadline
+                ) : (
+                  <>
+                    {closeHeadline.slice(0, closeAccentStart)}
+                    <span className="text-gold">{CLOSE_ACCENT_PHRASE}</span>
+                    {closeHeadline.slice(
+                      closeAccentStart + CLOSE_ACCENT_PHRASE.length,
+                    )}
+                  </>
+                )}
+              </span>
+            </SectionHeading>
+          </ScrollReveal>
+          {/* The CTA repeated, and nothing beside it. The close carried
             a gold text link to `/pricing` labelled `PRICING.headline`;
             the owner removed it (2026-08-28), so the close is the one
             action again. `/pricing` is still reached from the nav bar's
             featured button and the footer on every page. */}
-        <ScrollReveal delay={120} className="mt-10">
-          <ModalTrigger variant="inverse" arrow need={page.need}>
-            {FINAL_CTA.cta}
-          </ModalTrigger>
-        </ScrollReveal>
+          <ScrollReveal delay={120} className="mt-10">
+            <ModalTrigger variant="inverse" arrow need={page.need}>
+              {FINAL_CTA.cta}
+            </ModalTrigger>
+          </ScrollReveal>
+        </div>
       </section>
     </>
   );

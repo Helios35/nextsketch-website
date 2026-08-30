@@ -95,6 +95,22 @@ Each block is a two-column row. The text side runs mono index → panel-scale na
 
 **The sides alternate down the page** (owner direction) — that is what stops three or five rows reading as one table. The **text is always first in the DOM**; `lg:order-*` does the swapping, so the reading order and the single-column mobile stack both put substance before decoration.
 
+### The page measure
+
+Every band on both routes now centres its content on **`max-w-6xl`** (owner direction, 2026-08-30). The bands stay full-width and keep the binding gutter ladder; an inner `mx-auto w-full max-w-6xl` wrapper does the centring, applied to all four — hero, the "what you get" rows, §How it works, the close.
+
+The symptom: at a wide viewport the two-column rows spread edge to edge, so the `max-w-lg` text column hugged the left gutter while the `max-w-md` mock centred itself in a very wide track. No two rows agreed and nothing lined up with the band above.
+
+Three details that decide the implementation:
+
+- **The measure is `<Container>`'s existing `max-w-6xl`,** so nothing new is invented.
+- **It sits on an inner wrapper, not on the band.** `box-sizing: border-box` would otherwise subtract the gutters from the measure and shrink the content by 128px at `lg:`.
+- **Mocks take `lg:max-w-none` and fill their column,** so a mock's outer edge meets the measure exactly as the text does on the other side. Centred inside the track it stayed inset by ~48px — the same inconsistency the measure was added to remove. Below `lg:` the row stacks and the `max-w-md` cap returns, so a mock never blows up to the full band on a tablet.
+
+**The hero lockup is deliberately outside the measure**, on the viewport gutter. The nav bar's wordmark is there, and the two must land in the same place across the 80px handoff; centring it with the content would reintroduce the jump the zero-height sticky wrapper exists to prevent. Re-verified after the change.
+
+Measured at 1800px: `h1`, every block row, the process grid and the close heading all run 316→1468, the mocks sit flush at 924→1468 (and 316→860 on the alternating rows), and `scrollWidth === innerWidth`. `/` and `/pricing` still measure 64→1721 — untouched.
+
 ### The hero glow
 
 The owner asked for "the glow in the hero, same as the home page, same brand colour", explicitly **not cut off** and free to bleed into the next section.

@@ -72,8 +72,18 @@ import type { ServiceBlockId } from "@/lib/types";
  * `globals.css` is untouched.
  */
 
-/** Shared outer box — every mock occupies the same footprint. */
-const SHELL = "relative mx-auto w-full max-w-md";
+/**
+ * Shared outer box — every mock occupies the same footprint.
+ *
+ * It **fills its column from `lg:` up**, where the row is two-up, so the
+ * mock's outer edge meets the page measure exactly as the text column's
+ * does on the other side (owner direction, 2026-08-30). Centred inside
+ * the track it was inset from that edge by ~48px, which is precisely
+ * the row-to-row inconsistency the measure was added to remove. Below
+ * `lg:` the row is stacked and the cap comes back, so a mock never
+ * blows up to the full band width on a tablet.
+ */
+const SHELL = "relative mx-auto w-full max-w-md lg:max-w-none";
 
 /** The shared aspect box. Squared, hairline, solid — no blur, since
  *  no `ScrollVideo` is mounted here (#17) and there is nothing behind

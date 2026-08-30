@@ -13,6 +13,30 @@ import { PROCESS } from "@/content/copy";
 const ACCENT_PHRASE = "Stay.";
 
 /**
+ * Content measure for the service routes (owner direction, 2026-08-30).
+ *
+ * The bands stay full-width and keep the binding gutter ladder
+ * (`px-6 → sm:px-8 → lg:px-16`, §Layout); this centres their **content**
+ * so every row stops at the same edge. Without it the two-column rows
+ * spread to the full viewport on a wide screen: the `max-w-lg` text
+ * column hugged the left gutter while the `max-w-md` visual centred
+ * itself in a very wide track, so no two rows lined up and nothing
+ * agreed with the band above it.
+ *
+ * `max-w-6xl` is the value `<Container>` already uses, so no new measure
+ * is invented. It sits on an inner wrapper rather than on the band
+ * itself because `box-sizing: border-box` would otherwise subtract the
+ * gutters from the measure and shrink the content at `lg:` by 128px.
+ *
+ * **The hero lockup is deliberately outside it.** It has to stay on the
+ * viewport gutter, because the nav bar's wordmark is there and the two
+ * must land in the same place across the 80px handoff. Centring it with
+ * the content would reintroduce the jump the zero-height sticky wrapper
+ * exists to prevent.
+ */
+const MEASURE = "mx-auto w-full max-w-6xl";
+
+/**
  * "How it works" on the service routes (decision-log **#30**) — the
  * four canonical phases (Taxonomy §2) as a numbered card grid.
  *
@@ -68,56 +92,64 @@ export function ServiceProcess() {
       aria-labelledby="service-process-headline"
       className="w-full bg-ink px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-32"
     >
-      <ScrollReveal>
-        <SectionHeading as="h2" eyebrow={PROCESS.eyebrow} className="max-w-4xl">
-          <span id="service-process-headline">
-            {phraseStart === -1 ? (
-              headline
-            ) : (
-              <>
-                {headline.slice(0, phraseStart)}
-                <span className="text-gold">{ACCENT_PHRASE}</span>
-                {headline.slice(phraseStart + ACCENT_PHRASE.length)}
-              </>
-            )}
-          </span>
-        </SectionHeading>
-      </ScrollReveal>
-      <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 xl:grid-cols-4">
-        {PROCESS.phases.map((phase, i) => (
-          <ScrollReveal
-            key={phase.slug}
-            delay={120 + i * 80}
-            className="h-full"
+      <div className={MEASURE}>
+        <ScrollReveal>
+          <SectionHeading
+            as="h2"
+            eyebrow={PROCESS.eyebrow}
+            className="max-w-4xl"
           >
-            {/* flex-col + grow on the card so the four cards match
+            <span id="service-process-headline">
+              {phraseStart === -1 ? (
+                headline
+              ) : (
+                <>
+                  {headline.slice(0, phraseStart)}
+                  <span className="text-gold">{ACCENT_PHRASE}</span>
+                  {headline.slice(phraseStart + ACCENT_PHRASE.length)}
+                </>
+              )}
+            </span>
+          </SectionHeading>
+        </ScrollReveal>
+        <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 xl:grid-cols-4">
+          {PROCESS.phases.map((phase, i) => (
+            <ScrollReveal
+              key={phase.slug}
+              delay={120 + i * 80}
+              className="h-full"
+            >
+              {/* flex-col + grow on the card so the four cards match
                 height across a row whose phase copy runs to different
                 lengths, while the numeral above stays on its own line. */}
-            <div className="flex h-full flex-col">
-              <p
-                aria-hidden="true"
-                className="text-5xl leading-[1.05] font-medium tracking-tight text-white/20 md:text-6xl"
-              >
-                {phase.order}
-              </p>
-              <div className="mt-5 flex grow flex-col border border-white/15 bg-[#0a0a0c] p-6 transition-colors duration-150 hover:border-white/30 md:p-8">
-                <h3 className="text-xl font-medium tracking-tight text-white md:text-2xl">
-                  {phase.name}
-                </h3>
-                <p className="mt-3 text-base leading-relaxed text-white/70">
-                  {phase.description}
+              <div className="flex h-full flex-col">
+                <p
+                  aria-hidden="true"
+                  className="text-5xl leading-[1.05] font-medium tracking-tight text-white/20 md:text-6xl"
+                >
+                  {phase.order}
                 </p>
-                {/* The one sanctioned italic (§Color), on the one phase
+                <div className="mt-5 flex grow flex-col border border-white/15 bg-[#0a0a0c] p-6 transition-colors duration-150 hover:border-white/30 md:p-8">
+                  <h3 className="text-xl font-medium tracking-tight text-white md:text-2xl">
+                    {phase.name}
+                  </h3>
+                  <p className="mt-3 text-base leading-relaxed text-white/70">
+                    {phase.description}
+                  </p>
+                  {/* The one sanctioned italic (§Color), on the one phase
                     it belongs to — carried across from `/` so the
                     differentiator is not dropped on the pages a search
                     visitor lands on first. */}
-                {phase.slug === "validate" && (
-                  <p className="mt-5 text-gold italic">{PROCESS.annotation}</p>
-                )}
+                  {phase.slug === "validate" && (
+                    <p className="mt-5 text-gold italic">
+                      {PROCESS.annotation}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          </ScrollReveal>
-        ))}
+            </ScrollReveal>
+          ))}
+        </div>
       </div>
     </section>
   );
