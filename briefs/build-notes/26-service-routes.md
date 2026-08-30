@@ -238,6 +238,21 @@ Three things worth keeping:
 
 The abandoned-tail metaphor from the old mock survives: the code thins to a stub and stops on an empty line with the caret parked on it.
 
+### 03 Product Support: a project timeline (2026-08-30)
+
+The framed ops panel is replaced with a **project timeline** — a rail, a header, tabs, a date scale and a Gantt body — adapted from an owner-supplied planner screenshot. **This block only.**
+
+It also fits the §05 line better than the ops panel did. "The product is live. Now it needs to grow" is a plan with work still ahead of the today line, which is what a retainer looks like.
+
+Adopted: the sidebar rail with an open section and a count badge; the breadcrumb-plus-title header with its action cluster; the tab row with an underlined active tab; the date scale; and the timeline body — column rules with hatched non-working columns, phase rules with diamond markers, task cards at staggered offsets, a selected row band, and a dashed dependency link between two tasks.
+
+Refused: every title, date, name and numeral, and the photographic avatars, which become overlapping squares in the profile-chip vocabulary. The reference's donut progress rings become **squared gauges** whose leading edges carry the tint — round is not in this system's vocabulary, and it is the same device the bento's stat tile uses. `gold` appears once, on the today line.
+
+Two details worth keeping:
+
+- **The hatch is the placeholder tile's own device**, reused rather than invented: `repeating-linear-gradient(135deg, currentColor 0 1px, transparent 1px 7px)` over a `text-white/[0.05]`.
+- **The today line is `w-0.5`, not `w-px`.** A hairline gold rule disappears at this scale, and it is the one element the whole composition points at.
+
 ### One fade, in one file (2026-08-30)
 
 **This was drift, and it was mine.** Four graphics grew four different gradients as each was tuned in isolation — the hero visuals, the block mocks, the bento mosaic and the tile cluster — and they ended up with four different characters: some soft, some abrupt, one not reaching the edges at all. The owner had to correct it twice.

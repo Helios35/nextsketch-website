@@ -701,87 +701,303 @@ function ProductCompletionVisual() {
 }
 
 /* ------------------------------------------------------------------ *
- * Product Support — a live-product ops panel.                         *
- * Uptime ticks and a release timeline: "the product is live. Now it   *
- * needs to grow." No axis, no scale, no figures.                      *
+ * Product Support — a project timeline.                               *
+ * A rail, a header, tabs, a date scale and a Gantt body with task      *
+ * cards, a today line and a dependency link. Replaces the framed ops   *
+ * panel (owner, 2026-08-30); **this block only**.                     *
+ *                                                                      *
+ * It suits the §05 line better than the ops panel did: "the product is *
+ * live. Now it needs to grow." A plan with work still ahead of the     *
+ * today line is what a retainer looks like.                            *
+ *                                                                      *
+ * Frameless, like 01 and 02 — a border makes it read as a screenshot.  *
+ * Rule 4.3 as everywhere: no title, no date, no name, no numeral, no   *
+ * avatar photo. `gold` appears once, on the today line.                *
  * ------------------------------------------------------------------ */
 
-/** Mostly healthy, one bad patch, the newest two current. */
-const TICKS: readonly string[] = [
-  "bg-sage/75",
-  "bg-sage/75",
-  "bg-sage/75",
-  "bg-rose/80",
-  "bg-sage/75",
-  "bg-sage/75",
-  "bg-sage/75",
-  "bg-sage/75",
-  "bg-rose/80",
-  "bg-sage/75",
-  "bg-sage/75",
-  "bg-sage/75",
-  "bg-gold",
-  "bg-gold",
-];
+/** Overlapping squares, the system's stand-in for an avatar stack. */
+function AvatarStack() {
+  return (
+    <span className="flex shrink-0 items-center">
+      {["bg-lavender/45", "bg-sage/45", "bg-rose/45"].map((tone, i) => (
+        <span
+          key={i}
+          className={`size-3 shrink-0 border border-white/20 ${tone} ${
+            i > 0 ? "-ml-1" : ""
+          }`}
+        />
+      ))}
+    </span>
+  );
+}
 
-const TICK_HEIGHTS = ["h-7", "h-9", "h-8", "h-10"];
+/** The row-overflow affordance: three stacked marks. */
+function Kebab() {
+  return (
+    <span className="flex shrink-0 flex-col gap-[2px]">
+      {[0, 1, 2].map((i) => (
+        <span key={i} className="size-[2px] bg-white/30" />
+      ))}
+    </span>
+  );
+}
+
+/**
+ * A squared progress gauge. The reference uses a donut; round is not in
+ * this system's vocabulary, so it is a square whose leading edges carry
+ * the tint — the same device the bento's stat tile uses.
+ */
+function Gauge({ tone }: { tone: string }) {
+  return (
+    <span
+      className={`size-4 shrink-0 border-2 border-white/12 ${tone}`}
+      aria-hidden="true"
+    />
+  );
+}
+
+/** One task bar on the timeline. */
+function TaskCard({
+  at,
+  delay,
+  gauge,
+  selected = false,
+}: {
+  at: string;
+  delay: number;
+  gauge: string;
+  selected?: boolean;
+}) {
+  return (
+    <ScrollReveal delay={delay} className={`absolute ${at}`}>
+      <span
+        className={`flex items-center gap-2 border px-2 py-2 ${
+          selected
+            ? "border-white/45 bg-[#101013] shadow-[var(--shadow-modal)]"
+            : "border-white/15 bg-[#0a0a0c]"
+        }`}
+      >
+        <Gauge tone={gauge} />
+        <span className="min-w-0 grow space-y-1.5">
+          <Bar
+            className={selected ? "w-full bg-white/55" : "w-full bg-white/35"}
+          />
+          <span className="flex items-center gap-1.5">
+            <span className="size-2 shrink-0 border border-white/20" />
+            <Bar className="w-2/3 bg-white/15" />
+          </span>
+        </span>
+        <AvatarStack />
+        <Kebab />
+      </span>
+    </ScrollReveal>
+  );
+}
+
+/** Sidebar rail items; index 1 is the open section, index 3 carries a count. */
+const RAIL: readonly { w: string; active?: boolean; badge?: boolean }[] = [
+  { w: "w-12" },
+  { w: "w-10", active: true },
+  { w: "w-11" },
+  { w: "w-12", badge: true },
+  { w: "w-14" },
+  { w: "w-8" },
+  { w: "w-9" },
+];
 
 function ProductSupportVisual() {
   return (
     <div className={SHELL}>
-      <ScrollReveal delay={120}>
-        <div className={FRAME}>
-          <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
-            <Dot tone="bg-sage/80" />
-            <span className="h-1.5 w-16 bg-white/25" />
-            <span className="grow" />
-            <Profile />
+      <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <div className="flex h-full min-w-0">
+          {/* Rail. */}
+          <div className="flex w-[22%] min-w-0 shrink-0 flex-col border-r border-white/10 py-3">
+            <ScrollReveal delay={120}>
+              <span className="flex items-center gap-1.5 px-3 pb-4">
+                <span className="size-3 shrink-0 border border-white/30" />
+                <Bar className="w-10 bg-white/45" />
+              </span>
+            </ScrollReveal>
+            <div className="flex min-h-0 grow flex-col justify-start gap-[7px]">
+              {RAIL.map((item, i) => (
+                <ScrollReveal key={i} delay={160 + i * 28}>
+                  <span
+                    className={`flex items-center gap-2 px-3 py-1.5 ${
+                      item.active === true ? "bg-white/[0.07]" : ""
+                    }`}
+                  >
+                    <span
+                      className={`size-2.5 shrink-0 border ${
+                        item.active === true
+                          ? "border-white/45"
+                          : "border-white/25"
+                      }`}
+                    />
+                    <Bar
+                      className={`${item.w} ${
+                        item.active === true ? "bg-white/55" : "bg-white/25"
+                      }`}
+                    />
+                    {item.badge === true && (
+                      <span className="ml-auto size-2.5 shrink-0 bg-rose/70" />
+                    )}
+                  </span>
+                </ScrollReveal>
+              ))}
+            </div>
           </div>
-          <div className="grow space-y-5 px-5 py-5">
-            {/* Uptime strip. Heights vary so it reads as a record
-                rather than a pattern; no scale, no labels. */}
+
+          {/* Main. */}
+          <div className="flex min-w-0 grow flex-col">
+            {/* Header: breadcrumb, title, actions. */}
             <ScrollReveal delay={200}>
-              <span className="flex items-end gap-1.5">
-                {TICKS.map((tone, i) => (
+              <span className="flex items-start justify-between gap-3 border-b border-white/10 px-3 py-3">
+                <span className="min-w-0 space-y-2">
+                  <span className="flex items-center gap-1.5">
+                    <Bar className="w-8 bg-white/20" />
+                    <span className="size-1 shrink-0 rotate-45 bg-white/20" />
+                    <Bar className="w-7 bg-white/20" />
+                    <span className="size-1 shrink-0 rotate-45 bg-white/20" />
+                    <Bar className="w-9 bg-white/20" />
+                  </span>
+                  <Bar className="h-2.5 w-28 bg-white/60" />
+                </span>
+                <span className="flex shrink-0 items-center gap-2">
+                  <Kebab />
+                  <span className="size-2.5 border border-white/25" />
+                  <span className="relative">
+                    <span className="block size-2.5 border border-white/25" />
+                    <span className="absolute -top-0.5 -right-0.5 size-1.5 bg-rose/80" />
+                  </span>
+                  <AvatarStack />
+                  <span className="h-4 w-8 border border-white/20" />
+                </span>
+              </span>
+            </ScrollReveal>
+
+            {/* Tabs. */}
+            <ScrollReveal delay={250}>
+              <span className="flex items-stretch gap-4 border-b border-white/10 px-3">
+                {["w-10", "w-9", "w-7", "w-12", "w-9"].map((w, i) => (
                   <span
                     key={i}
-                    className={`w-2 ${tone} ${TICK_HEIGHTS[i % 4]}`}
+                    className={`py-2.5 ${
+                      i === 0 ? "border-b border-white/70" : ""
+                    }`}
+                  >
+                    <Bar
+                      className={`${w} ${i === 0 ? "bg-white/60" : "bg-white/22"}`}
+                    />
+                  </span>
+                ))}
+              </span>
+            </ScrollReveal>
+
+            {/* Date scale. */}
+            <ScrollReveal delay={295}>
+              <span className="flex items-center justify-between border-b border-white/10 px-3 py-2">
+                {Array.from({ length: 12 }, (_, i) => (
+                  <Bar
+                    key={i}
+                    className={`w-4 ${i === 7 ? "bg-gold/80" : "bg-white/20"}`}
                   />
                 ))}
               </span>
             </ScrollReveal>
-            {/* Release timeline: evenly spaced markers on a hairline,
-                the newest one filled. "We stay." */}
-            <ScrollReveal delay={300}>
-              <span className="flex items-center justify-between border-t border-white/15">
-                {[0, 1, 2, 3, 4].map((i) => (
+
+            {/* Timeline body. */}
+            <div className="relative min-h-0 grow">
+              {/* Column rules, with the non-working columns hatched. The
+                  repeating-linear-gradient hatch is the placeholder
+                  tile's own device, reused rather than invented. */}
+              <span className="absolute inset-0 flex">
+                {Array.from({ length: 12 }, (_, i) => (
                   <span
                     key={i}
-                    className={`-mt-[3px] size-1.5 rotate-45 ${
-                      i === 4 ? "bg-gold" : "bg-white/25"
+                    className={`h-full grow border-r border-white/[0.06] ${
+                      i === 5 || i === 6 || i === 11
+                        ? "bg-[repeating-linear-gradient(135deg,currentColor_0_1px,transparent_1px_7px)] text-white/[0.05]"
+                        : ""
                     }`}
                   />
                 ))}
               </span>
-            </ScrollReveal>
-            {/* Event log. */}
-            <ScrollReveal delay={380} className="space-y-2.5">
-              {[
-                { tone: "bg-sage/85", w: "w-full" },
-                { tone: "bg-lavender/85", w: "w-10/12" },
-                { tone: "bg-rose/85", w: "w-8/12" },
-                { tone: "bg-sage/85", w: "w-9/12" },
-              ].map((row, i) => (
-                <span key={i} className="flex items-center gap-2.5">
-                  <Dot tone={row.tone} />
-                  <span className={`block h-1.5 ${row.w} bg-white/10`} />
+
+              {/* Today. The one gold element on the plane. */}
+              <span className="absolute top-0 bottom-0 left-[62%] w-0.5 bg-gold" />
+
+              {/* Dependency link: one task waiting on another. */}
+              <svg
+                viewBox="0 0 200 120"
+                preserveAspectRatio="none"
+                className="absolute inset-0 h-full w-full"
+                fill="none"
+              >
+                <path
+                  d="M150 34 C176 34 176 62 150 62 L120 62"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 4"
+                  className="text-lavender/60"
+                />
+              </svg>
+
+              {/* Phase rules. */}
+              <ScrollReveal
+                delay={330}
+                className="absolute top-[3%] right-[4%] left-[3%]"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="size-2 shrink-0 rotate-45 bg-sage/80" />
+                  <Bar className="w-10 shrink-0 bg-white/40" />
+                  <span className="h-px grow bg-white/20" />
                 </span>
-              ))}
-            </ScrollReveal>
+              </ScrollReveal>
+              <ScrollReveal
+                delay={520}
+                className="absolute top-[70%] right-[4%] left-[3%]"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="size-2 shrink-0 rotate-45 bg-rose/80" />
+                  <Bar className="w-14 shrink-0 bg-white/40" />
+                  <span className="h-px grow bg-white/20" />
+                </span>
+              </ScrollReveal>
+
+              {/* Selected row band, behind its card. */}
+              <span className="absolute top-[26%] right-0 left-0 h-[16%] bg-white/[0.04]" />
+
+              <TaskCard
+                at="top-[12%] left-[6%] w-[52%]"
+                delay={370}
+                gauge="border-t-sage/80 border-r-sage/80"
+              />
+              <TaskCard
+                at="top-[28%] left-[22%] w-[54%]"
+                delay={420}
+                gauge="border-t-lavender/80 border-r-lavender/80"
+                selected
+              />
+              <TaskCard
+                at="top-[45%] left-[12%] w-[50%]"
+                delay={465}
+                gauge="border-t-white/45 border-r-white/45"
+              />
+              <TaskCard
+                at="top-[58%] left-[34%] w-[52%]"
+                delay={505}
+                gauge="border-t-rose/80 border-r-rose/80"
+              />
+              <TaskCard
+                at="top-[80%] left-[46%] w-[50%]"
+                delay={560}
+                gauge="border-t-sage/80 border-r-sage/80"
+              />
+            </div>
           </div>
-          <VisualFade />
         </div>
-      </ScrollReveal>
+        <VisualFade />
+      </div>
     </div>
   );
 }
