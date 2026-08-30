@@ -68,7 +68,7 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 
 ## The four blocks
 
-1. **Hero** — `/pricing`'s intro band, reproduced: sticky lockup, mono eyebrow, `display`-scale `<h1>` with a gold payoff word, description, divided-arrow `ModalTrigger`. Load-time `rise-in` at 0 / 120 / 200ms, not a scroll trigger, because it is above the fold.
+1. **Hero** — `/pricing`'s intro band, reproduced, restructured against a supplied reference (see below): sticky lockup, mono eyebrow, `display`-scale `<h1>` with a gold payoff word, description, divided-arrow `ModalTrigger`. Load-time `rise-in` at 0 / 120 / 200ms, not a scroll trigger, because it is above the fold.
 2. **"What you get"** — the topic blocks as alternating split rows (see below), one `<section id>` each.
 3. **How it works** — the four canonical phases as a numbered card grid, from the owner-supplied reference.
 4. **Close** — `FINAL_CTA` heading with its gold phrase and the CTA repeated. The gold `/pricing` link it briefly carried was **removed by the owner** (2026-08-28); `/pricing` stays reachable from the nav bar's featured button and the footer on every page.
@@ -94,6 +94,45 @@ Each block is a two-column row. The text side runs mono index → panel-scale na
 **The block CTA is the home page's service-card CTA, exactly** (owner direction, 2026-08-28). It shipped as the reference's outline button — the shared `<Button>` at `ghost` through `<ModalTrigger>` — and is now `<ServiceCta>`, the §Interaction-vocabulary gold underlined text link, so a service's CTA looks the same on the card that sends a visitor here and on the block they land on. Same seam, same `need`, same Rule 3.1 label; only the affordance changed.
 
 **The sides alternate down the page** (owner direction) — that is what stops three or five rows reading as one table. The **text is always first in the DOM**; `lg:order-*` does the swapping, so the reading order and the single-column mobile stack both put substance before decoration.
+
+### The hero, rebuilt against the reference (2026-08-30)
+
+The owner supplied a reference hero — ribbon across the top, two-up split, large perspective illustration — and three calls were settled before build: heading stays at `display` scale, the second CTA is Pricing, and the illustration carries skeleton bars with no readable text. Recorded as **#32**.
+
+| Reference | What shipped |
+|---|---|
+| Dark webinar bar flush at page top | The landing hero's **capability strip**, full-bleed, in the slot under the nav band — where the fixed bar and the page lockup sit here |
+| `[ 01 ]` cell + rule grid | Dropped. The eyebrow fills that role and a second index would collide with the `◆ 01/02/03` markers below |
+| Vertical column rules | One `lg:border-l border-white/10` between the columns |
+| Filled + outlined buttons | `ModalTrigger variant="inverse" arrow` + `Button variant="ghost"` → `/pricing`, both default size |
+| Trial caption under the CTAs | Dropped — no approved equivalent (Rule 4.3) |
+| Isometric illustration with readable labels | Tilted wireframe, **skeleton bars only**, `aria-hidden` |
+
+#### The ribbon is the same component, not a copy
+
+The owner was explicit: *the same one*, not a second ribbon that looks like it. The strip was **inline in `hero.tsx`** and read `LANDING.capabilities` directly — it was the only consumer of both the content and the `marquee` keyframe. One component with two call sites is the only way to satisfy that, so it was extracted **verbatim** to `capability-strip.tsx` with `items` / `label` / `copies` props.
+
+**`hero.tsx` is the one file outside the service hero that changed**, and only to import what was lifted out of it. Verified byte-identical: the home strip's rendered `outerHTML` is 4650 chars with the same hash before and after.
+
+Three details:
+
+- **The surface is not parameterised.** `bg-ink/30 backdrop-blur-sm` exists because footage sits behind the strip on `/`. Over a solid `ink` page `ink/30` resolves to the same black and the blur has nothing to work on — identical classes, identical result.
+- **`copies` had to go up.** The default 4 is tuned to four labels inside `max-w-4xl`. These lists are three and two across a full-width frame; at 4 copies the track runs out and the loop seam shows. Both routes pass 10.
+- **Content is referenced, not re-literalled** — `SERVICE[…].name` and `TIER[…].name`, so a rename cannot leave the strip behind. The accessible name reuses `LANDING.capabilitiesLabel` ("What we build"), which is approved and true on both pages, so no new string.
+
+#### The illustrations, and the one genuinely new thing
+
+`service-hero-visual.tsx` — a workflow graph on the agentic route (the reference's own subject), a layered product UI on the product route. Same tilt, so the two heroes read as one system.
+
+**Perspective is net-new vocabulary and is flagged, not slipped in.** The repo had **zero** `perspective` / `rotateX` / `preserve-3d` / `skew` / `matrix3d` usage; the only rotation anywhere is `rotate-45` on the gold diamond. §Surfaces and §Interaction vocabulary do not cover a decorative tilted plane, and the spec's instruction for an uncovered case is to generalize from shipped code and flag. So everything *on* the plane is existing vocabulary — squared hairline cards on solid `#0a0a0c`, skeleton matter on the white alpha ladder, chrome tints from #31, one gold element per plane, the mocks' radial fade — and only the tilt is new. Written as arbitrary properties (`[perspective:…]`, `[transform:rotateX(…)_rotateZ(…)]`) rather than Tailwind 3D utilities, so it does not depend on a utility set this repo has never compiled.
+
+- **A static transform is layout, not motion.** Nothing to gate on `prefers-reduced-motion`, and **no keyframe was added** — `globals.css` is untouched. The entrance is the hero's existing load-time `rise-in`, one step after the CTAs.
+- **Contained and faded, not bled.** The reference runs its illustration off the page edge. A rotated plane overflowing horizontally widens the page, and the usual fix — `overflow-x-clip` on an ancestor — would sit above the `sticky` lockup and put the 80px handoff at risk. The stage clips and the radial fade dissolves the clip. Adjustable if the bleed is wanted.
+- **Tuned, not guessed.** First pass read too small and too dim: near-black cards behind a `white/15` hairline disappear at that scale. Borders went to `white/25`, the fade's clear zone from 35% to 46%, the tilt flattened from 38° to 32°, and the agentic plane widened to 880px so the graph reads as a flow rather than a pile.
+
+#### Verified
+
+Handoff probed on both routes at scrollY 0 / 78 / 82 / 300 — identical to `/pricing` (24 only below 80px, 20 + 24 above); the ribbon and the two-up grid are exactly the kind of change that breaks it silently. No horizontal overflow at 375 / 1080 / 1800. Hero grid still runs 316→1468 at 1800px, matching the rows and the process band. `/pricing` renders no strip and still measures 64→1721.
 
 ### The page measure
 

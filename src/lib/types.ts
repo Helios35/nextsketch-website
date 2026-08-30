@@ -334,5 +334,14 @@ export interface ServicePageContent {
   readonly accentPhrase?: string;
   readonly intro?: string;
   readonly need?: ProjectType;
+  /**
+   * Labels for the hero's capability strip — the same marquee the
+   * landing hero carries (`CapabilityStrip`), with this route's own
+   * services in it (decision-log **#30**, owner direction 2026-08-30).
+   * Canonical names only, referenced from `SERVICES` / `PRICING_TIERS`
+   * rather than re-literalled, so a rename cannot leave the strip
+   * behind.
+   */
+  readonly strip: readonly string[];
   readonly blocks: readonly ServicePageBlock[];
 }

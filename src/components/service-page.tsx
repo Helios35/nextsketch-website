@@ -1,9 +1,12 @@
 import { BrandWordmark } from "@/components/brand-wordmark";
+import { Button } from "@/components/button";
+import { CapabilityStrip } from "@/components/capability-strip";
 import { ModalTrigger } from "@/components/modal-trigger";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { ServiceBlockVisual } from "@/components/service-block-visual";
 import { ServiceCta } from "@/components/service-cta";
+import { ServiceHeroVisual } from "@/components/service-hero-visual";
 import { ServiceProcess } from "@/components/service-process";
 import { FINAL_CTA, LANDING, NAV } from "@/content/copy";
 import { SERVICES_CTA } from "@/content/services";
@@ -187,38 +190,79 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             </a>
           </header>
         </div>
-        <div className="w-full px-6 pt-32 pb-16 sm:px-8 sm:pt-40 lg:px-16 lg:pt-48 lg:pb-20">
+        {/* The ribbon. Full-bleed and the first thing under the nav
+            band — the reference puts it flush at the page top, which
+            here is where the fixed bar and the page's own lockup live,
+            so it takes the slot directly beneath them. It is the
+            landing hero's strip, not a copy of it: `CapabilityStrip`
+            was extracted from `hero.tsx` for this and both surfaces now
+            render the same component. More copies than the default
+            because these lists are shorter (three labels and two) across
+            a full-width frame, and four would run out of track and show
+            the loop seam. */}
+        <div className="mt-24 w-full motion-safe:animate-rise-in sm:mt-28 lg:mt-32">
+          <CapabilityStrip
+            items={page.strip}
+            label={LANDING.capabilitiesLabel}
+            copies={10}
+          />
+        </div>
+        <div className="w-full px-6 pt-16 pb-16 sm:px-8 sm:pt-20 lg:px-16 lg:pt-24 lg:pb-20">
           <div className={MEASURE}>
-            <SectionHeading
-              as="h1"
-              eyebrow={page.eyebrow}
-              className="motion-safe:animate-rise-in"
-            >
-              <span id="service-headline">
-                {accent === undefined || accentStart === -1 ? (
-                  headline
-                ) : (
-                  <>
-                    {headline.slice(0, accentStart)}
-                    <span className="text-gold">{accent}</span>
-                    {headline.slice(accentStart + accent.length)}
-                  </>
+            {/* Two-up from `lg:`, where the illustration has room to be
+                read. Below that the row stacks text-first, the same
+                posture the "what you get" rows take. */}
+            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+              <div>
+                <SectionHeading
+                  as="h1"
+                  eyebrow={page.eyebrow}
+                  className="motion-safe:animate-rise-in"
+                >
+                  <span id="service-headline">
+                    {accent === undefined || accentStart === -1 ? (
+                      headline
+                    ) : (
+                      <>
+                        {headline.slice(0, accentStart)}
+                        <span className="text-gold">{accent}</span>
+                        {headline.slice(accentStart + accent.length)}
+                      </>
+                    )}
+                  </span>
+                </SectionHeading>
+                {/* Absent on the grouped route, which has no approved
+                    group-level description (Rule 4.3). */}
+                {page.intro !== undefined && (
+                  <p
+                    className={`mt-8 max-w-lg motion-safe:animate-rise-in [animation-delay:120ms] ${BODY_CLASS}`}
+                  >
+                    {page.intro}
+                  </p>
                 )}
-              </span>
-            </SectionHeading>
-            {/* Absent on the grouped route, which has no approved
-              group-level description (Rule 4.3). */}
-            {page.intro !== undefined && (
-              <p
-                className={`mt-8 max-w-2xl motion-safe:animate-rise-in [animation-delay:120ms] ${BODY_CLASS}`}
-              >
-                {page.intro}
-              </p>
-            )}
-            <div className="mt-10 motion-safe:animate-rise-in [animation-delay:200ms]">
-              <ModalTrigger variant="inverse" arrow need={page.need}>
-                {LANDING.cta}
-              </ModalTrigger>
+                {/* Primary plus Pricing (owner direction, 2026-08-30):
+                    the reference's filled-plus-outlined pair, in this
+                    system's terms. The second is the shared `<Button>`
+                    at `ghost` — not filled, same default size, so the
+                    two match in height — and it reads `NAV.featured`,
+                    the same object the nav bar's Pricing button reads,
+                    so label and href cannot drift from it (#26). */}
+                <div className="mt-10 flex flex-wrap items-center gap-3 motion-safe:animate-rise-in [animation-delay:200ms]">
+                  <ModalTrigger variant="inverse" arrow need={page.need}>
+                    {LANDING.cta}
+                  </ModalTrigger>
+                  <Button variant="ghost" href={NAV.featured.href}>
+                    {NAV.featured.label}
+                  </Button>
+                </div>
+              </div>
+              {/* The reference's column rule. A hairline inside one
+                  section is component vocabulary, not a section
+                  divider — the 2026-07-06 "no dividers between
+                  sections" call is untouched. */}
+              <div className="motion-safe:animate-rise-in lg:border-l lg:border-white/10 lg:pl-16 [animation-delay:280ms]">
+                <ServiceHeroVisual page={page.slug} />
+              </div>
             </div>
           </div>
         </div>

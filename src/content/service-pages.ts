@@ -119,6 +119,15 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
     eyebrow: "Products",
     name: "Products",
     /**
+     * The hero strip: the three services this route covers, in page
+     * order. Taxonomy §1 names, referenced not copied.
+     */
+    strip: [
+      SERVICE["new-product"].name,
+      SERVICE["product-completion"].name,
+      SERVICE["product-support"].name,
+    ],
+    /**
      * No `need`: three services share this page and preselecting one of
      * them would guess. The hero CTA opens the modal with nothing
      * chosen, which is what every CTA on the site except a card's does.
@@ -175,6 +184,12 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
     name: SERVICE["agentic-system"].name,
     /** Messaging Kit §05, as written. It covers the whole page. */
     intro: SERVICE["agentic-system"].description,
+    /**
+     * The hero strip: the two depths this route sells the service at
+     * (Taxonomy §1 "Two kinds of agentic system", #29). Tier names,
+     * referenced not copied.
+     */
+    strip: [TIER.workflow.name, TIER.tool.name],
     need: SERVICE_NEED["agentic-system"],
     /**
      * The two depths, in `/pricing` order. Both preselect `agentic`
