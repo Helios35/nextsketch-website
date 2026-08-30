@@ -21,10 +21,30 @@ import type { ServicePageSlug } from "@/lib/types";
  * Tailwind 3D utilities, so it does not depend on a utility set the
  * repo has never compiled.
  *
- * **A static transform is layout, not motion**, so there is nothing for
- * `prefers-reduced-motion` to suppress and no keyframe was added —
- * `globals.css` is untouched. The entrance is the hero's existing
- * load-time `rise-in`, one step after the CTAs.
+ * **The tilt is layout; the entrance is motion.** A static transform has
+ * nothing for `prefers-reduced-motion` to suppress, so only the entrance
+ * is gated. The illustration **assembles on load** rather than arriving
+ * as one block (owner direction, 2026-08-30): connectors first, then the
+ * panes in flow order, each on the shared `rise-in`. **No keyframe was
+ * added** — `globals.css` is untouched.
+ *
+ * **Two things make that work, and both are load-bearing.**
+ *
+ * 1. **The delay is an inline style, not an `[animation-delay:…]`
+ *    class.** The class form does not work anywhere on this site:
+ *    `motion-safe:animate-rise-in` compiles to the `animation`
+ *    *shorthand*, which resets `animation-delay` to `0s`, and the
+ *    `motion-safe:` variant sorts *after* the plain delay utility, so it
+ *    always wins. Measured: every `[animation-delay:…]` element on `/`,
+ *    `/pricing` and these routes computes `0s`. `ScrollReveal` is the one
+ *    thing that staggers correctly, because it sets `animationDelay`
+ *    inline — an inline style beats any class. Same fix here.
+ * 2. **The entrance and the depth live on different elements.**
+ *    `rise-in` animates `transform: translateY(16px)`, which would
+ *    overwrite a pane's `translateZ` and flatten the plane for the whole
+ *    700ms before snapping back. So each pane is two elements: an outer
+ *    that holds its position and its `translateZ`, and an inner that
+ *    holds the surface and the animation. Never merge them.
  *
  * **Rule 4.3 governs the content, as it does every mock on these
  * routes.** The reference labels each node ("Book a demo", "Send email
@@ -41,9 +61,6 @@ import type { ServicePageSlug } from "@/lib/types";
  * risk. The stage clips instead, and the radial fade dissolves the clip
  * so it reads as depth rather than a cut.
  */
-
-/** The plane's own coordinate space, before the tilt. */
-const PLANE = "relative h-[560px] w-[720px]";
 
 /**
  * The tilt. Shared by both routes so the two heroes read as one system,
@@ -81,29 +98,43 @@ function Bar({ className }: { className: string }) {
 }
 
 /**
- * One card on the plane. `z` lifts it toward the viewer, which is what
- * separates the layers once the plane is tilted; without it the whole
- * thing reads as a flat rotated image.
+ * One card on the plane, as two elements.
+ *
+ * `at` positions the outer and `z` lifts it toward the viewer, which is
+ * what separates the layers once the plane is tilted. `surface` and the
+ * entrance ride the inner, so `rise-in`'s `translateY` cannot clobber
+ * the outer's `translateZ` — see the doc block.
  */
 function Pane({
-  className,
+  at,
   z = 0,
+  delay,
   gold = false,
+  surface = "",
   children,
 }: {
-  className: string;
+  at: string;
   z?: number;
+  delay: number;
   gold?: boolean;
+  surface?: string;
   children: ReactNode;
 }) {
   return (
     <div
-      className={`absolute border bg-[#0a0a0c] ${
-        gold ? "border-gold/50 shadow-[var(--shadow-modal)]" : "border-white/25"
-      } ${className}`}
+      className={`absolute ${at}`}
       style={{ transform: `translateZ(${z}px)` } as CSSProperties}
     >
-      {children}
+      <div
+        className={`border bg-[#0a0a0c] motion-safe:animate-rise-in ${
+          gold
+            ? "border-gold/50 shadow-[var(--shadow-modal)]"
+            : "border-white/25"
+        } ${surface}`}
+        style={{ animationDelay: `${delay}ms` }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -120,26 +151,33 @@ function AgenticHeroVisual() {
        run to read as a flow rather than a pile, and the stage clips and
        fades the overhang anyway. */
     <div className="relative h-[560px] w-[880px]">
-      {/* Connectors sit under the nodes on the same plane. Dashed
-          hairlines on the white alpha ladder; the one gold path is the
-          route through the active node. */}
-      <svg
-        viewBox="0 0 880 560"
-        className="absolute inset-0 h-full w-full"
-        fill="none"
+      {/* Connectors sit under the nodes on the same plane, and land
+          first — the wiring appears, then the work arrives on it.
+          Dashed hairlines on the white alpha ladder; the one gold path
+          is the route through the active node. */}
+      <div
+        className="absolute inset-0 motion-safe:animate-rise-in"
+        style={{ animationDelay: "300ms" }}
       >
-        <g stroke="currentColor" strokeWidth="2" strokeDasharray="7 8">
-          <path d="M175 255 H205 V130 H235" className="text-white/30" />
-          <path d="M175 255 H205 V455 H235" className="text-white/30" />
-          <path d="M430 455 H455 V295 H480" className="text-white/30" />
-          <path d="M430 130 H455 V295 H480" className="text-gold/60" />
-          <path d="M680 295 H700 V145 H725" className="text-white/30" />
-          <path d="M680 295 H700 V450 H725" className="text-white/30" />
-        </g>
-      </svg>
+        <svg viewBox="0 0 880 560" className="h-full w-full" fill="none">
+          <g stroke="currentColor" strokeWidth="2" strokeDasharray="7 8">
+            <path d="M175 255 H205 V130 H235" className="text-white/30" />
+            <path d="M175 255 H205 V455 H235" className="text-white/30" />
+            <path d="M430 455 H455 V295 H480" className="text-white/30" />
+            <path d="M430 130 H455 V295 H480" className="text-gold/60" />
+            <path d="M680 295 H700 V145 H725" className="text-white/30" />
+            <path d="M680 295 H700 V450 H725" className="text-white/30" />
+          </g>
+        </svg>
+      </div>
 
       {/* Trigger. */}
-      <Pane className="top-[215px] left-[0px] w-[175px] p-5" z={0}>
+      <Pane
+        at="top-[215px] left-[0px] w-[175px]"
+        z={0}
+        delay={360}
+        surface="p-5"
+      >
         <span className="flex items-center gap-2.5">
           <span
             aria-hidden="true"
@@ -151,7 +189,12 @@ function AgenticHeroVisual() {
       </Pane>
 
       {/* Two parallel branches. */}
-      <Pane className="top-[70px] left-[235px] w-[195px] p-5" z={30}>
+      <Pane
+        at="top-[70px] left-[235px] w-[195px]"
+        z={30}
+        delay={430}
+        surface="p-5"
+      >
         <span className="flex items-center gap-2.5">
           <span
             aria-hidden="true"
@@ -163,7 +206,12 @@ function AgenticHeroVisual() {
         <Bar className="mt-2.5 w-24 bg-white/12" />
       </Pane>
 
-      <Pane className="top-[400px] left-[235px] w-[195px] p-5" z={20}>
+      <Pane
+        at="top-[400px] left-[235px] w-[195px]"
+        z={20}
+        delay={480}
+        surface="p-5"
+      >
         <span className="flex items-center gap-2.5">
           <span
             aria-hidden="true"
@@ -175,8 +223,15 @@ function AgenticHeroVisual() {
       </Pane>
 
       {/* The agent. The one gold element on the plane, lifted furthest
-          toward the viewer so the eye lands on it first. */}
-      <Pane className="top-[240px] left-[480px] w-[200px] p-5" z={110} gold>
+          toward the viewer and landing after the branches feed it — the
+          payoff beat of the sequence. */}
+      <Pane
+        at="top-[240px] left-[480px] w-[200px]"
+        z={110}
+        delay={560}
+        gold
+        surface="p-5"
+      >
         <span className="flex items-center gap-2.5">
           <span
             aria-hidden="true"
@@ -189,12 +244,22 @@ function AgenticHeroVisual() {
       </Pane>
 
       {/* Downstream. */}
-      <Pane className="top-[95px] left-[725px] w-[165px] p-5" z={60}>
+      <Pane
+        at="top-[95px] left-[725px] w-[165px]"
+        z={60}
+        delay={640}
+        surface="p-5"
+      >
         <Bar className="w-16 bg-white/30" />
         <Bar className="mt-3.5 w-24 bg-white/12" />
       </Pane>
 
-      <Pane className="top-[400px] left-[725px] w-[165px] p-5" z={50}>
+      <Pane
+        at="top-[400px] left-[725px] w-[165px]"
+        z={50}
+        delay={690}
+        surface="p-5"
+      >
         <Bar className="w-20 bg-white/30" />
         <Bar className="mt-3.5 w-20 bg-white/12" />
       </Pane>
@@ -210,9 +275,14 @@ function AgenticHeroVisual() {
  * ------------------------------------------------------------------ */
 function ProductHeroVisual() {
   return (
-    <div className={PLANE}>
+    <div className="relative h-[560px] w-[720px]">
       {/* The application window. */}
-      <Pane className="top-[70px] left-[40px] w-[540px] overflow-hidden" z={0}>
+      <Pane
+        at="top-[70px] left-[40px] w-[540px]"
+        z={0}
+        delay={300}
+        surface="overflow-hidden"
+      >
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
           <span className="size-1.5 bg-rose/80" />
           <span className="size-1.5 bg-gold/80" />
@@ -262,7 +332,12 @@ function ProductHeroVisual() {
       </Pane>
 
       {/* A detail panel, lifted off the window. */}
-      <Pane className="top-[300px] left-[330px] w-[280px] p-5" z={70}>
+      <Pane
+        at="top-[300px] left-[330px] w-[280px]"
+        z={70}
+        delay={440}
+        surface="p-5"
+      >
         <span className="flex items-center justify-between">
           <Bar className="w-20 bg-white/30" />
           <span className="h-5 w-12 border border-white/20" />
@@ -274,12 +349,15 @@ function ProductHeroVisual() {
         </div>
       </Pane>
 
-      {/* The primary action, closest to the viewer and the one gold
-          element on the plane. */}
+      {/* The primary action, closest to the viewer, the one gold element
+          on the plane, and the last thing to land — the sequence builds
+          the product and finishes on the thing you press. */}
       <Pane
-        className="top-[420px] left-[430px] flex w-[190px] items-center gap-3 p-4"
+        at="top-[420px] left-[430px] w-[190px]"
         z={150}
+        delay={560}
         gold
+        surface="flex items-center gap-3 p-4"
       >
         <span className="flex h-6 w-24 items-center bg-gold px-2.5">
           <span className="h-1.5 w-12 bg-gold-ink/60" />

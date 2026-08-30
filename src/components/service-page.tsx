@@ -235,7 +235,8 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                     group-level description (Rule 4.3). */}
                 {page.intro !== undefined && (
                   <p
-                    className={`mt-8 max-w-lg motion-safe:animate-rise-in [animation-delay:120ms] ${BODY_CLASS}`}
+                    className={`mt-8 max-w-lg motion-safe:animate-rise-in ${BODY_CLASS}`}
+                    style={{ animationDelay: "120ms" }}
                   >
                     {page.intro}
                   </p>
@@ -247,7 +248,10 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                     two match in height — and it reads `NAV.featured`,
                     the same object the nav bar's Pricing button reads,
                     so label and href cannot drift from it (#26). */}
-                <div className="mt-10 flex flex-wrap items-center gap-3 motion-safe:animate-rise-in [animation-delay:200ms]">
+                <div
+                  className="mt-10 flex flex-wrap items-center gap-3 motion-safe:animate-rise-in"
+                  style={{ animationDelay: "200ms" }}
+                >
                   <ModalTrigger variant="inverse" arrow need={page.need}>
                     {LANDING.cta}
                   </ModalTrigger>
@@ -260,7 +264,10 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                   section is component vocabulary, not a section
                   divider — the 2026-07-06 "no dividers between
                   sections" call is untouched. */}
-              <div className="motion-safe:animate-rise-in lg:border-l lg:border-white/10 lg:pl-16 [animation-delay:280ms]">
+              {/* No entrance on the wrapper: the illustration assembles from
+                  the inside, pane by pane, so a blanket fade here would
+                  just run over the top of it. */}
+              <div className="lg:border-l lg:border-white/10 lg:pl-16">
                 <ServiceHeroVisual page={page.slug} />
               </div>
             </div>

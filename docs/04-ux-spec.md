@@ -145,6 +145,8 @@ Shipped vocabulary — reuse these, at these tempos:
 |---------|-----------|---------|--------|
 | Capability strip | Slow marquee, pauses on hover | Always | **CURRENT** |
 | Hero content | `rise-in`, staggered | Load | **CURRENT** |
+
+> **`[animation-delay:…]` as a class does not work on this site — measured, 2026-08-30.** `motion-safe:animate-rise-in` compiles to the `animation` **shorthand**, which resets `animation-delay` to `0s`, and the `motion-safe:` variant sorts *after* the plain delay utility, so it always wins. Every `[animation-delay:…]` element on `/`, `/pricing` and the service routes computes `0s`, which means the documented 0 / 120 / 200ms stagger has never actually staggered anywhere except `ScrollReveal` — which is correct precisely because it sets `animationDelay` **inline**, and an inline style beats any class. **Set entrance delays inline.** The service hero was fixed this way; `/` and `/pricing` still carry the broken class form and are an open owner call, since fixing them changes shipped timing on two pages this unit was not scoped to touch.
 | Modal open | `modal-in` | Open | **CURRENT** |
 | Modal step | `step-in` | Step change | **CURRENT** |
 | Section entrances (all six sections below the hero) | `rise-in` via `ScrollReveal`, hero stagger (0 / 120 / 200ms; lists 120 + i·80ms) | Scroll into view | **CURRENT** (Unit 02) |

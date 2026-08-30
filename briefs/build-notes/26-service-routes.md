@@ -130,9 +130,21 @@ Three details:
 - **Contained and faded, not bled.** The reference runs its illustration off the page edge. A rotated plane overflowing horizontally widens the page, and the usual fix — `overflow-x-clip` on an ancestor — would sit above the `sticky` lockup and put the 80px handoff at risk. The stage clips and the radial fade dissolves the clip. Adjustable if the bleed is wanted.
 - **Tuned, not guessed.** First pass read too small and too dim: near-black cards behind a `white/15` hairline disappear at that scale. Borders went to `white/25`, the fade's clear zone from 35% to 46%, the tilt flattened from 38° to 32°, and the agentic plane widened to 880px so the graph reads as a flow rather than a pile.
 
+#### The illustration assembles on load
+
+Owner direction, 2026-08-30. It no longer arrives as one block: the connectors land first (the wiring appears), then the panes in **flow order** — trigger, both branches, the gold agent, then downstream — each on the shared `rise-in`. The product route builds window → detail panel → the gold action last, so the sequence finishes on the thing you press. **No keyframe was added**; `globals.css` is still untouched.
+
+Two things make it work, and both are load-bearing:
+
+**1. The delay is an inline style, not a class — because the class form is inert.** This turned out to be a **site-wide pre-existing bug**, not a service-page one. `motion-safe:animate-rise-in` compiles to the `animation` *shorthand*, which resets `animation-delay` to `0s`, and the `motion-safe:` variant sorts *after* the plain `[animation-delay:…]` utility, so it always wins. Measured: every such element on `/`, `/pricing` and these routes computes `0s`. **The documented 0 / 120 / 200ms hero stagger has never actually staggered anywhere** except `ScrollReveal`, which is correct precisely because it sets `animationDelay` inline. The service hero's own intro and CTA delays were moved to the inline form at the same time and now compute 0.12s / 0.2s. **`/` and `/pricing` still carry the broken form** — flagged as an open owner call rather than fixed, because it changes shipped timing on two pages this unit was not scoped to touch.
+
+**2. The entrance and the depth live on different elements.** `rise-in` animates `transform: translateY(16px)`, which would overwrite a pane's `translateZ` and flatten the plane for the whole 700ms before snapping back. Each pane is therefore two elements: an outer holding position and `translateZ`, an inner holding the surface and the animation. **Never merge them.** Verified after the change: all six panes still report their `translateZ` matrices and the plane still reports `preserve-3d`.
+
+The wrapper's blanket entrance was removed — with the panes animating from the inside, a fade over the top of them just muddies the sequence.
+
 #### Verified
 
-Handoff probed on both routes at scrollY 0 / 78 / 82 / 300 — identical to `/pricing` (24 only below 80px, 20 + 24 above); the ribbon and the two-up grid are exactly the kind of change that breaks it silently. No horizontal overflow at 375 / 1080 / 1800. Hero grid still runs 316→1468 at 1800px, matching the rows and the process band. `/pricing` renders no strip and still measures 64→1721.
+Handoff probed on both routes at scrollY 0 / 78 / 82 / 300 — identical to `/pricing` (24 only below 80px, 20 + 24 above); the ribbon and the two-up grid are exactly the kind of change that breaks it silently. Entrance delays measured on the agentic route: 0.12 / 0.2 / 0.3 then panes at 0.36 / 0.43 / 0.48 / 0.56 / 0.64 / 0.69, all at opacity 1 at rest. No horizontal overflow at 375 / 1080 / 1800. Hero grid still runs 316→1468 at 1800px, matching the rows and the process band. `/pricing` renders no strip and still measures 64→1721.
 
 ### The page measure
 
