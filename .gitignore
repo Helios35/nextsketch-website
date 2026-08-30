@@ -43,3 +43,11 @@ docs/brand/
 *.tsbuildinfo
 next-env.d.ts
 .claude/
+
+# confidential brand source documents, from any path (decision-log #2).
+# The docs/brand/ rule above is path-scoped, so copies elsewhere — the
+# transfer bundle carried two — were not caught by it.
+*.docx
+
+# Machine-transfer bundle. Lives on disk, not in the repo (owner, 2026-08-30).
+/NSOS-Transfer/
