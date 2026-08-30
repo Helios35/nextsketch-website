@@ -20,10 +20,12 @@
  *    (radial-gradient size percentages resolve against the
  *    corresponding box dimension), so the ramp ends exactly on all four
  *    mid-edges and every side dissolves the same amount.
- * 2. **The ramp is long.** `45% → 100%` spends more than half the
- *    radius on the transition. A short ramp is what makes a fade read
- *    as a cut-off rather than a dissolve, which is the failure this
- *    file exists to stop repeating.
+ * 2. **The ramp is long.** `25% → 100%` spends three quarters of the
+ *    radius on the transition (owner, 2026-08-30, widened from 45%). A
+ *    short ramp is what makes a fade read as a cut-off rather than a
+ *    dissolve, which is the failure this file exists to stop repeating:
+ *    the bento mosaic shipped once at `66% → 100%` and read as a hard
+ *    edge. **If in doubt, lengthen it.**
  *
  * A literal gradient rather than a token utility, for the reason
  * `globals.css` gives for the dialog backdrop: the `color-mix()` form
@@ -38,7 +40,7 @@ export function VisualFade() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,transparent_45%,var(--color-ink)_100%)]"
+      className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,transparent_25%,var(--color-ink)_100%)]"
     />
   );
 }

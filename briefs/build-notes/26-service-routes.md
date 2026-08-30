@@ -226,12 +226,12 @@ Three things worth keeping:
 
 **This was drift, and it was mine.** Four graphics grew four different gradients as each was tuned in isolation — the hero visuals, the block mocks, the bento mosaic and the tile cluster — and they ended up with four different characters: some soft, some abrupt, one not reaching the edges at all. The owner had to correct it twice.
 
-Every graphic on these routes now imports **`src/components/visual-fade.tsx`** and nothing else. Verified in the browser: all four fades on `/services/product` and all three on `/services/agentic-system` compute the identical `radial-gradient(50% 50%, transparent 45%, ink 100%)`. **Do not add a second local one** — if a fade needs changing it changes there, for all of them.
+Every graphic on these routes now imports **`src/components/visual-fade.tsx`** and nothing else. Verified in the browser: all four fades on `/services/product` and all three on `/services/agentic-system` compute the identical `radial-gradient(50% 50%, transparent 25%, ink 100%)`. **Do not add a second local one** — if a fade needs changing it changes there, for all of them.
 
 Two things are load-bearing in that value, and both were learned the hard way:
 
 - **The ellipse is sized explicitly.** `ellipse at center` defaults to `farthest-corner`, putting the last stop at the corners; on a 4/3 box that leaves the side mid-edges at 80% of the radius and the top and bottom at 60%, so the sides barely fade and the top and bottom read as a hard cut.
-- **The ramp is long.** `45% → 100%` spends more than half the radius on the transition. The mosaic's first cut used `66% → 100%`, a third of the radius, and read as a cut-off rather than a dissolve. **A short ramp is the failure mode.**
+- **The ramp is long.** `25% → 100%` spends three quarters of the radius on the transition (widened from 45% by the owner, 2026-08-30). The mosaic's first cut used `66% → 100%`, a third of the radius, and read as a cut-off rather than a dissolve. **A short ramp is the failure mode — if in doubt, lengthen it.**
 
 ### The mocks assert nothing — a Rule 4.3 requirement, not a style choice
 
