@@ -68,7 +68,7 @@ Unit 25 was confirmed merged (`4582c75`) before any of this was written, so noth
 
 ## The four blocks
 
-1. **Hero** — `/pricing`'s intro band, reproduced, plus an **ambient gold light** (owner direction, 2026-08-28 — see below): sticky lockup, mono eyebrow, `display`-scale `<h1>` with a gold payoff word, description, divided-arrow `ModalTrigger`. Load-time `rise-in` at 0 / 120 / 200ms, not a scroll trigger, because it is above the fold.
+1. **Hero** — `/pricing`'s intro band, reproduced: sticky lockup, mono eyebrow, `display`-scale `<h1>` with a gold payoff word, description, divided-arrow `ModalTrigger`. Load-time `rise-in` at 0 / 120 / 200ms, not a scroll trigger, because it is above the fold.
 2. **"What you get"** — the topic blocks as alternating split rows (see below), one `<section id>` each.
 3. **How it works** — the four canonical phases as a numbered card grid, from the owner-supplied reference.
 4. **Close** — `FINAL_CTA` heading with its gold phrase and the CTA repeated. The gold `/pricing` link it briefly carried was **removed by the owner** (2026-08-28); `/pricing` stays reachable from the nav bar's featured button and the footer on every page.
@@ -109,21 +109,9 @@ Three details that decide the implementation:
 
 **The hero lockup is deliberately outside the measure**, on the viewport gutter. The nav bar's wordmark is there, and the two must land in the same place across the 80px handoff; centring it with the content would reintroduce the jump the zero-height sticky wrapper exists to prevent. Re-verified after the change.
 
+> **An ambient gold hero glow shipped briefly and was removed** (owner direction, 2026-08-30). It reproduced the warm light in `/`'s orbit footage as a soft `gold` radial, on an `isolate` wrapper spanning the hero and the band under it so it could bleed. All of it is gone — the wrapper, the gradient, and the `bg-ink` removals it required — and the hero is flat `ink` again. The mocks' own radial fades are unrelated and untouched.
+
 Measured at 1800px: `h1`, every block row, the process grid and the close heading all run 316→1468, the mocks sit flush at 924→1468 (and 316→860 on the alternating rows), and `scrollWidth === innerWidth`. `/` and `/pricing` still measure 64→1721 — untouched.
-
-### The hero glow
-
-The owner asked for "the glow in the hero, same as the home page, same brand colour", explicitly **not cut off** and free to bleed into the next section.
-
-On `/` that glow is the warm light *inside the orbit footage*. These routes mount no video (#17), so it is reproduced as a single soft `gold` radial at 19% opacity behind the hero. Three things make it behave:
-
-- **Hero and the band under it share one `isolate` wrapper.** `isolate` is load-bearing: without it the `-z-10` layer escapes to the root stacking context and paints behind `html`'s `bg-ink`, which is invisible. Neither child carries `bg-ink` any more — `layout.tsx` puts it on `<html>`, so the surface is identical and an opaque child would simply cover the light.
-- **No `overflow-hidden` anywhere on the path.** Clipping is the exact thing being asked against. The light runs past the hero and fades out before §How it works.
-- **Sized `inset-x-0`, not a fixed width.** A wide absolutely-positioned element would widen the page; this bleeds vertically and never horizontally. Verified: `scrollWidth === innerWidth`.
-
-**§Surfaces' "no glows" rule is untouched and still binding.** It governs *panel and control depth* — "depth comes from shadow and blur, never from colored light" — and nothing here glows: no card, no button, no tile. This is hero atmosphere standing in for footage, which is the one place on `/` that was already coloured light. `gold` only; no new token.
-
-**The wordmark handoff was re-verified after wrapping the hero**, since a new stacking context around a `sticky` element is exactly the kind of change that breaks it silently. Probed at y = 0 / 78 / 82 / 300 and identical to `/pricing`: page lockup only below 80px, both from 82px up.
 
 ### Five visuals, not five shuffles
 
