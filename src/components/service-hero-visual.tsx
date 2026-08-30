@@ -268,101 +268,100 @@ function AgenticHeroVisual() {
 }
 
 /* ------------------------------------------------------------------ *
- * Products — a product UI, in layers.                                 *
- * A full interface with chrome, a rail and a content grid, plus two   *
- * panels floating toward the viewer: "a working product in            *
- * production", not a workflow. Same tilt, different subject.          *
+ * Products — two overlapping product surfaces.                        *
+ * A chart card behind, a task list in front of it: the shape of a     *
+ * product someone actually uses, not a diagram of one. Structure is   *
+ * adapted from an owner-supplied card reference (2026-08-30); the     *
+ * tilt, the surfaces and the Rule 4.3 posture are this system's.      *
  * ------------------------------------------------------------------ */
+
+/**
+ * Column fill heights, as a percentage of the track. The peak is the
+ * one gold element on this plane; everything else rides the white alpha
+ * ladder. Heights only — **no axis, no scale, no numerals, no day
+ * labels.** The reference labels every column and prints a figure on
+ * every row; reproducing that would put invented metrics on the page a
+ * search visitor lands on first, which is what Rule 4.3 and decision #5
+ * (the retired stat strip) exist to stop. Varying bars with nothing
+ * written on them assert nothing — the same posture the ops panel's
+ * uptime strip already ships.
+ */
+const COLUMNS: readonly number[] = [52, 68, 92, 86, 72, 33, 25];
+const PEAK = 2;
+
+/** Chrome tints for the task rows' status dots (#31). */
+const TASK_ROWS: readonly string[] = [
+  "bg-rose/80",
+  "bg-lavender/80",
+  "bg-sage/80",
+];
+
 function ProductHeroVisual() {
   return (
     <div className="relative h-[560px] w-[720px]">
-      {/* The application window. */}
+      {/* The chart card, behind. */}
       <Pane
-        at="top-[70px] left-[40px] w-[540px]"
+        at="top-[55px] left-[215px] w-[415px]"
         z={0}
         delay={300}
-        surface="overflow-hidden"
+        surface="p-6"
       >
-        <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
-          <span className="size-1.5 bg-rose/80" />
-          <span className="size-1.5 bg-gold/80" />
-          <span className="size-1.5 bg-sage/80" />
-          <Bar className="ml-3 w-24 bg-white/10" />
-          <span className="grow" />
-          <Bar className="w-8 bg-white/15" />
-          <span className="size-5 border border-white/20 bg-lavender/55" />
+        <div className="flex items-center justify-between">
+          <Bar className="h-2 w-32 bg-white/30" />
+          {/* The reference's "This Week" control, squared — rounded is
+              not in this system's vocabulary. */}
+          <span className="flex items-center gap-2.5 border border-white/20 px-3 py-2">
+            <Bar className="w-12 bg-white/25" />
+            <span
+              aria-hidden="true"
+              className="size-1.5 rotate-45 bg-white/30"
+            />
+          </span>
         </div>
-        <div className="flex">
-          {/* Rail. */}
-          <div className="w-24 shrink-0 space-y-3 border-r border-white/10 px-4 py-5">
-            <span className="block size-4 border border-white/20 bg-white/5" />
-            <Bar className="mt-5 w-12 bg-gold" />
-            <Bar className="w-10 bg-white/15" />
-            <Bar className="w-11 bg-white/15" />
-            <Bar className="w-8 bg-white/15" />
-          </div>
-          {/* Canvas. */}
-          <div className="grow space-y-4 px-5 py-5">
-            <Bar className="h-2 w-40 bg-white/30" />
-            <Bar className="w-64 bg-white/12" />
-            <div className="grid grid-cols-3 gap-3 pt-1">
-              {["bg-sage/80", "bg-lavender/80", "bg-rose/80"].map((tone) => (
+        <div className="mt-8 flex items-end justify-between gap-2.5">
+          {COLUMNS.map((fill, i) => (
+            <span key={i} className="flex flex-col items-center gap-3.5">
+              {/* Track, then the fill rising from the bottom of it. */}
+              <span className="relative flex h-[112px] w-3.5 items-end bg-white/[0.06]">
                 <span
-                  key={tone}
-                  className="space-y-2 border border-white/10 p-3"
-                >
-                  <span className="flex items-center gap-2">
-                    <span
-                      aria-hidden="true"
-                      className={`size-1.5 shrink-0 rotate-45 ${tone}`}
-                    />
-                    <Bar className="w-10 bg-white/20" />
-                  </span>
-                  <Bar className="w-full bg-white/10" />
-                </span>
-              ))}
-            </div>
-            <div className="space-y-2.5 pt-1">
-              <Bar className="w-full bg-white/10" />
-              <Bar className="w-5/6 bg-white/10" />
-              <Bar className="w-2/3 bg-white/10" />
-            </div>
-          </div>
+                  className={`w-full ${i === PEAK ? "bg-gold" : "bg-white/25"}`}
+                  style={{ height: `${fill}%` } as CSSProperties}
+                />
+              </span>
+              <Bar className="w-6 bg-white/12" />
+            </span>
+          ))}
         </div>
       </Pane>
 
-      {/* A detail panel, lifted off the window. */}
+      {/* The task list, lifted in front and overlapping it. */}
       <Pane
-        at="top-[300px] left-[330px] w-[280px]"
-        z={70}
+        at="top-[295px] left-[70px] w-[375px]"
+        z={110}
         delay={440}
-        surface="p-5"
+        surface="p-6"
       >
-        <span className="flex items-center justify-between">
-          <Bar className="w-20 bg-white/30" />
-          <span className="h-5 w-12 border border-white/20" />
-        </span>
-        <div className="mt-4 space-y-2.5">
-          <Bar className="w-full bg-white/10" />
-          <Bar className="w-4/5 bg-white/10" />
-          <Bar className="w-3/5 bg-white/10" />
+        <Bar className="h-2 w-28 bg-white/30" />
+        <div className="mt-5 space-y-2.5">
+          {TASK_ROWS.map((tone) => (
+            /* §Surfaces' sub-panel recipe for a data row, verbatim. */
+            <span
+              key={tone}
+              className="flex items-center gap-3.5 border border-white/12 bg-white/[0.02] p-3.5"
+            >
+              <span
+                aria-hidden="true"
+                className={`size-2 shrink-0 rotate-45 ${tone}`}
+              />
+              <Bar className="w-24 bg-white/25" />
+              <span className="grow" />
+              <Bar className="w-14 bg-white/15" />
+              {/* The reference's photo avatar, as this system's profile
+                  chip — a portrait would be an invented person. */}
+              <span className="size-6 shrink-0 border border-white/20 bg-lavender/45" />
+            </span>
+          ))}
         </div>
-      </Pane>
-
-      {/* The primary action, closest to the viewer, the one gold element
-          on the plane, and the last thing to land — the sequence builds
-          the product and finishes on the thing you press. */}
-      <Pane
-        at="top-[420px] left-[430px] w-[190px]"
-        z={150}
-        delay={560}
-        gold
-        surface="flex items-center gap-3 p-4"
-      >
-        <span className="flex h-6 w-24 items-center bg-gold px-2.5">
-          <span className="h-1.5 w-12 bg-gold-ink/60" />
-        </span>
-        <Bar className="w-12 bg-white/20" />
       </Pane>
     </div>
   );
