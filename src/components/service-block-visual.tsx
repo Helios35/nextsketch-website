@@ -87,25 +87,9 @@ import type { ServiceBlockId } from "@/lib/types";
  */
 const SHELL = "relative mx-auto w-full max-w-md lg:max-w-none";
 
-/** The shared aspect box. Squared, hairline, solid — no blur, since
- *  no `ScrollVideo` is mounted here (#17) and there is nothing behind
- *  a mock to blur. */
-const FRAME =
-  "relative flex aspect-[4/3] flex-col overflow-hidden border border-white/15 bg-[#0a0a0c]";
-
 /** A skeleton line. Width and tone come from the caller. */
 function Bar({ className }: { className: string }) {
   return <span className={`block h-1.5 ${className}`} />;
-}
-
-/** The profile chip every mock's chrome carries (owner direction). */
-function Profile() {
-  return (
-    <span className="flex shrink-0 items-center gap-2">
-      <span className="h-1.5 w-7 bg-white/15" />
-      <span className="size-5 border border-white/20 bg-lavender/55" />
-    </span>
-  );
 }
 
 /** A status dot in the interface-chrome palette. */
@@ -1003,68 +987,159 @@ function ProductSupportVisual() {
 }
 
 /* ------------------------------------------------------------------ *
- * Internal Tool — a dashboard UI.                                     *
- * Sidebar, top bar and a data table: "a real tool that you own."      *
- * Deliberately denser than the New Product window so the two never    *
- * read as one mock.                                                   *
+ * Internal Tool — an analytics panel.                                 *
+ * A status summary beside a trend chart with a read-out on one point.  *
+ * Replaces the framed dashboard mock (owner, 2026-08-30); **this block *
+ * only** — nothing else on either route changes.                      *
+ *                                                                      *
+ * It is the right subject for the tier: "a real tool that you own",    *
+ * something a team logs into to see what their agents did.            *
+ *                                                                      *
+ * Frameless like 01, 02 and 03. Rule 4.3 as everywhere: no label, no   *
+ * count, no date, no axis value. The reference's two series map onto   *
+ * `lavender` and `rose`, its status marks onto the #31 chrome set, and *
+ * `gold` appears once — on the read-out point, which is the one thing  *
+ * the whole composition points at.                                     *
  * ------------------------------------------------------------------ */
-const TABLE_ROWS: readonly string[] = [
-  "bg-sage/85",
-  "bg-gold",
-  "bg-rose/85",
-  "bg-lavender/85",
-  "bg-sage/85",
+
+/** Status rows in the summary panel. */
+const STATUS: readonly { tone: string; w: string; pill: string }[] = [
+  { tone: "bg-lavender/80", w: "w-12", pill: "w-6" },
+  { tone: "bg-sage/80", w: "w-10", pill: "w-2" },
+  { tone: "bg-rose/80", w: "w-16", pill: "w-4" },
 ];
 
 function InternalToolVisual() {
   return (
     <div className={SHELL}>
-      <ScrollReveal delay={120}>
-        <div className={`${FRAME} flex-row`}>
-          {/* Sidebar. The active item is the gold one. */}
-          <div className="w-16 shrink-0 space-y-3 border-r border-white/10 px-3 py-4">
-            <span className="block size-4 border border-white/20 bg-white/5" />
-            <span className="mt-5 block h-1.5 w-9 bg-gold" />
-            <span className="block h-1.5 w-7 bg-white/15" />
-            <span className="block h-1.5 w-8 bg-white/15" />
-            <span className="block h-1.5 w-6 bg-white/15" />
-            <span className="block h-1.5 w-8 bg-white/15" />
-          </div>
-          <div className="flex grow flex-col">
-            <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
-              <span className="h-1.5 w-14 bg-white/25" />
-              <span className="h-4 w-10 border border-white/15" />
-              <span className="grow" />
-              <Profile />
-            </div>
-            {/* Table. A header row, then rows of cells — the shape of a
-                tool a team logs into, with nothing written in it. */}
-            <div className="grow px-4 py-3.5">
-              <ScrollReveal delay={200}>
-                <span className="mb-3 grid grid-cols-[2fr_1fr_1fr] gap-3 border-b border-white/10 pb-2">
-                  <span className="h-1.5 bg-white/25" />
-                  <span className="h-1.5 bg-white/25" />
-                  <span className="h-1.5 bg-white/25" />
-                </span>
-              </ScrollReveal>
-              {TABLE_ROWS.map((tone, r) => (
-                <ScrollReveal key={r} delay={260 + r * 55}>
-                  <span className="mb-3 grid grid-cols-[2fr_1fr_1fr] items-center gap-3">
-                    <span className="h-1.5 bg-white/12" />
-                    <span className="h-1.5 bg-white/12" />
-                    {/* The run marker: agents behind a real interface. */}
-                    <span className="flex items-center gap-1.5">
-                      <Dot tone={tone} />
-                      <span className="h-1.5 grow bg-white/12" />
+      <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <div className="flex h-full min-w-0 gap-3 p-3">
+          {/* Summary. A bordered sub-panel is chrome, not the outer box
+              the owner asked to lose — the composition itself has no
+              frame. */}
+          <div className="flex w-[34%] min-w-0 shrink-0 flex-col border border-white/15 p-3">
+            <ScrollReveal delay={120}>
+              <Bar className="h-2 w-16 bg-white/50" />
+            </ScrollReveal>
+            <div className="mt-4 space-y-2">
+              {STATUS.map((row, i) => (
+                <ScrollReveal key={i} delay={170 + i * 55}>
+                  {/* §Surfaces' sub-panel recipe for a data row. */}
+                  <span className="flex items-center gap-2.5 border border-white/12 bg-white/[0.02] px-2.5 py-2">
+                    <span className={`size-2 shrink-0 rotate-45 ${row.tone}`} />
+                    <Bar className={`${row.w} bg-white/35`} />
+                    <span className="ml-auto flex h-4 shrink-0 items-center border border-white/15 px-1.5">
+                      <span className={`block h-1.5 ${row.pill} bg-white/30`} />
                     </span>
                   </span>
                 </ScrollReveal>
               ))}
             </div>
+            {/* The read-out note, with its own mark. */}
+            <ScrollReveal delay={345} className="mt-auto">
+              <span className="flex gap-2 pt-3">
+                <span className="mt-0.5 size-3 shrink-0 rotate-45 border border-white/25" />
+                <span className="min-w-0 grow space-y-1.5">
+                  <Bar className="w-full bg-white/20" />
+                  <Bar className="w-4/5 bg-white/20" />
+                  <Bar className="w-3/5 bg-white/12" />
+                </span>
+              </span>
+            </ScrollReveal>
           </div>
-          <VisualFade />
+
+          {/* Trend. */}
+          <div className="flex min-w-0 grow flex-col">
+            <ScrollReveal delay={200}>
+              <span className="flex items-center justify-between gap-3">
+                <Bar className="h-2 w-24 bg-white/50" />
+                {/* Range selector. Squared, not the reference's pill. */}
+                <span className="flex shrink-0 items-stretch border border-white/15">
+                  {["w-10", "w-8", "w-7"].map((w, i) => (
+                    <span
+                      key={i}
+                      className={`flex items-center px-2 py-1.5 ${
+                        i === 1 ? "bg-white/[0.08]" : ""
+                      }`}
+                    >
+                      <span
+                        className={`block h-1.5 ${w} ${
+                          i === 1 ? "bg-white/55" : "bg-white/25"
+                        }`}
+                      />
+                    </span>
+                  ))}
+                </span>
+              </span>
+            </ScrollReveal>
+
+            {/* Plot. */}
+            <ScrollReveal delay={260} className="mt-4 flex min-h-0 grow">
+              <span className="flex w-5 shrink-0 flex-col justify-between py-0.5">
+                {[0, 1, 2, 3].map((i) => (
+                  <span key={i} className="h-1.5 w-4 bg-white/20" />
+                ))}
+              </span>
+              <span className="relative min-w-0 grow">
+                <svg
+                  viewBox="0 0 200 100"
+                  preserveAspectRatio="none"
+                  className="h-full w-full"
+                  fill="none"
+                >
+                  {[40, 80, 120, 160].map((x) => (
+                    <line
+                      key={x}
+                      x1={x}
+                      y1="0"
+                      x2={x}
+                      y2="100"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      className="text-white/[0.08]"
+                    />
+                  ))}
+                  <path
+                    d="M0 28 C14 60 26 78 40 72 C54 66 58 34 72 32 C86 30 92 18 104 22 C116 26 122 58 136 60 C150 62 156 44 170 42 C184 40 192 28 200 20"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-lavender/75"
+                  />
+                  <path
+                    d="M0 78 C12 70 20 52 32 48 C44 44 48 22 60 20 C72 18 78 46 90 52 C102 58 108 44 120 40 C132 36 138 72 150 76 C162 80 168 40 180 36 C192 32 196 58 200 62"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-rose/75"
+                  />
+                </svg>
+
+                {/* The read-out point. Gold, and the only gold here. The
+                    reference glows; §Surfaces bans that, so presence
+                    comes from a hairline halo instead. */}
+                <span className="absolute top-[18%] left-[52%] flex size-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center border border-white/30">
+                  <span className="size-2 rotate-45 bg-gold" />
+                </span>
+
+                {/* Its read-out card. */}
+                <span className="absolute top-[2%] left-[56%] space-y-1.5 border border-white/20 bg-[#101013] px-2.5 py-2">
+                  <Bar className="w-14 bg-white/45" />
+                  <Bar className="w-12 bg-white/25" />
+                </span>
+              </span>
+            </ScrollReveal>
+
+            {/* Scale. */}
+            <ScrollReveal delay={330}>
+              <span className="mt-2.5 flex items-center justify-between pl-5">
+                {[0, 1, 2, 3, 4, 5].map((i) => (
+                  <Bar key={i} className="w-6 bg-white/20" />
+                ))}
+              </span>
+            </ScrollReveal>
+          </div>
         </div>
-      </ScrollReveal>
+        <VisualFade />
+      </div>
     </div>
   );
 }

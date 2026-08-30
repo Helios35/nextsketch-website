@@ -253,6 +253,18 @@ Two details worth keeping:
 - **The hatch is the placeholder tile's own device**, reused rather than invented: `repeating-linear-gradient(135deg, currentColor 0 1px, transparent 1px 7px)` over a `text-white/[0.05]`.
 - **The today line is `w-0.5`, not `w-px`.** A hairline gold rule disappears at this scale, and it is the one element the whole composition points at.
 
+### Agentic 02 Internal Tool: an analytics panel (2026-08-30)
+
+The framed dashboard mock is replaced with an **analytics panel** — a status summary beside a trend chart with a read-out on one point — adapted from an owner-supplied incident-frequency screenshot. **This block only.**
+
+It is the right subject for the tier: "a real tool that you own", something a team logs into to see what their agents did.
+
+Adopted: the summary card with its status rows and count pills, the footer note with its own mark, the range selector, the gridded plot with two crossing series, the highlighted data point and its read-out card, and both axes' ticks.
+
+Refused: every label, count, date and axis value. The two series map onto `lavender` and `rose`; the status marks onto the #31 chrome set. The reference's **glow** on the data point is refused outright — §Surfaces is explicit that "depth comes from shadow and blur, never from colored light" — so presence comes from a hairline halo square instead. Its pill-shaped range selector is squared. `gold` appears once, on the read-out point.
+
+**With this, all five block visuals are rebuilt**, which made `FRAME` and `Profile` dead code; both are removed. Every block visual on both routes is now frameless, and every graphic on the routes renders the one shared `VisualFade`.
+
 ### One fade, in one file (2026-08-30)
 
 **This was drift, and it was mine.** Four graphics grew four different gradients as each was tuned in isolation — the hero visuals, the block mocks, the bento mosaic and the tile cluster — and they ended up with four different characters: some soft, some abrupt, one not reaching the edges at all. The owner had to correct it twice.
