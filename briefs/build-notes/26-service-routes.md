@@ -217,10 +217,21 @@ Refused: **every figure, label, brand mark and emoji in it.** A dashboard printi
 Three things worth keeping:
 
 - **It is deliberately not wrapped in `FRAME`.** A bento cropped by a hard outer border reads as a screenshot, which is the thing being replaced. Each tile carries its own hairline and the grid dissolves at the box edge instead.
-- **Its own fade, sized to the box.** `MosaicFade` uses `ellipse 50% 50%` so the ramp ends on all four mid-edges (owner: "fades on all sides"). The shared `Fade` keeps the default `farthest-corner` form, because the other four visuals are framed cards whose border is meant to read as an edge — out of scope here.
+- **The shared `VisualFade`**, like every other graphic on these routes — see "One fade, in one file" above.
 - **`min-w-0` + `overflow-hidden` on the tiles is load-bearing.** A grid item defaults to `min-width: auto`, so a fixed-width bar in a narrow column pushes the track wider, the grid wider, and the page wider — a horizontal scrollbar on a phone, caused by a decorative mock. With these the content clips, which the fade hides anyway. **Caveat:** the preview pane would not render below 466px this session, so the narrow case is guarded structurally rather than measured. Worth an eyeball on a real phone.
 
 `gold` appears once, on the area chart. Everything else is chrome (#31) or the white alpha ladder. Scroll entrance preserved and extended: the seven tiles stagger 120 → 490ms on the shared `ScrollReveal`.
+
+### One fade, in one file (2026-08-30)
+
+**This was drift, and it was mine.** Four graphics grew four different gradients as each was tuned in isolation — the hero visuals, the block mocks, the bento mosaic and the tile cluster — and they ended up with four different characters: some soft, some abrupt, one not reaching the edges at all. The owner had to correct it twice.
+
+Every graphic on these routes now imports **`src/components/visual-fade.tsx`** and nothing else. Verified in the browser: all four fades on `/services/product` and all three on `/services/agentic-system` compute the identical `radial-gradient(50% 50%, transparent 45%, ink 100%)`. **Do not add a second local one** — if a fade needs changing it changes there, for all of them.
+
+Two things are load-bearing in that value, and both were learned the hard way:
+
+- **The ellipse is sized explicitly.** `ellipse at center` defaults to `farthest-corner`, putting the last stop at the corners; on a 4/3 box that leaves the side mid-edges at 80% of the radius and the top and bottom at 60%, so the sides barely fade and the top and bottom read as a hard cut.
+- **The ramp is long.** `45% → 100%` spends more than half the radius on the transition. The mosaic's first cut used `66% → 100%`, a third of the radius, and read as a cut-off rather than a dissolve. **A short ramp is the failure mode.**
 
 ### The mocks assert nothing — a Rule 4.3 requirement, not a style choice
 

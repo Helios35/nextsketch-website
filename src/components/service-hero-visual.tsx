@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { VisualFade } from "@/components/visual-fade";
 import type { ServicePageSlug } from "@/lib/types";
 
 /**
@@ -91,39 +92,6 @@ const CAMERA = {
     tilt: "[transform:rotateX(32deg)_rotateZ(-24deg)] [transform-style:preserve-3d]",
   },
 } as const;
-
-/**
- * The stage clips, so the fade is what keeps that from reading as a
- * cut — and it has to reach full ink on **every** side, not just the
- * ones that happen to be far from the centre.
- *
- * **The ellipse is sized explicitly, and that is the whole fix.**
- * `ellipse at center` with no size defaults to `farthest-corner`, which
- * puts the gradient's 100% at the **corners**. On this 4/3 box that
- * leaves the left and right mid-edges at 80% of the radius and the top
- * and bottom at 60%, so with a 46% → 97% ramp the sides reached only
- * ~67% ink and the top and bottom ~27% — a visible hard clip on two
- * sides and a weak one on the others (owner report, 2026-08-30).
- *
- * `ellipse 50% 50%` sizes the radii to the box's half-width and
- * half-height instead (radial-gradient size percentages resolve against
- * the corresponding box dimension), so the gradient's last stop lands
- * exactly on all four mid-edges and the corners sit past it at ~141%.
- * Every side dissolves the same amount. Do not drop the explicit size.
- *
- * Literal gradient rather than a token utility, for the reason
- * `globals.css` gives for the dialog backdrop: the `color-mix()` form
- * Tailwind compiles tokens to computes correctly but does not always
- * paint. `--color-ink` is a plain hex, so referencing it is safe.
- */
-function Fade() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,transparent_52%,var(--color-ink)_100%)]"
-    />
-  );
-}
 
 /** A skeleton line. Width and tone come from the caller. */
 function Bar({ className }: { className: string }) {
@@ -432,7 +400,7 @@ export function ServiceHeroVisual({ page }: { page: ServicePageSlug }) {
           <Visual />
         </div>
       </div>
-      <Fade />
+      <VisualFade />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { VisualFade } from "@/components/visual-fade";
 import type { ServiceBlockId } from "@/lib/types";
 
 /**
@@ -92,30 +93,9 @@ const SHELL = "relative mx-auto w-full max-w-md lg:max-w-none";
 const FRAME =
   "relative flex aspect-[4/3] flex-col overflow-hidden border border-white/15 bg-[#0a0a0c]";
 
-/**
- * The radial fade, on every visual, at **full strength** (owner
- * direction, 2026-08-28). It was softened once so the newly-added
- * chrome and profile chip would survive at the edges; the owner asked
- * for the fade back, so the dissolve wins and the corner detail is
- * deliberately spent. That is the trade: these are atmosphere, not
- * diagrams, and a mock that reads as a hard rectangle pasted on the
- * page is the thing the fade exists to prevent. Detail that has to be
- * legible therefore lives toward the centre of each mock.
- *
- * A literal gradient rather than a token utility, for the reason
- * `globals.css` gives for the dialog backdrop: the color-mix form
- * Tailwind compiles tokens to computes correctly but does not always
- * paint. `--color-ink` is a plain hex, so referencing it directly is
- * safe. An ellipse rather than a circle because the box is 4/3 and a
- * circle would eat the sides first.
- */
-function Fade() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_center,transparent_40%,var(--color-ink)_94%)]"
-    />
-  );
+/** A skeleton line. Width and tone come from the caller. */
+function Bar({ className }: { className: string }) {
+  return <span className={`block h-1.5 ${className}`} />;
 }
 
 /** The profile chip every mock's chrome carries (owner direction). */
@@ -126,11 +106,6 @@ function Profile() {
       <span className="size-5 border border-white/20 bg-lavender/55" />
     </span>
   );
-}
-
-/** A skeleton line. Width and tone come from the caller. */
-function Bar({ className }: { className: string }) {
-  return <span className={`block h-1.5 ${className}`} />;
 }
 
 /** A status dot in the interface-chrome palette. */
@@ -181,27 +156,6 @@ function MosaicTile({
         {children}
       </div>
     </ScrollReveal>
-  );
-}
-
-/**
- * The mosaic's own fade, sized to the box rather than to its corners.
- *
- * `ellipse at center` — what the shared `Fade` uses — defaults to
- * `farthest-corner`, which puts the last stop at the corners and leaves
- * the top and bottom mid-edges barely faded on a 4/3 box. `ellipse 50%
- * 50%` sizes the radii to half-width and half-height, so the ramp ends
- * exactly on all four mid-edges (owner: "fades on all sides"). The
- * shared `Fade` is left alone on purpose — the other four visuals are
- * framed cards whose border is meant to read as an edge, and they are
- * out of scope for this change.
- */
-function MosaicFade() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,transparent_66%,var(--color-ink)_100%)]"
-    />
   );
 }
 
@@ -432,7 +386,7 @@ function NewProductVisual() {
             </MosaicTile>
           </div>
         </div>
-        <MosaicFade />
+        <VisualFade />
       </div>
     </div>
   );
@@ -549,7 +503,7 @@ function ProductCompletionVisual() {
             <span className="grow" />
             <span className="h-1.5 w-8 bg-white/12" />
           </div>
-          <Fade />
+          <VisualFade />
         </div>
       </ScrollReveal>
     </div>
@@ -635,7 +589,7 @@ function ProductSupportVisual() {
               ))}
             </ScrollReveal>
           </div>
-          <Fade />
+          <VisualFade />
         </div>
       </ScrollReveal>
     </div>
@@ -702,7 +656,7 @@ function InternalToolVisual() {
               ))}
             </div>
           </div>
-          <Fade />
+          <VisualFade />
         </div>
       </ScrollReveal>
     </div>
@@ -868,7 +822,7 @@ function WorkflowVisual() {
             can sit on it; this one cannot. Values are the original
             circle stops, unchanged. */}
         <div className="relative mx-auto w-fit">
-          <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,transparent_30%,var(--color-ink)_78%)]" />
+          <VisualFade />
           {ROWS.map((row, r) => (
             <div
               key={r}
