@@ -41,9 +41,10 @@ import type { PricingTierSlug, ServicePageContent, ServicePageSlug, ServiceSlug 
  *   so each `<h1>` falls back to `name`: canonical vocabulary, not
  *   drafted copy. This is the empty-`features` posture applied to a
  *   heading a page cannot legally render nothing for.
- * - `intro` on `/services/product` — there is no approved *group*
- *   description for three services, so that hero carries none. The
- *   agentic route's is its §05 line, which covers the whole page.
+ * `intro` is now supplied on **both** routes. The agentic one is its
+ * §05 line; the product one is the group-level description the owner
+ * approved on 2026-08-30 (drafted here because §05 has no equivalent
+ * for three services grouped). Neither is DRAFT any more.
  *
  * **`included` was empty on all five blocks and is no longer.** The
  * owner asked for the "what you get" band to be built against a
@@ -118,6 +119,20 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
      */
     eyebrow: "Products",
     name: "Products",
+    /**
+     * The group-level description. **Owner-approved 2026-08-30**, so it
+     * is canonical rather than DRAFT: it was drafted in build-note 26
+     * against the gap Rule 4.3 had left open, posted for approval, and
+     * approved verbatim bar one word — "stalled" became "has stalled",
+     * because the three clauses were not parallel without it.
+     *
+     * Nothing in it is new positioning. "70%" is the Product Completion
+     * §05 line's own figure, already rendered on this page and the home
+     * page; "we validate first" and "and stay" are Rule 3.3's sanctioned
+     * vocabulary. No em dash (#19).
+     */
+    intro:
+      "Three ways in, one way of working. Whether the product does not exist yet, has stalled at 70%, or is live and needs to keep growing, we validate first, build it correctly, and stay.",
     /**
      * The hero strip: the three services this route covers, in page
      * order. Taxonomy §1 names, referenced not copied.

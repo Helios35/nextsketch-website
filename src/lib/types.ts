@@ -312,10 +312,11 @@ export interface ServicePageBlock {
  * - `accentPhrase` — the gold payoff word inside `headline`. Matched
  *   against the string, so it degrades to an unaccented heading exactly
  *   like every other section's `ACCENT_PHRASE`.
- * - `intro` — the supporting paragraph. Present only where an approved
- *   description already covers the whole page (the agentic route's §05
- *   line); the `product` route groups three services and has no
- *   group-level approved copy, so it renders none.
+ * - `intro` — the supporting paragraph. Supplied on both routes: the
+ *   agentic one is its §05 line, the product one is the group-level
+ *   description approved by the owner on 2026-08-30. It stays optional
+ *   so a future route without approved copy renders nothing rather than
+ *   a placeholder.
  *
  * `need` is optional for the same reason it is optional on
  * `ModalTrigger`: a page covering one service preselects it, and a page
