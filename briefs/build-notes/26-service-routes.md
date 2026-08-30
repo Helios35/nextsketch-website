@@ -253,6 +253,16 @@ Two details worth keeping:
 - **The hatch is the placeholder tile's own device**, reused rather than invented: `repeating-linear-gradient(135deg, currentColor 0 1px, transparent 1px 7px)` over a `text-white/[0.05]`.
 - **The today line is `w-0.5`, not `w-px`.** A hairline gold rule disappears at this scale, and it is the one element the whole composition points at.
 
+### The hero graphics and column rule are removed (2026-08-30)
+
+Both service heroes carried a tilted wireframe in a second column behind a `lg:border-l` rule. The owner removed both — "they are not needed now" — so each hero is a single column again: eyebrow, heading, description and the two actions at the page measure, with nothing beside them.
+
+`service-hero-visual.tsx` is **deleted** rather than left unimported, so nobody inherits a 400-line component nothing renders. It is recoverable from git at `a15975e` if the illustrations are ever wanted back.
+
+The intro's `max-w-lg` was sized for a two-up column; with one column it returns to `max-w-2xl`, the body measure `/pricing` uses.
+
+**Still open:** `/services/product` has no description under its heading, which the owner flagged in the same message. There is no approved group-level line for three services, so the slot renders nothing (Rule 4.3) and a draft is posted for approval — see the owner-owed section below.
+
 ### Agentic 02 Internal Tool: an analytics panel (2026-08-30)
 
 The framed dashboard mock is replaced with an **analytics panel** — a status summary beside a trend chart with a read-out on one point — adapted from an owner-supplied incident-frequency screenshot. **This block only.**
