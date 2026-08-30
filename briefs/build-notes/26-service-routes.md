@@ -222,6 +222,22 @@ Three things worth keeping:
 
 `gold` appears once, on the area chart. Everything else is chrome (#31) or the white alpha ladder. Scroll entrance preserved and extended: the seven tiles stagger 120 → 490ms on the shared `ScrollReveal`.
 
+### 02 Product Completion: a developer environment (2026-08-30)
+
+The framed window mock had a box around it and too little detail, so it is replaced with an **explorer tree beside a tabbed editor**, adapted from an owner-supplied editor screenshot. **This block only.**
+
+Adopted: the explorer header with its search affordance, a nested tree with disclosure carets, folder marks, file-type marks and one highlighted open file; the tab strip with per-tab type marks and close affordances; the line-number gutter; and indented, syntax-coloured code.
+
+Refused: every filename, every line of code, every numeral. The reference's syntax palette maps onto the #31 chrome set — `lavender` for keywords and component files, `sage` for strings, `rose` for values and stylesheets, the white ladder for identifiers and punctuation, `white/12` for comments. `gold` appears twice and only twice: the active tab's top rule and the parked caret.
+
+Three things worth keeping:
+
+- **No outer frame, on purpose** (owner: "I should not see a box around the ui"). A border makes it read as a screenshot pasted on the page. The internal chrome — the explorer rule, the tab strip, the gutter — is what says "editor", and the shared `VisualFade` dissolves the edges.
+- **Both columns distribute, they do not stack from the top.** The tree and the code column are `justify-between`, because the bars are fixed pixel sizes: left to stack naturally they filled a short box and left a growing gap at wider viewports, where the 4/3 box gets taller but the content does not.
+- **The caret is a `CODE` entry, not a trailing element.** The gutter renders one tick per code line; a standalone caret after the list would have put the two columns one row out of alignment.
+
+The abandoned-tail metaphor from the old mock survives: the code thins to a stub and stops on an empty line with the caret parked on it.
+
 ### One fade, in one file (2026-08-30)
 
 **This was drift, and it was mine.** Four graphics grew four different gradients as each was tuned in isolation — the hero visuals, the block mocks, the bento mosaic and the tile cluster — and they ended up with four different characters: some soft, some abrupt, one not reaching the edges at all. The owner had to correct it twice.

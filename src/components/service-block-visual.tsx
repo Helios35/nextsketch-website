@@ -393,119 +393,309 @@ function NewProductVisual() {
 }
 
 /* ------------------------------------------------------------------ *
- * Product Completion — a developer workspace.                         *
- * Tabs, a gutter, syntax-coloured code that thins out and stops, and  *
- * a parked caret: "got you 70% there and disappeared."                *
+ * Product Completion — a developer environment.                       *
+ * An explorer tree beside a tabbed editor. Replaces the framed window  *
+ * mock, which had a box around it and too little detail (owner,        *
+ * 2026-08-30). Structure adapted from an owner-supplied editor         *
+ * screenshot; **this block only** — nothing else on either route       *
+ * changes.                                                            *
+ *                                                                      *
+ * **No outer frame, on purpose.** A border around it makes it read as  *
+ * a screenshot pasted on the page; the internal chrome (the explorer   *
+ * rule, the tab strip, the gutter) is what says "editor", and the      *
+ * shared `VisualFade` dissolves the edges instead.                     *
+ *                                                                      *
+ * Rule 4.3 as everywhere else: no filename, no code, no numeral, no    *
+ * logo. The reference's syntax colours map onto the #31 chrome set —   *
+ * `lavender` for keywords and component files, `sage` for strings,     *
+ * `rose` for values and stylesheets, the white alpha ladder for        *
+ * identifiers and punctuation, `white/12` for comments. `gold` appears *
+ * once, on the active tab, and nowhere else.                           *
  * ------------------------------------------------------------------ */
 
+/** Disclosure caret for a tree row. Inline SVG, per §Interaction vocabulary. */
+function Caret({ open = false }: { open?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 12 12"
+      className={`size-2.5 shrink-0 text-white/35 ${open ? "rotate-90" : ""}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="square"
+    >
+      <path d="M4.5 2 L8 6 L4.5 10" />
+    </svg>
+  );
+}
+
+/** Close affordance on a tab. */
+function TabClose() {
+  return (
+    <svg
+      viewBox="0 0 12 12"
+      className="size-2.5 shrink-0 text-white/25"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="square"
+    >
+      <path d="M3 3 L9 9 M9 3 L3 9" />
+    </svg>
+  );
+}
+
 /**
- * Each line is its own run of coloured tokens. The colours are the
- * editor's, not the brand's — keywords, strings, comments — and the
- * tail deliberately thins to nothing, which is the whole metaphor.
+ * The explorer tree. `depth` is the indent step, `kind` decides the
+ * mark: a hollow square is a folder, a filled one is a file tinted by
+ * type. `active` is the open file, the one row with a fill behind it.
  */
-const CODE_LINES: readonly (readonly { w: string; tone: string }[])[] = [
-  [
-    { w: "w-8", tone: "bg-lavender/80" },
-    { w: "w-14", tone: "bg-white/25" },
-    { w: "w-6", tone: "bg-sage/75" },
-  ],
-  [
-    { w: "w-4", tone: "bg-white/10" },
-    { w: "w-10", tone: "bg-lavender/80" },
-    { w: "w-20", tone: "bg-sage/75" },
-  ],
-  [
-    { w: "w-4", tone: "bg-white/10" },
-    { w: "w-12", tone: "bg-white/20" },
-    { w: "w-8", tone: "bg-rose/75" },
-  ],
-  [
-    { w: "w-8", tone: "bg-white/10" },
-    { w: "w-9", tone: "bg-lavender/80" },
-    { w: "w-14", tone: "bg-white/20" },
-  ],
-  [
-    { w: "w-8", tone: "bg-white/10" },
-    { w: "w-16", tone: "bg-sage/75" },
-  ],
-  /* The comment the last firm left behind, then the stub. */
-  [{ w: "w-24", tone: "bg-white/12" }],
-  [
-    { w: "w-4", tone: "bg-white/10" },
-    { w: "w-6", tone: "bg-white/15" },
-  ],
+const TREE: readonly {
+  depth: 0 | 1 | 2 | 3;
+  folder?: boolean;
+  open?: boolean;
+  tone?: string;
+  w: string;
+  active?: boolean;
+}[] = [
+  { depth: 0, folder: true, w: "w-20" },
+  { depth: 0, folder: true, w: "w-12" },
+  { depth: 0, folder: true, open: true, w: "w-8" },
+  { depth: 1, folder: true, w: "w-12" },
+  { depth: 1, folder: true, open: true, w: "w-11" },
+  { depth: 2, tone: "bg-rose/70", w: "w-14" },
+  { depth: 1, folder: true, open: true, w: "w-16" },
+  { depth: 2, tone: "bg-lavender/70", w: "w-12" },
+  { depth: 2, tone: "bg-lavender/70", w: "w-14", active: true },
+  { depth: 2, tone: "bg-lavender/70", w: "w-16" },
+  { depth: 2, tone: "bg-lavender/70", w: "w-11" },
+  { depth: 1, folder: true, w: "w-10" },
+  { depth: 1, folder: true, w: "w-11" },
+  { depth: 1, tone: "bg-gold/70", w: "w-13" },
+  { depth: 1, tone: "bg-lavender/70", w: "w-12" },
+  { depth: 1, folder: true, w: "w-14" },
+  { depth: 1, folder: true, w: "w-8" },
+  { depth: 1, folder: true, w: "w-16" },
+];
+
+const INDENT: Record<0 | 1 | 2 | 3, string> = {
+  0: "pl-0",
+  1: "pl-3",
+  2: "pl-6",
+  3: "pl-9",
+};
+
+/** Editor tabs. The first is active. */
+const TABS: readonly { tone: string; w: string }[] = [
+  { tone: "bg-lavender/70", w: "w-12" },
+  { tone: "bg-gold/70", w: "w-11" },
+  { tone: "bg-white/30", w: "w-14" },
+  { tone: "bg-sage/70", w: "w-10" },
+];
+
+/**
+ * Syntax-coloured code. Each line is a run of tokens; the tail thins to
+ * a stub and stops, which is the "got you 70% there and disappeared"
+ * metaphor the previous mock carried and this one keeps.
+ */
+const CODE: readonly {
+  indent: 0 | 1 | 2 | 3;
+  tokens: { w: string; tone: string }[];
+  caret?: boolean;
+}[] = [
+  {
+    indent: 0,
+    tokens: [
+      { w: "w-10", tone: "bg-lavender/70" },
+      { w: "w-8", tone: "bg-white/30" },
+      { w: "w-6", tone: "bg-lavender/70" },
+      { w: "w-12", tone: "bg-sage/60" },
+    ],
+  },
+  {
+    indent: 0,
+    tokens: [
+      { w: "w-10", tone: "bg-lavender/70" },
+      { w: "w-4", tone: "bg-white/20" },
+      { w: "w-9", tone: "bg-white/30" },
+      { w: "w-14", tone: "bg-sage/60" },
+    ],
+  },
+  {
+    indent: 0,
+    tokens: [
+      { w: "w-10", tone: "bg-lavender/70" },
+      { w: "w-7", tone: "bg-white/30" },
+      { w: "w-16", tone: "bg-sage/60" },
+    ],
+  },
+  {
+    indent: 0,
+    tokens: [
+      { w: "w-10", tone: "bg-lavender/70" },
+      { w: "w-12", tone: "bg-white/30" },
+      { w: "w-10", tone: "bg-sage/60" },
+    ],
+  },
+  { indent: 0, tokens: [] },
+  {
+    indent: 0,
+    tokens: [
+      { w: "w-8", tone: "bg-lavender/70" },
+      { w: "w-9", tone: "bg-rose/60" },
+      { w: "w-3", tone: "bg-white/20" },
+    ],
+  },
+  { indent: 1, tokens: [{ w: "w-3", tone: "bg-white/20" }] },
+  {
+    indent: 2,
+    tokens: [
+      { w: "w-4", tone: "bg-white/30" },
+      { w: "w-3", tone: "bg-rose/60" },
+    ],
+  },
+  {
+    indent: 2,
+    tokens: [
+      { w: "w-8", tone: "bg-white/30" },
+      { w: "w-10", tone: "bg-sage/60" },
+    ],
+  },
+  {
+    indent: 2,
+    tokens: [
+      { w: "w-6", tone: "bg-white/30" },
+      { w: "w-20", tone: "bg-sage/60" },
+    ],
+  },
+  {
+    indent: 2,
+    tokens: [
+      { w: "w-9", tone: "bg-white/30" },
+      { w: "w-16", tone: "bg-sage/60" },
+      { w: "w-3", tone: "bg-white/20" },
+    ],
+  },
+  { indent: 1, tokens: [{ w: "w-24", tone: "bg-white/12" }] },
+  { indent: 1, tokens: [{ w: "w-3", tone: "bg-white/20" }] },
+  {
+    indent: 0,
+    tokens: [
+      { w: "w-6", tone: "bg-lavender/70" },
+      { w: "w-4", tone: "bg-white/20" },
+    ],
+  },
+  { indent: 1, tokens: [{ w: "w-5", tone: "bg-white/25" }] },
+  /* Where it was abandoned: the caret, parked on an empty line. It is a
+     CODE entry rather than a trailing element so the gutter and the code
+     column hold the same number of items and stay aligned. */
+  { indent: 1, tokens: [], caret: true },
 ];
 
 function ProductCompletionVisual() {
   return (
     <div className={SHELL}>
-      <ScrollReveal delay={120}>
-        <div className={FRAME}>
-          {/* Tab strip. The first tab is active, marked by the gold
-              underline the Process accordion uses for "you are here". */}
-          <div className="flex items-stretch border-b border-white/10 pr-4">
-            <span className="flex items-center gap-2 border-b border-gold px-4 py-3">
-              <span className="size-1.5 rotate-45 bg-gold" />
-              <span className="h-1.5 w-10 bg-white/30" />
-            </span>
-            <span className="flex items-center gap-2 px-4 py-3">
-              <Dot tone="bg-sage/80" />
-              <span className="h-1.5 w-8 bg-white/10" />
-            </span>
-            <span className="flex items-center gap-2 px-4 py-3">
-              <Dot tone="bg-lavender/80" />
-              <span className="h-1.5 w-7 bg-white/10" />
-            </span>
-            <span className="grow" />
-            <span className="flex items-center">
-              <Profile />
-            </span>
-          </div>
-          <div className="flex grow">
-            {/* Line-number gutter. Ticks, never numerals: a numeral is
-                content and this mock carries none. */}
-            <div className="flex flex-col gap-[11px] border-r border-white/10 px-3 py-4">
-              {CODE_LINES.map((_, i) => (
-                <span key={i} className="h-1.5 w-2 bg-white/15" />
-              ))}
-              <span className="h-1.5 w-2 bg-white/[0.06]" />
-              <span className="h-1.5 w-2 bg-white/[0.06]" />
-            </div>
-            <div className="grow px-4 py-4">
-              {CODE_LINES.map((line, i) => (
-                <ScrollReveal key={i} delay={200 + i * 55}>
+      <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <div className="flex h-full min-w-0">
+          {/* Explorer. */}
+          <div className="flex w-[36%] min-w-0 shrink-0 flex-col border-r border-white/10 py-3">
+            <ScrollReveal delay={120}>
+              <span className="flex items-center justify-between px-3 pb-2.5">
+                <Bar className="h-2 w-14 bg-white/45" />
+                <span className="size-2.5 rounded-none border border-white/25" />
+              </span>
+            </ScrollReveal>
+            <div className="flex min-h-0 grow flex-col justify-between">
+              {TREE.map((row, i) => (
+                <ScrollReveal key={i} delay={170 + i * 22}>
                   <span
-                    className={`mb-[11px] flex items-center gap-2 ${
-                      i === 0 ? "" : i < 5 ? "pl-4" : "pl-0"
+                    className={`flex items-center gap-1.5 py-[3px] pr-2 ${
+                      row.active ? "bg-white/[0.07]" : ""
                     }`}
                   >
-                    {line.map((token, t) => (
-                      <span
-                        key={t}
-                        className={`block h-1.5 ${token.w} ${token.tone}`}
+                    <span
+                      className={`flex items-center gap-1.5 ${INDENT[row.depth]} pl-2`}
+                    >
+                      {row.folder ? (
+                        <>
+                          <Caret open={row.open} />
+                          <span className="size-2.5 shrink-0 border border-white/30" />
+                        </>
+                      ) : (
+                        <>
+                          <span className="size-2.5 shrink-0" />
+                          <span className={`size-2 shrink-0 ${row.tone}`} />
+                        </>
+                      )}
+                      <Bar
+                        className={`${row.w} ${
+                          row.active
+                            ? "bg-white/60"
+                            : row.folder
+                              ? "bg-white/30"
+                              : "bg-white/25"
+                        }`}
                       />
-                    ))}
+                    </span>
                   </span>
                 </ScrollReveal>
               ))}
-              {/* The caret, parked where the last firm stopped. */}
-              <ScrollReveal delay={200 + CODE_LINES.length * 55}>
-                <span className="block h-3 w-0.5 bg-gold" />
-              </ScrollReveal>
             </div>
           </div>
-          {/* Status bar. */}
-          <div className="flex items-center gap-3 border-t border-white/10 px-4 py-2.5">
-            <Dot tone="bg-sage/85" />
-            <span className="h-1.5 w-10 bg-white/12" />
-            <Dot tone="bg-rose/85" />
-            <span className="h-1.5 w-6 bg-white/12" />
-            <span className="grow" />
-            <span className="h-1.5 w-8 bg-white/12" />
+
+          {/* Editor. */}
+          <div className="flex min-w-0 grow flex-col">
+            {/* Tab strip. The active tab is the one gold element. */}
+            <ScrollReveal delay={260}>
+              <span className="flex items-stretch border-b border-white/10">
+                {TABS.map((tab, i) => (
+                  <span
+                    key={i}
+                    className={`flex items-center gap-2 border-r border-white/[0.07] px-2.5 py-2.5 ${
+                      i === 0 ? "border-t border-t-gold bg-white/[0.04]" : ""
+                    }`}
+                  >
+                    <span className={`size-2.5 shrink-0 ${tab.tone}`} />
+                    <Bar
+                      className={`${tab.w} ${i === 0 ? "bg-white/55" : "bg-white/25"}`}
+                    />
+                    <TabClose />
+                  </span>
+                ))}
+              </span>
+            </ScrollReveal>
+
+            {/* Gutter and code. */}
+            <div className="flex min-h-0 grow pt-2.5">
+              <span className="flex w-7 shrink-0 flex-col items-end justify-between pr-2">
+                {CODE.map((_, i) => (
+                  <span key={i} className="h-1.5 w-2.5 bg-white/15" />
+                ))}
+              </span>
+              <div className="flex min-w-0 grow flex-col justify-between pr-3">
+                {CODE.map((line, i) => (
+                  <ScrollReveal key={i} delay={310 + i * 42}>
+                    <span
+                      className={`flex h-1.5 items-center gap-1.5 ${INDENT[line.indent]}`}
+                    >
+                      {line.tokens.map((t, j) => (
+                        <span
+                          key={j}
+                          className={`block h-1.5 ${t.w} ${t.tone}`}
+                        />
+                      ))}
+                      {line.caret === true && (
+                        <span className="block h-3 w-0.5 bg-gold" />
+                      )}
+                    </span>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
           </div>
-          <VisualFade />
         </div>
-      </ScrollReveal>
+        <VisualFade />
+      </div>
     </div>
   );
 }
