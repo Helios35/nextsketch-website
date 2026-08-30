@@ -134,7 +134,7 @@ A **service page slug is not a `ServiceSlug`.** Two pages cover four services, s
 
 `agentic-system` is spelled exactly like its `ServiceSlug` because that page *is* that service; `product` is a group name with no service behind it. The agentic blocks are kebab-cased from the **tier names**, not the terse tier slugs (`workflow` / `tool`), because these appear in the URL. Canonical in `src/lib/types.ts` → `ServicePageSlug`, `ServiceBlockId`, `SERVICE_BLOCK_PAGE`, and `src/content/service-pages.ts` → `SERVICE_PAGES`.
 
-Every inbound link is built by `serviceBlockHref`, which looks a block's page out of `SERVICE_BLOCK_PAGE`, so a link can never pair a block with a page that does not carry it and every href is root-relative by construction.
+The home page's cards link to the **route root**, so a visitor lands on the hero (#30, corrected 2026-08-30). The block anchors stay live for a shared or bookmarked URL, and `serviceBlockHref` remains the only sanctioned way to build one — it looks a block's page out of `SERVICE_BLOCK_PAGE`, so a link can never pair a block with a page that does not carry it and every href is root-relative by construction.
 
 ### Section IDs (anchor names)
 

@@ -70,11 +70,27 @@ import type { ServicePageSlug } from "@/lib/types";
  */
 const STAGE =
   "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 " +
-  "scale-[0.58] sm:scale-[0.74] lg:scale-[0.72] xl:scale-[0.88] " +
-  "[perspective:1500px]";
+  "scale-[0.58] sm:scale-[0.74] lg:scale-[0.72] xl:scale-[0.88]";
 
-const TILT =
-  "[transform:rotateX(32deg)_rotateZ(-24deg)] [transform-style:preserve-3d]";
+/**
+ * Perspective and tilt are **per route**, not shared. The product route
+ * was mirrored and given a stronger camera (owner direction,
+ * 2026-08-30); the agentic route keeps the original, so the two are
+ * deliberately no longer identical and one cannot be changed by editing
+ * the other. Perspective has to live on the *parent* of the transformed
+ * plane, which is why it is part of this config and not of the tilt.
+ */
+const CAMERA = {
+  /** Mirrored (`rotateZ` sign flipped) and closer, so it foreshortens harder. */
+  product: {
+    perspective: "[perspective:1050px]",
+    tilt: "[transform:rotateX(40deg)_rotateZ(26deg)] [transform-style:preserve-3d]",
+  },
+  agentic: {
+    perspective: "[perspective:1500px]",
+    tilt: "[transform:rotateX(32deg)_rotateZ(-24deg)] [transform-style:preserve-3d]",
+  },
+} as const;
 
 /**
  * The stage clips, so the fade is what keeps that from reading as a
@@ -301,7 +317,7 @@ function ProductHeroVisual() {
     <div className="relative h-[560px] w-[720px]">
       {/* The chart card, behind. */}
       <Pane
-        at="top-[55px] left-[215px] w-[415px]"
+        at="top-[45px] left-[90px] w-[415px]"
         z={0}
         delay={300}
         surface="p-6"
@@ -336,7 +352,7 @@ function ProductHeroVisual() {
 
       {/* The task list, lifted in front and overlapping it. */}
       <Pane
-        at="top-[295px] left-[70px] w-[375px]"
+        at="top-[250px] left-[280px] w-[375px]"
         z={110}
         delay={440}
         surface="p-6"
@@ -368,17 +384,23 @@ function ProductHeroVisual() {
 }
 
 /**
- * Route -> its hero illustration. Total over `ServicePageSlug`, so a
- * third route cannot ship without one and cannot silently inherit
- * another's.
+ * Route -> its hero illustration and its camera. Total over
+ * `ServicePageSlug`, so a third route cannot ship without one and
+ * cannot silently inherit another's.
  */
-const VISUALS: Record<ServicePageSlug, () => React.JSX.Element> = {
-  product: ProductHeroVisual,
-  "agentic-system": AgenticHeroVisual,
+const VISUALS: Record<
+  ServicePageSlug,
+  {
+    Visual: () => React.JSX.Element;
+    camera: (typeof CAMERA)[keyof typeof CAMERA];
+  }
+> = {
+  product: { Visual: ProductHeroVisual, camera: CAMERA.product },
+  "agentic-system": { Visual: AgenticHeroVisual, camera: CAMERA.agentic },
 };
 
 export function ServiceHeroVisual({ page }: { page: ServicePageSlug }) {
-  const Visual = VISUALS[page];
+  const { Visual, camera } = VISUALS[page];
 
   return (
     /* Decorative in full: skeleton matter carrying no readable content,
@@ -388,8 +410,8 @@ export function ServiceHeroVisual({ page }: { page: ServicePageSlug }) {
       aria-hidden="true"
       className="relative aspect-[4/3] w-full overflow-hidden"
     >
-      <div className={STAGE}>
-        <div className={TILT}>
+      <div className={`${STAGE} ${camera.perspective}`}>
+        <div className={camera.tilt}>
           <Visual />
         </div>
       </div>

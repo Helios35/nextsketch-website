@@ -1,5 +1,5 @@
 import type { ProjectType } from "@/lib/schema";
-import { serviceBlockHref, serviceRoute } from "@/lib/types";
+import { serviceRoute } from "@/lib/types";
 import type { Service, ServiceSlug } from "@/lib/types";
 
 /**
@@ -74,31 +74,40 @@ export const SERVICE_NEED: Record<ServiceSlug, ProjectType> = {
 };
 
 /**
- * Service slug -> the page (or the anchored block on it) that card
- * opens. Decision-log **#30** (2026-08-28).
+ * Service slug -> the service route that card opens. Decision-log
+ * **#30** (2026-08-28), **corrected 2026-08-30**.
  *
- * The unit-26 brief left "how the home-page service cards reach these
- * pages" open as an owner call. The owner answered it with the route
- * shape: two pages, each covering a group, and a click "goes to the
- * sections covering each topic clicked" (2026-08-28). So three cards
- * carry a block anchor and the fourth carries the page itself, because
- * `/services/agentic-system` *is* the Agentic System service and its
- * two blocks are depths of it, not the service.
+ * **Every card opens its route at the top.** The first cut sent the
+ * three product cards to their block anchors, because the owner's
+ * 2026-08-28 direction was that a click "goes to the sections covering
+ * each topic clicked". That was built before the routes had a hero
+ * worth landing on: measured from `/`, a card put the visitor at
+ * scrollY 544 with the `<h1>` 199px above the fold, so the ribbon, the
+ * heading, the CTAs and the graphic were all skipped on arrival. The
+ * owner corrected it (2026-08-30) — **the page loads on the hero.**
  *
- * Nothing here is a hand-written hash. `serviceBlockHref` looks each
- * block's page out of `SERVICE_BLOCK_PAGE`, so a card can never point
- * at an anchor the page it names does not carry, and every href is
- * root-relative by construction — the trap the brief says this unit
- * multiplies by four.
+ * That also makes all four cards behave the same way. Only the product
+ * three ever carried anchors; `agentic-system` always pointed at its
+ * route root, because that page *is* that service and its two blocks
+ * are depths of it — which is why the inconsistency showed up on one
+ * page and not the other.
+ *
+ * **The block anchors are untouched and still work.** They remain real
+ * `<section id>` targets, so a shared or bookmarked
+ * `/services/product#product-support` still lands on that block;
+ * nothing on the site generates one any more. `serviceBlockHref` stays
+ * exported for exactly that reason: it is the only typo-proof,
+ * root-relative way to build one, and deleting it would leave the next
+ * caller hand-writing the hash this unit exists to prevent.
  *
  * Typed as a total map over ServiceSlug: a new service without a
  * destination fails typecheck instead of shipping a card that goes
  * nowhere, the same guarantee `SERVICE_NEED` gives above.
  */
 export const SERVICE_PAGE_HREF: Record<ServiceSlug, string> = {
-  "new-product": serviceBlockHref("new-product"),
-  "product-completion": serviceBlockHref("product-completion"),
-  "product-support": serviceBlockHref("product-support"),
+  "new-product": serviceRoute("product"),
+  "product-completion": serviceRoute("product"),
+  "product-support": serviceRoute("product"),
   "agentic-system": serviceRoute("agentic-system"),
 };
 
