@@ -1,3 +1,5 @@
+import type { ProjectType } from "@/lib/schema";
+
 /**
  * Shared domain types. Canonical names and values come from
  * docs/06-taxonomy.md — never invent alternates.
@@ -129,14 +131,89 @@ export type WorkItem = {
 
 /**
  * The routes the site serves (docs/03-site-architecture.md §Sitemap).
- * `/` is the single scrolling page; `/pricing` is the one standalone
- * route (decision-log #23). `/api/qualify` is POST-only and has no
- * page, so it is not a destination anything links to.
+ * `/` is the scrolling home page; `/pricing` is the first standalone
+ * route (decision-log #23) and the **two service routes** under
+ * `/services/` are the next (**#30**). `/api/qualify` is POST-only and
+ * has no page, so it is not a destination anything links to.
+ *
+ * The service routes are built by `serviceRoute` rather than listed
+ * here, so the segment and the slug can never disagree. There is
+ * deliberately **no `/services` index** — the home page's `#services`
+ * section is the hub.
  */
 export const ROUTES = {
   home: "/",
   pricing: "/pricing",
 } as const;
+
+/**
+ * The two service routes (decision-log **#30**).
+ *
+ * The unit-26 brief specified four routes, one per service slug; the
+ * owner reduced that to two pages, each covering a related group, with
+ * an in-page anchored block per topic (owner direction, 2026-08-28).
+ * So a service page slug is **not** a `ServiceSlug`: `product` groups
+ * three of the four services, and `agentic-system` is one service sold
+ * at two depths (Taxonomy §1 "Two kinds of agentic system", #29).
+ *
+ * `agentic-system` is spelled exactly like its `ServiceSlug`, which is
+ * the point — that page is that service. `product` is a group name and
+ * has no service slug behind it.
+ */
+export type ServicePageSlug = "product" | "agentic-system";
+
+/**
+ * Root-relative path for a service route — `/services/product`, never
+ * a hand-written string. Generic so the literal survives, the same
+ * guarantee `sectionHref` gives its anchors.
+ */
+export const serviceRoute = <P extends ServicePageSlug>(
+  page: P,
+): `/services/${P}` => `/services/${page}`;
+
+/**
+ * The anchored blocks a service route carries — the "sections covering
+ * each topic clicked" (owner direction, 2026-08-28). Each is the `id`
+ * of a real `<section>`, so `globals.css`'s `section[id]` scroll-margin
+ * clears the fixed bar for free.
+ *
+ * The first three are the `ServiceSlug`s the `product` page groups. The
+ * last two are the two depths `/pricing` sells the Agentic System
+ * service at, kebab-cased from their tier names (§8) rather than from
+ * the terse tier slugs (`workflow` / `tool`), because these are what a
+ * visitor sees in the URL.
+ */
+export type ServiceBlockId =
+  | "new-product"
+  | "product-completion"
+  | "product-support"
+  | "ai-workflow-integration"
+  | "internal-tool";
+
+/**
+ * Which route hosts each block. Total over `ServiceBlockId`, so a new
+ * block that has not been given a page fails typecheck instead of
+ * shipping a link to nowhere.
+ */
+export const SERVICE_BLOCK_PAGE: Record<ServiceBlockId, ServicePageSlug> = {
+  "new-product": "product",
+  "product-completion": "product",
+  "product-support": "product",
+  "ai-workflow-integration": "agentic-system",
+  "internal-tool": "agentic-system",
+};
+
+/**
+ * Root-relative anchor for a service block — `/services/product#new-product`.
+ *
+ * The unit-26 brief calls the bare hash the trap this unit multiplies:
+ * `#new-product` written on `/services/agentic-system` resolves to
+ * nothing. Nothing hand-writes one; the block id picks its own page out
+ * of `SERVICE_BLOCK_PAGE`, so a link can never pair a block with a page
+ * that does not carry it.
+ */
+export const serviceBlockHref = (block: ServiceBlockId): string =>
+  `${serviceRoute(SERVICE_BLOCK_PAGE[block])}#${block}`;
 
 /**
  * Root-relative anchor for a section — `/#work`, never `#work`.
@@ -193,4 +270,79 @@ export interface PricingTier {
   /** Caption under the retainer figure — where the term is said out loud. */
   readonly ongoingNote: string;
   readonly features: readonly string[];
+}
+
+/**
+ * One anchored block on a service route (decision-log **#30**) — the
+ * §05 (or tier) description a visitor lands on when they click a topic,
+ * plus the CTA that carries that topic into the modal.
+ *
+ * `need` is the canonical `ProjectType` the block's CTA preselects. It
+ * is a field rather than a second slug-to-need map because the brief
+ * binds this unit to the existing seam: every value is read out of
+ * `SERVICE_NEED` or `PRICING_NEED` in content, so there is exactly one
+ * mapping per vocabulary and this type only carries the result.
+ *
+ * `included` is `readonly string[]` and **may be empty**: a block with
+ * no owner-approved bullets renders no list at all rather than an
+ * invented one, and no empty frame either (Rule 4.3, and the empty
+ * `PricingTier.features` precedent). Bullets are owner-owed.
+ */
+export interface ServicePageBlock {
+  readonly id: ServiceBlockId;
+  /** Canonical service or tier name — Taxonomy §1. Never reworded. */
+  readonly name: string;
+  /** Messaging Kit §05 or the tier's `/pricing` description, as-is (Rule 4.1). */
+  readonly description: string;
+  readonly need: ProjectType;
+  readonly included: readonly string[];
+}
+
+/**
+ * One service route's content (decision-log **#30**).
+ *
+ * **Three fields are optional because the copy behind them is
+ * owner-owed, and each renders nothing until it lands** (Rule 4.3, the
+ * brief's "render nothing in that slot — not a placeholder heading, not
+ * an empty frame"):
+ *
+ * - `headline` — the one-line promise. Until it exists the `<h1>` falls
+ *   back to `name`, which is canonical vocabulary rather than drafted
+ *   copy, so the page is never headless and nothing invented ships.
+ * - `accentPhrase` — the gold payoff word inside `headline`. Matched
+ *   against the string, so it degrades to an unaccented heading exactly
+ *   like every other section's `ACCENT_PHRASE`.
+ * - `intro` — the supporting paragraph. Supplied on both routes: the
+ *   agentic one is its §05 line, the product one is the group-level
+ *   description approved by the owner on 2026-08-30. It stays optional
+ *   so a future route without approved copy renders nothing rather than
+ *   a placeholder.
+ *
+ * `need` is optional for the same reason it is optional on
+ * `ModalTrigger`: a page covering one service preselects it, and a page
+ * covering three preselects nothing rather than guessing one of them.
+ */
+export interface ServicePageContent {
+  readonly slug: ServicePageSlug;
+  /** Browser tab and search-result title, in the `PRICING.title` house form. */
+  readonly title: string;
+  readonly description: string;
+  /** Mono micro-label above the heading (docs/04-ux-spec.md §Typography). */
+  readonly eyebrow: string;
+  /** Canonical name; the `<h1>` fallback until `headline` is approved. */
+  readonly name: string;
+  readonly headline?: string;
+  readonly accentPhrase?: string;
+  readonly intro?: string;
+  readonly need?: ProjectType;
+  /**
+   * Labels for the hero's capability strip — the same marquee the
+   * landing hero carries (`CapabilityStrip`), with this route's own
+   * services in it (decision-log **#30**, owner direction 2026-08-30).
+   * Canonical names only, referenced from `SERVICES` / `PRICING_TIERS`
+   * rather than re-literalled, so a rename cannot leave the strip
+   * behind.
+   */
+  readonly strip: readonly string[];
+  readonly blocks: readonly ServicePageBlock[];
 }

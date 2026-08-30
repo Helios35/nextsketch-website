@@ -1,5 +1,6 @@
-import { Fragment, type CSSProperties } from "react";
+import { Fragment } from "react";
 import { BrandWordmark } from "@/components/brand-wordmark";
+import { CapabilityStrip } from "@/components/capability-strip";
 import { HeroCta } from "@/components/hero-cta";
 import { HeroOrbit } from "@/components/hero-orbit";
 import { LANDING } from "@/content/copy";
@@ -32,9 +33,6 @@ import { LANDING } from "@/content/copy";
 /** Match against accentWords ignoring case and trailing punctuation. */
 const ACCENT_WORDS = new Set<string>(LANDING.accentWords);
 const normalize = (word: string) => word.replace(/[^a-z]/gi, "").toLowerCase();
-
-/** Four copies of the strip keep the loop seamless on wide viewports. */
-const MARQUEE_COPIES = [0, 1, 2, 3];
 
 export function Hero() {
   const words = LANDING.headline.split(" ");
@@ -74,37 +72,10 @@ export function Hero() {
             Slow, pauses on hover, motion-safe so reduced-motion users get
             a static strip. */}
         <div className="relative z-10 w-full max-w-4xl px-6 sm:px-8 lg:px-16 motion-safe:animate-rise-in">
-          <div
-            role="group"
-            aria-label={LANDING.capabilitiesLabel}
-            className="group overflow-hidden border-y border-white/10 bg-ink/30 py-2.5 backdrop-blur-sm"
-            style={{ "--duration": "38s", "--gap": "2.5rem" } as CSSProperties}
-          >
-            <div className="flex [gap:var(--gap)]">
-              {MARQUEE_COPIES.map((copy) => (
-                <ul
-                  key={copy}
-                  aria-hidden={copy !== 0}
-                  className="flex shrink-0 items-center [gap:var(--gap)] motion-safe:animate-marquee motion-safe:group-hover:[animation-play-state:paused]"
-                >
-                  {LANDING.capabilities.map((capability) => (
-                    <li
-                      key={capability}
-                      className="flex items-center gap-3.5 whitespace-nowrap"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
-                      />
-                      <span className="font-mono text-xs tracking-[0.12em] text-white/70 sm:text-sm">
-                        {capability}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ))}
-            </div>
-          </div>
+          <CapabilityStrip
+            items={LANDING.capabilities}
+            label={LANDING.capabilitiesLabel}
+          />
         </div>
 
         {/* Headline + CTA (left) | gold-italic supporting line (right). */}
