@@ -2,6 +2,7 @@ import { BrandWordmark } from "@/components/brand-wordmark";
 import { Button } from "@/components/button";
 import { CapabilityStrip } from "@/components/capability-strip";
 import { ModalTrigger } from "@/components/modal-trigger";
+import { PageGlow } from "@/components/page-glow";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { ServiceBlockVisual } from "@/components/service-block-visual";
@@ -173,9 +174,13 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
 
   return (
     <>
+      {/* The viewport-fixed gold glow (#35). The section and band
+          backgrounds below are transparent so it shows through — the
+          page's ground is the layout's `ink`. */}
+      <PageGlow />
       <section
         aria-labelledby="service-headline"
-        className="relative flex w-full flex-col bg-ink"
+        className="relative flex w-full flex-col"
       >
         {/* Load-bearing. See the doc block — do not flatten the h-0
             sticky wrapper, and do not add padding above it. */}
@@ -275,7 +280,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
           Each block is a real <section id>, so `globals.css`'s
           `section[id] { scroll-margin-top: 5rem }` clears the fixed bar
           on a deep link with no extra CSS. */}
-      <div className="w-full bg-ink px-6 pb-24 sm:px-8 sm:pb-28 lg:px-16 lg:pb-32">
+      <div className="w-full px-6 pb-24 sm:px-8 sm:pb-28 lg:px-16 lg:pb-32">
         <div className={`${MEASURE} flex flex-col gap-24 md:gap-32`}>
           {page.blocks.map((block, i) => {
             /* Sides alternate (owner direction): the visual leads on
@@ -410,7 +415,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
 
       <section
         aria-labelledby="service-close-headline"
-        className="w-full bg-ink px-6 pb-28 sm:px-8 sm:pb-32 lg:px-16 lg:pb-44"
+        className="w-full px-6 pb-28 sm:px-8 sm:pb-32 lg:px-16 lg:pb-44"
       >
         <div className={MEASURE}>
           <ScrollReveal>

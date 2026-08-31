@@ -119,6 +119,26 @@ Mechanics: satellites are percent-positioned on the stage; the connector SVG (`v
 
 Verified: typecheck/lint green, 375/1080/1800 overflow probe clean on both routes (headless Chrome device metrics), target treatment measured, screenshot reviewed.
 
+## 4. The gold page glow on `/pricing` and the service routes (owner direction, 2026-08-31)
+
+Recorded as **decision-log #35**. The owner pasted a background component (radial spotlight + animated noise canvas, plus a grid-lined demo variant) with: "ONLY use the glow NOTHING ELSE. The glow should be our color amber. I REPEAT. DO NOT TOUCH THE HOME PAGE."
+
+**What shipped** — `src/components/page-glow.tsx`, mounted by `pricing/page.tsx` and `service-page.tsx` (both service routes): the source's exact spotlight (`circle 560px at 50% 200px`), viewport-fixed at `-z-10`, in the brand `gold` at **0.3 alpha**. The alpha is the declared intensity knob — the source ships solid `#f97316`, which on this brand floods the hero and costs the white headline its contrast.
+
+**What was dropped, per "only the glow":** the noise canvas — the snippet's only client JS, an ungated per-frame rAF canvas repaint with no slot in the §Motion posture; without it the component is a server component shipping zero JS — plus the demo's grid lines and the `slate`/`black` bases (the pages are `ink`; `slate` does not compile against the cleared palette). The snippet's shadcn `/components/ui` placement was not followed: components live flat in `src/components/`.
+
+**Integration:** the three routes' bands shed their own `bg-ink` (`service-page.tsx` hero/rows/close, `service-process.tsx`, `pricing/page.tsx`, `pricing-tiers.tsx` — every one page-scoped), because an opaque band over a `-z-10` fixed backdrop hides it. The pages' ground is the layout's `ink`. The footer keeps its `bg-ink` on every page — it is shared with `/`, and the glow region is the upper viewport.
+
+**Home untouched, verified, not assumed:** no home-rendered file was edited, and in the browser `/` has no glow node in its DOM, the orbit footage still mounts, and all ten of its `bg-ink` bands are intact.
+
+| Check | Result |
+|---|---|
+| Glow renders on all three routes | Screenshots at top and scrolled — the fixed glow persists softly at the viewport top; opaque `surface` cards ride above it |
+| Headline legibility | White display text over the 0.3-alpha glow reads clean on all three heroes |
+| Wordmark handoff 0 / 78 / 82 / 300 | `/pricing` and agentic route both match the documented pattern exactly |
+| Console | Site-clean; Apollo tracker 400 pre-existing (unit 19) |
+| `typecheck` / `lint` / fresh `build` / `banned-terms` | All green; all routes still ○ (Static); 56 files clean |
+
 ### Named and left (adversarial review, 2026-08-31)
 
 - **`bg-[#101013]`** (`service-block-visual.tsx`, the selected TaskCard state) is a second, different elevated one-off literal. The "one location" directive arguably covers it, but it is not `#0a0a0c` and was not swept. Owner call whether it should become a token or fold into `surface`.

@@ -102,7 +102,7 @@ export function PricingTiers() {
   return (
     <section
       aria-labelledby="pricing-tiers-heading"
-      className="w-full bg-ink px-6 pb-24 sm:px-8 lg:px-16 lg:pb-32"
+      className="w-full px-6 pb-24 sm:px-8 lg:px-16 lg:pb-32"
     >
       <h2 id="pricing-tiers-heading" className="sr-only">
         {PRICING.tiersHeading}

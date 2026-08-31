@@ -90,7 +90,7 @@ export function ServiceProcess() {
   return (
     <section
       aria-labelledby="service-process-headline"
-      className="w-full bg-ink px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-32"
+      className="w-full px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-32"
     >
       <div className={MEASURE}>
         <ScrollReveal>
