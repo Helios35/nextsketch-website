@@ -202,8 +202,14 @@ export const PRICING_TIERS = [
   {
     slug: "workflow",
     name: "AI Workflow Integration",
+    /**
+     * Owner-directed reframe, 2026-08-31 (decision-log #36): this tier
+     * is agentic work that needs **no custom tool**. Claude or OpenAI,
+     * integrated into what already runs. The custom-tool depth is the
+     * `tool` tier below; the two descriptions carry that split.
+     */
     description:
-      "Embedded agents integrated into the processes your business already runs. We assess where they create real value in the day to day, then build them into the work itself.",
+      "Claude or OpenAI agents integrated into the work your business already does: checking emails, running reports, moving tasks along. No custom tool to build, no new platform to learn.",
     upfront: "$3,998",
     upfrontWas: "$5,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
@@ -214,8 +220,14 @@ export const PRICING_TIERS = [
   {
     slug: "tool",
     name: "Internal Tool",
+    /**
+     * Owner-directed reframe, 2026-08-31 (decision-log #36): this tier
+     * always means a **custom tool**, with custom agents where the job
+     * demands them. "Agent crews" is the deliberate nod to the
+     * CrewAI/LlamaIndex class of build without naming a vendor.
+     */
     description:
-      "A custom internal platform or agent built for your specific business processes. A real tool that you own, built around how your team actually works.",
+      "A custom tool built for your specific business processes, from a dashboard Claude plugs into to purpose-built agent crews. A real tool that you own, built around how your team actually works.",
     upfront: "$7,998",
     upfrontWas: "$10,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",

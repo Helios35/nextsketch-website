@@ -217,10 +217,17 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
         name: TIER.workflow.name,
         description: TIER.workflow.description,
         need: PRICING_NEED.workflow,
+        /**
+         * Reframed with the tier split (owner direction, 2026-08-31,
+         * #36): this depth needs no custom tool, so the old "custom
+         * tools where an agent alone will not do the job" bullet moved
+         * conceptually to the block below, where custom tools live.
+         * Still DRAFT pending owner approval.
+         */
         included: [
           "An assessment of where agents create real value in your day to day",
-          "Embedded agents built into the processes you already run",
-          "Custom tools where an agent alone will not do the job",
+          "Claude or OpenAI integrations built into the tools you already use",
+          "Everyday tasks handled: checking emails, running reports, moving work along",
           "Validated in production, on your real work",
         ],
       },
@@ -229,10 +236,11 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
         name: TIER.tool.name,
         description: TIER.tool.description,
         need: PRICING_NEED.tool,
+        /** Reframed with the tier split (#36). DRAFT pending approval. */
         included: [
-          "A tool your team logs into, built around how they work",
+          "A custom tool your team logs into, built around how they work",
           "Agents behind a real interface, not a chat window",
-          "Built on your processes, not on a template",
+          "Custom agent crews where the job demands them",
           "Yours to own, with everything handed over",
         ],
       },

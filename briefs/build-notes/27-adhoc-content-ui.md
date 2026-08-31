@@ -139,6 +139,22 @@ Recorded as **decision-log #35**. The owner pasted a background component (radia
 | Console | Site-clean; Apollo tracker 400 pre-existing (unit 19) |
 | `typecheck` / `lint` / fresh `build` / `banned-terms` | All green; all routes still ○ (Static); 56 files clean |
 
+## 5. The agentic depths re-split on the custom-tool line (owner direction, 2026-08-31)
+
+Recorded as **decision-log #36**. The owner defined the difference between the two agentic offers: **01 AI Workflow Integration** needs no custom tool (Claude or OpenAI integrated into what already runs, doing day-to-day tasks like checking emails and running reports); **02 Internal Tool** always means a custom tool, with custom agents where the job demands them (CrewAI/LlamaIndex-class crews, or an internal operations or marketing dashboard Claude plugs into).
+
+**Where it landed:** the two `PRICING_TIERS` descriptions (`src/content/pricing.ts`) — a Rule 4.1 canonical edit, owner-directed — and the two blocks' DRAFT bullets (`src/content/service-pages.ts`). Because the blocks reference the tier strings (#30's single-source doctrine), **the two agentic `/pricing` cards updated in lockstep**; that is the doctrine doing its job, and the alternative (de-sharing) would have left the same offer described two different ways on two pages. Prices, names, notes, the other two tiers: untouched. 01's old bullet "Custom tools where an agent alone will not do the job" is gone from 01 because it now contradicts the split; the custom-tool idea lives in 02.
+
+Two writing constraints worth recording: the owner's own word for 01 ("automations") is a Rule 3.2 banned term, so the idea ships as the named tasks; and the framework names (CrewAI, LlamaIndex) are recorded in the log, not rendered, with "purpose-built agent crews" as the vendor-neutral phrase.
+
+**Owner-owed, follow-up:** the §05 Agentic System umbrella line (the page's hero intro, also on the home card) still reads "Embedded agents built into the processes your business already runs, or an internal tool…". It is compatible with the split but does not name Claude/OpenAI or the no-custom-tool distinction. It was not in the direction's scope ("01 and 02") and is Messaging Kit canonical, so it is untouched and flagged here.
+
+| Check | Result |
+|---|---|
+| New copy renders on both blocks + both agentic pricing cards | Screenshots; subgrid rows still aligned; no overflow |
+| Nothing visual changed | Same layout, same cards, same visuals; text only |
+| `typecheck` / `lint` / fresh `build` / `banned-terms` | All green; 56 files clean (the new strings pass Rule 3.2/3.4) |
+
 ### Named and left (adversarial review, 2026-08-31)
 
 - **`bg-[#101013]`** (`service-block-visual.tsx`, the selected TaskCard state) is a second, different elevated one-off literal. The "one location" directive arguably covers it, but it is not `#0a0a0c` and was not swept. Owner call whether it should become a token or fold into `surface`.
