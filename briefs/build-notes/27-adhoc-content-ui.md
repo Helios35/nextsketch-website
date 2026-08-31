@@ -102,6 +102,23 @@ Fix: **`min-w-0` on the row's two column divs** — the bento tiles' own load-be
 
 "The ribbon at the top of the SERVICE page needs to have the same width as the page content. It should NOT extend to the far edges of screen as it auto scrolls." The strip's wrapper in `service-page.tsx` takes the gutter ladder plus the same `MEASURE` wrapper every other band uses, so its `border-y` hairlines stop at the content edges and the marquee clips there. Measured: strip and row cards both span 64→1087 at the test width — pixel-identical edges. `CapabilityStrip` itself is untouched (the home hero's `max-w-4xl` mount is its own and unchanged); `copies={10}` still overfills the narrower track, so no loop seam. ux-spec §`/services/*` hero bullet reconciled ("full-bleed" removed).
 
+## 3. The workflow cluster gets real app icons (owner direction, 2026-08-31)
+
+Recorded as **decision-log #34** — a narrow supersession of #30's logo refusal, for this one visual. The abstract 2-3-2 tile cluster on `/services/agentic-system` row 01 becomes a **hub-and-spoke app cluster**: the **Anthropic logomark** in gold on the emphasized centre tile, six satellites (email envelope, LinkedIn, Slack, GitHub, calendar, Google) spread around it, **dotted square-cap spokes** from each to the hub. The owner offered "anthropics logo or chat gpt" — Anthropic shipped; the OpenAI path is a one-line swap in `APP_ICONS`.
+
+What persists, per the direction ("all other attributes must persist"):
+
+- **The fade** — now riding the 4/3 stage rather than the cluster's own box, which is correct, not a regression: the spread layout fills the stage the way the framed mocks fill theirs, which is the condition the old "fade on the cluster's own box" trap was about. The doc block records the change.
+- **Tile chrome** (hairline `white/15`, `bg-surface`, squared), the **#31 chrome tones** reassigned to the satellites, **gold once** on the hub, the emphasized tile's brighter hairline + depth shadow.
+- **The rise-in assembly** — wiring first (delay 120), then the hub (200), then the apps (260 + i·55) — and the `:target` deep-link treatment, re-measured: on target the hub border computes gold at 60% and the index computes the gold token.
+- `aria-hidden`, the 4/3 stage, `SHELL`.
+
+**Sources, per the footer's own precedent** (`social-icon.tsx`: one matched set beats mixed): satellites are **Bootstrap Icons** (MIT, 16-grid — the set the footer's Behance/LinkedIn already come from, including the identical LinkedIn mark); the centre is **Simple Icons**' Anthropic mark (24-grid), which Bootstrap does not carry. Inline SVG paths; nothing installed. Satellite glyphs render one size step down from the centre (16-grid glyphs fill their viewBox edge to edge where the old 24-grid marks sat inside a margin) so the hub stays the focus.
+
+Mechanics: satellites are percent-positioned on the stage; the connector SVG (`viewBox 448×336`, the stage's own 4/3) derives its line ends from the same numbers, so tiles and spokes cannot drift apart, and the tiles' opaque `surface` fill masks the line ends. Positions sit inside ~70% of the fade's radius so the veil dims the edge tiles into the card without erasing the marks. Old `MARKS`/`CLUSTER`/`ROWS`/`STROKE` are removed as dead code (the FRAME/Profile precedent); recoverable from git.
+
+Verified: typecheck/lint green, 375/1080/1800 overflow probe clean on both routes (headless Chrome device metrics), target treatment measured, screenshot reviewed.
+
 ### Named and left (adversarial review, 2026-08-31)
 
 - **`bg-[#101013]`** (`service-block-visual.tsx`, the selected TaskCard state) is a second, different elevated one-off literal. The "one location" directive arguably covers it, but it is not `#0a0a0c` and was not swept. Owner call whether it should become a token or fold into `surface`.
