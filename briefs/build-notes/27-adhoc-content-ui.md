@@ -98,6 +98,10 @@ Fix: **`min-w-0` on the row's two column divs** — the bento tiles' own load-be
 | Console | Site-clean; the Apollo tracker 400 is pre-existing (unit 19) |
 | `typecheck` / `lint` / `build` / `banned-terms` | All green; all routes still ○ (Static); banned-terms 56 files clean **after a fresh `next build`** — running it against a dev-server `.next` scans only 38 files and is not a valid pass |
 
+## 2. The service-route ribbon moves onto the page measure (owner direction, 2026-08-31)
+
+"The ribbon at the top of the SERVICE page needs to have the same width as the page content. It should NOT extend to the far edges of screen as it auto scrolls." The strip's wrapper in `service-page.tsx` takes the gutter ladder plus the same `MEASURE` wrapper every other band uses, so its `border-y` hairlines stop at the content edges and the marquee clips there. Measured: strip and row cards both span 64→1087 at the test width — pixel-identical edges. `CapabilityStrip` itself is untouched (the home hero's `max-w-4xl` mount is its own and unchanged); `copies={10}` still overfills the narrower track, so no loop seam. ux-spec §`/services/*` hero bullet reconciled ("full-bleed" removed).
+
 ### Named and left (adversarial review, 2026-08-31)
 
 - **`bg-[#101013]`** (`service-block-visual.tsx`, the selected TaskCard state) is a second, different elevated one-off literal. The "one location" directive arguably covers it, but it is not `#0a0a0c` and was not swept. Owner call whether it should become a token or fold into `surface`.

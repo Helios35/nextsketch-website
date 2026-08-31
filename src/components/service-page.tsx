@@ -189,22 +189,27 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             </a>
           </header>
         </div>
-        {/* The ribbon. Full-bleed and the first thing under the nav
-            band — the reference puts it flush at the page top, which
-            here is where the fixed bar and the page's own lockup live,
-            so it takes the slot directly beneath them. It is the
-            landing hero's strip, not a copy of it: `CapabilityStrip`
-            was extracted from `hero.tsx` for this and both surfaces now
-            render the same component. More copies than the default
-            because these lists are shorter (three labels and two) across
-            a full-width frame, and four would run out of track and show
+        {/* The ribbon. The first thing under the nav band — the
+            reference puts it flush at the page top, which here is where
+            the fixed bar and the page's own lockup live, so it takes
+            the slot directly beneath them. It sits ON THE PAGE MEASURE,
+            not full-bleed (owner direction, 2026-08-31: it should not
+            run to the screen edges as it auto-scrolls), so its hairline
+            borders stop at the same two edges as every band below. It
+            is the landing hero's strip, not a copy of it:
+            `CapabilityStrip` was extracted from `hero.tsx` for this and
+            both surfaces now render the same component. More copies
+            than the default because these lists are shorter (three
+            labels and two), and four would run out of track and show
             the loop seam. */}
-        <div className="mt-24 w-full motion-safe:animate-rise-in sm:mt-28 lg:mt-32">
-          <CapabilityStrip
-            items={page.strip}
-            label={LANDING.capabilitiesLabel}
-            copies={10}
-          />
+        <div className="mt-24 w-full px-6 motion-safe:animate-rise-in sm:mt-28 sm:px-8 lg:mt-32 lg:px-16">
+          <div className={MEASURE}>
+            <CapabilityStrip
+              items={page.strip}
+              label={LANDING.capabilitiesLabel}
+              copies={10}
+            />
+          </div>
         </div>
         <div className="w-full px-6 pt-16 pb-16 sm:px-8 sm:pt-20 lg:px-16 lg:pt-24 lg:pb-20">
           <div className={MEASURE}>
