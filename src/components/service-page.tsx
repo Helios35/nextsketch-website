@@ -83,7 +83,7 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
  * measured from the home page's hero-plus-opaque region, and nothing
  * here touches that contract. Two consequences, both handled rather
  * than inherited — the same pair the Work band and `/pricing` handle:
- * where a card surface is used at all it is **solid `#0a0a0c`** rather
+ * where a card surface is used at all it is **solid `surface`** rather
  * than §Surfaces' translucent-plus-blur (there is nothing behind it to
  * blur), and headings carry **no text shadow** (they sit on plain ink,
  * where §Typography bans it).
@@ -293,9 +293,29 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                    accordion's open-row treatment (§Motion inventory)
                    doing the same "you are here" work. CSS only, so it
                    survives no-JS and reduced motion. */
-                className="group grid items-center gap-12 lg:grid-cols-2 lg:gap-16"
+                /* Each row is a card (owner direction, 2026-08-31), so
+                   the text and its visual read as one unit from desktop
+                   to the stacked mobile column. The recipe is the
+                   site's card, exactly — the §How-it-works and pricing
+                   cards' hairline, `surface` fill and padding — solid
+                   rather than glass for the reason the sibling process
+                   band gives: no ScrollVideo is mounted here. */
+                className="group grid items-center gap-12 border border-white/15 bg-surface p-6 transition-colors duration-150 hover:border-white/30 md:p-8 lg:grid-cols-2 lg:gap-16"
               >
-                <div className={visualLeads ? "lg:order-2" : "lg:order-1"}>
+                {/* `min-w-0` on both columns is the bento tiles' own
+                    load-bearing device, one level up: a grid item's
+                    automatic minimum is its content's min-content, and
+                    the mocks' fixed-pixel chrome (capped by the shell's
+                    `max-w-md`, 448px) was forcing the stacked mobile
+                    track to 448 — the page rendered 497px wide at a
+                    375px viewport and mobile Chrome zoomed out to hide
+                    it (pre-existing; unit 26's scrollWidth check could
+                    not see it through the auto-zoom). With it, the
+                    track shrinks, the mocks' own overflow-hidden stages
+                    clip, and the shared fade dissolves the clip. */}
+                <div
+                  className={`min-w-0 ${visualLeads ? "lg:order-2" : "lg:order-1"}`}
+                >
                   <ScrollReveal>
                     <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55 transition-colors duration-150 group-target:text-gold">
                       <span
@@ -371,7 +391,9 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                     />
                   </div>
                 </div>
-                <div className={visualLeads ? "lg:order-1" : "lg:order-2"}>
+                <div
+                  className={`min-w-0 ${visualLeads ? "lg:order-1" : "lg:order-2"}`}
+                >
                   <ServiceBlockVisual block={block.id} />
                 </div>
               </section>

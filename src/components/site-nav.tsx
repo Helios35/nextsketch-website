@@ -174,7 +174,7 @@ export function SiteNav() {
         className={[
           "px-6 sm:px-8 lg:px-16",
           "motion-safe:transition-colors motion-safe:duration-300",
-          scrolled ? "bg-[#0a0a0c]/95 backdrop-blur-xl" : "bg-transparent",
+          scrolled ? "bg-surface/95 backdrop-blur-xl" : "bg-transparent",
         ].join(" ")}
       >
         <nav
@@ -230,7 +230,7 @@ export function SiteNav() {
           role="dialog"
           aria-modal="true"
           aria-label={NAV.label}
-          className="pointer-events-auto fixed inset-0 z-50 flex flex-col bg-[#0a0a0c]/95 px-6 text-white backdrop-blur-xl sm:px-8 lg:px-16"
+          className="pointer-events-auto fixed inset-0 z-50 flex flex-col bg-surface/95 px-6 text-white backdrop-blur-xl sm:px-8 lg:px-16"
         >
           <div className="flex items-center justify-between py-5">
             {/* The overlay covers the hero, so its wordmark always

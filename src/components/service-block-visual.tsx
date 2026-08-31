@@ -135,7 +135,7 @@ function MosaicTile({
   return (
     <ScrollReveal delay={delay} className="min-h-0 min-w-0">
       <div
-        className={`flex h-full min-w-0 flex-col overflow-hidden border border-white/15 bg-[#0a0a0c] ${className}`}
+        className={`flex h-full min-w-0 flex-col overflow-hidden border border-white/15 bg-surface ${className}`}
       >
         {children}
       </div>
@@ -758,7 +758,7 @@ function TaskCard({
         className={`flex items-center gap-2 border px-2 py-2 ${
           selected
             ? "border-white/45 bg-[#101013] shadow-[var(--shadow-modal)]"
-            : "border-white/15 bg-[#0a0a0c]"
+            : "border-white/15 bg-surface"
         }`}
       >
         <Gauge tone={gauge} />
@@ -1278,7 +1278,7 @@ function Tile({
   return (
     <ScrollReveal delay={delay}>
       <div
-        className={`flex size-16 items-center justify-center border bg-[#0a0a0c] transition-colors duration-150 md:size-[74px] ${surface} ${tone}`}
+        className={`flex size-16 items-center justify-center border bg-surface transition-colors duration-150 md:size-[74px] ${surface} ${tone}`}
       >
         <svg viewBox="0 0 24 24" className="size-7 md:size-8">
           {MARKS[mark]}

@@ -53,4 +53,52 @@ Build-note 26 recorded that the Browser pane does not advance CSS *transitions* 
 
 ## Everything else in this unit
 
-Nate's, in session. To be recorded here as it happens.
+Nate's, in session. Recorded below as it happens.
+
+---
+
+## 1. The rows become cards, and the surface value becomes a token (owner direction, 2026-08-31)
+
+Recorded as **decision-log #33**. The direction had two halves and a scope rule: containers around the service-page rows so text and image read as one unit desktop to mobile; the card background from one consistent token "changed in one location", never case-by-case; and visually, nothing else moves — not §How it works, not any other part of the site.
+
+### The token — `surface`
+
+`#0a0a0c` was documented in §Color as "one deliberate literal outside the token set" and was hand-written in **12 class occurrences across 7 components** (pricing tiers, process cards, home services cards, work-rail cards, the modal, the nav bar + overlay, the mock frames). It is now `--color-surface`, defined once in `globals.css`, consumed as `bg-surface` / `bg-surface/95` everywhere.
+
+**The declaration is `@theme inline`, and that is load-bearing.** In the plain `@theme` block a `/95` utility compiles to a runtime `color-mix()` over a `var()`, which lands **one RGB step off** the build-time fold the old literals got (measured on canvas: green 10 vs 9 over black). `@theme inline` inlines the raw hex, the fold is static again, and the compiled value is exactly what shipped before. The custom property is still emitted, so `visual-fade.tsx`'s `var(--color-surface)` reference resolves.
+
+**Proof the sweep is visually inert:** the complete computed-`backgroundColor` tally of every element on all four pages, captured before and after. `/` and `/pricing` are **byte-identical** (down to the `lab(2.77686 0.219099 -0.803772 / 0.95)` serialization of the five glass surfaces). The service routes differ by exactly +3 and +2 opaque `rgb(10, 10, 12)` entries — the new row cards. Modal opened and eyeballed; wordmark handoff re-probed at 0 / 78 / 82 / 300 — identical to `/pricing`.
+
+### The row cards
+
+Each "what you get" `<section id>` takes the site's card recipe **exactly** — `border border-white/15 bg-surface p-6 md:p-8` with the `white/30` hover lift — solid, not glass, for the reason the sibling process band gives (no `ScrollVideo`). The deep-link `:target` treatment, alternation, DOM order and `scroll-margin` are untouched. The hover lift is included because it is part of the recipe the non-interactive process cards on the same page already carry; one class to remove if unwanted.
+
+**`VisualFade`'s far stop moved `ink` → `surface`** (its one file; consumers are exactly the five block mocks, all now inside cards). Dissolving to `ink` on a `surface` card would ring every mock with a slightly darker vignette.
+
+### The pre-existing mobile fault this surfaced
+
+**Both service routes really rendered 497px wide at a 375px viewport** — before the cards. The mocks' fixed-pixel chrome, capped by the shell's `max-w-md` (448px), set the stacked mobile grid track's automatic minimum to 448; mobile Chrome zoomed the page out to fit, which is why unit 26's `scrollWidth === innerWidth` check passed: **auto-zoom equalizes both sides of that comparison.** (Build-note 26 also records the pane refusing to render below 466px, so the narrow case was never truly measured.) The card padding widened the spill by ~25px; it did not cause it.
+
+Fix: **`min-w-0` on the row's two column divs** — the bento tiles' own load-bearing device (see build-note 26), one level up. The track shrinks, the mocks' `overflow-hidden` stages clip, the shared fade dissolves the clip. Verified via headless-Chrome device metrics (the pane cannot emulate below its own width): both routes now lay out at **exactly 375 / 1080 / 1800** with `scrollWidth === innerWidth` and the description and visual measured inside the card box.
+
+### Docs reconciled
+
+- `04-ux-spec.md` §Color: `surface` joins the Live palette table; the "deliberate literal" carve-out is closed with the `@theme inline` warning. §Surfaces and every `#0a0a0c` mention now name the token. §`/services/*` records the row cards and the `min-w-0` device.
+- `decision-log.md` **#33** (the token + the cards + the mobile fault); the stagger open-item moved to **Resolved (unit 27)**.
+- Component doc blocks that pointed at the literal now name the token, so nobody re-introduces `bg-[#0a0a0c]` by copying a comment.
+
+### Checks (this task)
+
+| Check | Result |
+|---|---|
+| Computed-background fingerprint, all 4 pages | `/` + `/pricing` byte-identical; routes +3/+2 card surfaces only |
+| Overflow at 375 / 1080 / 1800, both routes | None — real device metrics, headless Chrome (`innerWidth === scrollWidth === width`) |
+| Wordmark handoff 0 / 78 / 82 / 300 | Identical to `/pricing` |
+| Modal smoke test | Renders correctly on `bg-surface` |
+| Console | Site-clean; the Apollo tracker 400 is pre-existing (unit 19) |
+| `typecheck` / `lint` / `build` / `banned-terms` | All green; all routes still ○ (Static); banned-terms 56 files clean **after a fresh `next build`** — running it against a dev-server `.next` scans only 38 files and is not a valid pass |
+
+### Named and left (adversarial review, 2026-08-31)
+
+- **`bg-[#101013]`** (`service-block-visual.tsx`, the selected TaskCard state) is a second, different elevated one-off literal. The "one location" directive arguably covers it, but it is not `#0a0a0c` and was not swept. Owner call whether it should become a token or fold into `surface`.
+- **A dead `.bg-[#0a0a0c]/95` rule (~110 bytes) persists in the compiled CSS**: `globals.css` has no `@source` restriction, so Tailwind v4's content scan extracts the class form from backticked prose in the markdown docs and build notes. Visually inert; goes away if a `@source` directive ever scopes the scan.

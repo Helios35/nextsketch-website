@@ -72,7 +72,7 @@ const MEASURE = "mx-auto w-full max-w-6xl";
  * number is announced, because there it is the accordion row's only
  * position marker.
  *
- * **Cards are solid `#0a0a0c`, not §Surfaces' translucent-plus-blur.**
+ * **Cards are solid `surface`, not §Surfaces' translucent-plus-blur.**
  * That recipe exists so a card reads over the moving backdrop; the
  * service routes mount no `ScrollVideo` (#17), so there is nothing
  * behind the card to blur. Same call, same reason, as the Work band
@@ -129,7 +129,7 @@ export function ServiceProcess() {
                 >
                   {phase.order}
                 </p>
-                <div className="mt-5 flex grow flex-col border border-white/15 bg-[#0a0a0c] p-6 transition-colors duration-150 hover:border-white/30 md:p-8">
+                <div className="mt-5 flex grow flex-col border border-white/15 bg-surface p-6 transition-colors duration-150 hover:border-white/30 md:p-8">
                   <h3 className="text-xl font-medium tracking-tight text-white md:text-2xl">
                     {phase.name}
                   </h3>

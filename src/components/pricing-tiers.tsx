@@ -50,7 +50,7 @@ import type { PricingTier } from "@/lib/types";
  *   `globals.css` so only brand tokens compile.
  *
  * **Surface.** Cards are the elevated glass of §Surfaces at **solid**
- * `#0a0a0c`, not the spec's `#0a0a0c/95 + backdrop-blur-xl`. That
+ * `surface`, not the spec's `surface/95 + backdrop-blur-xl`. That
  * recipe exists so a card reads over the moving backdrop; `/pricing`
  * mounts no video, so there is nothing behind the card to blur. This is
  * the Work band's precedent (build-note 20), applied for the same
@@ -119,7 +119,7 @@ export function PricingTiers() {
              longer provides, and is uniform on purpose. */
           <div
             key={tier.slug}
-            className="row-span-6 mb-4 grid grid-rows-subgrid border border-white/15 bg-[#0a0a0c] p-6 transition-colors duration-150 hover:border-white/30 md:p-8 xl:mb-0"
+            className="row-span-6 mb-4 grid grid-rows-subgrid border border-white/15 bg-surface p-6 transition-colors duration-150 hover:border-white/30 md:p-8 xl:mb-0"
           >
             <h3 className="text-lg font-medium text-white md:text-xl">
               {tier.name}

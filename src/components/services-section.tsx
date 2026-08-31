@@ -29,7 +29,7 @@ const ACCENT_PHRASE = "actually works";
  * licensed over-imagery text shadow (docs/04-ux-spec.md §Typography —
  * shadows are banned on plain ink, licensed over footage). The four
  * engagements are elevated-glass cards (§Surfaces: translucent
- * #0a0a0c + backdrop blur, never opaque black) so they read over the
+ * surface + backdrop blur, never opaque black) so they read over the
  * moving video. This replaces the paper-era accent-block cards
  * (accent bg + paired -ink text + sketch arrow); the per-service
  * `accent` field is orphaned by the redesign and deliberately unread.
@@ -74,7 +74,7 @@ export function ServicesSection() {
               {/* flex-col + mt-auto on the CTA row so the four CTAs
                   line up across cards whose copy runs to different
                   lengths. */}
-              <div className="flex h-full flex-col border border-white/15 bg-[#0a0a0c]/95 p-6 backdrop-blur-xl transition-colors duration-150 hover:border-white/30 md:p-8">
+              <div className="flex h-full flex-col border border-white/15 bg-surface/95 p-6 backdrop-blur-xl transition-colors duration-150 hover:border-white/30 md:p-8">
                 <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
                   <span
                     aria-hidden="true"
