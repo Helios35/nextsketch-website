@@ -155,6 +155,30 @@ Two writing constraints worth recording: the owner's own word for 01 ("automatio
 | Nothing visual changed | Same layout, same cards, same visuals; text only |
 | `typecheck` / `lint` / fresh `build` / `banned-terms` | All green; 56 files clean (the new strings pass Rule 3.2/3.4) |
 
+## 6. Messaging comparison: our agentic-systems copy vs avolis.ai (owner-requested, 2026-08-31)
+
+The owner supplied https://www.avolis.ai/ ("I chose them because they rank on google") and asked for messaging of theirs that is better than ours **but still in line with our framing**. Their full homepage was read; findings below. **Nothing was edited** — every candidate touches canonical copy (§05, Rule 4.1) or the owner-owed headline slot (Rule 4.3), so all of it is drafted here awaiting the owner's picks.
+
+### Where their messaging beats ours, with drafts in our voice
+
+1. **They open with a one-line promise; our `<h1>` still says "Agentic System".** Theirs: "We find where AI pays off, build it into your operations, and keep improving it as your ongoing AI partner." That is find → build → stay, which is literally our process. Drafts for the empty `headline`/`accentPhrase` slot (supersede the build-note-26 drafts):
+   - "We find where agents pay off, build them in, and **stay**." (`accentPhrase: "stay"`)
+   - "Agents where they **pay off**, built into how you already work." (`accentPhrase: "pay off"`)
+2. **"Pays off" beats "create real value."** Economic, plain, harder to nod past. Candidates: §05 becomes "…We assess where agents actually pay off and build them in…"; bullet 01-1 becomes "An assessment of where agents actually pay off in your day to day."
+3. **They name the failure mode; we never say why validate-first matters here.** Theirs: "The ones who guess spend real money on the wrong tools, stall in pilots that never ship, and roll out systems no one uses." Draft, ours (hero-intro tail or a §05 rewrite): "Most teams guessing at AI buy the wrong tools and stall in pilots that never ship. We assess where agents actually pay off, then build them into the work itself."
+4. **The honesty line.** Theirs: "If there's nothing worth automating, we'll tell you. No deck, no pitch." Pure Brand Philosophy §6, and we do not have it. Draft: "If agents will not pay off in your business, we will tell you." (Candidate: end of the hero intro, or the assessment bullet.)
+5. **"No separate tool to babysit."** Sharper than our new "no new platform to learn." Candidate swap for 01's closer: "No custom tool to build, nothing new to babysit."
+
+### Where ours already matches or beats theirs (no change)
+
+- **"Built around how your team actually works"** — they run on the near-identical "built for how your business actually works." Our core framing competes at their level already; it is canonical and stays.
+- **Ownership**: our "Yours to own, with everything handed over" covers their "no black boxes, no vendor lock-in" in fewer words.
+- **Concrete task lists**: #36 already shipped ours (checking emails, running reports); theirs validates the pattern.
+
+### What was found and refused (off-frame, do not adopt)
+
+Testimonials and named quotes (Brand Philosophy §10, decision #5); invented dashboard metrics ("3,842 tasks scanned"); the 30–60–90-day result claims (adoptable **only** if the owner supplies real numbers — otherwise Rule 4.3 invention); the "AI transformation partner" umbrella (we are a product studio with an agentic service, not transformation consulting); a FAQ band (#30: no FAQ, owner-specified); industry verticals; and their "automate/automating/automation" vocabulary (Rule 3.2 bans the noun; the family stays out of our copy).
+
 ### Named and left (adversarial review, 2026-08-31)
 
 - **`bg-[#101013]`** (`service-block-visual.tsx`, the selected TaskCard state) is a second, different elevated one-off literal. The "one location" directive arguably covers it, but it is not `#0a0a0c` and was not swept. Owner call whether it should become a token or fold into `surface`.
