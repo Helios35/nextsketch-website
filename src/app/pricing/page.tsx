@@ -117,7 +117,10 @@ export default function Pricing() {
                 )}
               </span>
             </SectionHeading>
-            <p className="mt-8 max-w-2xl text-base leading-relaxed text-white/70 motion-safe:animate-rise-in md:text-lg [animation-delay:120ms]">
+            <p
+              className="mt-8 max-w-2xl text-base leading-relaxed text-white/70 motion-safe:animate-rise-in md:text-lg"
+              style={{ animationDelay: "120ms" }}
+            >
               {PRICING.intro}
             </p>
             {/* The commitment, at full-strength white against the /70
@@ -126,7 +129,10 @@ export default function Pricing() {
                 aside: a term that hides is the surprise invoice Brand
                 Philosophy §6 rejects, and the aside is the hero's
                 decorative device, not a disclosure treatment. */}
-            <p className="mt-6 flex max-w-2xl gap-3 text-base leading-relaxed text-white motion-safe:animate-rise-in [animation-delay:200ms]">
+            <p
+              className="mt-6 flex max-w-2xl gap-3 text-base leading-relaxed text-white motion-safe:animate-rise-in"
+              style={{ animationDelay: "200ms" }}
+            >
               <span
                 aria-hidden="true"
                 className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
