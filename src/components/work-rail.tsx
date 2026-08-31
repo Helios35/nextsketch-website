@@ -50,8 +50,8 @@ interface WorkRailProps {
  *   hover, mono index with the gold diamond marker, `mt-auto` CTA row)
  *   — so the two card grids on the page read as one family.
  *
- * The elevated fill is solid `#0a0a0c` rather than the spec's
- * `#0a0a0c/95 backdrop-blur-xl`: that recipe exists so a card reads
+ * The elevated fill is solid `surface` rather than the spec's
+ * `surface/95 backdrop-blur-xl`: that recipe exists so a card reads
  * over the moving video backdrop, and this section is the one opaque
  * band on the page (owner direction — footer-dark), so there is
  * nothing behind the card to blur. The surface color is unchanged, so
@@ -366,7 +366,7 @@ function ViewAllCard() {
   const { label, href } = WORK_VIEW_ALL;
   const surface =
     "flex h-full items-center justify-center border border-white/15 " +
-    "bg-[#0a0a0c] p-6 md:p-8";
+    "bg-surface p-6 md:p-8";
 
   if (href === undefined) {
     return (
@@ -470,7 +470,7 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
   );
 
   const surface =
-    "group/card flex h-full flex-col border border-white/15 bg-[#0a0a0c] " +
+    "group/card flex h-full flex-col border border-white/15 bg-surface " +
     "transition-colors duration-150 hover:border-white/30";
 
   if (!linked) {

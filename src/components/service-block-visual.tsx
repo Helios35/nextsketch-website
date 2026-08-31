@@ -135,7 +135,7 @@ function MosaicTile({
   return (
     <ScrollReveal delay={delay} className="min-h-0 min-w-0">
       <div
-        className={`flex h-full min-w-0 flex-col overflow-hidden border border-white/15 bg-[#0a0a0c] ${className}`}
+        className={`flex h-full min-w-0 flex-col overflow-hidden border border-white/15 bg-surface ${className}`}
       >
         {children}
       </div>
@@ -758,7 +758,7 @@ function TaskCard({
         className={`flex items-center gap-2 border px-2 py-2 ${
           selected
             ? "border-white/45 bg-[#101013] shadow-[var(--shadow-modal)]"
-            : "border-white/15 bg-[#0a0a0c]"
+            : "border-white/15 bg-surface"
         }`}
       >
         <Gauge tone={gauge} />
@@ -1151,118 +1151,81 @@ function InternalToolVisual() {
  * ------------------------------------------------------------------ */
 
 /**
- * 24px viewBox, `currentColor` — the ArrowIcon contract, at 1.75 rather
- * than the hairline 1.25. Measured, not guessed: `sage` and `lavender`
- * are deliberately desaturated pastels, and at 1.25px on a near-black
- * tile they resolve to grey no matter what alpha they carry. The extra
- * half-pixel is what lets the colour register at all.
+ * Real product marks (owner direction, 2026-08-31 — decision-log #34,
+ * a narrow supersession of #30's logo refusal for this one visual):
+ * the tiles carry actual app icons, "like the behance and linkedin
+ * icons in the footer". Satellites are **Bootstrap Icons** (MIT) — the
+ * footer's own set (`social-icon.tsx` precedent: one matched 16-unit
+ * grid beats mixed sources) — including the LinkedIn mark the footer
+ * already ships. The centre is the **Anthropic logomark** (Simple
+ * Icons, 24-unit grid), the one mark Bootstrap does not carry; swap
+ * its path for OpenAI's if the owner prefers ChatGPT at the hub.
+ * `fill="currentColor"` keeps the #31 chrome tints working unchanged.
  */
-const STROKE = {
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 1.75,
-  strokeLinecap: "square",
-  strokeLinejoin: "miter",
+const APP_ICONS = {
+  anthropic: {
+    viewBox: "0 0 24 24",
+    d: "M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z",
+  },
+  envelope: {
+    viewBox: "0 0 16 16",
+    d: "M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z",
+  },
+  linkedin: {
+    viewBox: "0 0 16 16",
+    d: "M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z",
+  },
+  slack: {
+    viewBox: "0 0 16 16",
+    d: "M3.362 10.11c0 .926-.756 1.681-1.681 1.681S0 11.036 0 10.111.756 8.43 1.68 8.43h1.682zm.846 0c0-.924.756-1.68 1.681-1.68s1.681.756 1.681 1.68v4.21c0 .924-.756 1.68-1.68 1.68a1.685 1.685 0 0 1-1.682-1.68zM5.89 3.362c-.926 0-1.682-.756-1.682-1.681S4.964 0 5.89 0s1.68.756 1.68 1.68v1.682zm0 .846c.924 0 1.68.756 1.68 1.681S6.814 7.57 5.89 7.57H1.68C.757 7.57 0 6.814 0 5.89c0-.926.756-1.682 1.68-1.682zm6.749 1.682c0-.926.755-1.682 1.68-1.682S16 4.964 16 5.889s-.756 1.681-1.68 1.681h-1.681zm-.848 0c0 .924-.755 1.68-1.68 1.68A1.685 1.685 0 0 1 8.43 5.89V1.68C8.43.757 9.186 0 10.11 0c.926 0 1.681.756 1.681 1.68zm-1.681 6.748c.926 0 1.682.756 1.682 1.681S11.036 16 10.11 16s-1.681-.756-1.681-1.68v-1.682h1.68zm0-.847c-.924 0-1.68-.755-1.68-1.68s.756-1.681 1.68-1.681h4.21c.924 0 1.68.756 1.68 1.68 0 .926-.756 1.681-1.68 1.681z",
+  },
+  github: {
+    viewBox: "0 0 16 16",
+    d: "M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8",
+  },
+  calendar: {
+    viewBox: "0 0 16 16",
+    d: "M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2",
+  },
+  google: {
+    viewBox: "0 0 16 16",
+    d: "M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z",
+  },
 } as const;
 
-const MARKS = {
-  /** The system's own marker, at tile scale. */
-  diamond: (
-    <path d="M12 4 20 12 12 20 4 12Z" fill="currentColor" stroke="none" />
-  ),
-  /** A squared frame inside a frame — a system with an edge. */
-  frame: (
-    <>
-      <rect x="3.5" y="3.5" width="17" height="17" {...STROKE} />
-      <rect x="8.5" y="8.5" width="7" height="7" {...STROKE} />
-    </>
-  ),
-  /** Four cells — a process made of steps. */
-  grid: (
-    <>
-      <rect x="3.5" y="3.5" width="7" height="7" {...STROKE} />
-      <rect x="13.5" y="3.5" width="7" height="7" {...STROKE} />
-      <rect x="3.5" y="13.5" width="7" height="7" {...STROKE} />
-      <rect x="13.5" y="13.5" width="7" height="7" {...STROKE} />
-    </>
-  ),
-  /** Layers — the stack the work already runs on. */
-  stack: (
-    <>
-      <path d="M3.5 6.5h17" {...STROKE} />
-      <path d="M3.5 12h17" {...STROKE} />
-      <path d="M3.5 17.5h17" {...STROKE} />
-    </>
-  ),
-  /** A hub with spokes — the agent, sitting inside the process. */
-  hub: (
-    <>
-      <rect x="9" y="9" width="6" height="6" {...STROKE} />
-      <path d="M12 3v6M12 15v6M3 12h6M15 12h6" {...STROKE} />
-    </>
-  ),
-  /** One line becoming two — work routed. */
-  branch: (
-    <>
-      <path d="M3.5 12h6" {...STROKE} />
-      <path d="M9.5 12 15 6.5h5.5" {...STROKE} />
-      <path d="M9.5 12 15 17.5h5.5" {...STROKE} />
-    </>
-  ),
-  /** A step line — the day to day, over time. */
-  step: <path d="M3.5 17.5h4.5V12h4.5V7h4.5v10.5h3.5" {...STROKE} />,
-  /** A field of points — the volume the work runs at. */
-  field: (
-    <>
-      {[6, 12, 18].map((y) =>
-        [6, 12, 18].map((x) => (
-          <rect
-            key={`${x}-${y}`}
-            x={x - 1}
-            y={y - 1}
-            width="2"
-            height="2"
-            fill="currentColor"
-          />
-        )),
-      )}
-    </>
-  ),
-} as const;
-
-type MarkKey = keyof typeof MARKS;
+type AppKey = keyof typeof APP_ICONS;
 
 /**
- * Cluster order: two, then three, then two. Index 3 is the centre and
- * takes gold. The rest are tinted from the interface-chrome palette,
- * which is what the reference's own tiles did with product logos —
- * without asserting a single integration.
+ * The satellites, spread around the centre hub (owner: "spread them
+ * out a bit"). Positions are percentages of the 4/3 stage, tile
+ * centres; the connector SVG derives its line ends from the same
+ * numbers so the two cannot drift. Tones are the #31 chrome set the
+ * old cluster carried, reassigned — `gold` still appears once, on the
+ * centre. Kept inside roughly 70% of the fade's radius so the veil
+ * dims the edge tiles into the card without erasing the marks.
  */
-const CLUSTER: readonly { mark: MarkKey; tone: string }[] = [
-  { mark: "field", tone: "text-white/45" },
-  { mark: "stack", tone: "text-sage/85" },
-  { mark: "branch", tone: "text-lavender/85" },
-  { mark: "hub", tone: "text-gold" },
-  { mark: "step", tone: "text-rose/85" },
-  { mark: "grid", tone: "text-white/45" },
-  { mark: "diamond", tone: "text-sage/70" },
-];
-
-const EMPHASIS_INDEX = 3;
-
-const ROWS: readonly (readonly number[])[] = [
-  [0, 1],
-  [2, 3, 4],
-  [5, 6],
+const HUB = { x: 50, y: 50 };
+const SATELLITES: readonly {
+  icon: AppKey;
+  tone: string;
+  x: number;
+  y: number;
+}[] = [
+  { icon: "envelope", tone: "text-sage/85", x: 29, y: 24 },
+  { icon: "linkedin", tone: "text-lavender/85", x: 71, y: 24 },
+  { icon: "slack", tone: "text-rose/85", x: 15, y: 55 },
+  { icon: "github", tone: "text-white/45", x: 85, y: 55 },
+  { icon: "calendar", tone: "text-white/45", x: 33, y: 81 },
+  { icon: "google", tone: "text-sage/70", x: 67, y: 81 },
 ];
 
 function Tile({
-  mark,
+  icon,
   tone,
   emphasis,
   delay,
 }: {
-  mark: MarkKey;
+  icon: AppKey;
   tone: string;
   emphasis: boolean;
   delay: number;
@@ -1275,13 +1238,23 @@ function Tile({
     ? "border-white/45 shadow-[var(--shadow-modal)] group-target:border-gold/60"
     : "border-white/15";
 
+  /* The satellites' 16-grid glyphs fill their viewBox edge to edge
+     where the old 24-grid marks sat inside a 3.5px margin, so they
+     step down one size to hold the same optical weight; the centre
+     keeps the larger cut — the focus stays on the hub. */
+  const { viewBox, d } = APP_ICONS[icon];
+
   return (
     <ScrollReveal delay={delay}>
       <div
-        className={`flex size-16 items-center justify-center border bg-[#0a0a0c] transition-colors duration-150 md:size-[74px] ${surface} ${tone}`}
+        className={`flex size-16 items-center justify-center border bg-surface transition-colors duration-150 md:size-[74px] ${surface} ${tone}`}
       >
-        <svg viewBox="0 0 24 24" className="size-7 md:size-8">
-          {MARKS[mark]}
+        <svg
+          viewBox={viewBox}
+          fill="currentColor"
+          className={emphasis ? "size-7 md:size-8" : "size-6 md:size-7"}
+        >
+          <path d={d} />
         </svg>
       </div>
     </ScrollReveal>
@@ -1292,34 +1265,53 @@ function WorkflowVisual() {
   return (
     <div className={SHELL}>
       {/* Same 4/3 box as the framed mocks, so all five rows line up.
-          Frameless on purpose: this one is a cluster, not a screen. */}
-      <div className="flex aspect-[4/3] items-center justify-center">
-        {/* **The fade rides the cluster's own box, not the 4/3 frame.**
-            This is load-bearing and it regressed once: `inset-0` on the
-            outer frame scales the gradient's radius to 448x336, and the
-            cluster is only ~240px across, so every tile landed inside
-            the clear zone and the dissolve vanished while the CSS still
-            looked correct. The framed mocks fill their frame, so theirs
-            can sit on it; this one cannot. Values are the original
-            circle stops, unchanged. */}
-        <div className="relative mx-auto w-fit">
-          <VisualFade />
-          {ROWS.map((row, r) => (
-            <div
-              key={r}
-              className="mx-auto flex w-fit justify-center gap-2 py-1"
-            >
-              {row.map((i) => (
-                <Tile
-                  key={i}
-                  mark={CLUSTER[i].mark}
-                  tone={CLUSTER[i].tone}
-                  emphasis={i === EMPHASIS_INDEX}
-                  delay={120 + r * 90 + row.indexOf(i) * 60}
-                />
-              ))}
-            </div>
-          ))}
+          Frameless on purpose: this one is a cluster, not a screen.
+
+          **The fade rides the stage now, and that is correct.** The
+          compact 2-3-2 cluster needed the fade on its own ~240px box —
+          `inset-0` on the frame put every tile inside the clear zone
+          and the dissolve vanished (see the git history of this file).
+          The spread hub-and-spoke layout fills the 4/3 stage the way
+          the framed mocks fill theirs, so the fade sits on the stage
+          for the same reason theirs can. Values unchanged. */}
+      <div className="relative aspect-[4/3] w-full">
+        <VisualFade />
+        {/* The wiring lands first, then the hub, then the apps — the
+            workflow graph's documented assembly order. Dotted, square
+            caps (the system has no round joins), on the white ladder.
+            The SVG shares the satellites' percent coordinates (times
+            4.48 / 3.36 for the 448x336 viewBox, the stage's own 4/3),
+            and the tiles' opaque `surface` fill masks the line ends,
+            so each spoke visually stops at a tile edge. */}
+        <ScrollReveal delay={120} className="absolute inset-0">
+          <svg viewBox="0 0 448 336" className="h-full w-full text-white/25">
+            {SATELLITES.map(({ icon, x, y }) => (
+              <path
+                key={icon}
+                d={`M${HUB.x * 4.48} ${HUB.y * 3.36}L${x * 4.48} ${y * 3.36}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeDasharray="1.5 5.5"
+                strokeLinecap="square"
+              />
+            ))}
+          </svg>
+        </ScrollReveal>
+        {SATELLITES.map(({ icon, tone, x, y }, i) => (
+          <div
+            key={icon}
+            className="absolute -translate-x-1/2 -translate-y-1/2"
+            style={{ left: `${x}%`, top: `${y}%` }}
+          >
+            <Tile icon={icon} tone={tone} emphasis={false} delay={260 + i * 55} />
+          </div>
+        ))}
+        <div
+          className="absolute -translate-x-1/2 -translate-y-1/2"
+          style={{ left: `${HUB.x}%`, top: `${HUB.y}%` }}
+        >
+          <Tile icon="anthropic" tone="text-gold" emphasis delay={200} />
         </div>
       </div>
     </div>

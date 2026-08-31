@@ -25,6 +25,24 @@
 }
 
 /*
+ * The elevated-surface fill (docs/04-ux-spec.md §Surfaces): every
+ * card, panel, mock frame, and glass surface on the site. It was a
+ * deliberate literal repeated per component; promoted to a token so it
+ * is defined once and changes in one place (owner directive,
+ * 2026-08-31 — decision-log #33). Never pure #000 for an elevated
+ * surface (it reads flat); the page itself stays `ink`.
+ *
+ * `inline`, deliberately: utilities get the raw hex instead of a
+ * `var()` reference, so `bg-surface/95` statically folds to the exact
+ * same value the old `bg-[#0a0a0c]/95` literals compiled to. The
+ * `var()` form mixes at runtime and lands one RGB step off the
+ * build-time fold (measured: green 10 vs 9 over black).
+ */
+@theme inline {
+  --color-surface: #0a0a0c;
+}
+
+/*
  * Premium material for the qualification modal (ui-ux-pro-max "Modern
  * Dark / Cinema"): its surface is never pure #000 (reads flat), the
  * elevated card carries a deep shadow, and one expo-out easing is

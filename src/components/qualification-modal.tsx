@@ -541,8 +541,8 @@ export function QualificationModal({
       className={[
         // Squared, hairline, glassy near-black — the template's surface
         // language (border-y/backdrop-blur strips), not a rounded card.
-        "flex h-dvh max-h-none w-full max-w-none flex-col rounded-none bg-[#0a0a0c] p-0 text-white",
-        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:border md:border-white/15 md:bg-[#0a0a0c]/95 md:backdrop-blur-xl md:shadow-[var(--shadow-modal)]",
+        "flex h-dvh max-h-none w-full max-w-none flex-col rounded-none bg-surface p-0 text-white",
+        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:border md:border-white/15 md:bg-surface/95 md:backdrop-blur-xl md:shadow-[var(--shadow-modal)]",
         // backdrop color lives in globals.css (::backdrop var-inheritance quirk)
         "motion-safe:animate-modal-in",
       ].join(" ")}

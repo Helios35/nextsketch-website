@@ -2,6 +2,7 @@ import { BrandWordmark } from "@/components/brand-wordmark";
 import { Button } from "@/components/button";
 import { CapabilityStrip } from "@/components/capability-strip";
 import { ModalTrigger } from "@/components/modal-trigger";
+import { PageGlow } from "@/components/page-glow";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { ServiceBlockVisual } from "@/components/service-block-visual";
@@ -83,7 +84,7 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
  * measured from the home page's hero-plus-opaque region, and nothing
  * here touches that contract. Two consequences, both handled rather
  * than inherited — the same pair the Work band and `/pricing` handle:
- * where a card surface is used at all it is **solid `#0a0a0c`** rather
+ * where a card surface is used at all it is **solid `surface`** rather
  * than §Surfaces' translucent-plus-blur (there is nothing behind it to
  * blur), and headings carry **no text shadow** (they sit on plain ink,
  * where §Typography bans it).
@@ -173,9 +174,13 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
 
   return (
     <>
+      {/* The viewport-fixed gold glow (#35). The section and band
+          backgrounds below are transparent so it shows through — the
+          page's ground is the layout's `ink`. */}
+      <PageGlow />
       <section
         aria-labelledby="service-headline"
-        className="relative flex w-full flex-col bg-ink"
+        className="relative flex w-full flex-col"
       >
         {/* Load-bearing. See the doc block — do not flatten the h-0
             sticky wrapper, and do not add padding above it. */}
@@ -189,22 +194,27 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             </a>
           </header>
         </div>
-        {/* The ribbon. Full-bleed and the first thing under the nav
-            band — the reference puts it flush at the page top, which
-            here is where the fixed bar and the page's own lockup live,
-            so it takes the slot directly beneath them. It is the
-            landing hero's strip, not a copy of it: `CapabilityStrip`
-            was extracted from `hero.tsx` for this and both surfaces now
-            render the same component. More copies than the default
-            because these lists are shorter (three labels and two) across
-            a full-width frame, and four would run out of track and show
+        {/* The ribbon. The first thing under the nav band — the
+            reference puts it flush at the page top, which here is where
+            the fixed bar and the page's own lockup live, so it takes
+            the slot directly beneath them. It sits ON THE PAGE MEASURE,
+            not full-bleed (owner direction, 2026-08-31: it should not
+            run to the screen edges as it auto-scrolls), so its hairline
+            borders stop at the same two edges as every band below. It
+            is the landing hero's strip, not a copy of it:
+            `CapabilityStrip` was extracted from `hero.tsx` for this and
+            both surfaces now render the same component. More copies
+            than the default because these lists are shorter (three
+            labels and two), and four would run out of track and show
             the loop seam. */}
-        <div className="mt-24 w-full motion-safe:animate-rise-in sm:mt-28 lg:mt-32">
-          <CapabilityStrip
-            items={page.strip}
-            label={LANDING.capabilitiesLabel}
-            copies={10}
-          />
+        <div className="mt-24 w-full px-6 motion-safe:animate-rise-in sm:mt-28 sm:px-8 lg:mt-32 lg:px-16">
+          <div className={MEASURE}>
+            <CapabilityStrip
+              items={page.strip}
+              label={LANDING.capabilitiesLabel}
+              copies={10}
+            />
+          </div>
         </div>
         <div className="w-full px-6 pt-16 pb-16 sm:px-8 sm:pt-20 lg:px-16 lg:pt-24 lg:pb-20">
           <div className={MEASURE}>
@@ -270,7 +280,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
           Each block is a real <section id>, so `globals.css`'s
           `section[id] { scroll-margin-top: 5rem }` clears the fixed bar
           on a deep link with no extra CSS. */}
-      <div className="w-full bg-ink px-6 pb-24 sm:px-8 sm:pb-28 lg:px-16 lg:pb-32">
+      <div className="w-full px-6 pb-24 sm:px-8 sm:pb-28 lg:px-16 lg:pb-32">
         <div className={`${MEASURE} flex flex-col gap-24 md:gap-32`}>
           {page.blocks.map((block, i) => {
             /* Sides alternate (owner direction): the visual leads on
@@ -293,9 +303,29 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                    accordion's open-row treatment (§Motion inventory)
                    doing the same "you are here" work. CSS only, so it
                    survives no-JS and reduced motion. */
-                className="group grid items-center gap-12 lg:grid-cols-2 lg:gap-16"
+                /* Each row is a card (owner direction, 2026-08-31), so
+                   the text and its visual read as one unit from desktop
+                   to the stacked mobile column. The recipe is the
+                   site's card, exactly — the §How-it-works and pricing
+                   cards' hairline, `surface` fill and padding — solid
+                   rather than glass for the reason the sibling process
+                   band gives: no ScrollVideo is mounted here. */
+                className="group grid items-center gap-12 border border-white/15 bg-surface p-6 transition-colors duration-150 hover:border-white/30 md:p-8 lg:grid-cols-2 lg:gap-16"
               >
-                <div className={visualLeads ? "lg:order-2" : "lg:order-1"}>
+                {/* `min-w-0` on both columns is the bento tiles' own
+                    load-bearing device, one level up: a grid item's
+                    automatic minimum is its content's min-content, and
+                    the mocks' fixed-pixel chrome (capped by the shell's
+                    `max-w-md`, 448px) was forcing the stacked mobile
+                    track to 448 — the page rendered 497px wide at a
+                    375px viewport and mobile Chrome zoomed out to hide
+                    it (pre-existing; unit 26's scrollWidth check could
+                    not see it through the auto-zoom). With it, the
+                    track shrinks, the mocks' own overflow-hidden stages
+                    clip, and the shared fade dissolves the clip. */}
+                <div
+                  className={`min-w-0 ${visualLeads ? "lg:order-2" : "lg:order-1"}`}
+                >
                   <ScrollReveal>
                     <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55 transition-colors duration-150 group-target:text-gold">
                       <span
@@ -371,7 +401,9 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                     />
                   </div>
                 </div>
-                <div className={visualLeads ? "lg:order-1" : "lg:order-2"}>
+                <div
+                  className={`min-w-0 ${visualLeads ? "lg:order-1" : "lg:order-2"}`}
+                >
                   <ServiceBlockVisual block={block.id} />
                 </div>
               </section>
@@ -383,7 +415,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
 
       <section
         aria-labelledby="service-close-headline"
-        className="w-full bg-ink px-6 pb-28 sm:px-8 sm:pb-32 lg:px-16 lg:pb-44"
+        className="w-full px-6 pb-28 sm:px-8 sm:pb-32 lg:px-16 lg:pb-44"
       >
         <div className={MEASURE}>
           <ScrollReveal>

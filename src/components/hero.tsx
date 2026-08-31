@@ -98,12 +98,18 @@ export function Hero() {
                   </Fragment>
                 ))}
               </h1>
-              <div className="motion-safe:animate-rise-in [animation-delay:120ms]">
+              <div
+                className="motion-safe:animate-rise-in"
+                style={{ animationDelay: "120ms" }}
+              >
                 <HeroCta label={LANDING.cta} />
               </div>
             </div>
             <div className="w-full sm:w-1/2">
-              <p className="font-sans text-base text-gold italic [text-shadow:0_1px_20px_rgba(0,0,0,0.7)] motion-safe:animate-rise-in sm:text-right md:text-2xl [animation-delay:200ms]">
+              <p
+                className="font-sans text-base text-gold italic [text-shadow:0_1px_20px_rgba(0,0,0,0.7)] motion-safe:animate-rise-in sm:text-right md:text-2xl"
+                style={{ animationDelay: "200ms" }}
+              >
                 {LANDING.supportingLine}
               </p>
             </div>
