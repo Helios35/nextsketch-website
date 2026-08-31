@@ -157,7 +157,9 @@ Two writing constraints worth recording: the owner's own word for 01 ("automatio
 
 ## 6. Messaging comparison: our agentic-systems copy vs avolis.ai (owner-requested, 2026-08-31)
 
-The owner supplied https://www.avolis.ai/ ("I chose them because they rank on google") and asked for messaging of theirs that is better than ours **but still in line with our framing**. Their full homepage was read; findings below. **Nothing was edited** — every candidate touches canonical copy (§05, Rule 4.1) or the owner-owed headline slot (Rule 4.3), so all of it is drafted here awaiting the owner's picks.
+The owner supplied https://www.avolis.ai/ ("I chose them because they rank on google") and asked for messaging of theirs that is better than ours **but still in line with our framing**. Their full homepage was read; findings below.
+
+> **SHIPPED 2026-08-31 (decision-log #37).** The owner approved 1a, 2, 3, 4 and 5 ("ship all of it"). The agentic `<h1>` now carries the find/build/stay promise with gold on "stay"; §05 and bullet 01-1 say "actually pay off"; the agentic hero intro is the bespoke problem/approach/honesty three-liner (§05 keeps its home-card job); block 01 closes on "nothing new to babysit" (the `/pricing` card follows in lockstep). The refused list below stands. The Messaging Kit's §05 copy (owner-owned, outside the repo) still needs reconciling to the new line.
 
 ### Where their messaging beats ours, with drafts in our voice
 

@@ -37,14 +37,17 @@ import type { PricingTierSlug, ServicePageContent, ServicePageSlug, ServiceSlug 
  * an empty frame"). Drafts for all of it are in
  * `briefs/build-notes/26-service-routes.md`, awaiting approval:
  *
- * - `headline` / `accentPhrase` — the one-line promise per page. Unset,
- *   so each `<h1>` falls back to `name`: canonical vocabulary, not
- *   drafted copy. This is the empty-`features` posture applied to a
- *   heading a page cannot legally render nothing for.
- * `intro` is now supplied on **both** routes. The agentic one is its
- * §05 line; the product one is the group-level description the owner
- * approved on 2026-08-30 (drafted here because §05 has no equivalent
- * for three services grouped). Neither is DRAFT any more.
+ * - `headline` / `accentPhrase` — the one-line promise per page. The
+ *   **agentic page's landed 2026-08-31** (owner-approved, #37); the
+ *   product page's is still owner-owed and unset, so its `<h1>` falls
+ *   back to `name`: canonical vocabulary, not drafted copy — the
+ *   empty-`features` posture applied to a heading a page cannot
+ *   legally render nothing for.
+ * `intro` is supplied on **both** routes and both are owner-approved:
+ * the product one is the group-level description approved 2026-08-30;
+ * the agentic one is bespoke as of 2026-08-31 (#37 — problem, approach,
+ * honesty), no longer the §05 reference, which still renders on the
+ * home card. Neither is DRAFT.
  *
  * **`included` was empty on all five blocks and is no longer.** The
  * owner asked for the "what you get" band to be built against a
@@ -197,8 +200,24 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
     /** Taxonomy §1 casing, exact. This page is that one service. */
     eyebrow: SERVICE["agentic-system"].name,
     name: SERVICE["agentic-system"].name,
-    /** Messaging Kit §05, as written. It covers the whole page. */
-    intro: SERVICE["agentic-system"].description,
+    /**
+     * The one-line promise — **owner-approved 2026-08-31** (decision-log
+     * #37, the avolis.ai comparison), so the `<h1>` no longer falls
+     * back to the canonical name. Find, build, stay: the process in one
+     * breath. The product page's promise is still owner-owed and still
+     * falls back.
+     */
+    headline: "We find where agents pay off, build them in, and stay.",
+    accentPhrase: "stay",
+    /**
+     * Bespoke to this page — **owner-approved 2026-08-31** (#37), no
+     * longer the §05 reference (that line still renders on the home
+     * card; the two slots do different jobs now). Problem, approach,
+     * honesty: the failure mode named (wrong tools, pilots that never
+     * ship), the assessment, and the no-pitch commitment.
+     */
+    intro:
+      "Most teams guessing at AI buy the wrong tools and stall in pilots that never ship. We assess where agents actually pay off, then build them into the work itself. If agents will not pay off in your business, we will tell you.",
     /**
      * The hero strip: the two depths this route sells the service at
      * (Taxonomy §1 "Two kinds of agentic system", #29). Tier names,
@@ -225,7 +244,7 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
          * Still DRAFT pending owner approval.
          */
         included: [
-          "An assessment of where agents create real value in your day to day",
+          "An assessment of where agents actually pay off in your day to day",
           "Claude or OpenAI integrations built into the tools you already use",
           "Everyday tasks handled: checking emails, running reports, moving work along",
           "Validated in production, on your real work",

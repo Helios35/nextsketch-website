@@ -209,7 +209,7 @@ export const PRICING_TIERS = [
      * `tool` tier below; the two descriptions carry that split.
      */
     description:
-      "Claude or OpenAI agents integrated into the work your business already does: checking emails, running reports, moving tasks along. No custom tool to build, no new platform to learn.",
+      "Claude or OpenAI agents integrated into the work your business already does: checking emails, running reports, moving tasks along. No custom tool to build, nothing new to babysit.",
     upfront: "$3,998",
     upfrontWas: "$5,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",

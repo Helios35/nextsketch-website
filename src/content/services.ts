@@ -129,8 +129,15 @@ export const SERVICES = [
   {
     slug: "agentic-system",
     name: "Agentic System",
+    /**
+     * Owner-approved 2026-08-31 (decision-log #37, the avolis.ai
+     * comparison): "actually pay off" replaces "create real value" —
+     * the economic verb is harder to nod past. One verb phrase changed;
+     * the rest of the §05 line is as written. The Messaging Kit copy of
+     * §05 is owner-owned and still needs reconciling to match.
+     */
     description:
-      "Your product or operations need intelligence built in. We assess where agents create real value and build them in, not because it's trendy, but because it solves the problem.",
+      "Your product or operations need intelligence built in. We assess where agents actually pay off and build them in, not because it's trendy, but because it solves the problem.",
     accent: "lavender",
   },
   {
