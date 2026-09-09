@@ -3,8 +3,9 @@ import type { PricingTier, PricingTierSlug } from "@/lib/types";
 
 /**
  * Pricing page (`/pricing`) copy — decision-log #23 (the route),
- * **#25** (the tier structure, the term, and the naming) and **#27**
- * (two tiers renamed onto the site's one service vocabulary).
+ * **#25** (the tier structure, the term, and the naming), **#27**
+ * (two tiers renamed onto the site's one service vocabulary) and
+ * **#38** (the ongoing monthly, $298 → $2,098).
  *
  * Pricing ships as a **standalone route, not a section**. Decision #16
  * named it "the next section in this effort"; the owner's 2026-08-24
@@ -21,10 +22,16 @@ import type { PricingTier, PricingTierSlug } from "@/lib/types";
  * below is that principle in the site's voice, not a new claim.
  *
  * **The term is said out loud, on every card and once above the grid.**
- * $298 per month, required for the first three months, optional after
- * (owner call, 2026-08-25, reducing an initial twelve). A price that
- * hides a commitment is exactly the surprise invoice §6 rejects, so it
- * is not tucked into a footnote.
+ * $2,098 per month, required for the first three months, optional
+ * after. Two owner calls, not one: the **term** is 2026-08-25 (reducing
+ * an initial twelve), the **figure** is 2026-09-09, raising it from
+ * $298 (**#38**). A price that hides a commitment is exactly the
+ * surprise invoice §6 rejects, so it is not tucked into a footnote —
+ * and at this figure the required term is $6,294 committed, which is
+ * the reason the sentence above the grid states it plainly. **The
+ * wording did not soften when the number grew.** Only the number
+ * changed: `term`, `description` and the three `ongoingNote` captions
+ * are word for word what they were at $298.
  *
  * **Product Completion carries no required term at all** — a two month
  * trial with no contractual obligation (owner call, same date). It is
@@ -56,7 +63,7 @@ export const PRICING = {
   /** Browser tab and search-result title for the route. */
   title: "Pricing | NextSketch",
   description:
-    "Scoped upfront engagements and a $298 monthly product partnership, published in plain numbers. No hourly billing and no surprise invoices.",
+    "Scoped upfront engagements and a $2,098 monthly product partnership, published in plain numbers. No hourly billing and no surprise invoices.",
   /** Mono micro-label above the heading (docs/04-ux-spec.md §Typography). */
   eyebrow: "Pricing",
   headline: "NextSketch puts the price upfront.",
@@ -71,7 +78,7 @@ export const PRICING = {
    * (#25). This is the sentence the brief exists to protect.
    */
   term:
-    "The $298 monthly partnership is required for the first three months. After that it is optional, and staying on is your call. Product Completion is the exception: it starts as a two month trial with no contractual obligation.",
+    "The $2,098 monthly partnership is required for the first three months. After that it is optional, and staying on is your call. Product Completion is the exception: it starts as a two month trial with no contractual obligation.",
   /**
    * Accessible name for the tier grid (screen-reader only). The grid is
    * a landmark region with no visible heading of its own — the page's
@@ -213,7 +220,7 @@ export const PRICING_TIERS = [
     upfront: "$3,998",
     upfrontWas: "$5,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
-    ongoing: "$298 per month",
+    ongoing: "$2,098 per month",
     ongoingNote: "Required the first three months, optional after.",
     features: [],
   },
@@ -231,7 +238,7 @@ export const PRICING_TIERS = [
     upfront: "$7,998",
     upfrontWas: "$10,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
-    ongoing: "$298 per month",
+    ongoing: "$2,098 per month",
     ongoingNote: "Required the first three months, optional after.",
     features: [],
   },
@@ -242,7 +249,7 @@ export const PRICING_TIERS = [
       "Someone got you 70% there and disappeared. We assess what was built, validate the direction, and get you to launch.",
     upfront: "Quoted",
     upfrontNote: "The partnership starts on day one instead.",
-    ongoing: "$298 per month",
+    ongoing: "$2,098 per month",
     ongoingNote: "Two month trial. No contractual obligation.",
     features: [],
   },
