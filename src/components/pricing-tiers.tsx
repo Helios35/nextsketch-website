@@ -30,10 +30,10 @@ import type { PricingTier } from "@/lib/types";
  *
  * - **The monthly/annual billing toggle.** The reference's centrepiece.
  *   There is no such choice here: the model is a scoped upfront figure
- *   plus a $298 retainer required for the first year (#25). A toggle
- *   would invent an annual plan that does not exist and imply the
- *   commitment is optional from day one, which is the exact "surprise
- *   invoice" Brand Philosophy §6 rejects.
+ *   plus a $2,098 retainer required for the first three months (#25,
+ *   #38). A toggle would invent an annual plan that does not exist and
+ *   imply the commitment is optional from day one, which is the exact
+ *   "surprise invoice" Brand Philosophy §6 rejects.
  * - **The `recommended` tier** — its badge, its `ring`, its `scale`
  *   emphasis. There is no recommended tier (owner call), and marking
  *   one would need a second accent, which decision #14 forbids. Gold is

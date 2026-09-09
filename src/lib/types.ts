@@ -265,7 +265,7 @@ export interface PricingTier {
   readonly upfrontWas?: string;
   /** Caption under the headline figure. */
   readonly upfrontNote: string;
-  /** The retainer figure, e.g. "$298 per month". */
+  /** The retainer figure, e.g. "$2,098 per month". */
   readonly ongoing: string;
   /** Caption under the retainer figure — where the term is said out loud. */
   readonly ongoingNote: string;
