@@ -110,14 +110,15 @@ interface CaseStudyPageProps {
  *   the load-time `rise-in` at 0 / 120 / 200 / 280ms with inline
  *   delays (unit 27), every block below the fold enters through
  *   `<ScrollReveal>` on the hero stagger (0 / 120 / 200 + i·80ms), and
- *   **each image band rides one whisper `<Parallax>`** — the About
- *   portrait's construction exactly: the drift wraps the whole frame
- *   (or the pair's grid), so the image inside is never scaled past its
- *   frame, and a band carries one instance, which is §Motion's "at
- *   most one per section". It is the one addition beyond the
- *   reference, flagged in build-note 30, and one wrapper per band to
- *   delete. No keyframe added, `globals.css` untouched, reduced motion
- *   sees no transform.
+ *   **each run of adjacent image bands rides one whisper `<Parallax>`**
+ *   — the About portrait's construction: the drift wraps whole frames,
+ *   so the image inside is never scaled past its frame, and neighbours
+ *   `gap-4` apart move together, so they can never overlap (separate
+ *   drifts did, by 15px — owner report, 2026-09-14). One instance per
+ *   run is §Motion's "at most one per section". It is the one addition
+ *   beyond the reference, flagged in build-note 30, and one wrapper per
+ *   run to delete. No keyframe added, `globals.css` untouched, reduced
+ *   motion sees no transform.
  * - **The site chrome the reference ends on** — a FAQ, a contact card
  *   and a "book a call" — is not reproduced. FAQ is retired (#13, #30),
  *   the phrase is a Rule 3.2 banned term, and the site's one conversion
@@ -171,6 +172,33 @@ export function CaseStudyPage({ study, others }: CaseStudyPageProps) {
     numbered.push({ block, first });
     return numbered;
   }, []);
+
+  /*
+   * Adjacent image bands share one parallax. Two bands `gap-4` apart on
+   * separate drifts move by different amounts (each is measured from
+   * its own centre), and 16px cannot absorb the difference: the lower
+   * band rode up over the pair above it by 15px (owner report,
+   * 2026-09-14). So consecutive `image` / `pair` blocks are grouped into
+   * a run and the run rides a single `<Parallax>`; a text block, with
+   * its own 80px of padding, ends the run and can never be reached by
+   * the 48px cap.
+   */
+  const runs = blocks.reduce<{ block: CaseStudyBlock; first: number }[][]>(
+    (grouped, entry) => {
+      const last = grouped[grouped.length - 1];
+      if (
+        entry.block.type !== "text" &&
+        last !== undefined &&
+        last[0].block.type !== "text"
+      ) {
+        last.push(entry);
+      } else {
+        grouped.push([entry]);
+      }
+      return grouped;
+    },
+    [],
+  );
 
   const intro = study.intro ?? study.summary;
   const hasLinks =
@@ -323,11 +351,20 @@ export function CaseStudyPage({ study, others }: CaseStudyPageProps) {
           blocks sit `gap-4` apart — the grid's own gap — and a text
           block brings its own vertical air, so the page reads as the
           reference does: text, then imagery close together, then air,
-          then text. */}
+          then text. A run of adjacent image bands rides one parallax
+          (see `runs` above); a text block renders on its own. */}
       <div className={`flex flex-col gap-4 ${GUTTERS}`}>
-        {blocks.map(({ block, first }, i) => (
-          <Block key={i} block={block} first={first} />
-        ))}
+        {runs.map((run, r) =>
+          run[0].block.type === "text" ? (
+            <Block key={r} block={run[0].block} first={run[0].first} />
+          ) : (
+            <Parallax key={r} className="flex flex-col gap-4">
+              {run.map(({ block, first }, i) => (
+                <Block key={i} block={block} first={first} />
+              ))}
+            </Parallax>
+          ),
+        )}
       </div>
 
       {others.length > 0 && (
@@ -402,11 +439,12 @@ function frameCount(block: CaseStudyBlock): number {
  * label is the block's heading, since "The challenge" is what the
  * block is about and the statement is its lede. An `image` block is one
  * full-width frame; a `pair` is two `4/3` frames side by side, stacking
- * below `md`. Each image band rides one `<Parallax>` — outside the
- * frame, around the whole band, so a pair drifts as one and nothing
- * inside a frame is ever scaled past it. A new kind of block is a new
- * member of `CaseStudyBlock` and a new branch here, never a fork of the
- * page.
+ * below `md`. Image blocks carry no parallax of their own: the drift
+ * belongs to the run of adjacent image bands they sit in (the page
+ * wraps each run in one `<Parallax>`), so neighbours move together and
+ * nothing inside a frame is ever scaled past it. A new kind of block is
+ * a new member of `CaseStudyBlock` and a new branch here, never a fork
+ * of the page.
  */
 function Block({ block, first }: { block: CaseStudyBlock; first: number }) {
   if (block.type === "text") {
@@ -435,32 +473,28 @@ function Block({ block, first }: { block: CaseStudyBlock; first: number }) {
   }
   if (block.type === "pair") {
     return (
-      <Parallax>
-        <div className="grid gap-4 md:grid-cols-2">
-          {block.images.map((image, k) => (
-            <ScrollReveal key={k} delay={k * 80}>
-              <CaseStudyImage
-                image={image}
-                ratio="4/3"
-                sizes={PAIR_SIZES}
-                index={first + k}
-              />
-            </ScrollReveal>
-          ))}
-        </div>
-      </Parallax>
+      <div className="grid gap-4 md:grid-cols-2">
+        {block.images.map((image, k) => (
+          <ScrollReveal key={k} delay={k * 80}>
+            <CaseStudyImage
+              image={image}
+              ratio="4/3"
+              sizes={PAIR_SIZES}
+              index={first + k}
+            />
+          </ScrollReveal>
+        ))}
+      </div>
     );
   }
   return (
     <ScrollReveal>
-      <Parallax>
-        <CaseStudyImage
-          image={block.image}
-          ratio="16/9"
-          sizes={FULL_SIZES}
-          index={first}
-        />
-      </Parallax>
+      <CaseStudyImage
+        image={block.image}
+        ratio="16/9"
+        sizes={FULL_SIZES}
+        index={first}
+      />
     </ScrollReveal>
   );
 }
