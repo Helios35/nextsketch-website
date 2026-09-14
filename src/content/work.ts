@@ -1,6 +1,4 @@
-import { CASE_STUDIES } from "@/content/case-studies";
 import { ROUTES } from "@/lib/types";
-import type { WorkItem } from "@/lib/types";
 
 /**
  * Selected-work (#work) copy — the proof band (owner direction
@@ -13,8 +11,12 @@ import type { WorkItem } from "@/lib/types";
  * need live at the bottom of this file.
  *
  * The item inventory no longer lives here. Each case study is its own
- * module under `src/content/case-studies/` (#41), and `WORK_ITEMS`
- * below is that list under the name the band has always read.
+ * module under `src/content/case-studies/` (#41), and `WORK_ITEMS` —
+ * that list projected to what a card shows — is exported from there.
+ * **This file deliberately imports nothing from `case-studies/`:** the
+ * rail is a client component that reads this file's strings, and an
+ * import of the studies here would carry every study's page copy into
+ * the client bundle (build-note 30).
  *
  * No canonical copy exists for this section (Messaging Kit §05 does
  * not cover it and architecture row 5 deferred to the placeholder
@@ -112,14 +114,14 @@ export const WORK_VIEW_ALL: { label: string; href?: string } = {
 export const WORK_PLACEHOLDER_LABEL = "Screenshot pending";
 
 /**
- * The work inventory the band renders, in display order — the case
- * study list itself (decision-log #41), under the name `work-section.tsx`
- * has read since the band shipped. The four entries moved out of this
- * file into `src/content/case-studies/`, one module each, byte for
+ * The work inventory the band renders is `WORK_ITEMS` in
+ * `src/content/case-studies/index.ts` — the case study list
+ * (decision-log #41) projected to the card's fields. The four entries
+ * moved out of this file into that directory, one module each, byte for
  * byte: names, links, screenshots, summaries and the per-image grading
- * notes travelled with them. Keeping the alias is what leaves the home
- * page's section component untouched (verified against the built HTML:
- * the home markup is identical except for the card destinations, #39).
+ * notes travelled with them. The alias lived here through unit 29 and
+ * moved beside the list in unit 30 for the bundling reason above; the
+ * band's markup is unchanged either way.
  *
  * What still governs every entry, wherever it lives:
  *
@@ -145,7 +147,6 @@ export const WORK_PLACEHOLDER_LABEL = "Screenshot pending";
  * image crops via object-cover, so every card matches regardless of
  * the screenshot's real dimensions (owner requirement, 2026-08-24).
  */
-export const WORK_ITEMS: readonly WorkItem[] = CASE_STUDIES;
 
 /**
  * `/work` — the case study grid (decision-log #39): page metadata plus
@@ -176,29 +177,39 @@ export const WORK_PAGE = {
 } as const;
 
 /**
- * `/work/[slug]` — the case study route, layout-final and deliberately
- * empty until the template lands (decision-log #39; Unit 25). Every
- * string the placeholder page renders beyond the study's own name and
- * summary. DRAFT in brand voice pending owner approval.
+ * `/work/[slug]` — the case study template's own strings (decision-log
+ * #39, #42, #43): everything the page renders that is not a study's
+ * content. The studies themselves live in `src/content/case-studies/`.
+ * DRAFT in brand voice pending owner approval.
  *
- * Rule 4.3 is why there is so little of it: no narrative, results,
- * metrics, client names or quotes ship until the owner supplies them,
- * so the page says the detail is coming and offers the two honest
- * exits — back to the grid, and out to the published page.
+ * `back`, `visit` and `source` are navigation, not conversion CTAs, so
+ * the Rule 3.1 set does not bind them (the `WORK_LINK` reasoning).
+ * `visit` renders only for a live project (`liveHref`, owner rule
+ * 2026-09-14) — none is today, so the string ships unused on purpose.
+ * `source` names the platform because every published page is on it;
+ * if a study is ever published elsewhere, this label is what changes.
  *
- * `back` and `source` are navigation, not conversion CTAs, so the Rule
- * 3.1 set does not bind them (the `WORK_LINK` reasoning). `source`
- * names the platform because every published page is on it today; if
- * a study is ever published elsewhere, this label is what changes.
+ * The block labels ("The challenge" and the rest) are not here: they
+ * are content, declared per block in each study's module.
  */
 export const CASE_STUDY_PAGE = {
   /** Mono micro-label above the study's name. */
   eyebrow: "Case study",
-  /** The body: the detail is coming, and where the work is meanwhile. */
-  pending:
-    "The full case study is coming. Until it lands, the rest of the work is one click away.",
   /** Navigation back to the grid. */
   back: "All work",
-  /** Navigation to the study's published page; rendered only when it has one. */
+  /** Off-site link to the live product. Live projects only (#43). */
+  visit: "Visit website",
+  /** Off-site link to the study's published page; rendered only when it has one. */
   source: "View on Behance",
+  /**
+   * Accessible name for the hero's detail list (screen-reader only,
+   * the `/work` grid's `sr-only` heading pattern): the label/value rows
+   * have no visible heading of their own.
+   */
+  metaHeading: "Project details",
+  /** Caption inside an image frame whose asset is still owed. */
+  imagePending: "Image pending",
+  /** The band of other studies at the end of the page. */
+  othersEyebrow: "More work",
+  othersHeading: "Other projects",
 } as const;

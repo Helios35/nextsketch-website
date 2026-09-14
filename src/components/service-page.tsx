@@ -1,6 +1,7 @@
 import { BrandWordmark } from "@/components/brand-wordmark";
 import { Button } from "@/components/button";
 import { CapabilityStrip } from "@/components/capability-strip";
+import { CloseBand } from "@/components/close-band";
 import { ModalTrigger } from "@/components/modal-trigger";
 import { PageGlow } from "@/components/page-glow";
 import { ScrollReveal } from "@/components/scroll-reveal";
@@ -8,18 +9,9 @@ import { SectionHeading } from "@/components/section-heading";
 import { ServiceBlockVisual } from "@/components/service-block-visual";
 import { ServiceCta } from "@/components/service-cta";
 import { ServiceProcess } from "@/components/service-process";
-import { FINAL_CTA, LANDING, NAV } from "@/content/copy";
+import { LANDING, NAV } from "@/content/copy";
 import { SERVICES_CTA } from "@/content/services";
 import type { ServicePageContent } from "@/lib/types";
-
-/**
- * Presentation marker, not copy: the qualification promise the close
- * turns on takes the gold payoff treatment (docs/04-ux-spec.md
- * §Typography). The same phrase `FinalCtaSection` accents on `/`, on
- * the same string. Degrades to an unaccented headline if the canonical
- * copy changes.
- */
-const CLOSE_ACCENT_PHRASE = "right fit";
 
 /**
  * Content measure for the service routes (owner direction, 2026-08-30).
@@ -168,9 +160,6 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
   const headline = page.headline ?? page.name;
   const accent = page.accentPhrase;
   const accentStart = accent === undefined ? -1 : headline.indexOf(accent);
-
-  const closeHeadline = FINAL_CTA.headline;
-  const closeAccentStart = closeHeadline.indexOf(CLOSE_ACCENT_PHRASE);
 
   return (
     <>
@@ -413,44 +402,17 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
       </div>
       <ServiceProcess />
 
-      <section
-        aria-labelledby="service-close-headline"
-        className="w-full px-6 pb-28 sm:px-8 sm:pb-32 lg:px-16 lg:pb-44"
-      >
-        <div className={MEASURE}>
-          <ScrollReveal>
-            <SectionHeading
-              as="h2"
-              eyebrow={FINAL_CTA.eyebrow}
-              className="max-w-3xl"
-            >
-              <span id="service-close-headline">
-                {closeAccentStart === -1 ? (
-                  closeHeadline
-                ) : (
-                  <>
-                    {closeHeadline.slice(0, closeAccentStart)}
-                    <span className="text-gold">{CLOSE_ACCENT_PHRASE}</span>
-                    {closeHeadline.slice(
-                      closeAccentStart + CLOSE_ACCENT_PHRASE.length,
-                    )}
-                  </>
-                )}
-              </span>
-            </SectionHeading>
-          </ScrollReveal>
-          {/* The CTA repeated, and nothing beside it. The close carried
-            a gold text link to `/pricing` labelled `PRICING.headline`;
-            the owner removed it (2026-08-28), so the close is the one
-            action again. `/pricing` is still reached from the nav bar's
-            featured button and the footer on every page. */}
-          <ScrollReveal delay={120} className="mt-10">
-            <ModalTrigger variant="inverse" arrow need={page.need}>
-              {FINAL_CTA.cta}
-            </ModalTrigger>
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* The close — `FINAL_CTA` and the divided-arrow trigger, one
+          action, on the page measure. It was inline here and moved to
+          `close-band.tsx` verbatim so the case study template could end
+          the same way without a third copy (decision-log #42); the id
+          and every class are the ones these routes shipped with, and
+          the built HTML is byte-identical before and after. */}
+      <CloseBand
+        headingId="service-close-headline"
+        need={page.need}
+        contentClassName={MEASURE}
+      />
     </>
   );
 }

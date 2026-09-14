@@ -5,7 +5,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { WorkGrid } from "@/components/work-grid";
-import { CASE_STUDIES } from "@/content/case-studies";
+import { WORK_ITEMS } from "@/content/case-studies";
 import { NAV } from "@/content/copy";
 import { WORK_PAGE } from "@/content/work";
 
@@ -129,7 +129,10 @@ export default function Work() {
             </p>
           </div>
         </section>
-        <WorkGrid items={CASE_STUDIES} />
+        {/* The card's projection of the list, not the studies: the
+            tiles are client components and every prop crosses into
+            the page payload (build-note 30). */}
+        <WorkGrid items={WORK_ITEMS} />
       </main>
       <SiteFooter />
     </>

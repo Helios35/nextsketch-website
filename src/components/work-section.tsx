@@ -1,12 +1,8 @@
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { WorkRail } from "@/components/work-rail";
-import {
-  WORK_EYEBROW,
-  WORK_HEADLINE,
-  WORK_INTRO,
-  WORK_ITEMS,
-} from "@/content/work";
+import { WORK_ITEMS } from "@/content/case-studies";
+import { WORK_EYEBROW, WORK_HEADLINE, WORK_INTRO } from "@/content/work";
 
 /**
  * Presentation marker, not copy: the proof the section exists to land

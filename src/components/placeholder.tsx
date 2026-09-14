@@ -23,6 +23,21 @@ interface PlaceholderProps {
   surface?: "paper" | "ink";
   /** Visible site copy inside the block (from a content constant). */
   label?: string;
+  /**
+   * Fill a positioned parent instead of sizing itself: `absolute
+   * inset-0`, no ratio, no border, no fill of its own — the parent
+   * frame carries all three (the case study image frames, decision-log
+   * #42), so the placeholder reads exactly as the frame does with a
+   * real image in it, and rides whatever the frame rides.
+   */
+  fill?: boolean;
+  /**
+   * The real image's alt text, when the placeholder stands in for an
+   * image the owner still owes. The block then announces as an image
+   * with that description rather than as a box of dev-facing text, so
+   * the accessibility pass is not deferred to the day the file lands.
+   */
+  alt?: string;
   className?: string;
 }
 
@@ -59,6 +74,8 @@ export function Placeholder({
   accent,
   surface = "paper",
   label,
+  fill = false,
+  alt,
   className,
 }: PlaceholderProps) {
   const name = `placeholder-${section}-${String(index).padStart(2, "0")}`;
@@ -66,11 +83,18 @@ export function Placeholder({
   return (
     <div
       data-placeholder={name}
+      role={alt === undefined ? undefined : "img"}
+      aria-label={alt}
       className={[
-        RATIO_CLASS[ratio],
-        "relative grid place-items-center overflow-hidden border",
+        fill ? "absolute inset-0" : `relative ${RATIO_CLASS[ratio]} border`,
+        "grid place-items-center overflow-hidden",
+        /* In `fill` mode the parent frame is the surface: painting a
+           second `white/[0.03]` here would composite to the hover stop
+           and read lighter than the same frame with its image in. */
         surface === "ink"
-          ? "rounded-none border-white/15 bg-white/[0.03] text-white/55"
+          ? fill
+            ? "text-white/55"
+            : "rounded-none border-white/15 bg-white/[0.03] text-white/55"
           : accent === undefined
             ? "rounded-lg border-ink/10 bg-paper-bright text-ink"
             : `rounded-lg ${TINT_CLASS[accent]}`,

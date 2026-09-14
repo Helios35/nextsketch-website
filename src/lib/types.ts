@@ -153,22 +153,103 @@ export type WorkItem = {
 );
 
 /**
- * One case study: the `WorkItem` its card shows plus what its own route
- * needs (decision-log #39, #41). Content lives in
+ * The frame ratios a case study image can take (decision-log #42). The
+ * frame is fixed and the asset crops to it, so the real image swaps in
+ * for the placeholder with zero layout shift (Taxonomy §7). `16/9` is
+ * the work card's screenshot frame; `4/3` is the service mocks' box.
+ */
+export type CaseStudyImageRatio = "16/9" | "4/3" | "1/1";
+
+/**
+ * One image slot on a case study route. `src` is optional on purpose:
+ * a slot with none renders the layout-final ink placeholder in the
+ * same frame, which is how the template is signed off on boxes before
+ * the owner supplies imagery. `alt` is required either way — it
+ * describes what the real image will show, so the accessibility pass
+ * is not deferred to the day the file lands. `ratio` overrides the
+ * block's default frame for that one slot.
+ */
+export interface CaseStudyImage {
+  readonly src?: string;
+  readonly alt: string;
+  readonly ratio?: CaseStudyImageRatio;
+}
+
+/** A label/value row in the case study hero's detail list. */
+export interface CaseStudyMeta {
+  readonly label: string;
+  readonly value: string;
+}
+
+/**
+ * The blocks a case study is composed from (decision-log #42). The
+ * content module declares which appear, in what order, with what
+ * content; the template renders them in sequence and knows nothing
+ * about any particular study. A study that needs a block that does
+ * not exist is a reason to add a member here and a component for it,
+ * never a reason to fork the page.
+ *
+ * - `text` — the reference's labelled block: a mono label, one
+ *   statement sentence at panel scale, one or two body paragraphs.
+ * - `image` — one full-width frame, `16/9` unless the slot says otherwise.
+ * - `pair` — two frames side by side, `4/3` unless a slot says otherwise.
+ */
+export type CaseStudyBlock =
+  | {
+      readonly type: "text";
+      readonly label: string;
+      readonly statement: string;
+      readonly body: readonly string[];
+    }
+  | {
+      readonly type: "image";
+      readonly image: CaseStudyImage;
+    }
+  | {
+      readonly type: "pair";
+      readonly images: readonly [CaseStudyImage, CaseStudyImage];
+    };
+
+/**
+ * One case study: the `WorkItem` its card shows plus everything its
+ * own route renders (decision-log #39, #41, #42). Content lives in
  * `src/content/case-studies/`, one module per study, collected in
  * `CASE_STUDIES` — the single list the home rail, the `/work` grid and
  * `/work/[slug]`'s static params all read, so a study cannot be on one
  * surface and missing from another.
  *
- * Deliberately thin. The route is layout-final and empty until the
- * template lands (Unit 25), which is where this type grows the block
- * composition each study declares. Nothing narrative belongs here yet:
- * results, metrics, client names and quotes are owner-owed (Rule 4.3).
+ * The route is one shared template (`case-study-page.tsx`) reading
+ * this shape: hero (name, `intro`, off-site links, the `meta` rows,
+ * the `hero` image), then `blocks` in order, then the other studies,
+ * then the close. Adding a case study is adding a module and its
+ * images; no page, route or component edit.
+ *
+ * **`liveHref` renders "Visit website", and only for a live project**
+ * (owner rule, 2026-09-14; decision-log #43). None of the current four
+ * is live, so none declares it. `sourceHref` (the published Behance
+ * page) is the other off-site link and renders whenever it is set.
+ *
+ * `need` is the project type the close's CTA preselects in the modal —
+ * the `ServiceCta` / `ModalTrigger` seam, read from the same
+ * `ProjectType` vocabulary, so a study cannot preselect something the
+ * form does not offer.
+ *
+ * Every string here is DRAFT pending owner approval, and Rule 4.3
+ * still binds what may be written: what each product is and what was
+ * built, never results, metrics, client names or quotes.
  */
 export type CaseStudy = WorkItem & {
   /** Browser tab and search-result title, in the `PRICING.title` house form. */
   readonly title: string;
   readonly description: string;
+  /** The sentence under the title. Falls back to `summary` when absent. */
+  readonly intro?: string;
+  /** Live product URL — "Visit website". Live projects only (#43). */
+  readonly liveHref?: string;
+  readonly need: ProjectType;
+  readonly meta: readonly CaseStudyMeta[];
+  readonly hero: CaseStudyImage;
+  readonly blocks: readonly CaseStudyBlock[];
 };
 
 /**
