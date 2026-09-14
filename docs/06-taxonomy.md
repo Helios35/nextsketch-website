@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 2.5 · **Date:** 2026-09-14 · **Status:** Active — one service vocabulary across every surface, service and case study slugs double as route segments, and case studies are one module each (decision-log #27–#30, **#39–#41**)
+**Version:** 2.6 · **Date:** 2026-09-14 · **Status:** Active — one service vocabulary across every surface, service and case study slugs double as route segments, case studies are one module each and compose from a block vocabulary (decision-log #27–#30, **#39–#43**)
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code)
 
@@ -150,6 +150,8 @@ A case study's `slug` is its route segment, `/work/<slug>`. It is the project's 
 | Parcell | `parcell` | `/work/parcell` |
 
 `slug` is not `id`. `id` (`work-01` …) keys the screenshot file under `/public/work/` and predates the routes; it stays the asset key and is never a URL. Slugs must be unique — the module index fails the build on a collision — and `workHref` is the only sanctioned way to build a case study href, so a link can only point at a route the build prerenders. **Naming a new study:** its published title, slugified; a study with no published title yet takes the name the owner supplies for its card.
+
+**Block vocabulary — CURRENT (#42, 2026-09-14).** A study's route is composed from `CaseStudyBlock` members, declared in its module in order: **`text`** (a `label`, one `statement`, one or two `body` paragraphs), **`image`** (one full-width frame) and **`pair`** (two frames). Block labels are content, not an enum — today every study runs "The challenge" · "The goal" · "What we built" — so a study may name its blocks differently without a type change. Frame ratios are `CaseStudyImageRatio`: `16/9` (the hero and full-width default, the card's own frame), `4/3` (the pair default, the service mocks' box) and `1/1`, settable per slot. Image slots are `CaseStudyImage` — `alt` required, `src` optional; a slot without `src` renders the §7 placeholder named `placeholder-work-<nn>` in page order, the hero being `01`. The off-site links are `liveHref` ("Visit website", live projects only, #43) and `sourceHref` ("View on Behance"). Canonical in `src/lib/types.ts`.
 
 ### Section IDs (anchor names)
 

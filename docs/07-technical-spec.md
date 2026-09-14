@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.2 · **Date:** 2026-09-14 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30) and the case study routes (#39–#41)
+**Version:** 2.3 · **Date:** 2026-09-14 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30), the case study routes (#39–#41) and the case study template (#42–#43)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -124,7 +124,8 @@ src/
                     routes, #30 — no /services index),
                     work/page.tsx (the case study grid, #39) +
                     work/[slug]/page.tsx (one prerendered route per
-                    study, #39 — dynamicParams false),
+                    study, #39 — dynamicParams false; thin, renders
+                    the shared template, #42),
                     globals.css (Tailwind v4 theme), not-found.tsx,
                     api/qualify/route.ts (the only server surface)
   components/     — hero.tsx + hero-orbit.tsx + hero-cta.tsx, site-nav.tsx,
@@ -134,6 +135,12 @@ src/
                     service routes' four blocks, #30),
                     work-rail.tsx (the card, exported — the /work tile
                     is its variant, #39), work-grid.tsx (#39),
+                    case-study-page.tsx (the template, #42) +
+                    case-study-image.tsx (framed image, parallax,
+                    placeholder fallback) + case-study-link.tsx (the
+                    off-site text link, #43), close-band.tsx (the
+                    service routes' close, extracted, shared with the
+                    template), placeholder.tsx (fill + alt, #42),
                     page-glow.tsx (#35), scroll-video.tsx, scroll-reveal.tsx,
                     parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
                     qualification-modal(-provider).tsx, modal-trigger.tsx,
@@ -152,7 +159,8 @@ src/
   lib/            — types.ts (SectionId, ROUTES, sectionHref,
                     PricingTier + PricingTierSlug, ServicePageSlug +
                     ServiceBlockId + serviceRoute/serviceBlockHref, #30,
-                    WorkItem + CaseStudy + workHref, #39),
+                    WorkItem + CaseStudy + workHref, #39, CaseStudyBlock +
+                    CaseStudyImage + CaseStudyMeta, #42),
                     schema.ts
                     (Zod union), qualify.ts (submit seam), video-scrub.ts,
                     lead-delivery.ts, lead-format.ts, lead-notify.ts
