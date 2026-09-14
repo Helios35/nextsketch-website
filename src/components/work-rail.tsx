@@ -10,6 +10,7 @@ import {
   WORK_RAIL,
   WORK_VIEW_ALL,
 } from "@/content/work";
+import { workHref } from "@/lib/types";
 import type { WorkItem } from "@/lib/types";
 import { useMounted } from "@/lib/use-mounted";
 import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
@@ -68,6 +69,13 @@ interface WorkRailProps {
  * hydrated (their row keeps a reserved height, so nothing shifts);
  * programmatic scrolling drops to `behavior: "auto"` under reduced
  * motion, matching the `globals.css` gate on smooth anchor scrolling.
+ *
+ * **The card is exported, and it is the `/work` grid's tile too
+ * (decision-log #39).** `work-grid.tsx` renders the same `<WorkCard>`
+ * in its `tile` variant — one component, one file, no fork — and on
+ * both surfaces the card lands on its own case study route. The
+ * trailing View all card lands on the grid. See `WorkCard` below for
+ * the two things the variant changes, which is all it changes.
  */
 export function WorkRail({ items, children }: WorkRailProps) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -353,14 +361,15 @@ const OVERLAY_TONE: Record<"light" | "bright", string> = {
  * (§Interaction vocabulary). It keeps the advance button scarce, the
  * same way gold is kept scarce.
  *
- * The destination is owner-owed, so with no `href` the control renders
- * as a genuinely disabled button in the system's documented disabled
- * state (§Interaction vocabulary: `opacity-40`, pointer-events off) —
- * honest about not being wired rather than an anchor pointing nowhere,
- * and inert to keyboard and pointer alike. The card also drops its
- * hover border in that state, since nothing there responds. Setting
- * `href` in src/content/work.ts is the only change needed to make it
- * live.
+ * The destination is `/work`, the case study grid (decision-log #39);
+ * it was the owner's Behance profile while the site had no page to
+ * offer. Should `href` ever be unset again, the control renders as a
+ * genuinely disabled button in the system's documented disabled state
+ * (§Interaction vocabulary: `opacity-40`, pointer-events off) — honest
+ * about not being wired rather than an anchor pointing nowhere, and
+ * inert to keyboard and pointer alike. The card also drops its hover
+ * border in that state, since nothing there responds. `WORK_VIEW_ALL`
+ * in src/content/work.ts is the only place the destination lives.
  */
 function ViewAllCard() {
   const { label, href } = WORK_VIEW_ALL;
@@ -389,19 +398,73 @@ function ViewAllCard() {
 }
 
 /**
- * One work card. Linking is per-item: a project with a public URL is a
- * real anchor carrying the gold link affordance and the arrow nudge; a
- * project without one renders the identical card as a plain container,
- * never a dead link. The whole card is the click target when it links,
- * so the gold row is presentational (`aria-hidden`) rather than a
- * nested second link.
+ * Which surface renders a card. `rail` is the home band's snap slide;
+ * `tile` is a cell in the `/work` grid (decision-log #39).
  */
-function WorkCard({ item, index }: { item: WorkItem; index: number }) {
-  const linked = item.href !== undefined;
+export type WorkCardVariant = "rail" | "tile";
+
+/**
+ * The screenshot's `sizes` hint per surface — how wide its slot can
+ * be, so `next/image` never picks a source that is too small.
+ */
+const IMAGE_SIZES: Record<WorkCardVariant, string> = {
+  /** The rail slide's own width ladder (see the track's `w-` clamp). */
+  rail: "(min-width: 1024px) 26rem, (min-width: 640px) 24rem, 82vw",
+  /**
+   * A conservative floor for the grid: full width below `md` and never
+   * narrower than half the viewport above it, which is the widest cell
+   * any column ladder produces. `WorkGrid` passes its exact ladder
+   * through `sizes`; this default only guards a caller that does not.
+   */
+  tile: "(min-width: 768px) 50vw, 100vw",
+};
+
+interface WorkCardProps {
+  item: WorkItem;
+  index: number;
+  /**
+   * The tile is the rail card, not a fork of it (decision-log #39): the
+   * same frame, grade, copy block and gold row, sized by whatever
+   * contains it — the rail's slide or the grid's cell. The variant
+   * changes exactly two things, both about the screenshot: the `sizes`
+   * hint (below) and whether it may load eagerly (`priority`), because
+   * the grid opens above the fold and the rail never does.
+   */
+  variant?: WorkCardVariant;
+  /** Overrides the variant's `sizes` hint — the grid knows its ladder. */
+  sizes?: string;
+  /** Preload the screenshot: the grid's first row. Rail cards never set it. */
+  priority?: boolean;
+}
+
+/**
+ * One work card. **Every card is a link to its own case study route**,
+ * built from the item's `slug` by `workHref` — never to the project's
+ * Behance page, which the route renders as a link out instead (#39).
+ * The whole card is the click target, so the gold row is
+ * presentational (`aria-hidden`) rather than a nested second link, and
+ * the anchor's accessible name carries the project and the label.
+ *
+ * It used to link only when the item had a public URL and render as a
+ * plain container otherwise. That branch is gone, not hidden: a case
+ * study route exists for every entry of the list by construction, so
+ * there is no unlinked card to render.
+ */
+export function WorkCard({
+  item,
+  index,
+  variant = "rail",
+  sizes = IMAGE_SIZES[variant],
+  priority = false,
+}: WorkCardProps) {
   const tone = item.tone ?? "light";
 
-  const body = (
-    <>
+  return (
+    <a
+      href={workHref(item.slug)}
+      aria-label={`${item.name}, ${WORK_LINK}`}
+      className="group/card flex h-full flex-col border border-white/15 bg-surface transition-colors duration-150 hover:border-white/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+    >
       {/* Fixed 16/9 frame, independent of the screenshot's real size —
           every card matches (owner requirement, 2026-08-24). */}
       <div className="relative aspect-video overflow-hidden border-b border-white/10 bg-white/[0.03]">
@@ -411,7 +474,8 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
             alt={item.alt}
             width={1600}
             height={900}
-            sizes="(min-width: 1024px) 26rem, (min-width: 640px) 24rem, 82vw"
+            sizes={sizes}
+            priority={priority}
             className={`h-full w-full object-cover transition-[scale,filter] duration-300 motion-safe:group-hover/card:scale-105 ${IMAGE_TONE[tone]} ${
               item.focal === "top" ? "object-top" : "object-center"
             }`}
@@ -454,37 +518,16 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
         <p className="mt-3 line-clamp-2 text-base leading-relaxed text-white/70">
           {item.summary}
         </p>
-        {linked && (
-          <span
-            aria-hidden="true"
-            className="mt-auto inline-flex items-center gap-2 pt-6 text-base font-medium text-gold underline underline-offset-4 transition-colors duration-150 group-hover/card:text-white"
-          >
-            {WORK_LINK}
-            <span className="transition-[translate] duration-150 motion-safe:group-hover/card:translate-x-0.5">
-              <ArrowIcon className="size-4" />
-            </span>
+        <span
+          aria-hidden="true"
+          className="mt-auto inline-flex items-center gap-2 pt-6 text-base font-medium text-gold underline underline-offset-4 transition-colors duration-150 group-hover/card:text-white"
+        >
+          {WORK_LINK}
+          <span className="transition-[translate] duration-150 motion-safe:group-hover/card:translate-x-0.5">
+            <ArrowIcon className="size-4" />
           </span>
-        )}
+        </span>
       </div>
-    </>
-  );
-
-  const surface =
-    "group/card flex h-full flex-col border border-white/15 bg-surface " +
-    "transition-colors duration-150 hover:border-white/30";
-
-  if (!linked) {
-    return <div className={surface}>{body}</div>;
-  }
-  return (
-    <a
-      href={item.href}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={`${item.name} — ${WORK_LINK}`}
-      className={`${surface} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
-    >
-      {body}
     </a>
   );
 }

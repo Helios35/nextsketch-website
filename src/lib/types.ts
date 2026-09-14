@@ -71,25 +71,48 @@ export interface FaqItem {
 }
 
 /**
- * One card in the selected-work rail (#work). Content lives in
- * src/content/work.ts; Rule 4.3 forbids invented names or outcomes, so
- * every field here is owner-supplied.
+ * One work card — the home rail's card and the `/work` grid's tile are
+ * the same component reading this shape (decision-log #39). Content
+ * lives in `src/content/case-studies/`, one module per study (#41), and
+ * reaches the rail through `WORK_ITEMS` in `src/content/work.ts`. Rule
+ * 4.3 forbids invented names or outcomes, so every field here is
+ * owner-supplied.
  *
- * `image`/`alt` and `href` are optional on purpose, and independently:
- * a project whose screenshot is still owed renders the layout-final
- * ink placeholder in the same 16/9 frame (zero layout shift on
- * swap-in), and a project with no public URL renders as a non-linking
- * tile rather than a dead link. `alt` is required whenever `image` is
- * set — enforced by the union below, so a screenshot can never ship
- * without its accessible description.
+ * **Every card links, to its own case study route.** The destination is
+ * built from `slug` by `workHref`, never hand-written, so a card cannot
+ * point at a route that does not exist: `/work/[slug]` prerenders one
+ * page per entry of the same list the cards render from.
+ *
+ * `image`/`alt` and `sourceHref` are optional on purpose, and
+ * independently: a project whose screenshot is still owed renders the
+ * layout-final ink placeholder in the same 16/9 frame (zero layout shift
+ * on swap-in), and a project with no published page simply renders no
+ * off-site link on its route. `alt` is required whenever `image` is set
+ * — enforced by the union below, so a screenshot can never ship without
+ * its accessible description.
  */
 export type WorkItem = {
   /** Stable key; also the screenshot's file name under /public/work/. */
   readonly id: string;
+  /**
+   * The route segment — `/work/<slug>` (decision-log #39). Kebab-case
+   * per docs/06-taxonomy.md §8: the project's published title
+   * slugified ("SaaS Platform" → `saas-platform`), because the
+   * published title is the name the owner released the work under
+   * (build-note 20). Distinct from `id`, which keys the asset file and
+   * predates the routes; the two are not interchangeable.
+   */
+  readonly slug: string;
   readonly name: string;
   readonly summary: string;
-  /** Live product URL. Omitted when the work has no public link. */
-  readonly href?: string;
+  /**
+   * Where the work was published off-site — its Behance case study
+   * today. **Not the card's destination** (that is `workHref(slug)`,
+   * #39); the case study route renders this as a link out, so the
+   * published page stays one hop away rather than disappearing when
+   * the cards were rerouted. Omitted when the work has no public page.
+   */
+  readonly sourceHref?: string;
 } & (
   | {
       readonly image: string;
@@ -130,20 +153,43 @@ export type WorkItem = {
 );
 
 /**
+ * One case study: the `WorkItem` its card shows plus what its own route
+ * needs (decision-log #39, #41). Content lives in
+ * `src/content/case-studies/`, one module per study, collected in
+ * `CASE_STUDIES` — the single list the home rail, the `/work` grid and
+ * `/work/[slug]`'s static params all read, so a study cannot be on one
+ * surface and missing from another.
+ *
+ * Deliberately thin. The route is layout-final and empty until the
+ * template lands (Unit 25), which is where this type grows the block
+ * composition each study declares. Nothing narrative belongs here yet:
+ * results, metrics, client names and quotes are owner-owed (Rule 4.3).
+ */
+export type CaseStudy = WorkItem & {
+  /** Browser tab and search-result title, in the `PRICING.title` house form. */
+  readonly title: string;
+  readonly description: string;
+};
+
+/**
  * The routes the site serves (docs/03-site-architecture.md §Sitemap).
  * `/` is the scrolling home page; `/pricing` is the first standalone
- * route (decision-log #23) and the **two service routes** under
- * `/services/` are the next (**#30**). `/api/qualify` is POST-only and
- * has no page, so it is not a destination anything links to.
+ * route (decision-log #23), the **two service routes** under
+ * `/services/` are the next (**#30**), and `/work` is the case study
+ * grid (**#39**). `/api/qualify` is POST-only and has no page, so it is
+ * not a destination anything links to.
  *
- * The service routes are built by `serviceRoute` rather than listed
- * here, so the segment and the slug can never disagree. There is
- * deliberately **no `/services` index** — the home page's `#services`
- * section is the hub.
+ * The service routes are built by `serviceRoute` and the case study
+ * routes by `workHref` rather than listed here, so a segment and its
+ * slug can never disagree. There is deliberately **no `/services`
+ * index** — the home page's `#services` section is the hub. `/work` is
+ * the opposite shape: a real index page, because the band's "View all"
+ * has to land somewhere.
  */
 export const ROUTES = {
   home: "/",
   pricing: "/pricing",
+  work: "/work",
 } as const;
 
 /**
@@ -231,6 +277,21 @@ export const serviceBlockHref = (block: ServiceBlockId): string =>
  * shape gave and a plain href string would have thrown away.
  */
 export const sectionHref = <T extends SectionId>(id: T): `/#${T}` => `/#${id}`;
+
+/**
+ * Root-relative path for a case study — `/work/mascot`, never a
+ * hand-written string (decision-log #39). Every card and tile builds its
+ * destination through this from the study's own `slug`, so a link can
+ * only ever point at a route `/work/[slug]` prerenders. Generic so the
+ * literal survives, the guarantee `serviceRoute` and `sectionHref` give.
+ *
+ * `/work` itself is `ROUTES.work`; `#work` (the home band) is
+ * `sectionHref("work")`. They are a character apart and mean different
+ * things, on purpose (#40): the nav's Work item is the band, and the
+ * grid is reached from the band's own control.
+ */
+export const workHref = <S extends string>(slug: S): `/work/${S}` =>
+  `/work/${slug}`;
 
 /** Pricing tier slugs per docs/06-taxonomy.md, ordered, exactly four. */
 export type PricingTierSlug = "workflow" | "tool" | "rescue" | "custom";

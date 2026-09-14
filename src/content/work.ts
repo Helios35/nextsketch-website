@@ -1,11 +1,20 @@
+import { CASE_STUDIES } from "@/content/case-studies";
+import { ROUTES } from "@/lib/types";
 import type { WorkItem } from "@/lib/types";
 
 /**
- * Selected-work (#work) copy and item inventory — the proof band
- * (owner direction 2026-08-24: the site was converting poorly because
- * nothing on it demonstrated proof of work or authority). The section
- * is reactivated from the dormant set, which decision-log #13 required
- * a new owner decision to do — see docs/decision-log.md #16.
+ * Selected-work (#work) copy — the proof band (owner direction
+ * 2026-08-24: the site was converting poorly because nothing on it
+ * demonstrated proof of work or authority). The section is reactivated
+ * from the dormant set, which decision-log #13 required a new owner
+ * decision to do — see docs/decision-log.md #16. Since #39 the band is
+ * also the doorway to `/work`, the case study grid, and every card
+ * lands on its own `/work/<slug>` route; the strings those two pages
+ * need live at the bottom of this file.
+ *
+ * The item inventory no longer lives here. Each case study is its own
+ * module under `src/content/case-studies/` (#41), and `WORK_ITEMS`
+ * below is that list under the name the band has always read.
  *
  * No canonical copy exists for this section (Messaging Kit §05 does
  * not cover it and architecture row 5 deferred to the placeholder
@@ -58,7 +67,9 @@ export const WORK_INTRO =
   "Every screen is built and designed by Next Sketch";
 
 /**
- * Per-card link label — owner-specified verbatim (2026-08-24).
+ * Per-card link label — owner-specified verbatim (2026-08-24). Since
+ * #39 the card it labels lands on the project's own case study route
+ * rather than its Behance page; the label reads the same for both.
  *
  * Deliberately NOT from the Rule 3.1 CTA set: that set is exhaustive
  * for *conversion* CTAs, and this control is navigation to the
@@ -84,25 +95,33 @@ export const WORK_RAIL = {
  * The rail's trailing card — a single control to the full archive
  * instead of a screenshot (owner direction 2026-08-24).
  *
- * Points at the owner's Behance profile (supplied 2026-08-24) — the
- * same URL the footer's Behance social link already uses. `href` stays
- * optional on the type: with it unset the card renders its button in
- * the system's documented disabled state rather than as an anchor
- * pointing nowhere.
+ * It lands on `/work`, the case study grid (owner decision 2026-09-12,
+ * decision-log #39). Until then it opened the owner's Behance profile,
+ * standing in for a page this site did not have; that URL is still the
+ * footer's Behance social link, so nothing is lost. The label did not
+ * change. `href` stays optional on the type: with it unset the card
+ * renders its button in the system's documented disabled state rather
+ * than as an anchor pointing nowhere.
  */
 export const WORK_VIEW_ALL: { label: string; href?: string } = {
   label: "View all",
-  href: "https://www.behance.net/nateivy",
+  href: ROUTES.work,
 };
 
 /** Placeholder caption shown on a card whose screenshot is still owed. */
 export const WORK_PLACEHOLDER_LABEL = "Screenshot pending";
 
 /**
- * The work inventory, in display order.
+ * The work inventory the band renders, in display order — the case
+ * study list itself (decision-log #41), under the name `work-section.tsx`
+ * has read since the band shipped. The four entries moved out of this
+ * file into `src/content/case-studies/`, one module each, byte for
+ * byte: names, links, screenshots, summaries and the per-image grading
+ * notes travelled with them. Keeping the alias is what leaves the home
+ * page's section component untouched (verified against the built HTML:
+ * the home markup is identical except for the card destinations, #39).
  *
- * Names and links are the owner's, supplied 2026-08-24; the summaries
- * are DRAFT, written from each linked project and pending approval.
+ * What still governs every entry, wherever it lives:
  *
  * `name` is the project's own Behance title rather than the product
  * name shown inside the screenshot (Genioo, Caddy), because the
@@ -126,43 +145,60 @@ export const WORK_PLACEHOLDER_LABEL = "Screenshot pending";
  * image crops via object-cover, so every card matches regardless of
  * the screenshot's real dimensions (owner requirement, 2026-08-24).
  */
-export const WORK_ITEMS = [
-  {
-    id: "work-01",
-    name: "Mascot",
-    summary: "An AI companion device for kids, and the app parents run it.",
-    href: "https://www.behance.net/gallery/197568297/Mascot",
-    image: "/work/work-01.webp",
-    alt: "A blue handheld kids device beside a phone showing its companion app, with mascot avatars and activity cards.",
-  },
-  {
-    id: "work-02",
-    name: "SaaS Platform",
-    summary: "A team workspace for tracking deliverables and milestones.",
-    href: "https://www.behance.net/gallery/176781989/Saas-Platform",
-    image: "/work/work-02.webp",
-    alt: "A laptop showing a project planning dashboard with deliverable cards above a team timeline of milestones.",
-    // No `focal`: the mockup is 2:1, wider than the 16/9 frame, so the
-    // crop takes width and a vertical focal point would do nothing.
-    // Measured mean luminance 0.87 — the brightest of the set by a
-    // clear margin (88% of the frame in the top luminance band), and
-    // the only one that glares under the base grade.
-    tone: "bright",
-  },
-  {
-    id: "work-03",
-    name: "Agentic Platform",
-    summary: "A CAD tool where an embedded agent drafts parts.",
-    href: "https://www.behance.net/gallery/226572695/Agentic-Platform",
-    image: "/work/work-03.webp",
-    alt: "A laptop showing a dark 3D CAD workspace with a gear model beside an AI assistant panel.",
-  },
-  {
-    id: "work-04",
-    name: "Parcell",
-    summary: "A mobile app for discovering and collecting digital art.",
-    href: "https://www.behance.net/gallery/176762755/Parcell",
-    image: "/work/work-04.webp",
-    alt: "Two phones showing a digital art app's sign-in screen and its browsing grid.",
-  },
-] as const satisfies readonly WorkItem[];
+export const WORK_ITEMS: readonly WorkItem[] = CASE_STUDIES;
+
+/**
+ * `/work` — the case study grid (decision-log #39): page metadata plus
+ * the intro band's copy.
+ *
+ * The eyebrow, headline and intro are the proof band's own strings,
+ * reused rather than redrafted. The grid *is* the band in full — a
+ * visitor arrives from the band's "View all" — and the headline is
+ * owner-specified copy (2026-08-24) while no page-specific line exists
+ * yet. A line of the page's own is an owner call, not a builder's
+ * draft. `title` and `description` are DRAFT in the `PRICING.title`
+ * house form; the description restates the approved headline and
+ * claims nothing the band does not.
+ */
+export const WORK_PAGE = {
+  title: "Work | NextSketch",
+  description:
+    "Selected work from NextSketch. Real products doing the job they were built to do.",
+  eyebrow: WORK_EYEBROW,
+  headline: WORK_HEADLINE,
+  intro: WORK_INTRO,
+  /**
+   * Accessible name for the grid landmark (screen-reader only). The
+   * grid is a region with no visible heading of its own — the page's
+   * <h1> already names it — so it needs one that is not the eyebrow.
+   */
+  gridHeading: "All case studies",
+} as const;
+
+/**
+ * `/work/[slug]` — the case study route, layout-final and deliberately
+ * empty until the template lands (decision-log #39; Unit 25). Every
+ * string the placeholder page renders beyond the study's own name and
+ * summary. DRAFT in brand voice pending owner approval.
+ *
+ * Rule 4.3 is why there is so little of it: no narrative, results,
+ * metrics, client names or quotes ship until the owner supplies them,
+ * so the page says the detail is coming and offers the two honest
+ * exits — back to the grid, and out to the published page.
+ *
+ * `back` and `source` are navigation, not conversion CTAs, so the Rule
+ * 3.1 set does not bind them (the `WORK_LINK` reasoning). `source`
+ * names the platform because every published page is on it today; if
+ * a study is ever published elsewhere, this label is what changes.
+ */
+export const CASE_STUDY_PAGE = {
+  /** Mono micro-label above the study's name. */
+  eyebrow: "Case study",
+  /** The body: the detail is coming, and where the work is meanwhile. */
+  pending:
+    "The full case study is coming. Until it lands, the rest of the work is one click away.",
+  /** Navigation back to the grid. */
+  back: "All work",
+  /** Navigation to the study's published page; rendered only when it has one. */
+  source: "View on Behance",
+} as const;
