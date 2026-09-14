@@ -23,15 +23,14 @@ import type { CaseStudy } from "@/lib/types";
  * order.** The owner set the hero: the three handhelds floating. The
  * slots below are laid out for those six, which is why this module
  * declares one fewer image block than the template's default rhythm.
- * Each frame's ratio is picked for its render (per-slot override):
- * the hero is `4/3` because the floating devices fill a near-square
- * frame and a `16/9` crop would take the top device's head off; the
- * two pairs are `1/1` because all four are square or near-square
- * compositions with the subject centred; the closing full-width is
- * the default `16/9`, the one landscape composite. The files land at
- * `/public/work/mascot/mascot-0<n>.<ext>` in page order; until they
- * do, `src` is absent and every frame renders the placeholder with
- * the real image's `alt`.
+ * **The frames keep the template's ratios and the renders crop to
+ * them** (owner rule, 2026-09-14: the image adjusts to the container,
+ * never the container to the image), so no slot overrides its ratio:
+ * the hero and the closing composite sit in `16/9`, the pairs in
+ * `4/3`, and `object-cover` centres each render in its frame. The
+ * files live at `/public/work/mascot/mascot-0<n>.<ext>` in page
+ * order, in the format the owner supplied (the build-note 20 posture),
+ * renamed kebab-case per Taxonomy §8.
  *
  * `slug` is the published title slugified (Taxonomy §8, §6). `title`
  * and `description` are the route's metadata; DRAFT.
@@ -57,7 +56,7 @@ export const MASCOT = {
   ],
   /* mascot-01: the three handhelds floating (owner: the top image). */
   hero: {
-    ratio: "4/3",
+    src: "/work/mascot/mascot-01.png",
     alt: "Three Mascot handhelds floating against a pale blue background: a green one showing a game, a blue one showing the home screen, and a white one turned to show its camera.",
   },
   blocks: [
@@ -75,11 +74,11 @@ export const MASCOT = {
       type: "pair",
       images: [
         {
-          ratio: "1/1",
+          src: "/work/mascot/mascot-02.png",
           alt: "The blue Mascot handheld showing an incoming call from a parent, beside a parent's phone showing the child's live location on a map and a push-to-talk bar.",
         },
         {
-          ratio: "1/1",
+          src: "/work/mascot/mascot-03.png",
           alt: "The blue Mascot handheld on its home screen, beside a parent's phone showing the Templates and Learn cards.",
         },
       ],
@@ -98,11 +97,11 @@ export const MASCOT = {
       type: "pair",
       images: [
         {
-          ratio: "1/1",
+          src: "/work/mascot/mascot-04.png",
           alt: "The blue Mascot handheld from the front with its controls labelled: silence, power, volume, push to talk, SOS button, game pad joystick, game pad buttons and front speaker.",
         },
         {
-          ratio: "1/1",
+          src: "/work/mascot/mascot-05.jpg",
           alt: "Three parent app screens on a dark purple background: Templates and Learn cards, a live location map above an activity summary, and a recent activity timeline with a question typed to the mascot.",
         },
       ],
@@ -120,6 +119,7 @@ export const MASCOT = {
     {
       type: "image",
       image: {
+        src: "/work/mascot/mascot-06.png",
         alt: "Two close views of the blue Mascot handheld: its side edge with the orange push-to-talk button, and its lower face with the joystick, the red SOS button, two game pad buttons and the speaker grille.",
       },
     },
