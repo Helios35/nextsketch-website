@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.1 · **Date:** 2026-08-28 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30)
+**Version:** 2.2 · **Date:** 2026-09-14 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30) and the case study routes (#39–#41)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -13,7 +13,7 @@
 
 ## System overview — **CHANGED**
 
-**Four statically-prerendered pages** — the dark scrolling home page, `/pricing` (decision-log #23, 2026-08-25) and the **two service routes** `/services/product` + `/services/agentic-system` (**#30**, 2026-08-28) — with **exactly one serverless API route** for lead submission (`POST /api/qualify`). Adding routes did **not** add a server surface: all four prerender to static HTML at build and sell nothing. **No database, no auth, no CMS, and no backend beyond that one route — ever** (decision-log #8, unchanged by #23). Content is code (typed constants in `src/content/*.ts`), since canonical copy is locked and changes are owner decisions. The durable lead record is an external **Google Sheet** (+ a best-effort Asana task); the site stores nothing server-side.
+**Five statically-prerendered pages plus one dynamic segment prerendered per case study** — the dark scrolling home page, `/pricing` (decision-log #23, 2026-08-25), the **two service routes** `/services/product` + `/services/agentic-system` (**#30**, 2026-08-28), the **`/work` case study grid** and **`/work/[slug]`**, one static page per study generated at build from `src/content/case-studies/` (`generateStaticParams`, `dynamicParams: false`; **#39**, 2026-09-12) — with **exactly one serverless API route** for lead submission (`POST /api/qualify`). Adding routes did **not** add a server surface: every page prerenders to static HTML at build and sells nothing. **No database, no auth, no CMS, and no backend beyond that one route — ever** (decision-log #8, unchanged by #23 or #39; **#41** records that the case studies are repo content, one module each, not a CMS). Content is code (typed constants in `src/content/*.ts`), since canonical copy is locked and changes are owner decisions. The durable lead record is an external **Google Sheet** (+ a best-effort Asana task); the site stores nothing server-side.
 
 ## Tech stack — **CURRENT** (versions as-built)
 
@@ -122,6 +122,9 @@ src/
                     services/product/page.tsx +
                     services/agentic-system/page.tsx (the two service
                     routes, #30 — no /services index),
+                    work/page.tsx (the case study grid, #39) +
+                    work/[slug]/page.tsx (one prerendered route per
+                    study, #39 — dynamicParams false),
                     globals.css (Tailwind v4 theme), not-found.tsx,
                     api/qualify/route.ts (the only server surface)
   components/     — hero.tsx + hero-orbit.tsx + hero-cta.tsx, site-nav.tsx,
@@ -129,7 +132,9 @@ src/
                     pricing-tiers.tsx (the /pricing grid, #25),
                     service-page.tsx + service-process.tsx (the two
                     service routes' four blocks, #30),
-                    work-rail.tsx, scroll-video.tsx, scroll-reveal.tsx,
+                    work-rail.tsx (the card, exported — the /work tile
+                    is its variant, #39), work-grid.tsx (#39),
+                    page-glow.tsx (#35), scroll-video.tsx, scroll-reveal.tsx,
                     parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
                     qualification-modal(-provider).tsx, modal-trigger.tsx,
                     button.tsx (variant + size, #26)
@@ -138,13 +143,16 @@ src/
                      on disk, not rendered; delete vs. keep is an open
                      owner call, build-note 08)
   content/        — copy.ts (SITE + NAV + LANDING live; retired-plan copy
-                    dormant), work.ts, pricing.ts, services.ts,
+                    dormant), work.ts (the band's and the /work
+                    routes' strings), case-studies/ (one module per
+                    study + index.ts, #41), pricing.ts, services.ts,
                     service-pages.ts (the two routes' content, #30 —
                     references services.ts/pricing.ts, never re-literals
                     their copy), modal.ts, email.ts, faq.ts
   lib/            — types.ts (SectionId, ROUTES, sectionHref,
                     PricingTier + PricingTierSlug, ServicePageSlug +
-                    ServiceBlockId + serviceRoute/serviceBlockHref, #30),
+                    ServiceBlockId + serviceRoute/serviceBlockHref, #30,
+                    WorkItem + CaseStudy + workHref, #39),
                     schema.ts
                     (Zod union), qualify.ts (submit seam), video-scrub.ts,
                     lead-delivery.ts, lead-format.ts, lead-notify.ts

@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 2.4 · **Date:** 2026-08-28 · **Status:** Active — one service vocabulary across every surface, and the slugs now double as route segments (decision-log #27–#30)
+**Version:** 2.5 · **Date:** 2026-09-14 · **Status:** Active — one service vocabulary across every surface, service and case study slugs double as route segments, and case studies are one module each (decision-log #27–#30, **#39–#41**)
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code)
 
@@ -107,9 +107,9 @@ Computed in `src/lib/lead-format.ts` (`leadSignal`). The pre-pivot set (`qualifi
 
 Token names — `paper` · `paper-bright` · `ink` · `white` · `gold`/`gold-ink` · `lavender`/`lavender-ink` · `rose`/`rose-ink` · `sage`/`sage-ink` — remain defined in `src/app/globals.css`; Tailwind theme keys use exactly these names (**CURRENT**). The design system uses four of them (**CURRENT**): `ink` (page surface), `white` (text), and **`gold`/`gold-ink` — the only accent** (decision-log #14). The rest are **orphaned** (**CHANGED**): `lavender`/`rose`/`sage` (+ `-ink` pairs) and `paper-bright` have no design role and are unavailable to new sections; `paper` is orphaned with one live exception — the 404 surface (**CURRENT**). Removing orphaned tokens from `globals.css` is a future owner-approved code change. Pairing rule (accent bg ⇒ paired `-ink` text) is **CURRENT/binding**. Full detail in `04-ux-spec.md` §Color.
 
-## 6. Routes and section IDs — **CHANGED** (four routes; service slugs are now route segments) · **RETIRED** (held-section IDs)
+## 6. Routes and section IDs — **CHANGED** (five static pages plus a dynamic case study segment; service and case study slugs are route segments) · **RETIRED** (held-section IDs)
 
-### Routes — **CHANGED (decision-log #23, 2026-08-25; #30, 2026-08-28)**
+### Routes — **CHANGED (decision-log #23, 2026-08-25; #30, 2026-08-28; #39, 2026-09-12)**
 
 | Route | What it is | Status |
 |---|---|---|
@@ -117,9 +117,11 @@ Token names — `paper` · `paper-bright` · `ink` · `white` · `gold`/`gold-in
 | `/pricing` | Standalone pricing page, statically prerendered | **CHANGED (new, #23)** |
 | `/services/product` | New Product · Product Completion · Product Support, as anchored blocks | **CHANGED (new, #30)** |
 | `/services/agentic-system` | Agentic System, at its two depths | **CHANGED (new, #30)** |
+| `/work` | The case study grid — every study in content, behind the home band's "View all" | **CHANGED (new, #39)** |
+| `/work/[slug]` | One route per case study, prerendered at build from `src/content/case-studies/`; an unknown slug is the site 404 | **CHANGED (new, #39)** |
 | `/api/qualify` | POST-only lead endpoint, no page | **CURRENT** (see `07-technical-spec.md`) |
 
-Route paths are kebab-case per §8. **None of these is a server surface** — all four pages prerender to static HTML, so decision #8 is untouched. Canonical in `src/lib/types.ts` → `ROUTES` (the two static paths) and `serviceRoute` (the service segments, built from `ServicePageSlug` so the segment and the slug cannot disagree).
+Route paths are kebab-case per §8. **None of these is a server surface** — every page prerenders to static HTML, the case study routes one per study at build (`generateStaticParams`, `dynamicParams: false`), so decision #8 is untouched. Canonical in `src/lib/types.ts` → `ROUTES` (the three static paths), `serviceRoute` (the service segments, built from `ServicePageSlug` so the segment and the slug cannot disagree) and `workHref` (the case study segments, built from each study's `slug`).
 
 **There is no `/services` index route** (#30): the home page's `#services` section is the hub.
 
@@ -135,6 +137,19 @@ A **service page slug is not a `ServiceSlug`.** Two pages cover four services, s
 `agentic-system` is spelled exactly like its `ServiceSlug` because that page *is* that service; `product` is a group name with no service behind it. The agentic blocks are kebab-cased from the **tier names**, not the terse tier slugs (`workflow` / `tool`), because these appear in the URL. Canonical in `src/lib/types.ts` → `ServicePageSlug`, `ServiceBlockId`, `SERVICE_BLOCK_PAGE`, and `src/content/service-pages.ts` → `SERVICE_PAGES`.
 
 The home page's cards link to the **route root**, so a visitor lands on the hero (#30, corrected 2026-08-30). The block anchors stay live for a shared or bookmarked URL, and `serviceBlockHref` remains the only sanctioned way to build one — it looks a block's page out of `SERVICE_BLOCK_PAGE`, so a link can never pair a block with a page that does not carry it and every href is root-relative by construction.
+
+### Case study slugs — **CURRENT (#39, #41)**
+
+A case study's `slug` is its route segment, `/work/<slug>`. It is the project's **published title slugified** — kebab-case per §8 — because the published (Behance) title is the name the owner released the work under (build-note 20), and it lives on the study's own module in `src/content/case-studies/`, nowhere else:
+
+| Study | Slug | Route |
+|---|---|---|
+| Mascot | `mascot` | `/work/mascot` |
+| SaaS Platform | `saas-platform` | `/work/saas-platform` |
+| Agentic Platform | `agentic-platform` | `/work/agentic-platform` |
+| Parcell | `parcell` | `/work/parcell` |
+
+`slug` is not `id`. `id` (`work-01` …) keys the screenshot file under `/public/work/` and predates the routes; it stays the asset key and is never a URL. Slugs must be unique — the module index fails the build on a collision — and `workHref` is the only sanctioned way to build a case study href, so a link can only point at a route the build prerenders. **Naming a new study:** its published title, slugified; a study with no published title yet takes the name the owner supplies for its card.
 
 ### Section IDs (anchor names)
 
@@ -153,7 +168,7 @@ Six items, in this order, rendered by both `SiteNav`'s overlay and `SiteFooter` 
 | 5 | About | `/#about` | section anchor |
 | 6 | **Pricing** | **`/pricing`** | **route** — last slot (#24) |
 
-**The two service routes are not nav items (#30).** The nav is settled (#22, #24, #26) and this unit does not reopen it: the service pages are reached from the `#services` cards, where each card's **name** links to that service's block. Adding them to `NAV.items` is a separate owner call.
+**The two service routes are not nav items (#30), and neither is `/work` (#40).** The nav is settled (#22, #24, #26) and neither unit reopened it: the service pages are reached from the `#services` cards, where each card's **name** links to that service's block, and `/work` is reached from the `#work` band's "View all" (each case study from its card on the band or its tile on the grid). **The Work item still means `/#work`, the band** — one character from `/work`, and neither is a mistake. Adding any of them to `NAV.items` is a separate owner call.
 
 **Destinations are root-relative, never bare hashes** (#23). A bare `#work` resolves against the current route, so on `/pricing` it would mean `/pricing#work` — nothing. `NAV.items` therefore carries a finished `href` per item rather than a `SectionId` the components turn into `#${id}`; anchors are built by `sectionHref()` in `src/lib/types.ts`, which keeps the `SectionId` literal so a mistyped anchor still fails typecheck. Both wordmark targets are `NAV.home` = `/#top`.
 
@@ -165,7 +180,7 @@ Six items, in this order, rendered by both `SiteNav`'s overlay and `SiteFooter` 
 
 The naming convention stands for any future section asset: `placeholder-{section}-{nn}.{ext}` in `/public/placeholders/`, fixed aspect ratio, swap-in at handoff.
 
-**Work screenshots — CURRENT (decision-log #16, 2026-08-24).** The selected-work images are **shipped brand assets, not placeholders** (the hero/backdrop precedent below), so they land at **`/public/work/{id}.jpg`** — kebab-case per §8, `{id}` matching the item's `id` in `src/content/work.ts`. Any source resolution is fine: the card frame is a fixed **16/9** box and the image center-crops from the top (`object-cover object-top`), so every card matches regardless of the screenshot's real dimensions (owner requirement). An item with no `image` yet renders the layout-final ink placeholder in that same frame, so the real asset swaps in with zero layout shift. The old multi-section placeholder *inventory* (work tiles, testimonial blocks) is **RETIRED** with that build; redesign sections define their asset needs per-section (#13). The interim remote hero background image is **CLOSED** (Unit 03, decision-log #15): the hero and site backdrops are now **shipped brand assets**, not placeholders — `hero-orbit.mp4` / `hero-orbit-poster.jpg` and `backdrop-{strategist,builder,partner}.mp4` + `-poster.jpg` in `/public/` (kebab-case per §8; referenced via `LANDING.backgroundVideo` / `backgroundPoster` and `page.tsx`, config not copy assets).
+**Work screenshots — CURRENT (decision-log #16, 2026-08-24; #41, 2026-09-12).** The selected-work images are **shipped brand assets, not placeholders** (the hero/backdrop precedent below), so they land at **`/public/work/{id}.{ext}`** — kebab-case per §8, in the format the owner supplied, `{id}` matching the study's `id` in its module under `src/content/case-studies/`. Any source resolution is fine: the card frame is a fixed **16/9** box and the image crops to it (`object-cover`, with a per-item `focal` edge where a tall source needs one), so every card and tile matches regardless of the screenshot's real dimensions (owner requirement). An item with no `image` yet renders the layout-final ink placeholder in that same frame, so the real asset swaps in with zero layout shift. **Case study media follows the same convention (#41):** images in the repo under `/public/work/`, referenced by path from the study's module; anything heavy enough to bloat the repo — video, large image sequences — is hosted externally and referenced by URL, never committed into `public/`. The old multi-section placeholder *inventory* (work tiles, testimonial blocks) is **RETIRED** with that build; redesign sections define their asset needs per-section (#13). The interim remote hero background image is **CLOSED** (Unit 03, decision-log #15): the hero and site backdrops are now **shipped brand assets**, not placeholders — `hero-orbit.mp4` / `hero-orbit-poster.jpg` and `backdrop-{strategist,builder,partner}.mp4` + `-poster.jpg` in `/public/` (kebab-case per §8; referenced via `LANDING.backgroundVideo` / `backgroundPoster` and `page.tsx`, config not copy assets).
 
 ## 8. Naming conventions — **CURRENT**
 
