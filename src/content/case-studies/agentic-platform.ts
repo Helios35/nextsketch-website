@@ -24,21 +24,18 @@ import type { CaseStudy } from "@/lib/types";
  * slugified (Taxonomy §8, §6); `title` and `description` are DRAFT
  * metadata.
  *
- * **Imagery (owner-supplied, 2026-09-14): six renders from the
- * project's portfolio folder, in this order.** The owner set both ends:
- * the laptop render is the hero and the interface overview ("UI
- * Intro") is the last image. Between them, the two workflow diagrams
- * as a pair and two workspace states full-width. Six of the folder's
- * twelve: the intro board repeats the hero's laptop under a title, and
- * five of the six workspace states differ only by which panel is open,
- * so one of each ships and the rest are a `src` swap away. **The
+ * **Imagery (owner-supplied, 2026-09-14): the six files in the owner's
+ * "Engen Case Study" folder, nothing else, in file order.** The owner
+ * set both ends: `Hero.png` (the laptop) is the hero and `UI Intro.png`
+ * is the last image. **The block layout is the template's default
+ * rhythm and does not move for a study** (owner rule): hero, pair,
+ * full-width, pair, full-width, seven frames. Six files fill six of
+ * them; the middle full-width slot renders the placeholder until the
+ * owner supplies a seventh image or says which slot goes. **The
  * frames keep the template's ratios and the renders crop to them**
- * (owner rule: the image adjusts to the container, never the container
- * to the image): `16/9` for the hero, the full-width states and the
- * closing overview, `4/3` for the pair, `object-cover` centring each.
- * The 2:1 workspace shots sit in the `16/9` slots, where they lose a
- * sliver of width, rather than in the pair, where they would lose
- * their side panels. The files live at
+ * (owner rule: the image adjusts to the container, never the
+ * container to the image): `16/9` for the hero and the full-width
+ * slots, `4/3` for the pairs, `object-cover` centring each. Files at
  * `/public/work/agentic-platform/agentic-platform-0<n>.png` in page
  * order, in the format the owner supplied, renamed kebab-case per
  * Taxonomy §8.
@@ -62,7 +59,7 @@ export const AGENTIC_PLATFORM = {
     { label: "Scope", value: "Design and build" },
     { label: "Platform", badges: ["agentic-platform"] },
   ],
-  /* agentic-platform-01: the laptop render (owner: the hero). */
+  /* agentic-platform-01, the owner's Hero.png: the laptop. */
   hero: {
     src: "/work/agentic-platform/agentic-platform-01.png",
     alt: "A laptop showing the CAD workspace: a gear model on a dark gridded canvas, the feature tree on the left and the Work Bench panel with the agent prompt on the right.",
@@ -77,26 +74,26 @@ export const AGENTIC_PLATFORM = {
         "A separate window splits the job: the request lives in the chat, the result in the model, and nothing shows what changed. The agent had to work where the modeling happens.",
       ],
     },
-    /* agentic-platform-02 and -03: the two workflow diagrams. */
+    /* agentic-platform-02 and -03: UI Collapsed and UI Expanded 1. */
     {
       type: "pair",
       images: [
         {
           src: "/work/agentic-platform/agentic-platform-02.png",
-          alt: "The AI workflow diagram: the user uploads a file and writes a prompt, the agent asks clarifying questions, the model converts the query to scripts and the CAD engine executes the commands.",
+          alt: "The empty workspace: a dark gridded canvas with the file chip, the toolbar, the account chip and a lone cube, every panel collapsed.",
         },
         {
           src: "/work/agentic-platform/agentic-platform-03.png",
-          alt: "The MVP process flow: the user answers questions, the model checks parts against the spec or converts the query to scripts, headless CAD executes them, and the user reviews, converts and exports the file.",
+          alt: "The workspace with the Work Bench open on its AI tab: the prompt asks for a gear based on the uploaded document, with Define, Design and Analyze actions beneath it.",
         },
       ],
     },
-    /* agentic-platform-04: the workspace with the agent prompt open. */
+    /* The seventh frame: no seventh file in the owner's folder, so the
+       placeholder holds the slot rather than the layout changing. */
     {
       type: "image",
       image: {
-        src: "/work/agentic-platform/agentic-platform-04.png",
-        alt: "The workspace with the Work Bench open on its AI tab: the prompt asks for a gear based on the uploaded document, with Define, Design and Analyze actions beneath it and the gear model in the center.",
+        alt: "The full interface: the gear model in the workspace and the assistant panel to its side.",
       },
     },
     {
@@ -108,13 +105,19 @@ export const AGENTIC_PLATFORM = {
         "The model had to stay primary. The agent could not cover it or pull the work into another screen, and the user needed a way to step in at any point.",
       ],
     },
-    /* agentic-platform-05: the workspace with the properties open. */
+    /* agentic-platform-04 and -05: UI Expanded 2 and UI Expanded 6. */
     {
-      type: "image",
-      image: {
-        src: "/work/agentic-platform/agentic-platform-05.png",
-        alt: "The workspace with the Work Bench on its Properties tab, the gear's geometry expanded: volume, surface area, bounding box and geometric center beside the model.",
-      },
+      type: "pair",
+      images: [
+        {
+          src: "/work/agentic-platform/agentic-platform-04.png",
+          alt: "The workspace with the feature tree expanded to its sketches and the Work Bench on its AI tab, the gear model in the center.",
+        },
+        {
+          src: "/work/agentic-platform/agentic-platform-05.png",
+          alt: "The workspace with the History tab open, a chat message expanded to its feature list, and the Work Bench on its Properties tab showing the gear's geometry.",
+        },
+      ],
     },
     {
       type: "text",
@@ -125,12 +128,12 @@ export const AGENTIC_PLATFORM = {
         "The panel holds the request and the agent's reply beside the model, so the exchange and the result share one screen. The dark palette keeps the geometry in front, and the model view never gives up the center.",
       ],
     },
-    /* agentic-platform-06: the interface overview (owner: the last image). */
+    /* agentic-platform-06, the owner's UI Intro.png: the last image. */
     {
       type: "image",
       image: {
         src: "/work/agentic-platform/agentic-platform-06.png",
-        alt: "The interface overview: the empty workspace above the UI kit title, then the component sheet of toolbars, feature trees, history lists and Work Bench states.",
+        alt: "The interface overview: the empty workspace above the UI kit title, with the component sheet of toolbars, feature trees, history lists and the Work Bench beginning beneath.",
       },
     },
   ],
