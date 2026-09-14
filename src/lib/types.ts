@@ -175,11 +175,37 @@ export interface CaseStudyImage {
   readonly ratio?: CaseStudyImageRatio;
 }
 
-/** A label/value row in the case study hero's detail list. */
-export interface CaseStudyMeta {
-  readonly label: string;
-  readonly value: string;
-}
+/**
+ * The platform badge vocabulary (owner direction, 2026-09-14;
+ * decision-log #44): the fixed set a case study's "Platform" row is
+ * composed from, one or more per study. Keys are kebab-case per
+ * Taxonomy §8; the rendered labels live in `PLATFORM_BADGES` in
+ * `src/content/work.ts`, so the copy stays in content and a study
+ * cannot declare a badge the set does not carry.
+ */
+export type PlatformBadge =
+  | "web-app"
+  | "saas"
+  | "mobile-app"
+  | "device"
+  | "agentic-platform"
+  | "internal-tool";
+
+/**
+ * A row in the case study hero's detail list: a label with either a
+ * plain value or a set of platform badges (#44). Which it is decides
+ * how the template renders the row's `<dd>`; the label and the row's
+ * place in the list are the module's to set either way.
+ */
+export type CaseStudyMeta =
+  | {
+      readonly label: string;
+      readonly value: string;
+    }
+  | {
+      readonly label: string;
+      readonly badges: readonly PlatformBadge[];
+    };
 
 /**
  * The blocks a case study is composed from (decision-log #42). The

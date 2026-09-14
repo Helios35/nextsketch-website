@@ -42,7 +42,7 @@ export const MASCOT = {
   meta: [
     { label: "Industry", value: "Kids' consumer tech" },
     { label: "Scope", value: "Design and build" },
-    { label: "Platform", value: "Device and mobile app" },
+    { label: "Platform", badges: ["device", "mobile-app"] },
   ],
   hero: {
     alt: "A handheld kids device beside a phone showing its companion app, with mascot avatars and activity cards.",

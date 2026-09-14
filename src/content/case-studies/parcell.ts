@@ -34,7 +34,7 @@ export const PARCELL = {
   meta: [
     { label: "Industry", value: "Digital art" },
     { label: "Scope", value: "Design and build" },
-    { label: "Platform", value: "Mobile" },
+    { label: "Platform", badges: ["mobile-app"] },
   ],
   hero: {
     alt: "Two phones showing the sign-in screen and the browsing grid of digital artworks.",

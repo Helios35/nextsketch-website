@@ -1,4 +1,5 @@
 import { ROUTES } from "@/lib/types";
+import type { PlatformBadge } from "@/lib/types";
 
 /**
  * Selected-work (#work) copy — the proof band (owner direction
@@ -213,3 +214,20 @@ export const CASE_STUDY_PAGE = {
   othersEyebrow: "More work",
   othersHeading: "Other projects",
 } as const;
+
+/**
+ * The platform badges a case study's "Platform" row is composed from
+ * (owner direction, 2026-09-14; decision-log #44): the six labels the
+ * owner set, keyed by the `PlatformBadge` vocabulary so a study
+ * declares a key and the label is written once, here. A study carries
+ * one or more. Total over the type, so a new key without a label fails
+ * typecheck rather than rendering blank.
+ */
+export const PLATFORM_BADGES: Record<PlatformBadge, string> = {
+  "web-app": "Web App",
+  saas: "SaaS",
+  "mobile-app": "Mobile App",
+  device: "Device",
+  "agentic-platform": "Agentic Platform",
+  "internal-tool": "Internal Tool",
+};

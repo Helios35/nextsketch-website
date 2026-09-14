@@ -129,6 +129,14 @@ The two contested findings were the number of `Parallax` instances (seven per ro
 - **A `year` or `date` row, owner-supplied.** The reference leads its hero with a date; the meta rows can carry one the moment the owner states it, with no code change.
 - **Real imagery, then the ratios.** Pick `16/9` or `4/3` per slot against the actual assets; the type already allows it.
 
+## Addendum — the Platform row becomes badges (owner direction, same day; #44)
+
+The owner selected the Platform row on the rendered page and asked for its value as pills or badges from a fixed set — Web App, SaaS, Mobile App, Device, Agentic Platform, Internal Tool — one or more per study, on the design system, touching nothing else.
+
+What shipped: a detail row may now declare `badges` instead of `value` (`CaseStudyMeta` is the union; `PlatformBadge` is the six keys, kebab-case; `PLATFORM_BADGES` in `src/content/work.ts` holds the six labels, total over the type). The template renders a badge row's `<dd>` as a right-aligned, wrapping list of tags; every other row is unchanged. **The badge is squared.** §Interaction vocabulary ends "no pills", so the owner's "pill" is this system's version: the hairline ink surface (`white/15` on `white/[0.03]`, the frame and input surface) at the mono micro-label's face with the selection tab's `white/90` text, `px-2.5 py-1`, no rounding, no fill colour, no icon. Inline in `case-study-page.tsx` as `BADGE_CLASS` rather than a component, since it has one call site; the day a tile or another route wants one is the day it becomes `badge.tsx`.
+
+Assigned: Mascot — Device, Mobile App · SaaS Platform — Web App, SaaS · Agentic Platform — Agentic Platform · Parcell — Mobile App. The earlier plain values ("Device and mobile app", "Web", "Desktop", "Mobile") are gone. Verified in the browser at 1440 and 390: `border-radius: 0px`, 1px hairline, 27px tall, right-aligned, wrapping under the label at phone width with no overflow. Typecheck, lint, build and the banned-terms gate green.
+
 ## Verification
 
 `lint`, `typecheck`, `build`, `banned-terms` green; the gate scanned 105 files with no change to the script. Build output unchanged in shape: `/work/[slug]` `●` SSG with the four slugs.

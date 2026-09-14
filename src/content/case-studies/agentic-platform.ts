@@ -42,7 +42,7 @@ export const AGENTIC_PLATFORM = {
   meta: [
     { label: "Industry", value: "CAD software" },
     { label: "Scope", value: "Design and build" },
-    { label: "Platform", value: "Desktop" },
+    { label: "Platform", badges: ["agentic-platform"] },
   ],
   hero: {
     alt: "The dark 3D CAD workspace with a gear model beside the AI assistant panel.",

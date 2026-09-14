@@ -153,6 +153,19 @@ A case study's `slug` is its route segment, `/work/<slug>`. It is the project's 
 
 **Block vocabulary — CURRENT (#42, 2026-09-14).** A study's route is composed from `CaseStudyBlock` members, declared in its module in order: **`text`** (a `label`, one `statement`, one or two `body` paragraphs), **`image`** (one full-width frame) and **`pair`** (two frames). Block labels are content, not an enum — today every study runs "The challenge" · "The goal" · "What we built" — so a study may name its blocks differently without a type change. Frame ratios are `CaseStudyImageRatio`: `16/9` (the hero and full-width default, the card's own frame), `4/3` (the pair default, the service mocks' box) and `1/1`, settable per slot. Image slots are `CaseStudyImage` — `alt` required, `src` optional; a slot without `src` renders the §7 placeholder named `placeholder-work-<nn>` in page order, the hero being `01`. The off-site links are `liveHref` ("Visit website", live projects only, #43) and `sourceHref` ("View on Behance"). Canonical in `src/lib/types.ts`.
 
+**Platform badges — CURRENT (#44, 2026-09-14).** A detail row may carry `badges` instead of a `value`; today the Platform row does. The vocabulary is fixed and owner-set, keyed kebab-case per §8 with the rendered label beside it:
+
+| Key | Label |
+|---|---|
+| `web-app` | Web App |
+| `saas` | SaaS |
+| `mobile-app` | Mobile App |
+| `device` | Device |
+| `agentic-platform` | Agentic Platform |
+| `internal-tool` | Internal Tool |
+
+A study declares one or more (Mascot: Device · Mobile App; SaaS Platform: Web App · SaaS; Agentic Platform: Agentic Platform; Parcell: Mobile App). Adding a badge is a key in `PlatformBadge` (`src/lib/types.ts`) and its label in `PLATFORM_BADGES` (`src/content/work.ts`); the record is total, so one without the other fails typecheck.
+
 ### Section IDs (anchor names)
 
 The live anchor set, all on `/`: `top` (page top — wordmark target, on `<main>`) · **`work` (Selected Work)** · `why` (Manifesto) · `services` · `process` · `about` · `start` (Final CTA). These reuse the fitting old IDs, as this section anticipated. `start` is reached via the CTAs, not a nav item. **The service routes carry their own anchor set** (`ServiceBlockId`, above), which is deliberately separate from `SectionId`: these ids exist on `/services/*`, not on `/`, and typing them together would let a `/#new-product` ship.

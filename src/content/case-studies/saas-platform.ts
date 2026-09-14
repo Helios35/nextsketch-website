@@ -45,7 +45,7 @@ export const SAAS_PLATFORM = {
   meta: [
     { label: "Industry", value: "Project planning" },
     { label: "Scope", value: "Design and build" },
-    { label: "Platform", value: "Web" },
+    { label: "Platform", badges: ["web-app", "saas"] },
   ],
   hero: {
     alt: "The project planning dashboard on a laptop, with deliverable cards above a team timeline of milestones.",

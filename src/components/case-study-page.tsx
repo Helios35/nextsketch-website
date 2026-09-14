@@ -10,7 +10,11 @@ import { SectionHeading } from "@/components/section-heading";
 import { WorkCard } from "@/components/work-rail";
 import { toWorkItem } from "@/content/case-studies";
 import { NAV } from "@/content/copy";
-import { CASE_STUDY_PAGE, WORK_VIEW_ALL } from "@/content/work";
+import {
+  CASE_STUDY_PAGE,
+  PLATFORM_BADGES,
+  WORK_VIEW_ALL,
+} from "@/content/work";
 import { ROUTES } from "@/lib/types";
 import type { CaseStudy, CaseStudyBlock } from "@/lib/types";
 
@@ -23,6 +27,18 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
 /** The mono micro-label with the gold diamond marker (§Interaction vocabulary). */
 const LABEL_CLASS =
   "flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] text-white/55 uppercase";
+
+/**
+ * A platform badge (decision-log #44): this system's "pill" is
+ * squared. The hairline ink surface (`white/15` border on the
+ * `white/[0.03]` fill — the frame, the input, the card) at the mono
+ * micro-label's face, with the selection tab's `white/90` text so it
+ * reads as a value rather than a caption. No rounding, no fill colour,
+ * no icon: §Interaction vocabulary ends "no pills", and this is the
+ * badge that vocabulary allows.
+ */
+const BADGE_CLASS =
+  "inline-flex items-center border border-white/15 bg-white/[0.03] px-2.5 py-1 font-mono text-[0.7rem] tracking-[0.14em] text-white/90 uppercase";
 
 /**
  * `sizes` hints for the two frame widths, so the real images are never
@@ -249,17 +265,34 @@ export function CaseStudyPage({ study, others }: CaseStudyPageProps) {
                       tiers use for the same situation. */}
                   <h2 className="sr-only">{CASE_STUDY_PAGE.metaHeading}</h2>
                   <dl className="border-t border-white/10">
-                    {study.meta.map(({ label, value }) => (
+                    {study.meta.map((row) => (
                       <div
-                        key={label}
+                        key={row.label}
                         className="flex items-baseline justify-between gap-6 border-b border-white/10 py-4"
                       >
                         <dt className="font-mono text-[0.7rem] tracking-[0.14em] text-white/55 uppercase">
-                          {label}
+                          {row.label}
                         </dt>
-                        <dd className="text-right text-base text-white">
-                          {value}
-                        </dd>
+                        {/* A badge row (the Platform row, #44) renders
+                            its set as squared hairline tags, right-
+                            aligned and wrapping; a plain row renders
+                            its value. The module decides which a row
+                            is by what it declares. */}
+                        {"badges" in row ? (
+                          <dd>
+                            <ul className="flex flex-wrap justify-end gap-2">
+                              {row.badges.map((badge) => (
+                                <li key={badge} className={BADGE_CLASS}>
+                                  {PLATFORM_BADGES[badge]}
+                                </li>
+                              ))}
+                            </ul>
+                          </dd>
+                        ) : (
+                          <dd className="text-right text-base text-white">
+                            {row.value}
+                          </dd>
+                        )}
                       </div>
                     ))}
                   </dl>
