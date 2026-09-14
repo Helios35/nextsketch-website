@@ -19,9 +19,20 @@ import type { CaseStudy } from "@/lib/types";
  * (Rule 4.3). Intent is written as intent. The owner edits it here and
  * nowhere else.
  *
- * Every image slot is a placeholder until the owner supplies imagery
- * (`src` absent); each `alt` describes what the real image should
- * show, so the file lands into a frame that already announces it.
+ * **Imagery (owner-supplied, 2026-09-14): six renders, in this
+ * order.** The owner set the hero: the three handhelds floating. The
+ * slots below are laid out for those six, which is why this module
+ * declares one fewer image block than the template's default rhythm.
+ * Each frame's ratio is picked for its render (per-slot override):
+ * the hero is `4/3` because the floating devices fill a near-square
+ * frame and a `16/9` crop would take the top device's head off; the
+ * two pairs are `1/1` because all four are square or near-square
+ * compositions with the subject centred; the closing full-width is
+ * the default `16/9`, the one landscape composite. The files land at
+ * `/public/work/mascot/mascot-0<n>.<ext>` in page order; until they
+ * do, `src` is absent and every frame renders the placeholder with
+ * the real image's `alt`.
+ *
  * `slug` is the published title slugified (Taxonomy §8, §6). `title`
  * and `description` are the route's metadata; DRAFT.
  */
@@ -44,8 +55,10 @@ export const MASCOT = {
     { label: "Scope", value: "Design and build" },
     { label: "Platform", badges: ["device", "mobile-app"] },
   ],
+  /* mascot-01: the three handhelds floating (owner: the top image). */
   hero: {
-    alt: "A handheld kids device beside a phone showing its companion app, with mascot avatars and activity cards.",
+    ratio: "4/3",
+    alt: "Three Mascot handhelds floating against a pale blue background: a green one showing a game, a blue one showing the home screen, and a white one turned to show its camera.",
   },
   blocks: [
     {
@@ -57,18 +70,19 @@ export const MASCOT = {
         "The child's side has to feel like play. The parent's side has to stay in charge without turning into a settings menu, where the choices that matter get buried.",
       ],
     },
+    /* mascot-02 and mascot-03: the handheld beside the parent's phone. */
     {
       type: "pair",
       images: [
-        { alt: "The handheld device on its own." },
         {
-          alt: "The companion app on a phone, open to the mascot avatars a child picks from.",
+          ratio: "1/1",
+          alt: "The blue Mascot handheld showing an incoming call from a parent, beside a parent's phone showing the child's live location on a map and a push-to-talk bar.",
+        },
+        {
+          ratio: "1/1",
+          alt: "The blue Mascot handheld on its home screen, beside a parent's phone showing the Templates and Learn cards.",
         },
       ],
-    },
-    {
-      type: "image",
-      image: { alt: "The mascot avatars in the companion app." },
     },
     {
       type: "text",
@@ -79,11 +93,18 @@ export const MASCOT = {
         "Screens a parent can read at a glance and act on in the moment, and a place in the app that belongs to the child, not the parent. None of it should need explaining.",
       ],
     },
+    /* mascot-04 and mascot-05: the labelled hardware and the app screens. */
     {
       type: "pair",
       images: [
-        { alt: "An activity card opened in the companion app." },
-        { alt: "The parental controls screen in the companion app." },
+        {
+          ratio: "1/1",
+          alt: "The blue Mascot handheld from the front with its controls labelled: silence, power, volume, push to talk, SOS button, game pad joystick, game pad buttons and front speaker.",
+        },
+        {
+          ratio: "1/1",
+          alt: "Three parent app screens on a dark purple background: Templates and Learn cards, a live location map above an activity summary, and a recent activity timeline with a question typed to the mascot.",
+        },
       ],
     },
     {
@@ -95,10 +116,11 @@ export const MASCOT = {
         "The mascot picker is the child's. The activity cards and the controls are the parent's, laid out so a change is one look and one tap rather than a trip through settings.",
       ],
     },
+    /* mascot-06: the hardware detail composite. */
     {
       type: "image",
       image: {
-        alt: "A selection of the companion app's screens: the mascot picker, activity cards and parental controls.",
+        alt: "Two close views of the blue Mascot handheld: its side edge with the orange push-to-talk button, and its lower face with the joystick, the red SOS button, two game pad buttons and the speaker grille.",
       },
     },
   ],

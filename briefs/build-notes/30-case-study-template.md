@@ -151,3 +151,9 @@ In-browser, dev server, Chromium:
 - **Built case study HTML** — no em dash in any rendered string; only the layout's embedded 404 slot carries one (pre-existing, open item).
 - **Console** — clean on a fresh load apart from the pre-existing Apollo 400s.
 - `git diff adhoc/case-study-grid --stat` — the files in the table above and nothing else.
+
+## Addendum — Mascot's imagery, slotted and waiting for the files (owner direction, same day)
+
+The owner supplied six renders for Mascot inline in the session and set the order's one fixed point: the three handhelds floating is the top image. The renders reached the session as inline attachments, not as files, and they are not among the Behance modules (those are the process and research pages), so the bytes could not be written to the repo from here. Everything that does not need them is done: the module declares six slots in the owner's order, one fewer image block than the template's default rhythm, with each frame's ratio picked for its render (hero `4/3`, so the floating devices are not decapitated by a `16/9` crop; both pairs `1/1`, since all four are square or near-square compositions, and the reference's own pairs measure 1.09; the closing composite `16/9`) and alt text describing each render. Verified in the browser: six placeholder frames at 1.333 / 1 / 1 / 1 / 1 / 1.778, each announcing its alt.
+
+**Owed:** the six files, at `public/work/mascot/mascot-01` through `mascot-06` in page order (any of png, jpg or webp; the extension goes into the `src` lines when they land). The order: 01 the three floating handhelds · 02 the handheld showing a parent's call beside the phone's map · 03 the handheld beside the phone's Templates and Learn cards · 04 the labelled front view · 05 the three app screens on purple · 06 the side and controls composite. Wiring them is six `src` lines in `mascot.ts`.
