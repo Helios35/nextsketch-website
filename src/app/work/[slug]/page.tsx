@@ -3,11 +3,17 @@ import { notFound } from "next/navigation";
 import { ArrowIcon } from "@/components/arrow-icon";
 import { BrandWordmark } from "@/components/brand-wordmark";
 import { Button } from "@/components/button";
+import { CaseStudyPage } from "@/components/case-study-page";
 import { PageGlow } from "@/components/page-glow";
 import { SectionHeading } from "@/components/section-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
-import { CASE_STUDIES, findCaseStudy } from "@/content/case-studies";
+import {
+  CASE_STUDIES,
+  findCaseStudy,
+  findCaseStudyPage,
+  otherCaseStudies,
+} from "@/content/case-studies";
 import { NAV } from "@/content/copy";
 import { CASE_STUDY_PAGE } from "@/content/work";
 import { ROUTES } from "@/lib/types";
@@ -52,13 +58,18 @@ export async function generateMetadata({
 
 /**
  * `/work/[slug]` — a case study's own route (decision-log **#39**,
- * 2026-09-12), **layout-final and deliberately empty.** Nav, footer,
- * the study's metadata, the dark surface, its name and summary, and
- * body copy saying the detail is coming. The template that fills it —
- * the block composition, the imagery, the narrative — is Unit 25's,
- * built against a reference the owner supplies; nothing of it is
- * scaffolded here, and no narrative, results, metrics, client names or
- * quotes are invented to stand in (Rule 4.3).
+ * 2026-09-12; **#43**, 2026-09-18).
+ *
+ * **A study with a page renders it; a study without one renders the
+ * placeholder below.** The page is `CaseStudyPage`, the owner's own
+ * composition on the design system, fed by the study's `page` content
+ * (`findCaseStudyPage`); today Mascot has one and the other three do
+ * not, and they are untouched until the owner supplies their material.
+ * The placeholder is what every study rendered from #39 until #43:
+ * nav, footer, the study's metadata, the dark surface, its name and
+ * summary, and body copy saying the detail is coming. No narrative,
+ * results, metrics, client names or quotes are invented to stand in
+ * (Rule 4.3).
  *
  * Two exits, both navigation rather than conversion CTAs: back to
  * `/work`, and out to the study's published page (`sourceHref`, the
@@ -90,12 +101,21 @@ export async function generateMetadata({
  *
  * Server component; the page prerenders to static HTML and #8 holds.
  */
-export default async function CaseStudyRoute({
-  params,
-}: CaseStudyRouteProps) {
+export default async function CaseStudyRoute({ params }: CaseStudyRouteProps) {
   const { slug } = await params;
   const study = findCaseStudy(slug);
   if (study === undefined) notFound();
+
+  const page = findCaseStudyPage(slug);
+  if (page !== undefined) {
+    return (
+      <CaseStudyPage
+        study={study}
+        page={page}
+        others={otherCaseStudies(slug)}
+      />
+    );
+  }
 
   return (
     <>

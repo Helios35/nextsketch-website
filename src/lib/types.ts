@@ -41,10 +41,7 @@ export type AccentName = (typeof ACCENT_NAMES)[number];
  * with a rename — the lead record's values are a contract.
  */
 export type ServiceSlug =
-  | "new-product"
-  | "product-completion"
-  | "product-support"
-  | "agentic-system";
+  "new-product" | "product-completion" | "product-support" | "agentic-system";
 
 export interface Service {
   readonly slug: ServiceSlug;
@@ -153,6 +150,172 @@ export type WorkItem = {
 );
 
 /**
+ * A cut-out render on a case study page (decision-log #43): a
+ * transparent PNG of the product, not a screenshot in a frame. It is
+ * shown as itself on the ink page, at its own proportions, never
+ * cropped and never stretched.
+ *
+ * `width` and `height` are the file's pixel size, which `next/image`
+ * needs to reserve space and to build the srcset; it never upscales, so
+ * a render is only ever as sharp as the file the owner supplied.
+ *
+ * `window` is the render's **visible bounding box** in source pixels,
+ * measured from the file's alpha channel (build-note 30 records the
+ * numbers). A cut-out arrives with wide transparent margins, sometimes
+ * half the canvas, and laying it out by its canvas would leave every
+ * render floating in dead space at a quarter of the size it should be.
+ * The page lays it out by this box instead, and every opaque pixel is
+ * still inside it: this trims transparency, it does not crop the
+ * product. Omitted, the whole canvas is the box.
+ */
+export interface CaseStudyRender {
+  readonly src: string;
+  readonly alt: string;
+  readonly width: number;
+  readonly height: number;
+  readonly window?: {
+    readonly x0: number;
+    readonly y0: number;
+    readonly x1: number;
+    readonly y1: number;
+  };
+}
+
+/**
+ * One hardware callout on an annotated render (decision-log #43): a
+ * mono micro-label on a hairline leader ending in the gold diamond
+ * marker at the feature. `x` and `y` are percentages of the render's
+ * visible box (its `window`), measured from the file; `side` is where
+ * the label sits and which way the leader runs. The labels are the
+ * owner's own words from the reference render, rebuilt in the system's
+ * type rather than shipped baked into a bitmap.
+ */
+export interface RenderAnnotation {
+  readonly label: string;
+  readonly x: number;
+  readonly y: number;
+  readonly side: "left" | "right" | "top" | "bottom";
+}
+
+/**
+ * The platform badge vocabulary a case study's chip row draws from
+ * (owner direction, 2026-09-14; decision-log #44): six values, fixed,
+ * one or more per study. Labels live in `PLATFORM_BADGES` in
+ * `src/content/work.ts`, keyed by these, so a study declares keys and
+ * the words are written once.
+ */
+export type PlatformBadge =
+  | "web-app"
+  | "saas"
+  | "mobile-app"
+  | "device"
+  | "agentic-platform"
+  | "internal-tool";
+
+/**
+ * A case study's page, in named slots (decision-log #43, 2026-09-18).
+ * The composition is the owner's own example for Mascot, built on the
+ * design system: a header row and a hero-scale headline; two renders
+ * sinking into a panel, with the mascot stepping out over its edge;
+ * the panel (a render beside the statement, then the owner's question
+ * answered with the screens); an annotated hardware band; a closing
+ * render; the other studies; the close. Each slot is content: the copy
+ * it renders and the renders it lays out. A slot a study has no
+ * material for is omitted and renders nothing (Rule 4.3: no
+ * placeholder frames, no invented matter). `hero`, `panel` and
+ * `closing` are the spine every page has.
+ *
+ * Named slots rather than a free block vocabulary, deliberately: the
+ * owner set this page's order and the template is that order. A study
+ * chooses what fills each slot, not where the slots go.
+ */
+export interface CaseStudyPageContent {
+  /** The `<h1>`, at hero scale; DRAFT until the owner ratifies it. */
+  readonly headline: string;
+  /** The gold payoff phrase inside `headline`, matched against the string. */
+  readonly accentPhrase?: string;
+  /**
+   * The service the work was, by its canonical slug (Taxonomy §1). The
+   * header renders its name as the first chip, and the close's CTA
+   * preselects its project type through `SERVICE_NEED`.
+   */
+  readonly service: ServiceSlug;
+  /** One or more platform badges after the service chip. */
+  readonly badges: readonly PlatformBadge[];
+  /**
+   * The live product, if there is one. **"Visit website" renders only
+   * for a live project** (owner rule, 2026-09-14; #44); none of the
+   * current studies declares this, so the control appears nowhere yet.
+   */
+  readonly liveHref?: string;
+  readonly hero: {
+    /**
+     * The pair the panel's top edge cuts across, left and right. The
+     * left one sits lower than the right (the owner's stagger) and is
+     * the one the pop-out belongs to.
+     */
+    readonly renders: readonly [CaseStudyRender, CaseStudyRender];
+    /**
+     * A render laid over the left one: the mascot stepping out of its
+     * screen and over the panel's edge. `left` and `top` place its
+     * top-left corner and `width` sizes it, all as percentages of the
+     * left render's box, so it scales with the device and its head
+     * registers on the mascot drawn on the screen at every width.
+     */
+    readonly popout?: {
+      readonly render: CaseStudyRender;
+      readonly left: number;
+      readonly top: number;
+      readonly width: number;
+    };
+  };
+  readonly panel: {
+    readonly render: CaseStudyRender;
+    readonly eyebrow: string;
+    /**
+     * The panel-scale statement beside the render. Omitted, the page
+     * renders the study's ratified `summary` there, which is the only
+     * approved one-line description of the product.
+     */
+    readonly heading?: string;
+    readonly body: string;
+    readonly bullets: readonly string[];
+    /**
+     * The owner's question, answered: a centred heading, one line under
+     * it, and the on-device screens as a grid. Captions describe what
+     * each screen shows, never a file name.
+     */
+    readonly question?: {
+      readonly heading: string;
+      /** Omitted, the page answers with the proof band's own line (`WORK_INTRO`). */
+      readonly body?: string;
+      readonly screens: readonly {
+        readonly render: CaseStudyRender;
+        readonly caption: string;
+      }[];
+    };
+  };
+  readonly hardware?: {
+    readonly eyebrow: string;
+    readonly heading: string;
+    readonly body: string;
+    readonly render: CaseStudyRender;
+    readonly annotations: readonly RenderAnnotation[];
+    /** A second view of the hardware under the annotated one, captioned. */
+    readonly back?: {
+      readonly render: CaseStudyRender;
+      readonly caption: string;
+    };
+  };
+  readonly closing: {
+    readonly eyebrow: string;
+    readonly heading: string;
+    readonly body: string;
+    readonly render: CaseStudyRender;
+  };
+}
+
+/**
  * One case study: the `WorkItem` its card shows plus what its own route
  * needs (decision-log #39, #41). Content lives in
  * `src/content/case-studies/`, one module per study, collected in
@@ -160,10 +323,16 @@ export type WorkItem = {
  * `/work/[slug]`'s static params all read, so a study cannot be on one
  * surface and missing from another.
  *
- * Deliberately thin. The route is layout-final and empty until the
- * template lands (Unit 25), which is where this type grows the block
- * composition each study declares. Nothing narrative belongs here yet:
- * results, metrics, client names and quotes are owner-owed (Rule 4.3).
+ * A study's full page is a separate export of its module registered in
+ * `src/content/case-studies/index.ts` (decision-log #43), **not a
+ * field here**: this object is handed to the home rail and the `/work`
+ * grid, both client components, so everything on it is serialised into
+ * every page's payload, and a page's copy and geometry belong to one
+ * route. A study with no page renders the layout-final placeholder
+ * route it has had since #39; that is three of the four today, and
+ * they are untouched until the owner supplies their material. Nothing
+ * narrative ships that the owner did not supply: results, metrics,
+ * client names and quotes stay owner-owed (Rule 4.3).
  */
 export type CaseStudy = WorkItem & {
   /** Browser tab and search-result title, in the `PRICING.title` house form. */

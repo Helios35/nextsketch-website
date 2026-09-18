@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.2 · **Date:** 2026-09-14 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30) and the case study routes (#39–#41)
+**Version:** 2.3 · **Date:** 2026-09-18 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30), the case study routes (#39–#41) and the first case study page (#43–#44)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -133,7 +133,13 @@ src/
                     service-page.tsx + service-process.tsx (the two
                     service routes' four blocks, #30),
                     work-rail.tsx (the card, exported — the /work tile
-                    is its variant, #39), work-grid.tsx (#39),
+                    is its variant, #39), work-grid.tsx (#39; extended
+                    with props for the case study page, #43),
+                    case-study-page.tsx (the page, #43) +
+                    case-study-render.tsx (a cut-out laid out by its
+                    visible box) + case-study-link.tsx (the off-site
+                    link) + close-band.tsx (the service routes' close,
+                    copied; service-page.tsx still inline),
                     page-glow.tsx (#35), scroll-video.tsx, scroll-reveal.tsx,
                     parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
                     qualification-modal(-provider).tsx, modal-trigger.tsx,
@@ -144,15 +150,19 @@ src/
                      owner call, build-note 08)
   content/        — copy.ts (SITE + NAV + LANDING live; retired-plan copy
                     dormant), work.ts (the band's and the /work
-                    routes' strings), case-studies/ (one module per
-                    study + index.ts, #41), pricing.ts, services.ts,
+                    routes' strings, the platform badge labels #44),
+                    case-studies/ (one module per study + index.ts,
+                    #41; a study's page is a second export of its
+                    module registered by slug in index.ts, #43), pricing.ts, services.ts,
                     service-pages.ts (the two routes' content, #30 —
                     references services.ts/pricing.ts, never re-literals
                     their copy), modal.ts, email.ts, faq.ts
   lib/            — types.ts (SectionId, ROUTES, sectionHref,
                     PricingTier + PricingTierSlug, ServicePageSlug +
                     ServiceBlockId + serviceRoute/serviceBlockHref, #30,
-                    WorkItem + CaseStudy + workHref, #39),
+                    WorkItem + CaseStudy + workHref, #39,
+                    CaseStudyPageContent + CaseStudyRender +
+                    RenderAnnotation + PlatformBadge, #43–#44),
                     schema.ts
                     (Zod union), qualify.ts (submit seam), video-scrub.ts,
                     lead-delivery.ts, lead-format.ts, lead-notify.ts

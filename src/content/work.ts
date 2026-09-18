@@ -1,6 +1,6 @@
 import { CASE_STUDIES } from "@/content/case-studies";
 import { ROUTES } from "@/lib/types";
-import type { WorkItem } from "@/lib/types";
+import type { PlatformBadge, WorkItem } from "@/lib/types";
 
 /**
  * Selected-work (#work) copy — the proof band (owner direction
@@ -61,10 +61,12 @@ export const WORK_HEADLINE =
  * docs/06-taxonomy.md §8, which makes "NextSketch" binding for all
  * copy and reserves the spaced form for the legal name ("Next Sketch
  * LLC"). Flagged rather than silently corrected — it is a one-word
- * change either way, and the owner's call.
+ * change either way, and the owner's call. Since decision-log #43 the
+ * line also answers "What did we do?" on a case study page that omits
+ * its own `question.body` (Mascot does), so the spaced form is on
+ * three surfaces.
  */
-export const WORK_INTRO =
-  "Every screen is built and designed by Next Sketch";
+export const WORK_INTRO = "Every screen is built and designed by Next Sketch";
 
 /**
  * Per-card link label — owner-specified verbatim (2026-08-24). Since
@@ -176,29 +178,58 @@ export const WORK_PAGE = {
 } as const;
 
 /**
- * `/work/[slug]` — the case study route, layout-final and deliberately
- * empty until the template lands (decision-log #39; Unit 25). Every
- * string the placeholder page renders beyond the study's own name and
- * summary. DRAFT in brand voice pending owner approval.
+ * `/work/[slug]` — the strings the case study routes render that are
+ * not a study's own content (decision-log #39, #43, #44). A study with
+ * a `page` renders the full page; one without renders the layout-final
+ * placeholder it has had since #39, which is what `pending` is for.
+ * DRAFT in brand voice pending owner approval.
  *
- * Rule 4.3 is why there is so little of it: no narrative, results,
- * metrics, client names or quotes ship until the owner supplies them,
- * so the page says the detail is coming and offers the two honest
- * exits — back to the grid, and out to the published page.
- *
- * `back` and `source` are navigation, not conversion CTAs, so the Rule
- * 3.1 set does not bind them (the `WORK_LINK` reasoning). `source`
- * names the platform because every published page is on it today; if
- * a study is ever published elsewhere, this label is what changes.
+ * `back`, `visit` and `source` are navigation, not conversion CTAs, so
+ * the Rule 3.1 set does not bind them (the `WORK_LINK` reasoning).
+ * `visit` renders only for a live project (`liveHref`, owner rule
+ * 2026-09-14, #44); none is today, so the string ships unused on
+ * purpose. `source` names the platform because every published page
+ * is on it; if a study is ever published elsewhere, this label is what
+ * changes.
  */
 export const CASE_STUDY_PAGE = {
   /** Mono micro-label above the study's name. */
   eyebrow: "Case study",
-  /** The body: the detail is coming, and where the work is meanwhile. */
+  /** The placeholder route's body: the detail is coming, and where the work is meanwhile. */
   pending:
     "The full case study is coming. Until it lands, the rest of the work is one click away.",
   /** Navigation back to the grid. */
   back: "All work",
-  /** Navigation to the study's published page; rendered only when it has one. */
+  /** Off-site link to the live product. Live projects only (#44). */
+  visit: "Visit website",
+  /** Off-site link to the study's published page; rendered only when it has one. */
   source: "View on Behance",
+  /** Screen-reader suffix on the off-site links, which open a new tab. */
+  newTab: "opens in a new tab",
+  /**
+   * Accessible name for the header's chip row (screen-reader only, the
+   * `/work` grid's `sr-only` heading pattern): the chips have no
+   * visible label of their own.
+   */
+  chipsLabel: "Service and platform",
+  /** The band of other studies near the end of the page. */
+  othersEyebrow: "More work",
+  othersHeading: "Other projects",
 } as const;
+
+/**
+ * The platform badges a case study's chip row draws from (owner
+ * direction, 2026-09-14; decision-log #44): the six labels the owner
+ * set, keyed by the `PlatformBadge` vocabulary so a study declares keys
+ * and the words are written once, here. A study carries one or more.
+ * Total over the type, so a new key without a label fails typecheck
+ * rather than rendering blank.
+ */
+export const PLATFORM_BADGES: Record<PlatformBadge, string> = {
+  "web-app": "Web App",
+  saas: "SaaS",
+  "mobile-app": "Mobile App",
+  device: "Device",
+  "agentic-platform": "Agentic Platform",
+  "internal-tool": "Internal Tool",
+};

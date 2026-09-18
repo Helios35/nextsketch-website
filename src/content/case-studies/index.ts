@@ -1,6 +1,6 @@
-import type { CaseStudy } from "@/lib/types";
+import type { CaseStudy, CaseStudyPageContent } from "@/lib/types";
 import { AGENTIC_PLATFORM } from "./agentic-platform";
-import { MASCOT } from "./mascot";
+import { MASCOT, MASCOT_PAGE } from "./mascot";
 import { PARCELL } from "./parcell";
 import { SAAS_PLATFORM } from "./saas-platform";
 
@@ -48,3 +48,33 @@ if (slugs.size !== CASE_STUDIES.length) {
  */
 export const findCaseStudy = (slug: string): CaseStudy | undefined =>
   CASE_STUDIES.find((study) => study.slug === slug);
+
+/**
+ * The studies that have a full page (decision-log #43), keyed by slug.
+ * A study's page content lives beside its card content in its own
+ * module (#41) and is registered here by that module's own `slug`, so
+ * a page can only ever belong to a study that exists.
+ *
+ * Kept apart from `CASE_STUDIES` on purpose: that list is handed to
+ * the home rail and the `/work` grid, both client components, so
+ * everything on it is serialised into every page's payload. A study's
+ * page content is several kilobytes of copy and geometry that only its
+ * own route needs, and putting it on the list would ship it with the
+ * home page. Three of the four studies have no page yet and render the
+ * placeholder route until the owner supplies their material.
+ */
+const CASE_STUDY_PAGES: ReadonlyMap<string, CaseStudyPageContent> = new Map([
+  [MASCOT.slug, MASCOT_PAGE],
+]);
+
+/** Slug → the study's page content, or `undefined` for a study without one. */
+export const findCaseStudyPage = (
+  slug: string,
+): CaseStudyPageContent | undefined => CASE_STUDY_PAGES.get(slug);
+
+/**
+ * Every study but this one, in list order: the "Other projects" band
+ * on a case study page (#43). Never itself, never reordered.
+ */
+export const otherCaseStudies = (slug: string): readonly CaseStudy[] =>
+  CASE_STUDIES.filter((study) => study.slug !== slug);
