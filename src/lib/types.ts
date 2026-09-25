@@ -240,11 +240,11 @@ export type PricingTierSlug = "workflow" | "tool" | "rescue" | "custom";
  * `src/content/pricing.ts`; nothing here is rendered from a component
  * literal.
  *
- * `upfront` and `ongoing` are **display strings, not numbers**. Two of
- * the four tiers have no numeric upfront at all (one is retainer-only,
- * one is quoted), so a `number` would have forced a sentinel and every
- * consumer would have had to re-derive the label from it. The figure a
- * visitor reads is the figure in content.
+ * `upfront` and `ongoing` are **display strings, not numbers**. They
+ * were chosen when two tiers had no numeric upfront (one retainer-only,
+ * one quoted); every tier carries a figure since #45, and the strings
+ * stay because they already carry their own currency symbol and unit.
+ * The figure a visitor reads is the figure in content.
  *
  * `features` is `readonly string[]` and may be empty: a tier renders no
  * list rather than an invented one (Rule 4.3). Bullets are owner-owed.
@@ -253,7 +253,7 @@ export interface PricingTier {
   readonly slug: PricingTierSlug;
   readonly name: string;
   readonly description: string;
-  /** Headline figure, e.g. "$3,998" / "No upfront" / "Quoted". */
+  /** Headline figure, e.g. "$3,998" / "$12,000". */
   readonly upfront: string;
   /**
    * The struck former figure shown beside `upfront`, e.g. "$5,000".
@@ -263,9 +263,14 @@ export interface PricingTier {
    * currency symbol.
    */
   readonly upfrontWas?: string;
-  /** Caption under the headline figure. */
-  readonly upfrontNote: string;
-  /** The retainer figure, e.g. "$2,098 per month". */
+  /**
+   * Caption under the headline figure. Optional since #45, the
+   * `upfrontWas` precedent: New Product's caption existed only to
+   * explain "Quoted", and a tier without one renders no caption rather
+   * than an invented line (Rule 4.3).
+   */
+  readonly upfrontNote?: string;
+  /** The retainer figure, e.g. "$2,998 per month". */
   readonly ongoing: string;
   /** Caption under the retainer figure — where the term is said out loud. */
   readonly ongoingNote: string;

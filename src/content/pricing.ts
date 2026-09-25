@@ -4,8 +4,10 @@ import type { PricingTier, PricingTierSlug } from "@/lib/types";
 /**
  * Pricing page (`/pricing`) copy — decision-log #23 (the route),
  * **#25** (the tier structure, the term, and the naming), **#27**
- * (two tiers renamed onto the site's one service vocabulary) and
- * **#38** (the ongoing monthly, $298 → $2,098).
+ * (two tiers renamed onto the site's one service vocabulary), **#38**
+ * (a monthly figure since superseded) and **#45** (the 2026-09-25
+ * price reset: all four tiers carry fixed figures, and all four carry
+ * the same three-month term).
  *
  * Pricing ships as a **standalone route, not a section**. Decision #16
  * named it "the next section in this effort"; the owner's 2026-08-24
@@ -22,23 +24,24 @@ import type { PricingTier, PricingTierSlug } from "@/lib/types";
  * below is that principle in the site's voice, not a new claim.
  *
  * **The term is said out loud, on every card and once above the grid.**
- * $2,098 per month, required for the first three months, optional
- * after. Two owner calls, not one: the **term** is 2026-08-25 (reducing
- * an initial twelve), the **figure** is 2026-09-09, raising it from
- * $298 (**#38**). A price that hides a commitment is exactly the
- * surprise invoice §6 rejects, so it is not tucked into a footnote —
- * and at this figure the required term is $6,294 committed, which is
- * the reason the sentence above the grid states it plainly. **The
- * wording did not soften when the number grew.** Only the number
- * changed: `term`, `description` and the three `ongoingNote` captions
- * are word for word what they were at $298.
+ * The monthly is required for the first three months, optional after,
+ * **on all four tiers** (#45). The **term** is the 2026-08-25 call
+ * (reducing an initial twelve); the **figures** are the 2026-09-25
+ * reset (**#45**): $2,998 per month on the two agentic tiers, $10,000
+ * per month on the two product tiers. A price that hides a commitment
+ * is exactly the surprise invoice §6 rejects, so it is not tucked into
+ * a footnote.
  *
- * **Product Completion carries no required term at all** — a two month
- * trial with no contractual obligation (owner call, same date). It is
- * the tier whose visitor has already been burned by one firm, so asking
- * them to commit before seeing anything works is the wrong ask. The
- * page-level term names the exception rather than stating a blanket
- * commitment its own cards contradict.
+ * **The page-level `term` no longer carries a figure.** The monthly now
+ * differs by tier, so one number above the grid would be wrong for two
+ * of the four cards; each card states its own. Nothing else in the
+ * sentence was reworded when the Product Completion exception came out.
+ *
+ * **Product Completion no longer runs as a trial** (#45). It carries the
+ * same three-month term as every other tier, and its card says what
+ * each figure buys, in the owner's words (2026-09-25): the upfront
+ * includes discovery, the monthly covers the build for the required
+ * three months, then support and continued development after.
  *
  * Naming: the first tier is **"AI Workflow Integration"** (owner call,
  * 2026-08-25). The owner's working name for it ended in the word Rule
@@ -63,7 +66,7 @@ export const PRICING = {
   /** Browser tab and search-result title for the route. */
   title: "Pricing | NextSketch",
   description:
-    "Scoped upfront engagements and a $2,098 monthly product partnership, published in plain numbers. No hourly billing and no surprise invoices.",
+    "Scoped upfront engagements and a monthly product partnership, published in plain numbers. No hourly billing and no surprise invoices.",
   /** Mono micro-label above the heading (docs/04-ux-spec.md §Typography). */
   eyebrow: "Pricing",
   headline: "NextSketch puts the price upfront.",
@@ -75,10 +78,13 @@ export const PRICING = {
     "Every engagement has two parts: a scoped upfront build, then a monthly partnership that keeps the product alive. You know both numbers before you commit. No hourly billing, no meter running during meetings, no surprise invoices.",
   /**
    * The commitment, stated plainly and before the cards. Owner-settled
-   * (#25). This is the sentence the brief exists to protect.
+   * (#25). This is the sentence the brief exists to protect. Since #45
+   * it applies to all four tiers, so the Product Completion exception
+   * is gone, and it names no figure because the monthly differs by
+   * tier. The rest is word for word as it shipped.
    */
   term:
-    "The $2,098 monthly partnership is required for the first three months. After that it is optional, and staying on is your call. Product Completion is the exception: it starts as a two month trial with no contractual obligation.",
+    "The monthly partnership is required for the first three months. After that it is optional, and staying on is your call.",
   /**
    * Accessible name for the tier grid (screen-reader only). The grid is
    * a landmark region with no visible heading of its own — the page's
@@ -149,17 +155,18 @@ export const PRICING_NEED: Record<PricingTierSlug, ProjectType> = {
 /**
  * Per-tier CTA labels, both from the Rule 3.1 exhaustive set.
  *
- * "Qualify Your Project" carries the three scoped tiers and "Let's See
- * if We're a Fit" carries the quoted New Product tier (`custom`). Both
+ * "Qualify Your Project" carries the first three tiers and "Let's See
+ * if We're a Fit" carries the New Product tier (`custom`). Both
  * were the set's two unused members, so neither dilutes the hero's
  * primary ("Start a Conversation") or the services cards' ("Build With
  * Us") — the same reasoning `SERVICES_CTA` used when it picked its
  * label.
  *
- * That tier needed the different label because its scope is not
- * defined yet: "Qualify Your Project" presumes a project to qualify,
- * and §6 permits a quote only where "scope genuinely requires it".
- * The owner's shorthand for this CTA was "call", and every natural
+ * That tier took the different label when its price was a quote and
+ * its scope was not defined yet: "Qualify Your Project" presumes a
+ * project to qualify. It carries a fixed price since #45; the label is
+ * unchanged by that call (labels are out of its scope). The owner's
+ * shorthand for this CTA was "call", and every natural
  * phrasing of that is a Rule 3.2 banned term, so nothing here is
  * invented — both strings come straight out of the sanctioned set.
  */
@@ -170,9 +177,23 @@ export const PRICING_CTA_CUSTOM = "Let's See if We're a Fit";
  * The four tiers, in owner-settled order (#25). **"Save Your Project"
  * and "Custom Product" were renamed to Product Completion and New
  * Product by #27**, onto the same four names the cards, the hero strip
- * and the modal now use. Nothing else about these entries moved: not a
- * price, not a struck former price, not a description, not a note, not
- * the order, not the empty `features` arrays.
+ * and the modal now use. **#45 (2026-09-25) reset the figures**: the
+ * two agentic tiers keep their upfront and move to $2,998 per month;
+ * the two product tiers stop being quoted and carry $12,000 upfront
+ * plus $10,000 per month. The struck former prices stay on the first
+ * two tiers only. No monthly is struck, and neither $12,000 is: there
+ * is no discount to show on either.
+ *
+ * **Product Completion's two captions are the owner's own lines**
+ * (2026-09-25), word for word and in his order: the upfront includes
+ * discovery; the monthly covers the build for the first three months,
+ * then support and continued development. The second and third lines
+ * share the `ongoingNote` caption so the card keeps its six rows.
+ *
+ * **New Product has no `upfrontNote`.** Its old caption existed only to
+ * explain "Quoted", and no replacement was supplied (Rule 4.3), so the
+ * slot renders nothing. Its `ongoingNote` is the term caption the two
+ * agentic tiers already carry, since the term now applies to it too.
  *
  * Descriptions for the last two tiers trace to Brand Philosophy §4
  * ("What We Build"), reworded only to fit the card measure and to drop
@@ -220,7 +241,7 @@ export const PRICING_TIERS = [
     upfront: "$3,998",
     upfrontWas: "$5,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
-    ongoing: "$2,098 per month",
+    ongoing: "$2,998 per month",
     ongoingNote: "Required the first three months, optional after.",
     features: [],
   },
@@ -238,30 +259,29 @@ export const PRICING_TIERS = [
     upfront: "$7,998",
     upfrontWas: "$10,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
-    ongoing: "$2,098 per month",
+    ongoing: "$2,998 per month",
     ongoingNote: "Required the first three months, optional after.",
     features: [],
   },
   {
-    slug: "rescue",
-    name: "Product Completion",
-    description:
-      "Someone got you 70% there and disappeared. We assess what was built, validate the direction, and get you to launch.",
-    upfront: "Quoted",
-    upfrontNote: "The partnership starts on day one instead.",
-    ongoing: "$2,098 per month",
-    ongoingNote: "Two month trial. No contractual obligation.",
-    features: [],
-  },
-  {
+    /**
+     * **One card for two offerings (owner direction, 2026-09-25).**
+     * New Product and Product Completion are distinct services but carry
+     * the same price, so `/pricing` shows them as one card titled "New
+     * Product". The description covers both; the captions are the
+     * owner's Product Completion breakdown, which now reads for both.
+     * DRAFT description, pending owner approval. `/pricing` only: the
+     * home page and the service routes keep the two offerings separate.
+     */
     slug: "custom",
     name: "New Product",
     description:
-      "Scope that does not fit the tiers above. We define it with you first, then price it to the deliverable, so you get a flat rate that does not change. We deliver a working product in 6–8 weeks.",
-    upfront: "Quoted",
-    upfrontNote: "Priced once the scope is defined with you.",
-    ongoing: "Quoted monthly",
-    ongoingNote: "Scoped to what the product needs.",
+      "Two starting points, one price. A new product built from scratch, delivered working in 6–8 weeks. Or a product someone got 70% there before disappearing: we assess what was built, validate the direction, and get you to launch.",
+    upfront: "$12,000",
+    upfrontNote: "$12,000 upfront. Includes discovery.",
+    ongoing: "$10,000 per month",
+    ongoingNote:
+      "$10,000/mo covers the build. First three months required. After that, it covers support and continued development of the platform.",
     features: [],
   },
 ] as const satisfies readonly PricingTier[];
