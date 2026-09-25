@@ -264,25 +264,24 @@ export const PRICING_TIERS = [
     features: [],
   },
   {
-    slug: "rescue",
-    name: "Product Completion",
+    /**
+     * **One card for two offerings (owner direction, 2026-09-25).**
+     * New Product and Product Completion are distinct services but carry
+     * the same price, so `/pricing` shows them as one card titled "New
+     * Product". The description covers both; the captions are the
+     * owner's Product Completion breakdown, which now reads for both.
+     * DRAFT description, pending owner approval. `/pricing` only: the
+     * home page and the service routes keep the two offerings separate.
+     */
+    slug: "custom",
+    name: "New Product",
     description:
-      "Someone got you 70% there and disappeared. We assess what was built, validate the direction, and get you to launch.",
+      "Two starting points, one price. A new product built from scratch, delivered working in 6–8 weeks. Or a product someone got 70% there before disappearing: we assess what was built, validate the direction, and get you to launch.",
     upfront: "$12,000",
     upfrontNote: "$12,000 upfront. Includes discovery.",
     ongoing: "$10,000 per month",
     ongoingNote:
       "$10,000/mo covers the build. First three months required. After that, it covers support and continued development of the platform.",
-    features: [],
-  },
-  {
-    slug: "custom",
-    name: "New Product",
-    description:
-      "Scope that does not fit the tiers above. We define it with you first, then price it to the deliverable, so you get a flat rate that does not change. We deliver a working product in 6–8 weeks.",
-    upfront: "$12,000",
-    ongoing: "$10,000 per month",
-    ongoingNote: "Required the first three months, optional after.",
     features: [],
   },
 ] as const satisfies readonly PricingTier[];

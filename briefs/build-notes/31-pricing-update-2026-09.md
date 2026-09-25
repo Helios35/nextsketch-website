@@ -114,3 +114,23 @@ Also for your review: Product Completion's upfront reads "$12,000" as the figure
 - What the monthly buys on the other three tiers (Product Completion's is now answered).
 - The struck former prices as a standing discount claim (#25).
 - The `custom` / `rescue` slug fossils, the em-dash gate and the existing em-dash violations: out of scope per the brief.
+
+---
+
+## Addendum (same day): Product Completion and New Product combined on `/pricing`
+
+**Owner direction, 2026-09-25:** the two cards "look basically the same", so on the pricing page only they become one card titled **"New Product"**, with copy covering both offerings (distinct services, same price). Home page and service routes explicitly out of scope and untouched.
+
+| Field | Combined card |
+|---|---|
+| `slug` / `name` | `custom` / "New Product" |
+| `description` | "Two starting points, one price. A new product built from scratch, delivered working in 6–8 weeks. Or a product someone got 70% there before disappearing: we assess what was built, validate the direction, and get you to launch." (drafted, **owner-approved 2026-09-25**) |
+| `upfront` / `upfrontNote` | `$12,000` / "$12,000 upfront. Includes discovery." |
+| `ongoing` / `ongoingNote` | `$10,000 per month` / "$10,000/mo covers the build. First three months required. After that, it covers support and continued development of the platform." |
+| CTA / preselect | "Let's See if We're a Fit" / `new_product` (unchanged) |
+
+Files: `src/content/pricing.ts` (the `rescue` entry removed, `custom` rewritten) and `src/components/pricing-tiers.tsx` (`xl:grid-cols-4` → `xl:grid-cols-3`). `PricingTierSlug` and `PRICING_NEED` still carry `rescue`, now unused, left as is to keep the change inside the two files. `service-pages.ts` reads only `PRICING_TIERS[0]` and `[1]`, so the service routes render byte-for-byte what they did.
+
+This resolves judgment calls 1 and 2 above: the empty upfront caption is filled by the owner's line, and "price it to the deliverable" is gone from the pricing card. Call 3 stands in a new form: a Product Completion visitor clicking this card lands on *New product* in the modal (changeable there).
+
+Checks: lint, typecheck, build, banned-terms all clean. Browser at 1440px: three cards in one row, bands aligned, combined card reads as above. At `md` the grid is two columns, so New Product wraps to a second row alone.

@@ -107,7 +107,7 @@ export function PricingTiers() {
       <h2 id="pricing-tiers-heading" className="sr-only">
         {PRICING.tiersHeading}
       </h2>
-      <div className="grid gap-x-4 gap-y-0 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-x-4 gap-y-0 md:grid-cols-2 xl:grid-cols-3">
         {/* Widened to PricingTier: `as const satisfies` narrows each entry
             to its own literal type, so `upfrontWas` would not exist on the
             two tiers that omit it. The component reads the interface, not
