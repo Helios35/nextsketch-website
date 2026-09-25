@@ -30,8 +30,8 @@ import type { PricingTier } from "@/lib/types";
  *
  * - **The monthly/annual billing toggle.** The reference's centrepiece.
  *   There is no such choice here: the model is a scoped upfront figure
- *   plus a $2,098 retainer required for the first three months (#25,
- *   #38). A toggle would invent an annual plan that does not exist and
+ *   plus a monthly retainer required for the first three months (#25,
+ *   #45). A toggle would invent an annual plan that does not exist and
  *   imply the commitment is optional from day one, which is the exact
  *   "surprise invoice" Brand Philosophy §6 rejects.
  * - **The `recommended` tier** — its badge, its `ring`, its `scale`
@@ -153,9 +153,14 @@ export function PricingTiers() {
                   </s>
                 )}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-white/55">
-                {tier.upfrontNote}
-              </p>
+              {/* Optional (#45): a tier with no approved caption renders
+                  none. The subgrid row is shared, so the card's bands
+                  still line up with its neighbours'. */}
+              {tier.upfrontNote !== undefined && (
+                <p className="mt-2 text-sm leading-relaxed text-white/55">
+                  {tier.upfrontNote}
+                </p>
+              )}
             </div>
             <div className="mt-6 border-t border-white/10 pt-6">
               <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
