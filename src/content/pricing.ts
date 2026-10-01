@@ -28,7 +28,9 @@ import type { PricingTier, PricingTierSlug } from "@/lib/types";
  * **on all four tiers** (#45). The **term** is the 2026-08-25 call
  * (reducing an initial twelve); the **figures** are the 2026-09-25
  * reset (**#45**): $2,998 per month on the two agentic tiers, $10,000
- * per month on the two product tiers. A price that hides a commitment
+ * per month on the two product tiers. One figure has moved since:
+ * Internal Tool's monthly is $6,998 (owner call, 2026-10-01), and AI
+ * Workflow Integration stays at $2,998. A price that hides a commitment
  * is exactly the surprise invoice §6 rejects, so it is not tucked into
  * a footnote.
  *
@@ -180,15 +182,22 @@ export const PRICING_CTA_CUSTOM = "Let's See if We're a Fit";
  * and the modal now use. **#45 (2026-09-25) reset the figures**: the
  * two agentic tiers keep their upfront and move to $2,998 per month;
  * the two product tiers stop being quoted and carry $12,000 upfront
- * plus $10,000 per month. The struck former prices stay on the first
- * two tiers only. No monthly is struck, and neither $12,000 is: there
- * is no discount to show on either.
+ * plus $10,000 per month. **Internal Tool's monthly then moved to
+ * $6,998** (owner call, 2026-10-01); nothing else on that card did.
+ * The struck former prices stay on the first two tiers only. No
+ * monthly is struck, Internal Tool's included: striking the old
+ * monthly beside the new one would advertise an increase. Neither
+ * $12,000 is struck either: there is no discount to show on either.
  *
  * **Product Completion's two captions are the owner's own lines**
  * (2026-09-25), word for word and in his order: the upfront includes
  * discovery; the monthly covers the build for the first three months,
  * then support and continued development. The second and third lines
  * share the `ongoingNote` caption so the card keeps its six rows.
+ * **They no longer repeat the card's figures** (owner call,
+ * 2026-10-01): no other card's caption restates its price, so the
+ * restated figure came out of each caption and every other word
+ * stayed.
  *
  * **New Product has no `upfrontNote`.** Its old caption existed only to
  * explain "Quoted", and no replacement was supplied (Rule 4.3), so the
@@ -259,7 +268,7 @@ export const PRICING_TIERS = [
     upfront: "$7,998",
     upfrontWas: "$10,000",
     upfrontNote: "Scoped upfront. Strategy, build and validation.",
-    ongoing: "$2,998 per month",
+    ongoing: "$6,998 per month",
     ongoingNote: "Required the first three months, optional after.",
     features: [],
   },
@@ -278,10 +287,10 @@ export const PRICING_TIERS = [
     description:
       "Two starting points, one price. A new product built from scratch, delivered working in 6–8 weeks. Or a product someone got 70% there before disappearing: we assess what was built, validate the direction, and get you to launch.",
     upfront: "$12,000",
-    upfrontNote: "$12,000 upfront. Includes discovery.",
+    upfrontNote: "Includes discovery.",
     ongoing: "$10,000 per month",
     ongoingNote:
-      "$10,000/mo covers the build. First three months required. After that, it covers support and continued development of the platform.",
+      "Covers the build. First three months required. After that, it covers support and continued development of the platform.",
     features: [],
   },
 ] as const satisfies readonly PricingTier[];
