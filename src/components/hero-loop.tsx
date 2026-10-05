@@ -34,7 +34,9 @@ interface HeroLoopProps {
  * the console stays clean. A mid-session reduced-motion flip pauses and
  * calls `load()`, which re-arms the poster rather than freezing on
  * whatever frame was showing; that also aborts a pending `play()`,
- * whose rejection the same catch absorbs.
+ * whose rejection the same catch absorbs. If the browser pauses the
+ * loop while the page is hidden, it restarts when the page is visible
+ * again (see the effect).
  *
  * Loading: `preload="metadata"` + poster in the server HTML, so the
  * still paints with the page and reduced-motion visitors fetch only
@@ -61,10 +63,26 @@ export function HeroLoop({ src, poster }: HeroLoopProps) {
       reduceMotion ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (video === null || reduced) return;
-    video.play().catch(() => {
-      // Autoplay refused or aborted: the poster stays. Not an error.
-    });
+    const start = () => {
+      video.play().catch(() => {
+        // Autoplay refused or aborted: the poster stays. Not an error.
+      });
+    };
+    // Browsers pause video-only playback while the page is hidden (this
+    // clip has no audio track). Chrome resumes it when the tab returns;
+    // the Claude desktop preview pane was measured not to, leaving the
+    // hero frozen mid-clip, and nothing obliges every engine to. So the
+    // loop restarts itself whenever the page is visible again, including
+    // a back/forward-cache restore. play() on a playing video is a no-op.
+    const resume = () => {
+      if (document.visibilityState === "visible" && video.paused) start();
+    };
+    start();
+    document.addEventListener("visibilitychange", resume);
+    window.addEventListener("pageshow", resume);
     return () => {
+      document.removeEventListener("visibilitychange", resume);
+      window.removeEventListener("pageshow", resume);
       video.pause();
       video.load();
     };

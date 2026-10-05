@@ -102,6 +102,25 @@ Both files were copied into `public/` unmodified: SHA-256 `392ed4e2…a5fbfa` (v
 
 **Not verified here:** real iOS Safari (including Low Power Mode), Android Chrome, desktop Safari and Firefox. This environment has only Chromium engines. The refusal path was exercised by making `play()` reject exactly as those browsers do. The muted + `playsInline` + effect-`play()` combination is the standard pattern iOS allows without a gesture.
 
+### Fix after the first push: the loop froze after the page was hidden
+
+**Owner report, same day:** "the video runs then goes away", seen in the Claude desktop preview pane on `next dev`.
+
+**Cause, measured.** The clip has no audio track, so Chromium treats its playback as video-only and pauses it while the page is hidden. In the pane, it was paused at 6.8s and again at 20.6s with `visibilityState: hidden`, and it stayed paused after the pane was visible again. Our code did not cause either pause: no `pause()` or `load()` call was logged, and the time was not reset.
+
+**It is not a Chrome bug.** In headless Chrome 154, a hidden tab pauses the clip and resumes it 1.5s after the tab is shown again. The pane does the pause without the resume. Nothing obliges every engine to resume a script-started video, so the loop should not depend on it.
+
+**Change.** `HeroLoop` now calls `play()` again on `visibilitychange` and on `pageshow` (a back/forward-cache restore), whenever the page is visible and the clip is paused. Calling `play()` on a playing video does nothing. The listeners are registered only on the motion-safe path and removed in the cleanup, so reduced motion is unaffected.
+
+**Verified** in headless Chrome against `next dev`, plus lint and typecheck:
+
+| Case | Before | After |
+|---|---|---|
+| Page hidden, paused by script with no native resume (the pane's behaviour), then shown | still paused at 4.6s | playing again: 4.71s → 6.23s → 9.23s |
+| Normal Chrome hide and show | resumes | unchanged |
+| Reduced motion | poster only, nothing played | unchanged |
+| Back navigation | plays | unchanged |
+
 ## Deviations from the brief
 
 1. **Decision log: beyond "append plus footer", three small in-place edits.** (a) The numbering preamble said "the next new row is #46"; left alone, the next agent would collide, so it now says #47 (and "#45–#46"). (b) and (c) one-line supersession notes appended to #15 and #17. The log's own rule is that a superseded row "stays in place and says so", and #45 did the same for #25 and #38. None renumbers, rewords or re-litigates a row. Each is a one-line revert if unwanted.
