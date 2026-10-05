@@ -30,21 +30,14 @@ const ACCENT_PHRASE = "Real Products";
  *
  * Placement and surface are owner-directed: the band sits immediately
  * below the hero — proof before the argument — and is **opaque
- * `bg-ink`, matching the footer**. That makes it the one section on
- * the page that is not a transparent band over the scroll-synced
- * footage, which is a deliberate divergence from the Unit 02 rule,
- * flagged rather than silently resolved: the screenshots are the
- * section's whole job and moving footage behind them competed with
- * them. Two consequences are handled rather than inherited:
- *
- * - **No text shadow on the heading.** The other four sections carry
- *   the licensed over-imagery shadow because they sit on footage; this
- *   one sits on plain ink, where §Typography bans it.
- * - **The backdrop keeps its cadence.** An opaque band would otherwise
- *   spend a slice of the sequence behind itself, unseen. ScrollVideo
- *   excludes this section's height from the scroll range it maps
- *   (`data-backdrop-hidden`), so the footage still opens on its first
- *   frame and lands on its last, at the tempo it has today.
+ * `bg-ink`, matching the footer**. When it shipped it was the one
+ * section on the page that was not a transparent band over
+ * scroll-synced footage: the screenshots are the section's whole job
+ * and moving footage behind them competed with them. That backdrop is
+ * retired (decision-log #46, 2026-10-05), so every section below the
+ * hero now sits on ink, and the hook this band carried to keep the
+ * backdrop's scroll cadence is gone with it. Its heading still takes
+ * **no text shadow**: it sits on plain ink, where §Typography bans it.
  *
  * Vertical padding drops the `sm:` step the other sections carry: the
  * rail's cards bring their own height, and the full ladder left the
@@ -62,7 +55,6 @@ export function WorkSection() {
     <section
       id="work"
       aria-labelledby="work-headline"
-      data-backdrop-hidden
       className="w-full bg-ink py-24 lg:py-32"
     >
       <WorkRail items={WORK_ITEMS}>

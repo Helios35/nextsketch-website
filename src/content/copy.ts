@@ -177,10 +177,10 @@ export const HERO = {
  * - cta: the Rule 3.1 primary; opens the qualification modal.
  *
  * backgroundVideo/backgroundPoster are config, not copy — the
- * owner-supplied hero orbit footage (self-hosted, Redesign Unit 03),
- * closing the owner-owed background-asset swap that replaced the
- * interim Unsplash placeholder (build-note 08, Open item). The poster
- * is the clip's first frame — the reduced-motion / no-JS fallback.
+ * owner-supplied hero loop (self-hosted in /public, as the footage it
+ * replaced was; decision-log #46, 2026-10-05), shipped exactly as
+ * delivered. The poster is the clip's first frame — painted at once,
+ * and the reduced-motion / no-JS view.
  */
 export const LANDING = {
   wordmark: SITE.name,
@@ -197,8 +197,8 @@ export const LANDING = {
   cta: "Start a Conversation",
   /** Accessible name for the decorative capability strip. */
   capabilitiesLabel: "What we build",
-  backgroundVideo: "/hero-orbit.mp4",
-  backgroundPoster: "/hero-orbit-poster.jpg",
+  backgroundVideo: "/hero-loop.mp4",
+  backgroundPoster: "/hero-loop-poster.jpg",
 } as const;
 
 export const MANIFESTO = {

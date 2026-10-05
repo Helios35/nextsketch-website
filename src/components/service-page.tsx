@@ -71,19 +71,19 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
  * intro band's full height. A plain `absolute` copy of `hero.tsx`'s
  * treatment scrolls out at 52px while the nav's does not arrive until
  * 80px, leaving a 28px window with no logo anywhere on screen —
- * `hero.tsx` gets away with `absolute` only because its stage is sticky
- * across 160vh of runway. Pure CSS, so no-JS behaves the same. It must
- * stay the section's **first child with no top padding above it**; the
+ * `hero.tsx` got away with `absolute` only while its stage was sticky
+ * across 160vh of runway (retired by #46; build-note 32 records what
+ * that means for the home page). Pure CSS, so no-JS behaves the same.
+ * It must stay the section's **first child with no top padding above it**; the
  * padding lives on the content block, or the lockup starts 128px low.
  * The gutter padding sits on the anchor, not the `<header>`, so the
  * lockup keeps that 24px offset while the hit area clears the binding
  * 44px minimum. It links to `NAV.home`, reachable because the fixed bar
  * is `pointer-events-none` except on its own controls (#26).
  *
- * **`ScrollVideo` is not mounted** (#17): the backdrop's scroll range is
- * measured from the home page's hero-plus-opaque region, and nothing
- * here touches that contract. Two consequences, both handled rather
- * than inherited — the same pair the Work band and `/pricing` handle:
+ * **No footage is mounted** (the scroll-synced backdrop was the home
+ * page's alone, and #46 retired it). Two consequences, both handled
+ * rather than inherited — the same pair the Work band and `/pricing` handle:
  * where a card surface is used at all it is **solid `surface`** rather
  * than §Surfaces' translucent-plus-blur (there is nothing behind it to
  * blur), and headings carry **no text shadow** (they sit on plain ink,
@@ -309,7 +309,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                    site's card, exactly — the §How-it-works and pricing
                    cards' hairline, `surface` fill and padding — solid
                    rather than glass for the reason the sibling process
-                   band gives: no ScrollVideo is mounted here. */
+                   band gives: no footage is mounted here. */
                 className="group grid items-center gap-12 border border-white/15 bg-surface p-6 transition-colors duration-150 hover:border-white/30 md:p-8 lg:grid-cols-2 lg:gap-16"
               >
                 {/* `min-w-0` on both columns is the bento tiles' own

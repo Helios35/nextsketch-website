@@ -73,8 +73,8 @@ const MEASURE = "mx-auto w-full max-w-6xl";
  * position marker.
  *
  * **Cards are solid `surface`, not §Surfaces' translucent-plus-blur.**
- * That recipe exists so a card reads over the moving backdrop; the
- * service routes mount no `ScrollVideo` (#17), so there is nothing
+ * That recipe exists so a card reads over moving footage; the
+ * service routes mount none, so there is nothing
  * behind the card to blur. Same call, same reason, as the Work band
  * (build-note 20) and the `/pricing` tiers (23). **No text shadow on
  * the heading** for the matching reason: it sits on plain ink, where

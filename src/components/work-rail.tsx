@@ -52,8 +52,8 @@ interface WorkRailProps {
  *
  * The elevated fill is solid `surface` rather than the spec's
  * `surface/95 backdrop-blur-xl`: that recipe exists so a card reads
- * over the moving video backdrop, and this section is the one opaque
- * band on the page (owner direction — footer-dark), so there is
+ * over moving footage, and this section is an opaque ink band
+ * (owner direction — footer-dark), so there is
  * nothing behind the card to blur. The surface color is unchanged, so
  * it still matches the Services cards optically and still honors
  * "never pure #000 for an elevated surface" (§Surfaces).

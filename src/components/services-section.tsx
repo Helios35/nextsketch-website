@@ -22,15 +22,15 @@ const ACCENT_PHRASE = "actually works";
 /**
  * Services (#services) — name the four engagements
  * (docs/03-site-architecture.md row 6). Rebuilt in place to the
- * hero-derived design system (Redesign Unit 02): a transparent band
- * over the site's fixed scroll-synced video backdrop (owner
- * direction 2026-07-06 — the footage backs the whole page, so the
- * band mounts no video of its own). The display heading carries the
- * licensed over-imagery text shadow (docs/04-ux-spec.md §Typography —
- * shadows are banned on plain ink, licensed over footage). The four
- * engagements are elevated-glass cards (§Surfaces: translucent
- * surface + backdrop blur, never opaque black) so they read over the
- * moving video. This replaces the paper-era accent-block cards
+ * hero-derived design system (Redesign Unit 02): a transparent band,
+ * built to sit over the site's fixed scroll-synced video backdrop
+ * (owner direction 2026-07-06). That backdrop is retired
+ * (decision-log #46, 2026-10-05), so the band now sits on the page's
+ * ink. The display heading still carries the over-imagery text shadow
+ * and the four engagements are still elevated-glass cards (§Surfaces:
+ * translucent surface + backdrop blur) — both made for footage, both
+ * left as shipped by #46 (no type or colour change in that unit) and
+ * flagged in build-note 32. This replaces the paper-era accent-block cards
  * (accent bg + paired -ink text + sketch arrow); the per-service
  * `accent` field is orphaned by the redesign and deliberately unread.
  */
