@@ -14,7 +14,7 @@ import type { CSSProperties } from "react";
  *
  * **The surface is deliberately not parameterised.** `bg-ink/30
  * backdrop-blur-sm` exists because the landing hero has footage behind
- * it. A service route mounts no `ScrollVideo` (#17), so `ink/30` over a
+ * it. A service route mounts no footage, so `ink/30` over a
  * solid `ink` page resolves to the same black and the blur has nothing
  * to work on — identical classes, identical result, one strip.
  *

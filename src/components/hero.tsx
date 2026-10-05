@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { BrandWordmark } from "@/components/brand-wordmark";
 import { CapabilityStrip } from "@/components/capability-strip";
 import { HeroCta } from "@/components/hero-cta";
-import { HeroOrbit } from "@/components/hero-orbit";
+import { HeroLoop } from "@/components/hero-loop";
 import { LANDING } from "@/content/copy";
 
 /**
@@ -17,17 +17,16 @@ import { LANDING } from "@/content/copy";
  * repurposed into the capability strip sanctioned by UX spec §Motion
  * inventory (the four canonical services, no numbers).
  *
- * Unit 03 (owner-directed): the interim Unsplash still is replaced by
- * the owner-supplied orbit footage, scroll-scrubbed — the section is
- * a runway (`data-hero-runway`, min-height reserved in globals.css
- * before first paint, scripting + motion-safe gated), the content
- * sits on a sticky one-viewport stage (`data-hero-stage`), and
- * <HeroOrbit> maps scroll onto the orbit so scrolling rotates the
- * camera around the subject. No-JS / reduced-motion keep the
- * one-viewport hero over the static poster frame.
+ * The band is owner-supplied footage (Unit 03 replaced the interim
+ * Unsplash still). Since decision-log #46 (2026-10-05) it is one silent
+ * loop that plays on its own (<HeroLoop>) and ignores scroll: the
+ * 260vh scroll runway and the sticky stage that existed only to give
+ * the old scrubbed orbit room are gone, so the hero is one screen tall
+ * and the first scroll moves straight into Work. Composition, overlays,
+ * header block, strip and copy are unchanged by that swap.
  *
  * Server component; the interactive pieces are <HeroCta>, which opens
- * the qualification modal, and the decorative <HeroOrbit> backdrop.
+ * the qualification modal, and the decorative <HeroLoop> footage.
  */
 
 /** Match against accentWords ignoring case and trailing punctuation. */
@@ -38,24 +37,14 @@ export function Hero() {
   const words = LANDING.headline.split(" ");
 
   return (
-    <section
-      aria-labelledby="hero-headline"
-      data-hero-runway
-      className="relative"
-    >
-      {/* The sticky stage: one viewport of hero content pinned while
-          the section's runway (globals.css [data-hero-runway] —
-          scripting + motion-safe gated, present before first paint)
-          scrolls past underneath — scroll drives the orbit. Without
-          JS or under reduced motion the runway never applies and this
-          renders exactly the one-viewport hero. */}
-      <div
-        data-hero-stage
-        className="sticky top-0 flex min-h-dvh w-full flex-col items-start justify-end gap-8 overflow-hidden"
-      >
-        {/* Orbit footage under the image-band treatment (ink/40 overlay
-            + bottom scrim) so the white headline stays legible. */}
-        <HeroOrbit
+    <section aria-labelledby="hero-headline" className="relative">
+      {/* The stage: one viewport of hero content, bottom-anchored. It
+          was sticky across the scrub runway until #46; `relative` keeps
+          it the containing block for the absolute footage and header. */}
+      <div className="relative flex min-h-dvh w-full flex-col items-start justify-end gap-8 overflow-hidden">
+        {/* Looping footage under the image-band treatment (ink/40
+            overlay + bottom scrim) so the white headline stays legible. */}
+        <HeroLoop
           src={LANDING.backgroundVideo}
           poster={LANDING.backgroundPoster}
         />

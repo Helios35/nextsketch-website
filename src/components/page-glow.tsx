@@ -1,8 +1,8 @@
 /**
  * The page-background glow on `/pricing` and the two service routes —
- * and nowhere else. The home page keeps its footage backdrop and is
- * explicitly out of bounds (owner direction, 2026-08-31; decision-log
- * #35).
+ * and nowhere else. The home page is explicitly out of bounds (owner
+ * direction, 2026-08-31; decision-log #35) — its footage now lives in
+ * the hero alone (#46), and its lower sections sit on plain ink.
  *
  * Adapted from an owner-supplied background component (a radial
  * spotlight + animated noise-canvas snippet). What survives is **the

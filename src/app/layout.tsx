@@ -39,9 +39,10 @@ export default function RootLayout({
       lang="en"
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full bg-ink antialiased`}
     >
-      {/* The page surface lives on <html> (the canvas) so the fixed
-          -z-10 scroll-video backdrop paints above it while staying
-          below all in-flow content. */}
+      {/* The page surface lives on <html> (the canvas) so a fixed
+          -z-10 page backdrop (the gold glow on /pricing and the service
+          routes, page-glow.tsx) paints above it while staying below
+          all in-flow content. */}
       <body className="flex min-h-full flex-col font-sans text-white">
         <QualificationModalProvider>{children}</QualificationModalProvider>
         {/* Both trackers sit together for readability, but they mount

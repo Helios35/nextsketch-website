@@ -35,10 +35,8 @@ const ACCENT_PHRASE = "upfront";
  * surface. `QualificationModalProvider` is already in the layout, so
  * every tier CTA reaches the modal without a second provider.
  *
- * `ScrollVideo` is deliberately **not** mounted: the cinematic backdrop
- * belongs to the home page, and its scroll range is measured from that
- * page's hero-plus-opaque region (decision-log #17). Nothing here
- * touches that contract.
+ * No footage is mounted: the site's only video is the home page hero's
+ * loop (decision-log #46).
  *
  * **The wordmark (Unit 22, unchanged).** The home page's above-the-fold
  * lockup belongs to the hero, not the nav — `site-nav.tsx` renders an
@@ -49,9 +47,10 @@ const ACCENT_PHRASE = "upfront";
  * route-agnostic.
  *
  * The zero-height sticky wrapper is load-bearing and predates the
- * tiers. The hero's lockup is `absolute` inside a stage sticky across
- * 160vh of runway, so it holds the top of the viewport long past the
- * 80px handoff. Reproduced as a plain `absolute` here, it would scroll
+ * tiers. The hero's lockup was `absolute` inside a stage sticky across
+ * 160vh of runway (retired by #46, build-note 32), so it held the top
+ * of the viewport long past the 80px handoff. Reproduced as a plain
+ * `absolute` here, it would scroll
  * out at 52px while the nav's does not arrive until 80px — a 28px
  * window with no logo on screen. `h-0` keeps the wrapper out of the
  * flow (the lockup still paints at the hero's exact 24px offset) and
