@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.1 · **Date:** 2026-08-28 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30)
+**Version:** 2.2 · **Date:** 2026-10-05 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -124,12 +124,12 @@ src/
                     routes, #30 — no /services index),
                     globals.css (Tailwind v4 theme), not-found.tsx,
                     api/qualify/route.ts (the only server surface)
-  components/     — hero.tsx + hero-orbit.tsx + hero-cta.tsx, site-nav.tsx,
+  components/     — hero.tsx + hero-loop.tsx + hero-cta.tsx, site-nav.tsx,
                     site-footer.tsx, the six section components,
                     pricing-tiers.tsx (the /pricing grid, #25),
                     service-page.tsx + service-process.tsx (the two
                     service routes' four blocks, #30),
-                    work-rail.tsx, scroll-video.tsx, scroll-reveal.tsx,
+                    work-rail.tsx, scroll-reveal.tsx,
                     parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
                     qualification-modal(-provider).tsx, modal-trigger.tsx,
                     button.tsx (variant + size, #26)
@@ -146,7 +146,7 @@ src/
                     PricingTier + PricingTierSlug, ServicePageSlug +
                     ServiceBlockId + serviceRoute/serviceBlockHref, #30),
                     schema.ts
-                    (Zod union), qualify.ts (submit seam), video-scrub.ts,
+                    (Zod union), qualify.ts (submit seam),
                     lead-delivery.ts, lead-format.ts, lead-notify.ts
 scripts/          — inbound-leads.gs (the Apps Script reference copy; build-note 14)
                     check-banned-terms.mjs (the Rule 3.2/3.4 gate)
