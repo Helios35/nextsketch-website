@@ -48,8 +48,13 @@ export function Hero() {
     <section aria-labelledby="hero-headline" className="relative">
       {/* The stage: one viewport of hero content, bottom-anchored. It
           was sticky across the scrub runway until #46; `relative` keeps
-          it the containing block for the absolute footage and header. */}
-      <div className="relative flex min-h-dvh w-full flex-col items-start justify-end gap-8 overflow-hidden">
+          it the containing block for the absolute footage and header.
+          `pt-19` (76px, exactly the absolute header block's height) is a
+          guard, not spacing: the content is bottom-anchored, so it does
+          nothing while the copy fits the screen. When it does not (the
+          #51 headline runs to seven lines at 1024x768), the stage grows
+          and the strip stops below the logo instead of sliding under it. */}
+      <div className="relative flex min-h-dvh w-full flex-col items-start justify-end gap-8 overflow-hidden pt-19">
         {/* Looping footage under the image-band treatment (background/25
             overlay + bottom scrim) so the linen headline stays legible. */}
         <HeroLoop

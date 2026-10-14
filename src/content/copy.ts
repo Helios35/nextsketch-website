@@ -153,17 +153,25 @@ export const HERO = {
  * Landing hero (single-page site) — the dark cinematic re-skin of the
  * supplied template, mapped to NextSketch messaging. Every string here
  * traces to an approved source:
- * - headline: decision-log #18 (2026-08-24), superseding Messaging Kit
- *   §05 Hero Option A ("From idea to production. And we stay."), which
- *   architecture row 2 had recorded as locked. Rule 4.1 no longer
- *   traces the hero to §05 — do not "correct" this back to Option A.
- * - accentWords: the two payoff words rendered in the gold brand accent;
- *   "stay" moved to "partner" with the headline, since the old word no
- *   longer appears and an unmatched word renders un-accented, which
- *   would have left the hero with one gold word instead of two;
- *   matched against `headline` punctuation-insensitively (if the headline
- *   changes, an unmatched word simply renders un-accented).
- * - supportingLine: Messaging Kit §03 Message 4 (The Relationship), verbatim.
+ * - headline: owner-supplied, verbatim (decision-log #51, 2026-10-14),
+ *   superseding #18's "From idea to production. Gain a real partner.",
+ *   which itself superseded Messaging Kit §05 Hero Option A ("From idea
+ *   to production. And we stay."). Rule 4.1 no longer traces the hero
+ *   to §05: do not "correct" this back to either earlier line.
+ * - accentWords: the payoff rendered in the coral brand accent (#47).
+ *   It moved with the headline (#51) to the headline's closing promise,
+ *   "work in production", as one coral phrase: the old pair also sat at
+ *   the end ("production" / "partner"). Kept at the end on purpose:
+ *   coral holds 4.5:1 over the footage only inside the hero scrim's
+ *   solid band, which the bottom lines sit in at every width; a coral
+ *   word higher up (measured: "agentic") drops to 3.5:1 on some frames.
+ *   Each entry is matched as a whole word against `headline`,
+ *   punctuation-insensitively, so "in" colours only that one word; if
+ *   the headline changes, an unmatched word simply renders un-accented.
+ * - supportingLine: DRAFT pending owner approval (#51). Rewritten to
+ *   carry the new headline's claim; it echoes the Validate phase's own
+ *   "In production. Not in a demo." The line it replaces was Messaging
+ *   Kit §03 Message 4 (The Relationship), verbatim.
  * - capabilities: the four canonical services (Taxonomy §1, exact casing),
  *   shown as the slow capability strip sanctioned in UX spec §Motion inventory
  *   — no invented numbers or social proof (Brand Philosophy §10, Rule 4.3).
@@ -184,10 +192,11 @@ export const HERO = {
  */
 export const LANDING = {
   wordmark: SITE.name,
-  headline: "From idea to production. Gain a real partner.",
-  accentWords: ["production", "partner"],
+  headline:
+    "We build agentic systems and digital products that work in production",
+  accentWords: ["work", "in", "production"],
   supportingLine:
-    "You're not hiring a vendor. You're gaining a product partner.",
+    "Not a demo, not a pilot. Software your business runs on every day.",
   capabilities: [
     "New Product",
     "Product Completion",
