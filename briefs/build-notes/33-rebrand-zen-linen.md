@@ -225,3 +225,21 @@ Every doc that described the look was reconciled to the code, then checked claim
 ## Still open, unchanged by this unit
 
 The 28px no-logo window on `/` (#46; the header block was again out of scope), `min-h-dvh` → `min-h-svh` on the hero (#46), and the brief's out-of-scope list: brand docs outside the repo (now an open item in the log), a light mode, and the paperwork debt.
+
+## Addendum: the hero headline (#51, same day, after the first push)
+
+**Owner direction:** "The hero main text should say 'We build agentic systems and digital products that work in production'. Change the sub text in the hero to match the message. This is a content change everything visually should persist."
+
+| | Was | Now |
+|---|---|---|
+| `LANDING.headline` | "From idea to production. Gain a real partner." (#18) | "We build agentic systems and digital products that work in production" (verbatim, no period, as given) |
+| `LANDING.accentWords` | `production`, `partner` | `work`, `in`, `production`: the closing phrase, one coral run |
+| `LANDING.supportingLine` | "You're not hiring a vendor. You're gaining a product partner." (Messaging Kit §03 Message 4) | "Not a demo, not a pilot. Software your business runs on every day." **DRAFT, needs your approval** |
+
+**Why the coral moved to the end.** The first cut put coral on "agentic" and "production". Measured over every frame of the loop, "agentic" fell to 3.5:1 at 1280×800, 3.65:1 at 768×1024 and 4.49:1 at 1440×900: the longer headline lifts its upper lines above the scrim's solid band, and coral has little headroom over the footage (see "The hero"). Darkening the scrim further would have hidden most of the footage on laptops. The closing phrase sits in the solid band at every width, and the old payoff sat at the end too. Linen words higher up keep plenty of headroom.
+
+**The one non-copy change: a guard against the logo.** At 1024×768 the headline runs to seven lines, the bottom-anchored block outgrew the screen, and the capability strip slid under the logo (strip top at 0px). The stage now carries `pt-19` (76px, exactly the absolute header block's height). It does nothing while the copy fits, which is every size measured except two: at 1024×768 the hero is now 882px tall (114px past the screen) and at 1280×720 727px, with the strip stopping just below the logo. Same classes, faces, colours, overlays and fade everywhere.
+
+**Measured** (dev server, 0.5s steps over the whole loop, twelve sizes: 1920×1080, 1536×864, 1440×900, 1366×768, 1280×800, 1280×720, 1024×768, 768×1024, 414×896, 390×844, 375×667, 360×780): headline 7.59:1 or better, "work in production" 5.12:1 or better, supporting line 5.61:1 or better, strip 5.65:1 or better. Gates green (lint, typecheck, build, banned-terms).
+
+**Docs:** decision-log #51 (supersedes #18's headline; #18 carries the note; the drafted supporting line is an open owner item), `01-vision.md` 2.2, `03-site-architecture.md` (hero row), `04-ux-spec.md` (accent rules, the coral payoff rule now says keep the hero's coral at the end, the hero loop's measurements, the guard, the hero bullet). The Messaging Kit, outside the repo, is yours to reconcile.
