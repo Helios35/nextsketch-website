@@ -1,14 +1,29 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ApolloTracker } from "@/components/apollo-tracker";
 import { QualificationModalProvider } from "@/components/qualification-modal-provider";
 import { SITE } from "@/content/copy";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+/*
+ * fin's three families (docs/04-ux-spec.md §Typography, decision-log
+ * #47): Inter for the interface and every figure, Playfair Display for
+ * display headings and the brand voice (its italic carries the hero's
+ * supporting line), JetBrains Mono for labels. All variable fonts,
+ * self-hosted at build by next/font: zero runtime requests to a font
+ * CDN and no layout shift.
+ */
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair-display",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -24,10 +39,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * Root layout. The site is now a single dark landing hero, so the
- * shell is just the ink page surface and the qualification-modal
- * provider (every CTA opens the modal); the multi-section SiteNav and
- * SiteFooter are no longer mounted.
+ * Root layout: the page surface (fin's dark `background`, the site's
+ * only theme since decision-log #47), the fonts, and the
+ * qualification-modal provider (every CTA opens the modal). Nav and
+ * footer are mounted per page, not here.
  */
 export default function RootLayout({
   children,
@@ -37,13 +52,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full bg-ink antialiased`}
+      className={`${inter.variable} ${playfairDisplay.variable} ${jetbrainsMono.variable} h-full bg-background antialiased`}
     >
       {/* The page surface lives on <html> (the canvas) so a fixed
-          -z-10 page backdrop (the gold glow on /pricing and the service
+          -z-10 page backdrop (the coral glow on /pricing and the service
           routes, page-glow.tsx) paints above it while staying below
           all in-flow content. */}
-      <body className="flex min-h-full flex-col font-sans text-white">
+      <body className="flex min-h-full flex-col font-sans text-foreground">
         <QualificationModalProvider>{children}</QualificationModalProvider>
         {/* Both trackers sit together for readability, but they mount
             differently: <Analytics /> is the first-party cookieless
