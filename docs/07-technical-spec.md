@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.2 · **Date:** 2026-10-05 · **Status:** Active — reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46)
+**Version:** 2.3 · **Date:** 2026-10-14 · **Status:** Active: reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -20,9 +20,9 @@
 | Layer | Choice | Notes |
 |---|---|---|
 | Framework | **Next.js 16** (App Router, TypeScript) · React 19 | `/api/qualify` is a Route Handler using native `Request`/`Response` and `after()` from `next/server` |
-| Styling | **Tailwind CSS v4** | Token-based theme in `src/app/globals.css` (`@theme`); default palette cleared so only brand tokens compile (`06-taxonomy.md` §5) |
-| Animation | CSS keyframes, `motion-safe`-gated | The live hero + modal use CSS keyframes (no `motion/react` import — the `no-restricted-imports` rule). The design system binds the redesign sections to the same contract (`04-ux-spec.md` §Motion), so `motion` (Framer) is installed but has no planned consumer — uninstalling it is a future cleanup call |
-| Fonts | `next/font/google` | **Space Grotesk** (display/UI) + **JetBrains Mono** (mono); self-hosted at build, zero layout shift (decision-log #1) |
+| Styling | **Tailwind CSS v4** | **CHANGED (decision-log #47, #48).** The token layer is `src/app/globals.css`: fin's Zen Linen **dark** values (the only theme; no light set, no toggle) as raw custom properties on `:root`, republished into Tailwind's namespaces by an `@theme inline` bridge, the way fin builds it. Tailwind's stock colour, radius, shadow, text-shadow and drop-shadow namespaces are cleared first (`initial`), so only the site's tokens compile and a component never writes a hex (`06-taxonomy.md` §5). Every radius step derives from one `--radius` token (#48), so a bare `rounded` compiles to nothing. `color-scheme: dark` renders native UI dark |
+| Animation | CSS keyframes, `motion-safe`-gated | The live hero + modal use CSS keyframes (no `motion/react` import: the `no-restricted-imports` rule). The design system binds the redesign sections to the same contract (`04-ux-spec.md` §Motion), so `motion` (Framer) is installed but has no planned consumer; uninstalling it is a future cleanup call. **CHANGED (#47):** fin's motion rule binds, with every animation at 200ms or less (the marquee is ambient and exempt), and one `prefers-reduced-motion: reduce` block in `globals.css`'s base layer sets every transition to 0s and every animation to 0.01ms (so `animationend` still fires) site-wide, so no component has to remember |
+| Fonts | `next/font/google` | **CHANGED (decision-log #47).** **Inter** (`--font-inter`: the interface, body and every figure) + **Playfair Display** (`--font-playfair-display`, normal and italic: display headings and the brand voice) + **JetBrains Mono** (`--font-jetbrains-mono`: labels), loaded in `layout.tsx` and mapped to `font-sans` / `font-serif` / `font-mono` in `globals.css`; self-hosted at build, zero layout shift (decision-log #1). Space Grotesk is retired |
 | Email | **Resend** (`resend` SDK) | Lead auto-reply + Nathan's alert — **best-effort notification**, via `after()` (Rule 2.5) |
 | Lead record | Google Apps Script web-app webhook (Sheet) + Asana REST API | Plain `fetch` POSTs — **no SDK dependency added** |
 | Validation | **Zod v4** | Discriminated-union schema for the lead payload, shared client/server (`src/lib/schema.ts`) |
@@ -116,38 +116,47 @@ Resend (email — best-effort, via `after()`) · **Google Apps Script webhook** 
 
 ```
 src/
-  app/            — layout.tsx (dark ink shell, fonts, modal provider),
-                    page.tsx (home: hero + six sections),
-                    pricing/page.tsx (the standalone route, #23),
-                    services/product/page.tsx +
-                    services/agentic-system/page.tsx (the two service
-                    routes, #30 — no /services index),
-                    globals.css (Tailwind v4 theme), not-found.tsx,
-                    api/qualify/route.ts (the only server surface)
-  components/     — hero.tsx + hero-loop.tsx + hero-cta.tsx, site-nav.tsx,
-                    site-footer.tsx, the six section components,
-                    pricing-tiers.tsx (the /pricing grid, #25),
-                    service-page.tsx + service-process.tsx (the two
-                    service routes' four blocks, #30),
-                    work-rail.tsx, scroll-reveal.tsx,
-                    parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
-                    qualification-modal(-provider).tsx, modal-trigger.tsx,
-                    button.tsx (variant + size, #26)
-                    (DORMANT — retired paper plan: hero-section.tsx,
-                     sketch-accent.tsx, the held sections, Reveal, etc. —
-                     on disk, not rendered; delete vs. keep is an open
-                     owner call, build-note 08)
-  content/        — copy.ts (SITE + NAV + LANDING live; retired-plan copy
-                    dormant), work.ts, pricing.ts, services.ts,
-                    service-pages.ts (the two routes' content, #30 —
-                    references services.ts/pricing.ts, never re-literals
-                    their copy), modal.ts, email.ts, faq.ts
-  lib/            — types.ts (SectionId, ROUTES, sectionHref,
-                    PricingTier + PricingTierSlug, ServicePageSlug +
-                    ServiceBlockId + serviceRoute/serviceBlockHref, #30),
-                    schema.ts
-                    (Zod union), qualify.ts (submit seam),
-                    lead-delivery.ts, lead-format.ts, lead-notify.ts
-scripts/          — inbound-leads.gs (the Apps Script reference copy; build-note 14)
-                    check-banned-terms.mjs (the Rule 3.2/3.4 gate)
+  app/            layout.tsx (the dark `background` shell, the three
+                  next/font families, modal provider; #47),
+                  page.tsx (home: hero + six sections),
+                  pricing/page.tsx (the standalone route, #23),
+                  services/product/page.tsx +
+                  services/agentic-system/page.tsx (the two service
+                  routes, #30; no /services index),
+                  globals.css (the token layer: fin Zen Linen dark,
+                  #47; also the hero's all-edge `hero-fade` mask,
+                  #50), not-found.tsx (dark since #47), favicon.ico
+                  (recoloured, #49),
+                  api/qualify/route.ts (the only server surface)
+  components/     hero.tsx + hero-loop.tsx + hero-cta.tsx, site-nav.tsx,
+                  site-footer.tsx, the six section components,
+                  pricing-tiers.tsx (the /pricing grid, #25),
+                  service-page.tsx + service-process.tsx (the two
+                  service routes' four blocks, #30),
+                  work-rail.tsx, scroll-reveal.tsx,
+                  parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
+                  qualification-modal(-provider).tsx, modal-trigger.tsx,
+                  button.tsx (variant + size, #26)
+                  (DORMANT, the retired paper plan: hero-section.tsx,
+                   sketch-accent.tsx, the held sections, Reveal, etc.:
+                   on disk, not rendered; delete vs. keep is an open
+                   owner call, build-note 08)
+  content/        copy.ts (SITE + NAV + LANDING live; retired-plan copy
+                  dormant), work.ts, pricing.ts, services.ts,
+                  service-pages.ts (the two routes' content, #30;
+                  references services.ts/pricing.ts, never re-literals
+                  their copy), modal.ts, email.ts, faq.ts
+  lib/            types.ts (SectionId, ROUTES, sectionHref,
+                  PricingTier + PricingTierSlug, ServicePageSlug +
+                  ServiceBlockId + serviceRoute/serviceBlockHref, #30),
+                  schema.ts
+                  (Zod union), qualify.ts (submit seam),
+                  lead-delivery.ts, lead-format.ts, lead-notify.ts
+public/           hero-loop.mp4 + hero-loop-poster.jpg (the hero loop,
+                  #46; since #50 the delivered hero-loop-sketch footage
+                  and its first-frame poster, byte-identical, installed
+                  at these paths), work/ (the #work screenshots),
+                  placeholders/ (the About portrait placeholder)
+scripts/          inbound-leads.gs (the Apps Script reference copy; build-note 14)
+                  check-banned-terms.mjs (the Rule 3.2/3.4 gate)
 ```

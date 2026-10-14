@@ -1,6 +1,6 @@
 # Site Architecture — NextSketch Website Rebuild
 
-**Version:** 2.4 · **Date:** 2026-08-28 · **Status:** Active — the site is **four routes**: the home page, `/pricing`, and **two service routes** under `/services/` (decision-log #22–#26, **#30**)
+**Version:** 2.5 · **Date:** 2026-10-14 · **Status:** Active: the site is **four routes**: the home page, `/pricing`, and **two service routes** under `/services/` (decision-log #22–#26, **#30**); every route, the 404 included, renders on fin's dark `background` (**#47**)
 **Answers:** How is it structured?
 **References:** `02-prd.md` (what) · `04-ux-spec.md` (how each section looks) · `05-business-rules.md` (modal logic)
 
@@ -11,16 +11,18 @@
 ## Sitemap
 
 ```
-/                          — the home page: hero + six sections, one scroll   [CURRENT]
-/pricing                   — standalone pricing route (static, ink surface)   [CHANGED — #23]
-/services/product          — New Product · Product Completion · Product Support
-                             (static, ink surface, anchored blocks)           [NEW — #30]
-/services/agentic-system   — Agentic System, at its two depths: AI Workflow
-                             Integration · Internal Tool (static, ink)        [NEW — #30]
-/404                       — custom not-found (light paper surface)           [CURRENT]
-[modal]                    — qualification modal (overlay, no route)          [CURRENT]
-/api/qualify               — POST-only serverless lead endpoint (no page)     [CURRENT — see 07]
+/                          the home page: hero + six sections, one scroll     [CURRENT]
+/pricing                   standalone pricing route (static, dark)            [CHANGED, #23]
+/services/product          New Product · Product Completion · Product Support
+                           (static, dark, anchored blocks)                    [NEW, #30]
+/services/agentic-system   Agentic System, at its two depths: AI Workflow
+                           Integration · Internal Tool (static, dark)         [NEW, #30]
+/404                       custom not-found (dark, like every route)          [CHANGED, #47]
+[modal]                    qualification modal (overlay, no route)            [CURRENT]
+/api/qualify               POST-only serverless lead endpoint (no page)       [CURRENT, see 07]
 ```
+
+**Every route is dark on one ground, fin's `background` (decision-log #47, 2026-10-14).** The sitemap previously labelled the routes "ink surface" and the 404 "light paper surface"; #47 retired both tokens (`ink` for fin's dark steps, `paper` with the 404's light surface), so the site is dark only and no route carries a surface of its own.
 
 **There is deliberately no `/services` index route.** The home page's `#services` section is the hub, and the four cards there are the entry point (#30).
 
@@ -30,9 +32,9 @@ Old Webflow routes (`/projects`, `/about-us`, `/contact-us`, `/projects/*`) get 
 
 ## Navigation structure — **CHANGED** (hamburger plus one featured button, at every breakpoint)
 
-**CURRENT (as-built).** `SiteNav` and `SiteFooter` are both live and mount **per page** (`page.tsx` and `pricing/page.tsx`), not in `src/app/layout.tsx`, so the 404 keeps its own light paper surface. *(This section previously recorded them as RETIRED and unmounted — that was true of the 2026-06-14 pivot and was left stale when Redesign Unit 02 remounted them. Corrected here.)*
+**CURRENT (as-built).** `SiteNav` and `SiteFooter` are both live and mount **per page** (`page.tsx` and `pricing/page.tsx`), not in `src/app/layout.tsx`, so the 404 renders without them. *(It once did so to keep its own light paper surface; since decision-log #47 the 404 is dark like every other route, and the per-page mount simply stands.)* *(This section previously recorded them as RETIRED and unmounted: that was true of the 2026-06-14 pivot and was left stale when Redesign Unit 02 remounted them. Corrected here.)*
 
-**The bar** is fixed, transparent over the hero, and turns to elevated glass with reduced height past 80px of scroll. It holds the brand lockup on the left and **one right-justified hamburger** — **at every screen size** (**decision-log #22**, 2026-08-25). The visible desktop tab row is **RETIRED**; the full-screen ink overlay is now the only place the items render, at all widths. Beside the burger it carries **one button — `NAV.featured`, which is Pricing** (**decision-log #26**, 2026-08-25), the shared `<Button>` at the de-emphasized `ghost` variant in the `compact` size. That **narrowly supersedes** the 2026-07-06 "no CTA in the nav" direction, which was about *conversion*: this is navigation to a page, so **the nav still has no conversion CTA** and the hero CTA and `#start` still carry it. The button hides below 375px, where the bar measurably stops fitting; the menu carries Pricing at every width regardless, and bar and menu read the **same object** so the two cannot drift. The bar is `pointer-events-none` with `pointer-events-auto` restored on its own controls, so a page can put a real link under the transparent bar (#26) — which is what lets `/pricing` link its own above-the-fold lockup. The bar is deliberately **not route-aware**.
+**The bar** is fixed, transparent over the hero, and turns to elevated glass with reduced height past 80px of scroll (fin's `card` at 95% with a backdrop blur and a `border` hairline, **decision-log #47**). It holds the brand lockup on the left and **one right-justified hamburger**, **at every screen size** (**decision-log #22**, 2026-08-25). The visible desktop tab row is **RETIRED**; the full-screen overlay (the same `card` glass, #47; it was `ink` before) is now the only place the items render, at all widths. Beside the burger it carries **one button, `NAV.featured`, which is Pricing** (**decision-log #26**, 2026-08-25), the shared `<Button>` at the de-emphasized `ghost` variant in the `compact` size (since #47 a solid `secondary` fill with a `border` hairline, over the hero too, where it was a transparent outline). That **narrowly supersedes** the 2026-07-06 "no CTA in the nav" direction, which was about *conversion*: this is navigation to a page, so **the nav still has no conversion CTA** and the hero CTA and `#start` still carry it. The button hides below 375px, where the bar measurably stops fitting; the menu carries Pricing at every width regardless, and bar and menu read the **same object** so the two cannot drift. The bar is `pointer-events-none` with `pointer-events-auto` restored on its own controls, so a page can put a real link under the transparent bar (#26), which is what lets `/pricing` link its own above-the-fold lockup. The bar is deliberately **not route-aware**.
 
 **The lockup** appears in the bar only once scrolled, because above the fold it belongs to the page: `hero.tsx` renders it on `/`, and `pricing/page.tsx` renders its own for the same reason (no hero there to supply one) — as do **both service routes**, through the shared `<ServicePage>`, which reproduces `/pricing`'s zero-height sticky wrapper exactly (#30). Both sit on the same gutter at the same size, so the bar's takes over at 80px without a jump or a blink.
 
@@ -44,7 +46,7 @@ Old Webflow routes (`/projects`, `/about-us`, `/contact-us`, `/projects/*`) get 
 
 ## Page structure — **CHANGED**
 
-**Live (as-built):** the dark cinematic hero (`src/components/hero.tsx`): wordmark, headline ("From idea to production. Gain a real partner." — **decision-log #18**, gold accent on "production" / "partner"), Messaging Kit §03 Message 4 supporting line, the capability strip (four services), and the CTA → modal — followed by the section set below. Messaging Kit §05 **Hero Option A** ("From idea to production. And we stay."), which this row previously recorded as locked, is **superseded** (#18); it survives on disk only in the dormant `HERO.headline`. Detail in `04-ux-spec.md` §Live components.
+**Live (as-built):** the dark cinematic hero (`src/components/hero.tsx`): wordmark, headline ("From idea to production. Gain a real partner.", **decision-log #18**, with the coral accent on "production" / "partner", gold until **#47**), Messaging Kit §03 Message 4 supporting line, the capability strip (four services), and the CTA → modal, all over the autoplaying hero loop (#46; since **#50** the fin-palette sketch footage, faded out on every edge into the page's `background` with no hard stop), followed by the section set below. Messaging Kit §05 **Hero Option A** ("From idea to production. And we stay."), which this row previously recorded as locked, is **superseded** (#18); it survives on disk only in the dormant `HERO.headline`. Detail in `04-ux-spec.md` §Live components.
 
 **Section set on the home page (decision-log #13, extended by #16).** **Six sections** join the hero on `/`, built one unit at a time against `04-ux-spec.md`: Selected Work (01, added by #16), then the five of #13 — Manifesto (02), Services (03), Process (04), About (05), Final CTA (06). *(#13 named five; #16 added Work ahead of them and renumbered the rest. Reconciled across the doc stack 2026-08-28.)* Pricing is **not** in this set: #23 moved it to its own route.
 

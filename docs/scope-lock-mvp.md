@@ -1,8 +1,10 @@
 # NextSketch MVP — Direction (Re-Lock)
 
-**Date:** 2026-06-22 · **Status:** Locked — **partially superseded 2026-07-06** (see banner)
+**Date:** 2026-06-22 · **Status:** Locked: **partially superseded 2026-07-06 and 2026-10-14** (see banners)
 
 > **Supersession note (2026-07-06, decision-log #13–#14).** The "Out — deferred (returns later)" bucket below is superseded: the multi-section revival is now **confirmed** — five sections (Manifesto, Services, Process, About, Final CTA) join the hero, designed against the hero-derived design system (`04-ux-spec.md` v3.0). The **light theme + handwritten sketch accents are retired for good** (they do not "return later"); gold is the only accent, all other accent colors orphaned (#14). Sections not in the #13 set (work grid, testimonials, who-it's-for, FAQ, nav/footer) are retired, not deferred. The lead pipeline, launch bar, and "Out — for good" cuts below are unchanged and still binding.
+
+> **Supersession note (2026-10-14, decision-log #47 to #50).** The look described below and in the 2026-07-06 note is superseded; the scope is not. The site is rebranded to the fin design system's Zen Linen theme, **dark only** with no theme toggle (#47). **Coral `#F26A4B` replaces gold as the one accent** under the same rule (#47 supersedes #14), so the 2026-07-06 note's "gold is the only accent" now reads coral. **Type is Inter + Playfair Display + JetBrains Mono** (#47), so "Space Grotesk + JetBrains Mono" below is retired. Corners follow fin's radius scale (#48), the logo is recoloured, not reshaped (#49), and the hero plays the fin-palette sketch footage, faded out on every edge (#50). The rebrand is visual only: every word, route and the modal are unchanged, and the lead pipeline, the launch bar and the "Out, for good" cuts stand as the 2026-07-06 note left them.
 **Purpose:** Confirming the locked direction for the NextSketch MVP after the 2026-06-14 pivot and the Sprint 03 doc audit — so the next build sprint starts from an agreed base. This is the plan, not a question list.
 
 > The doc stack (`docs/00–08` + `decision-log.md`) now matches the live build. This one-pager is the agreed scope base; the working plan (in the workspace) carries the sequence, shortcuts, and open items.
