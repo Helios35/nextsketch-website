@@ -21,7 +21,11 @@ export const SECTION_IDS = [
 
 export type SectionId = (typeof SECTION_IDS)[number];
 
-/** Accent color pairs per Taxonomy §5; pairing rule: accent bg ⇒ paired -ink text. */
+/**
+ * The dead per-service / per-phase accent data names (Taxonomy §5,
+ * RETIRED). None is a colour token since decision-log #47; the data is
+ * never rendered (coral `brand` is the one accent).
+ */
 export const ACCENT_NAMES = ["gold", "lavender", "rose", "sage"] as const;
 
 export type AccentName = (typeof ACCENT_NAMES)[number];

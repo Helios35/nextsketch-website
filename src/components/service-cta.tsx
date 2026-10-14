@@ -14,9 +14,10 @@ import type { ProjectType } from "@/lib/schema";
  * Shares ModalTrigger's seam — a real mailto anchor that the click
  * intercepts — so no-JS visitors still reach the escape hatch
  * (Business Rules E3). It is a separate component rather than a
- * ModalTrigger variant because the affordance is different: the gold
- * underlined text link of the §Color rule, not Button's block-button
- * vocabulary (solid surface, divided-arrow box, scale-on-hover).
+ * ModalTrigger variant because the affordance is different: the coral
+ * (`brand`) underlined text link of the §Color rule (decision-log #47),
+ * not Button's block-button vocabulary (solid fill, divided-arrow box,
+ * colour-on-hover).
  * Forcing it through Button would mean bending Button's padding and
  * hover for one caller.
  */
@@ -44,7 +45,7 @@ export function ServiceCta({ label, need, service }: ServiceCtaProps) {
         event.preventDefault();
         openModal(need);
       }}
-      className="group/cta inline-flex min-h-11 items-center gap-2 text-base font-medium text-gold underline underline-offset-4 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+      className="group/cta inline-flex min-h-11 items-center gap-2 text-base font-medium text-brand underline underline-offset-4 transition-colors duration-150 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       {label}
       <span className="transition-[translate] duration-150 motion-safe:group-hover/cta:translate-x-0.5">

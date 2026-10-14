@@ -10,8 +10,9 @@ import {
 
 /**
  * Presentation marker, not copy: the proof the section exists to land
- * takes the gold payoff treatment (docs/04-ux-spec.md §Typography — at
- * most a couple of accent words inside a white display heading).
+ * takes the coral payoff treatment, `text-brand` (docs/04-ux-spec.md
+ * §Typography: at most a couple of accent words inside a linen display
+ * heading; decision-log #47).
  * Degrades to an unaccented headline if the canonical copy changes.
  */
 const ACCENT_PHRASE = "Real Products";
@@ -30,14 +31,15 @@ const ACCENT_PHRASE = "Real Products";
  *
  * Placement and surface are owner-directed: the band sits immediately
  * below the hero — proof before the argument — and is **opaque
- * `bg-ink`, matching the footer**. When it shipped it was the one
+ * `bg-background`, matching the footer**. When it shipped it was the one
  * section on the page that was not a transparent band over
  * scroll-synced footage: the screenshots are the section's whole job
  * and moving footage behind them competed with them. That backdrop is
  * retired (decision-log #46, 2026-10-05), so every section below the
- * hero now sits on ink, and the hook this band carried to keep the
- * backdrop's scroll cadence is gone with it. Its heading still takes
- * **no text shadow**: it sits on plain ink, where §Typography bans it.
+ * hero now sits on `background`, and the hook this band carried to keep
+ * the backdrop's scroll cadence is gone with it. Its heading still takes
+ * **no text shadow**: it sits on plain `background`, where §Typography
+ * bans it.
  *
  * Vertical padding drops the `sm:` step the other sections carry: the
  * rail's cards bring their own height, and the full ladder left the
@@ -55,7 +57,7 @@ export function WorkSection() {
     <section
       id="work"
       aria-labelledby="work-headline"
-      className="w-full bg-ink py-24 lg:py-32"
+      className="w-full bg-background py-24 lg:py-32"
     >
       <WorkRail items={WORK_ITEMS}>
         <div className="max-w-3xl">
@@ -67,7 +69,7 @@ export function WorkSection() {
                 ) : (
                   <>
                     {headline.slice(0, phraseStart)}
-                    <span className="text-gold">{ACCENT_PHRASE}</span>
+                    <span className="text-brand">{ACCENT_PHRASE}</span>
                     {headline.slice(phraseStart + ACCENT_PHRASE.length)}
                   </>
                 )}
@@ -75,7 +77,7 @@ export function WorkSection() {
             </SectionHeading>
           </ScrollReveal>
           <ScrollReveal delay={120}>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/70 md:text-lg">
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-foreground md:text-lg">
               {WORK_INTRO}
             </p>
           </ScrollReveal>

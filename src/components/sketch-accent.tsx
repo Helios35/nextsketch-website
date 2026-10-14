@@ -10,9 +10,9 @@ interface SketchAccentProps {
   variant: SketchVariant;
   accent?: AccentName;
   /**
-   * Stroke tone: "base" is the accent itself (on neutral paper);
-   * "ink" is the paired -ink — required on accent backgrounds per
-   * the pairing rule.
+   * Stroke tone: "base" is the accent itself (on the dark page or a
+   * card); "ink" is `brand-foreground`, required on a coral fill per
+   * the pairing rule (decision-log #47).
    */
   tone?: "base" | "ink";
   /**
@@ -31,19 +31,22 @@ interface SketchAccentProps {
 /**
  * Static accent→class maps: Tailwind only compiles class literals.
  * Stroke color flows via currentColor so one map covers every variant.
+ * Only the gold key spends coral (decision-log #47); the other keys
+ * stroke in the neutral `muted-foreground`, because the chart steps
+ * are wireframe chrome only and coral goes nowhere new.
  */
 const ACCENT_CLASS: Record<AccentName, string> = {
-  gold: "text-gold",
-  lavender: "text-lavender",
-  rose: "text-rose",
-  sage: "text-sage",
+  gold: "text-brand",
+  lavender: "text-muted-foreground",
+  rose: "text-muted-foreground",
+  sage: "text-muted-foreground",
 };
 
 const ACCENT_INK_CLASS: Record<AccentName, string> = {
-  gold: "text-gold-ink",
-  lavender: "text-lavender-ink",
-  rose: "text-rose-ink",
-  sage: "text-sage-ink",
+  gold: "text-brand-foreground",
+  lavender: "text-brand-foreground",
+  rose: "text-brand-foreground",
+  sage: "text-brand-foreground",
 };
 
 interface SketchSpec {

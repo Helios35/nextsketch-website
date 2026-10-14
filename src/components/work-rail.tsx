@@ -36,27 +36,33 @@ interface WorkRailProps {
  *   the shared <ArrowIcon> (§Interaction vocabulary: "Icons are inline
  *   SVG, never lucide-react"), and JS only *enhances* — it never
  *   drives the scroll.
- * - **Squared, not `rounded-xl`.** `rounded-none` is the shape of the
- *   brand (§How to build a new section, rule 1).
- * - **A segmented gold meter, not dots.** §Interaction vocabulary
- *   specifies the pagination affordance literally — `h-[3px] w-7`
- *   bars, `gap-1.5`, filled `bg-gold`, rest `bg-white/15` — and ends
- *   "No dots." Each bar is wrapped in a 44px target (§Layout).
- * - **Cards are glass panels, not image-overlay tiles.** The reference
+ * - **fin's card radius.** The squared-corner rule is retired
+ *   (decision-log #48): cards take `rounded-xl` and clip their
+ *   screenshot frame (`overflow-hidden`), so the image shares the
+ *   card's corners.
+ * - **A segmented coral meter, not dots.** §Interaction vocabulary
+ *   specifies the pagination affordance literally: `h-[3px] w-7`
+ *   bars, `gap-1.5`, filled `bg-brand`, both `rounded-full`
+ *   (decision-log #47, #48), and it ends "No dots." The rest bars
+ *   are `muted-foreground` at 70% (about 3.25:1 on `background`):
+ *   each is the only visible mark of a real button, so it holds
+ *   fin's 3:1 floor for marks, which `muted` (1.3:1) did not.
+ *   Each bar is wrapped in a 44px target (§Layout).
+ * - **Cards are panels, not image-overlay tiles.** The reference
  *   overlays its title and body on the image behind a gradient; these
  *   cards are screenshots of real products and the screenshot *is* the
  *   proof, so it keeps its own 16/9 frame and the copy sits below it
- *   in the Services-card surface (hairline `white/15` → `white/30` on
- *   hover, mono index with the gold diamond marker, `mt-auto` CTA row)
- *   — so the two card grids on the page read as one family.
+ *   in the Services-card surface (`card` fill, `border` hairline
+ *   lifting to `muted-foreground/50` on hover, mono index with the
+ *   coral diamond marker, `mt-auto` CTA row), so the two card grids on
+ *   the page read as one family.
  *
- * The elevated fill is solid `surface` rather than the spec's
- * `surface/95 backdrop-blur-xl`: that recipe exists so a card reads
- * over moving footage, and this section is an opaque ink band
- * (owner direction — footer-dark), so there is
- * nothing behind the card to blur. The surface color is unchanged, so
- * it still matches the Services cards optically and still honors
- * "never pure #000 for an elevated surface" (§Surfaces).
+ * The elevated fill is solid `card`, the same as the Services cards.
+ * Glass (`card/95 backdrop-blur-xl`) is for a surface that floats over
+ * something, and this section is an opaque `background` band (owner
+ * direction: footer-dark), so there is nothing behind the card to
+ * blur. `card` sits one step above `background` and the `border`
+ * hairline is what separates the two (§Surfaces, decision-log #47).
  *
  * Motion: hover treatments are the shared 150ms micro-transition and
  * the image's `scale-105` lift is `motion-safe`-gated. No keyframes
@@ -170,13 +176,14 @@ export function WorkRail({ items, children }: WorkRailProps) {
     });
   };
 
-  /** Icon control — the ghost vocabulary at icon size (§Interaction). */
+  /** Icon control: the secondary/ghost button vocabulary at icon size
+   *  (§Interaction; `rounded-md`, decision-log #47, #48). */
   const control =
-    "inline-flex min-h-11 min-w-11 items-center justify-center border " +
-    "border-white/30 text-white transition-colors duration-150 " +
-    "hover:border-white/60 hover:bg-white/[0.06] " +
-    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white " +
-    "disabled:pointer-events-none disabled:opacity-40";
+    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border " +
+    "border-border bg-secondary text-foreground transition-colors duration-150 " +
+    "hover:bg-accent " +
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring " +
+    "disabled:pointer-events-none disabled:opacity-50";
 
   const showControls = mounted && scrollable;
 
@@ -238,7 +245,7 @@ export function WorkRail({ items, children }: WorkRailProps) {
         role="group"
         aria-label={WORK_RAIL.label}
         tabIndex={0}
-        className="relative mt-14 snap-x snap-mandatory overflow-x-auto scroll-px-6 pb-2 [scrollbar-width:none] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:scroll-px-8 md:mt-20 lg:scroll-px-16 [&::-webkit-scrollbar]:hidden"
+        className="relative mt-14 snap-x snap-mandatory overflow-x-auto scroll-px-6 pb-2 [scrollbar-width:none] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:scroll-px-8 md:mt-20 lg:scroll-px-16 [&::-webkit-scrollbar]:hidden"
       >
         <ul
           ref={trackRef}
@@ -273,13 +280,13 @@ export function WorkRail({ items, children }: WorkRailProps) {
               onClick={() => scrollToCard(i)}
               aria-label={slide.label}
               aria-current={i === active}
-              className="group/bar inline-flex min-h-11 min-w-7 items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              className="group/bar inline-flex min-h-11 min-w-7 items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <span
-                className={`h-[3px] w-7 transition-colors duration-150 ${
+                className={`h-[3px] w-7 rounded-full transition-colors duration-150 ${
                   i === active
-                    ? "bg-gold"
-                    : "bg-white/15 group-hover/bar:bg-white/40"
+                    ? "bg-brand"
+                    : "bg-muted-foreground/70 group-hover/bar:bg-muted-foreground"
                 }`}
               />
             </button>
@@ -294,7 +301,7 @@ export function WorkRail({ items, children }: WorkRailProps) {
  * The grading mask, per screenshot key (owner direction 2026-08-24:
  * the screenshots arrive in four unrelated palettes — light
  * periwinkle, white, near-black, white/violet — and read as four loose
- * stickers on the ink band). It is the §Surfaces image-band recipe
+ * stickers on the dark band). It is the §Surfaces image-band recipe
  * applied for visual consistency rather than text legibility, so it is
  * split by tone instead of applied flat.
  *
@@ -336,8 +343,8 @@ const IMAGE_TONE: Record<"light" | "bright", string> = {
 };
 
 const OVERLAY_TONE: Record<"light" | "bright", string> = {
-  light: "bg-ink/45 group-hover/card:bg-ink/5",
-  bright: "bg-ink/50 group-hover/card:bg-ink/5",
+  light: "bg-background/45 group-hover/card:bg-background/5",
+  bright: "bg-background/50 group-hover/card:bg-background/5",
 };
 
 /**
@@ -347,15 +354,15 @@ const OVERLAY_TONE: Record<"light" | "bright", string> = {
  * set rather than reading as an afterthought, and the button sits
  * centred in it.
  *
- * Ghost, not the white divided-arrow advance: that surface is the
- * page's conversion affordance (the hero CTA and #start), and browsing
- * to an archive is exactly the de-emphasized action ghost exists for
+ * Ghost, not the stone (`primary`) divided-arrow advance: that surface
+ * is the page's conversion affordance (the hero CTA and #start), and
+ * browsing to an archive is exactly the de-emphasized action ghost exists for
  * (§Interaction vocabulary). It keeps the advance button scarce, the
- * same way gold is kept scarce.
+ * same way coral is kept scarce.
  *
  * The destination is owner-owed, so with no `href` the control renders
  * as a genuinely disabled button in the system's documented disabled
- * state (§Interaction vocabulary: `opacity-40`, pointer-events off) —
+ * state (§Interaction vocabulary: `opacity-50`, pointer-events off),
  * honest about not being wired rather than an anchor pointing nowhere,
  * and inert to keyboard and pointer alike. The card also drops its
  * hover border in that state, since nothing there responds. Setting
@@ -365,13 +372,13 @@ const OVERLAY_TONE: Record<"light" | "bright", string> = {
 function ViewAllCard() {
   const { label, href } = WORK_VIEW_ALL;
   const surface =
-    "flex h-full items-center justify-center border border-white/15 " +
-    "bg-surface p-6 md:p-8";
+    "flex h-full items-center justify-center rounded-xl border border-border " +
+    "bg-card p-6 md:p-8";
 
   if (href === undefined) {
     return (
       <div className={surface}>
-        <Button variant="ghost" arrow disabled className="opacity-40">
+        <Button variant="ghost" arrow disabled className="opacity-50">
           {label}
         </Button>
       </div>
@@ -379,7 +386,7 @@ function ViewAllCard() {
   }
   return (
     <div
-      className={`${surface} transition-colors duration-150 hover:border-white/30`}
+      className={`${surface} transition-colors duration-150 hover:border-muted-foreground/50`}
     >
       <Button variant="ghost" arrow href={href}>
         {label}
@@ -390,10 +397,10 @@ function ViewAllCard() {
 
 /**
  * One work card. Linking is per-item: a project with a public URL is a
- * real anchor carrying the gold link affordance and the arrow nudge; a
+ * real anchor carrying the coral link affordance and the arrow nudge; a
  * project without one renders the identical card as a plain container,
  * never a dead link. The whole card is the click target when it links,
- * so the gold row is presentational (`aria-hidden`) rather than a
+ * so the coral row is presentational (`aria-hidden`) rather than a
  * nested second link.
  */
 function WorkCard({ item, index }: { item: WorkItem; index: number }) {
@@ -404,7 +411,7 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
     <>
       {/* Fixed 16/9 frame, independent of the screenshot's real size —
           every card matches (owner requirement, 2026-08-24). */}
-      <div className="relative aspect-video overflow-hidden border-b border-white/10 bg-white/[0.03]">
+      <div className="relative aspect-video overflow-hidden border-b border-border bg-secondary">
         {item.image !== undefined ? (
           <Image
             src={item.image}
@@ -412,33 +419,35 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
             width={1600}
             height={900}
             sizes="(min-width: 1024px) 26rem, (min-width: 640px) 24rem, 82vw"
-            className={`h-full w-full object-cover transition-[scale,filter] duration-300 motion-safe:group-hover/card:scale-105 ${IMAGE_TONE[tone]} ${
+            className={`h-full w-full object-cover transition-[scale,filter] duration-150 motion-safe:group-hover/card:scale-105 ${IMAGE_TONE[tone]} ${
               item.focal === "top" ? "object-top" : "object-center"
             }`}
           />
         ) : (
-          <span className="absolute inset-0 grid place-items-center font-mono text-xs tracking-[0.14em] text-white/40 uppercase">
+          <span className="absolute inset-0 grid place-items-center font-mono text-xs tracking-[0.14em] text-muted-foreground uppercase">
             {WORK_PLACEHOLDER_LABEL}
           </span>
         )}
         {/* Flat grade, weighted by the screenshot's key (IMAGE_TONE). */}
         <div
           aria-hidden="true"
-          className={`absolute inset-0 transition-colors duration-300 ${OVERLAY_TONE[tone]}`}
+          className={`absolute inset-0 transition-colors duration-150 ${OVERLAY_TONE[tone]}`}
         />
         {/* The §Surfaces bottom scrim, confined to the lower two
             thirds: it dissolves the image's bottom edge into the card
-            instead of stopping at a hard line above the copy. A
-            full-height `via-ink/25` was tried first and compounded
-            with the flat layer into a muddy middle. */}
+            instead of stopping at a hard line above the copy. It fades
+            to `card`, the fill below it, not to `background`, which
+            would leave a darker band where the image meets the card. A
+            full-height `via-background/25` was tried first and
+            compounded with the flat layer into a muddy middle. */}
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/90 to-transparent"
+          className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-card/90 to-transparent"
         />
       </div>
       <div className="flex grow flex-col p-6 md:p-8">
-        <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] text-white/55 uppercase">
-          <span aria-hidden="true" className="h-1.5 w-1.5 rotate-45 bg-gold" />
+        <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] text-muted-foreground uppercase">
+          <span aria-hidden="true" className="h-1.5 w-1.5 rotate-45 bg-brand" />
           {String(index + 1).padStart(2, "0")}
         </p>
         {/* One line of title over two of body, fixed (owner
@@ -448,16 +457,16 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
             ellipsis should ever appear. They exist so a later copy
             edit can lengthen a card without silently pushing the rail
             out of alignment. */}
-        <h3 className="mt-6 line-clamp-1 text-lg font-medium text-white md:text-xl">
+        <h3 className="mt-6 line-clamp-1 font-sans text-lg font-semibold tracking-tight text-foreground md:text-xl">
           {item.name}
         </h3>
-        <p className="mt-3 line-clamp-2 text-base leading-relaxed text-white/70">
+        <p className="mt-3 line-clamp-2 text-base leading-relaxed text-foreground">
           {item.summary}
         </p>
         {linked && (
           <span
             aria-hidden="true"
-            className="mt-auto inline-flex items-center gap-2 pt-6 text-base font-medium text-gold underline underline-offset-4 transition-colors duration-150 group-hover/card:text-white"
+            className="mt-auto inline-flex items-center gap-2 pt-6 text-base font-medium text-brand underline underline-offset-4 transition-colors duration-150 group-hover/card:text-foreground"
           >
             {WORK_LINK}
             <span className="transition-[translate] duration-150 motion-safe:group-hover/card:translate-x-0.5">
@@ -470,8 +479,9 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
   );
 
   const surface =
-    "group/card flex h-full flex-col border border-white/15 bg-surface " +
-    "transition-colors duration-150 hover:border-white/30";
+    "group/card flex h-full flex-col overflow-hidden rounded-xl border " +
+    "border-border bg-card transition-colors duration-150 " +
+    "hover:border-muted-foreground/50";
 
   if (!linked) {
     return <div className={surface}>{body}</div>;
@@ -482,7 +492,7 @@ function WorkCard({ item, index }: { item: WorkItem; index: number }) {
       target="_blank"
       rel="noreferrer"
       aria-label={`${item.name} — ${WORK_LINK}`}
-      className={`${surface} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
+      className={`${surface} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}
     >
       {body}
     </a>

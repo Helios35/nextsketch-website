@@ -9,16 +9,17 @@ interface PlaceholderProps {
   index: number;
   ratio?: PlaceholderRatio;
   /**
-   * Accent-tinted treatment with a diagonal sketch-hatch overlay —
-   * the work-tile placeholder spec (docs/04-ux-spec.md §Component
-   * specs). Text takes the paired -ink per the pairing rule.
+   * Accent-tinted treatment with a diagonal sketch-hatch overlay: the
+   * work-tile placeholder spec (docs/04-ux-spec.md §Component specs).
+   * Text takes `foreground`: a translucent tint on the dark page is not
+   * a coral fill, so `brand-foreground` would not read (decision-log #47).
    */
   accent?: AccentName;
   /**
-   * Surface the placeholder sits on. "ink" is the redesign's dark
-   * treatment (hairline glass per docs/04-ux-spec.md §Surfaces);
-   * "paper" is the retired light default, kept for the dormant
-   * sections.
+   * Surface the placeholder sits on. "ink" is the hairline tile on
+   * `secondary` (docs/04-ux-spec.md §Surfaces); "paper" is the former
+   * light default, now a `card` tile, kept for the dormant sections.
+   * Both take the fin image-frame radius (decision-log #47, #48).
    */
   surface?: "paper" | "ink";
   /** Visible site copy inside the block (from a content constant). */
@@ -35,15 +36,17 @@ const RATIO_CLASS: Record<PlaceholderRatio, string> = {
 
 /**
  * Static accent→class maps: Tailwind only compiles class literals.
- * Tint stays translucent so the viewport keeps its neutral base
- * (accents are seasoning); hatch strokes flow via currentColor on
- * the overlay so one gradient covers every accent.
+ * Only the gold key tints, in translucent coral so the viewport keeps
+ * its neutral base (decision-log #47); the other keys take the neutral
+ * `muted` tile, because the chart steps are wireframe chrome only.
+ * Hatch strokes flow via currentColor on the overlay so one gradient
+ * covers every accent.
  */
 const TINT_CLASS: Record<AccentName, string> = {
-  gold: "border-gold/40 bg-gold/20 text-gold-ink",
-  lavender: "border-lavender/40 bg-lavender/20 text-lavender-ink",
-  rose: "border-rose/40 bg-rose/20 text-rose-ink",
-  sage: "border-sage/40 bg-sage/20 text-sage-ink",
+  gold: "border-brand/40 bg-brand/20 text-foreground",
+  lavender: "border-border bg-muted text-foreground",
+  rose: "border-border bg-muted text-foreground",
+  sage: "border-border bg-muted text-foreground",
 };
 
 /**
@@ -70,9 +73,9 @@ export function Placeholder({
         RATIO_CLASS[ratio],
         "relative grid place-items-center overflow-hidden border",
         surface === "ink"
-          ? "rounded-none border-white/15 bg-white/[0.03] text-white/55"
+          ? "rounded-lg border-border bg-secondary text-muted-foreground"
           : accent === undefined
-            ? "rounded-lg border-ink/10 bg-paper-bright text-ink"
+            ? "rounded-lg border-border bg-card text-foreground"
             : `rounded-lg ${TINT_CLASS[accent]}`,
         className,
       ]
@@ -92,10 +95,10 @@ export function Placeholder({
         <span
           className={
             surface === "ink"
-              ? "font-mono text-xs tracking-[0.14em] uppercase opacity-50"
+              ? "font-mono text-xs tracking-[0.14em] uppercase"
               : label === undefined
-                ? "font-hand text-xl opacity-40"
-                : "font-hand text-sm opacity-50"
+                ? "font-sans text-xl"
+                : "font-sans text-sm"
           }
         >
           {name}

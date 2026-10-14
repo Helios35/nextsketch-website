@@ -5,10 +5,10 @@ import { FINAL_CTA } from "@/content/copy";
 
 /**
  * Presentation marker, not copy: the qualification promise the close
- * turns on takes the gold payoff treatment (docs/04-ux-spec.md
- * §Typography — at most a couple of accent words inside a white
- * display heading). Degrades to an unaccented headline if the
- * canonical copy changes.
+ * turns on takes the coral payoff treatment, `text-brand`
+ * (docs/04-ux-spec.md §Typography: at most a couple of accent words
+ * inside a linen Playfair display heading; decision-log #47).
+ * Degrades to an unaccented headline if the canonical copy changes.
  */
 const ACCENT_PHRASE = "right fit";
 
@@ -41,7 +41,7 @@ export function FinalCtaSection() {
         <SectionHeading
           index="06"
           eyebrow={FINAL_CTA.eyebrow}
-          className="max-w-3xl [text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
+          className="max-w-3xl"
         >
           <span id="start-headline">
             {phraseStart === -1 ? (
@@ -49,7 +49,7 @@ export function FinalCtaSection() {
             ) : (
               <>
                 {headline.slice(0, phraseStart)}
-                <span className="text-gold">{ACCENT_PHRASE}</span>
+                <span className="text-brand">{ACCENT_PHRASE}</span>
                 {headline.slice(phraseStart + ACCENT_PHRASE.length)}
               </>
             )}
@@ -57,7 +57,7 @@ export function FinalCtaSection() {
         </SectionHeading>
       </ScrollReveal>
       <ScrollReveal delay={120}>
-        <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
+        <p className="mt-6 max-w-2xl text-base leading-relaxed text-foreground md:text-lg">
           {FINAL_CTA.body}
         </p>
       </ScrollReveal>

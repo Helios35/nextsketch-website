@@ -5,13 +5,14 @@ import type { AccentName } from "@/lib/types";
 
 /**
  * Static accent→class map (Tailwind compiles literals only). Accent
- * text on neutral paper — same license as the sketch strokes.
+ * text on the card (coral for the gold key, neutral otherwise,
+ * decision-log #47): same license as the sketch strokes.
  */
 const QUOTE_MARK_CLASS: Record<AccentName, string> = {
-  gold: "text-gold",
-  lavender: "text-lavender",
-  rose: "text-rose",
-  sage: "text-sage",
+  gold: "text-brand",
+  lavender: "text-muted-foreground",
+  rose: "text-muted-foreground",
+  sage: "text-muted-foreground",
 };
 
 /** Two quiet placeholder blocks; accents are presentational. */
@@ -36,14 +37,14 @@ export function TestimonialsSection() {
       <div className="mt-14 grid gap-6 md:mt-20 md:grid-cols-2">
         {BLOCK_ACCENTS.map((accent, i) => (
           <Reveal key={accent} delay={i * 0.1}>
-            <blockquote className="h-full rounded-2xl border border-ink/10 bg-paper-bright p-8 md:p-10">
+            <blockquote className="h-full rounded-xl border border-border bg-card p-8 md:p-10">
               <span
                 aria-hidden="true"
                 className={`block font-sans text-6xl leading-none font-bold ${QUOTE_MARK_CLASS[accent]}`}
               >
                 &ldquo;
               </span>
-              <p className="mt-6 text-base text-ink/50">
+              <p className="mt-6 text-base text-muted-foreground">
                 {TESTIMONIALS.placeholderLabel}
               </p>
             </blockquote>

@@ -30,10 +30,10 @@ function BurgerIcon() {
  * Fixed top nav, dark re-skin per Redesign Unit 02 (docs/04-ux-spec.md
  * §Component specs) — replaces the sticky paper bar of the retired
  * sketch system. Fixed (not sticky) so it overlays the full-bleed hero
- * without pushing it down: transparent over the hero, elevated ink
- * glass (bg-ink/80 + backdrop-blur, white/10 hairline) with reduced
- * height after 80px of scroll. The shrink is plain CSS transitions
- * gated by motion-safe. Items ride NAV.items — the live redesign
+ * without pushing it down: transparent over the hero, elevated `card`
+ * glass (bg-card/95 + backdrop-blur, `border` hairline; decision-log
+ * #47) with reduced height after 80px of scroll. The shrink is plain
+ * CSS transitions gated by motion-safe. Items ride NAV.items: the live redesign
  * sections (decision-log #13: work / why / services / process / about;
  * #start is reached via the CTA, not a nav item) plus Pricing, the one
  * item that leaves the page (#23/#24). The hero renders the brand
@@ -45,7 +45,7 @@ function BurgerIcon() {
  * **Hamburger at every breakpoint — decision-log #22 (2026-08-25).**
  * The visible desktop tab row is retired: the bar is the wordmark slot
  * and one right-justified burger at every width, and the full-screen
- * ink overlay (focus trap, Escape, scroll lock, focus return) is the
+ * `card` glass overlay (focus trap, Escape, scroll lock, focus return) is the
  * only place the items render. A sixth item made the row crowd the
  * lockup at md, and the overlay was already carrying the whole set on
  * mobile — so this deletes a surface rather than adding one. The
@@ -57,9 +57,10 @@ function BurgerIcon() {
  *
  * **The bar carries one button, beside the burger** (owner direction,
  * 2026-08-25; decision-log #26): `NAV.featured`, which is Pricing. It
- * is the shared `<Button>` at the `ghost` variant — §Interaction
- * vocabulary's de-emphasized action on ink — deliberately not the white
- * divided-arrow advance the hero CTA owns. This narrowly supersedes the
+ * is the shared `<Button>` at the `ghost` variant (§Interaction
+ * vocabulary's de-emphasized action: `secondary` fill, `border`
+ * hairline), deliberately not the stone `primary` divided-arrow advance
+ * the hero CTA owns. This narrowly supersedes the
  * 2026-07-06 "no CTA in the nav" direction: that call was about
  * conversion, and this is navigation to a page, so the nav still has no
  * conversion CTA. Pricing keeps its menu row too, so the button is a
@@ -162,33 +163,33 @@ export function SiteNav() {
     <header
       className={[
         "pointer-events-none fixed inset-x-0 top-0 z-40 border-b",
-        "motion-safe:transition-colors motion-safe:duration-300",
-        scrolled ? "border-white/10" : "border-transparent",
+        "motion-safe:transition-colors motion-safe:duration-150",
+        scrolled ? "border-border" : "border-transparent",
       ].join(" ")}
     >
-      {/* The surface (elevated glass per §Surfaces — never pure #000)
-          lives on this inner div, NOT the header: a backdrop-filter
+      {/* The surface (elevated `card` glass per §Surfaces, never pure
+          black) lives on this inner div, NOT the header: a backdrop-filter
           would make the header the containing block for the
           fixed-position mobile overlay and clip it to the bar. */}
       <div
         className={[
           "px-6 sm:px-8 lg:px-16",
-          "motion-safe:transition-colors motion-safe:duration-300",
-          scrolled ? "bg-surface/95 backdrop-blur-xl" : "bg-transparent",
+          "motion-safe:transition-colors motion-safe:duration-150",
+          scrolled ? "bg-card/95 backdrop-blur-xl" : "bg-transparent",
         ].join(" ")}
       >
         <nav
           aria-label={NAV.label}
           className={[
             "flex items-center justify-between gap-6",
-            "motion-safe:transition-[padding] motion-safe:duration-300",
+            "motion-safe:transition-[padding] motion-safe:duration-150",
             scrolled ? "py-3" : "py-5",
           ].join(" ")}
         >
           {scrolled ? (
             <a
               href={NAV.home}
-              className="pointer-events-auto inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="pointer-events-auto inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <BrandWordmark className="h-7 w-auto" />
             </a>
@@ -217,7 +218,7 @@ export function SiteNav() {
               aria-expanded={open}
               aria-label={NAV.menu.open}
               onClick={() => setOpen(true)}
-              className="pointer-events-auto inline-flex min-h-11 min-w-11 items-center justify-center text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="pointer-events-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <BurgerIcon />
             </button>
@@ -230,7 +231,7 @@ export function SiteNav() {
           role="dialog"
           aria-modal="true"
           aria-label={NAV.label}
-          className="pointer-events-auto fixed inset-0 z-50 flex flex-col bg-surface/95 px-6 text-white backdrop-blur-xl sm:px-8 lg:px-16"
+          className="pointer-events-auto fixed inset-0 z-50 flex flex-col bg-card/95 px-6 text-foreground backdrop-blur-xl sm:px-8 lg:px-16"
         >
           <div className="flex items-center justify-between py-5">
             {/* The overlay covers the hero, so its wordmark always
@@ -238,7 +239,7 @@ export function SiteNav() {
             <a
               href={NAV.home}
               onClick={closeMenu}
-              className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <BrandWordmark className="h-7 w-auto" />
             </a>
@@ -247,7 +248,7 @@ export function SiteNav() {
               type="button"
               aria-label={NAV.menu.close}
               onClick={closeMenu}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center text-white/60 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <CloseIcon />
             </button>
@@ -258,7 +259,7 @@ export function SiteNav() {
                 <a
                   href={href}
                   onClick={closeMenu}
-                  className="block py-3 text-3xl font-medium tracking-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="block py-3 text-3xl font-medium tracking-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >
                   {label}
                 </a>

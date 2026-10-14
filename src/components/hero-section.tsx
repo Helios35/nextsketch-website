@@ -52,7 +52,7 @@ export function HeroSection() {
         ))}
       </SectionHeading>
       <Reveal delay={0.25} className="mt-8 max-w-2xl">
-        <p className="text-lg leading-relaxed text-ink/80 md:text-xl">
+        <p className="text-lg leading-relaxed text-foreground md:text-xl">
           {HERO.subheadline}
         </p>
       </Reveal>
@@ -60,10 +60,10 @@ export function HeroSection() {
         <ModalTrigger>{HERO.cta}</ModalTrigger>
       </Reveal>
       <Reveal delay={0.45} className="mt-20 md:mt-28">
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-10 border-t border-ink/10 pt-10 md:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-10 border-t border-border pt-10 md:grid-cols-4">
           {HERO.stats.map(({ value, label }) => (
             <div key={label} className="flex flex-col-reverse gap-2">
-              <dt className="text-sm text-ink/60">{label}</dt>
+              <dt className="text-sm text-muted-foreground">{label}</dt>
               <dd className="text-3xl font-bold tracking-tight md:text-4xl">
                 {value}
               </dd>

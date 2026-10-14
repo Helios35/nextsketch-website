@@ -26,9 +26,10 @@ import { FOOTER, NAV, SITE } from "@/content/copy";
  * shared <Container> gives way to the full-width band on the hero
  * gutter rhythm (px-6 / sm:px-8 / lg:px-16) with the section-opening
  * top hairline; anchors and socials take the mono micro-label voice.
- * All hovers are the 150ms micro-transition; hairlines come from the
- * white alpha ladder (/10). Server component — no interactivity
- * beyond plain anchors.
+ * All hovers are the 150ms micro-transition, `muted-foreground` to
+ * `foreground`; the one hairline is the `border` token, on the
+ * `background` ground (decision-log #47). Server component, no
+ * interactivity beyond plain anchors.
  *
  * Layout restructured (owner-supplied reference, 2026-08-04) — the
  * reference contributed structure only; every token, face and hover
@@ -52,22 +53,23 @@ export function SiteFooter() {
 
   /** Mono micro-label treatment — the section anchors. */
   const anchorLink =
-    "inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.14em] text-white/60 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+    "inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
   /**
-   * Icon-only socials: same white/60 -> white as the anchors, but a
-   * square 44px target since there is no label to give it width.
+   * Icon-only socials: same `muted-foreground` to `foreground` as the
+   * anchors, but a square 44px target since there is no label to give
+   * it width.
    */
   const socialLink =
-    "inline-flex min-h-11 min-w-11 items-center justify-center text-white/60 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
   return (
-    <footer className="bg-ink text-white">
+    <footer className="bg-background text-foreground">
       <div className="px-6 py-16 sm:px-8 md:py-20 lg:px-16">
         <div className="md:flex md:items-start md:justify-between">
           <a
             href={NAV.home}
-            className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <BrandWordmark className="h-7 w-auto" />
           </a>
@@ -84,7 +86,7 @@ export function SiteFooter() {
             ))}
           </ul>
         </div>
-        <div className="mt-8 border-t border-white/10 pt-8 lg:grid lg:grid-cols-10 lg:items-center">
+        <div className="mt-8 border-t border-border pt-8 lg:grid lg:grid-cols-10 lg:items-center">
           <nav aria-label={FOOTER.label} className="lg:col-[4/11] lg:row-[1]">
             <ul className="flex flex-wrap items-center gap-x-8 gap-y-1 lg:justify-end">
               {NAV.items.map(({ href, label }) => (
@@ -96,9 +98,10 @@ export function SiteFooter() {
               ))}
             </ul>
           </nav>
-          {/* white/55 (the mono-caption stop), not /40 — the legal line
-              is real text and must clear WCAG AA contrast on ink. */}
-          <p className="mt-6 font-mono text-xs tracking-[0.14em] text-white/55 lg:col-[1/4] lg:row-[1] lg:mt-0">
+          {/* `muted-foreground` (the mono-caption step, 5.4:1 on
+              `background`): the legal line is real text and must clear
+              WCAG AA, and there is no dimmer legal text step. */}
+          <p className="mt-6 font-mono text-xs tracking-[0.14em] text-muted-foreground lg:col-[1/4] lg:row-[1] lg:mt-0">
             © {year} {SITE.legalName}
           </p>
         </div>

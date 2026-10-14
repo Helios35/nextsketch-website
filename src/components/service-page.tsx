@@ -14,8 +14,8 @@ import type { ServicePageContent } from "@/lib/types";
 
 /**
  * Presentation marker, not copy: the qualification promise the close
- * turns on takes the gold payoff treatment (docs/04-ux-spec.md
- * §Typography). The same phrase `FinalCtaSection` accents on `/`, on
+ * turns on takes the coral payoff treatment (docs/04-ux-spec.md
+ * §Typography, decision-log #47). The same phrase `FinalCtaSection` accents on `/`, on
  * the same string. Degrades to an unaccented headline if the canonical
  * copy changes.
  */
@@ -46,7 +46,7 @@ const CLOSE_ACCENT_PHRASE = "right fit";
 const MEASURE = "mx-auto w-full max-w-6xl";
 
 /** Shared measure for a block's supporting paragraph. */
-const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
+const BODY_CLASS = "text-base leading-relaxed text-foreground md:text-lg";
 
 /**
  * A service route, whole — decision-log **#30** (2026-08-28). Both
@@ -84,10 +84,10 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
  * **No footage is mounted** (the scroll-synced backdrop was the home
  * page's alone, and #46 retired it). Two consequences, both handled
  * rather than inherited — the same pair the Work band and `/pricing` handle:
- * where a card surface is used at all it is **solid `surface`** rather
+ * where a card surface is used at all it is **solid `card`** rather
  * than §Surfaces' translucent-plus-blur (there is nothing behind it to
- * blur), and headings carry **no text shadow** (they sit on plain ink,
- * where §Typography bans it).
+ * blur), and headings carry **no text shadow** (they sit on plain
+ * `background`, where §Typography bans it).
  *
  * **The "what you get" band is alternating split rows (owner
  * direction, 2026-08-28, third revision, against a supplied
@@ -105,8 +105,10 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
  * `class-variance-authority`, a `cn()` helper and a `/components/ui`
  * directory. Nothing new was installed. Its outline button becomes the
  * shared `<Button>` at `ghost` through `<ModalTrigger>`; its heading
- * and body become the panel display scale and the `white/70` body step;
- * its `rounded-xl` and `bg-muted` become squared on `ink`. What the
+ * and body become the panel-scale row title (Inter semibold) and the
+ * `foreground` body step; its `rounded-xl` is now this system's own
+ * card radius (decision-log #48) and its `bg-muted` becomes `card`
+ * (#47). What the
  * reference actually contributed is the split, the alternation and the
  * fading tile cluster — the rest lives in `service-block-visual.tsx`,
  * which records the visual half's own refusals (third-party logos
@@ -124,7 +126,7 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
  *
  * **Conversion goes through the existing seam.** The hero and close are
  * `<ModalTrigger>` at the `inverse` advance variant; each block is
- * `<ServiceCta>`, the §Interaction-vocabulary gold underlined text
+ * `<ServiceCta>`, the §Interaction-vocabulary coral underlined text
  * link — **the same CTA the home page's service cards carry** (owner
  * direction, 2026-08-28), so a service's CTA looks identical on the
  * card that sends a visitor here and on the block they land on. Both
@@ -146,10 +148,11 @@ const BODY_CLASS = "text-base leading-relaxed text-white/70 md:text-lg";
  * these rows are shorter than a card. The **`target:` treatment** is
  * the one new interaction, and it earns its place: the rows are tall,
  * so arriving from a service card has to say *which* one you arrived
- * at. The block's **index goes gold** and the cluster's emphasized
- * tile takes a gold hairline, both at the 150ms micro-transition
+ * at. The block's **index goes coral** (#47) and the cluster's
+ * emphasized tile takes a coral hairline, both at the 150ms
+ * micro-transition
  * tempo — the Process accordion's open-row treatment doing identical
- * "you are here" work, and gold stays scarce because only those two
+ * "you are here" work, and coral stays scarce because only those two
  * elements take it. Pure CSS, so it holds with no JS and adds no
  * transform for reduced motion to suppress.
  *
@@ -174,9 +177,9 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
 
   return (
     <>
-      {/* The viewport-fixed gold glow (#35). The section and band
-          backgrounds below are transparent so it shows through — the
-          page's ground is the layout's `ink`. */}
+      {/* The viewport-fixed coral glow (#35, recoloured by #47). The
+          section and band backgrounds below are transparent so it shows
+          through: the page's ground is the layout's `background`. */}
       <PageGlow />
       <section
         aria-labelledby="service-headline"
@@ -188,7 +191,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
           <header>
             <a
               href={NAV.home}
-              className="pointer-events-auto inline-flex px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-8 lg:px-16"
+              className="pointer-events-auto inline-flex px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-8 lg:px-16"
             >
               <BrandWordmark className="h-7 w-auto" />
             </a>
@@ -236,7 +239,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                   ) : (
                     <>
                       {headline.slice(0, accentStart)}
-                      <span className="text-gold">{accent}</span>
+                      <span className="text-brand">{accent}</span>
                       {headline.slice(accentStart + accent.length)}
                     </>
                   )}
@@ -255,8 +258,9 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
               {/* Primary plus Pricing (owner direction, 2026-08-30):
                     the reference's filled-plus-outlined pair, in this
                     system's terms. The second is the shared `<Button>`
-                    at `ghost` — not filled, same default size, so the
-                    two match in height — and it reads `NAV.featured`,
+                    at `ghost` (the hairline `secondary` fill, not the
+                    stone advance fill; same default size, so the two
+                    match in height), and it reads `NAV.featured`,
                     the same object the nav bar's Pricing button reads,
                     so label and href cannot drift from it (#26). */}
               <div
@@ -298,7 +302,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                 aria-labelledby={`${block.id}-heading`}
                 /* `group` + `target:` is the deep-link answer: the rows
                    are tall, so arriving needs to *say* which one you
-                   arrived at. The index turns gold and the emphasized
+                   arrived at. The index turns coral and the emphasized
                    tile's hairline follows it, which is the Process
                    accordion's open-row treatment (§Motion inventory)
                    doing the same "you are here" work. CSS only, so it
@@ -306,11 +310,12 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                 /* Each row is a card (owner direction, 2026-08-31), so
                    the text and its visual read as one unit from desktop
                    to the stacked mobile column. The recipe is the
-                   site's card, exactly — the §How-it-works and pricing
-                   cards' hairline, `surface` fill and padding — solid
+                   site's card, exactly: the §How-it-works and pricing
+                   cards' `border` hairline, `card` fill, fin's
+                   `rounded-xl` (decision-log #48) and padding, solid
                    rather than glass for the reason the sibling process
                    band gives: no footage is mounted here. */
-                className="group grid items-center gap-12 border border-white/15 bg-surface p-6 transition-colors duration-150 hover:border-white/30 md:p-8 lg:grid-cols-2 lg:gap-16"
+                className="group grid items-center gap-12 rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8 lg:grid-cols-2 lg:gap-16"
               >
                 {/* `min-w-0` on both columns is the bento tiles' own
                     load-bearing device, one level up: a grid item's
@@ -327,20 +332,21 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                   className={`min-w-0 ${visualLeads ? "lg:order-2" : "lg:order-1"}`}
                 >
                   <ScrollReveal>
-                    <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55 transition-colors duration-150 group-target:text-gold">
+                    <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground transition-colors duration-150 group-target:text-brand">
                       <span
                         aria-hidden="true"
-                        className="h-1.5 w-1.5 rotate-45 bg-gold"
+                        className="h-1.5 w-1.5 rotate-45 bg-brand"
                       />
                       {String(i + 1).padStart(2, "0")}
                     </p>
-                    {/* Panel display scale (§Typography), not the
-                        section scale: these sit under the page's own
-                        <h1>, and the reference's column heading is the
-                        same weight relative to its body. */}
+                    {/* The row-title treatment at panel scale
+                        (§Typography: Inter semibold, decision-log #47),
+                        not the serif section scale: these sit under the
+                        page's own <h1>, and the reference's column
+                        heading is the same weight relative to its body. */}
                     <h2
                       id={`${block.id}-heading`}
-                      className="mt-5 max-w-lg text-2xl font-medium tracking-tight text-balance text-white md:text-3xl"
+                      className="mt-5 max-w-lg font-sans text-2xl font-semibold tracking-tight text-balance text-foreground md:text-3xl"
                     >
                       {block.name}
                     </h2>
@@ -367,16 +373,17 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                             className="flex gap-4"
                           >
                             {/* The system's list marker
-                                (§Interaction vocabulary: "a small gold
-                                diamond"). The reference's lucide
+                                (§Interaction vocabulary: the small
+                                diamond, coral since decision-log #47).
+                                The reference's lucide
                                 glyphs are not reproduced — icons here
                                 are inline SVG only and this marker is
                                 settled vocabulary. */}
                             <span
                               aria-hidden="true"
-                              className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
+                              className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
                             />
-                            <span className="text-base leading-relaxed text-white/70">
+                            <span className="text-base leading-relaxed text-foreground">
                               {item}
                             </span>
                           </ScrollReveal>
@@ -386,7 +393,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                   )}
                   {/* The home page's service-card CTA, exactly
                       (owner direction, 2026-08-28): `<ServiceCta>`, the
-                      §Interaction-vocabulary gold underlined text link.
+                      §Interaction-vocabulary coral underlined text link.
                       A service's CTA now looks the same wherever a
                       visitor meets it — the card that sent them here
                       and the block they landed on. This replaces the
@@ -430,7 +437,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                 ) : (
                   <>
                     {closeHeadline.slice(0, closeAccentStart)}
-                    <span className="text-gold">{CLOSE_ACCENT_PHRASE}</span>
+                    <span className="text-brand">{CLOSE_ACCENT_PHRASE}</span>
                     {closeHeadline.slice(
                       closeAccentStart + CLOSE_ACCENT_PHRASE.length,
                     )}
@@ -440,7 +447,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             </SectionHeading>
           </ScrollReveal>
           {/* The CTA repeated, and nothing beside it. The close carried
-            a gold text link to `/pricing` labelled `PRICING.headline`;
+            an accented text link to `/pricing` labelled `PRICING.headline`;
             the owner removed it (2026-08-28), so the close is the one
             action again. `/pricing` is still reached from the nav bar's
             featured button and the footer on every page. */}

@@ -5,21 +5,22 @@ import { MANIFESTO } from "@/content/copy";
 
 /**
  * Presentation marker, not copy: the reframe phrase the section
- * exists to land takes the gold payoff treatment (docs/04-ux-spec.md
- * §Typography — at most a couple of accent words inside a white
- * display heading). Degrades to an unaccented headline if the
- * canonical copy changes.
+ * exists to land takes the coral payoff treatment, `text-brand`
+ * (docs/04-ux-spec.md §Typography: at most a couple of accent words
+ * inside a linen display heading; decision-log #47). Degrades to an
+ * unaccented headline if the canonical copy changes.
  */
 const ACCENT_PHRASE = "actually need";
 
 /**
  * Manifesto (#why) — reframe the problem. Rebuilt in place to the
- * hero-derived design system (Redesign Unit 02): a full-width ink
- * band on the shared gutter rhythm, the mono "(02)" eyebrow, a
- * display statement with the gold payoff phrase, and the body offset
- * right in the two-column editorial rhythm. Entrances are the shared
- * ScrollReveal at the hero stagger (0 / 120 / 200ms); the body block
- * carries the shared whisper parallax.
+ * hero-derived design system (Redesign Unit 02): a full-width band on
+ * `background` with the shared gutter rhythm, the mono "(02)" eyebrow,
+ * a Playfair display statement with the coral payoff phrase (no text
+ * shadow: it sits on plain `background`, decision-log #47), and the
+ * body offset right in the two-column editorial rhythm. Entrances are
+ * the shared ScrollReveal at the hero stagger (0 / 120 / 200ms); the
+ * body block carries the shared whisper parallax.
  */
 export function ManifestoSection() {
   const headline = MANIFESTO.headline;
@@ -35,7 +36,7 @@ export function ManifestoSection() {
         <SectionHeading
           index="02"
           eyebrow={MANIFESTO.eyebrow}
-          className="max-w-4xl [text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
+          className="max-w-4xl"
         >
           <span id="why-headline">
             {phraseStart === -1 ? (
@@ -43,7 +44,7 @@ export function ManifestoSection() {
             ) : (
               <>
                 {headline.slice(0, phraseStart)}
-                <span className="text-gold">{ACCENT_PHRASE}</span>
+                <span className="text-brand">{ACCENT_PHRASE}</span>
                 {headline.slice(phraseStart + ACCENT_PHRASE.length)}
               </>
             )}
@@ -54,7 +55,7 @@ export function ManifestoSection() {
         <div className="mt-12 grid gap-8 md:mt-16 md:grid-cols-2 md:gap-12">
           {MANIFESTO.body.map((paragraph, i) => (
             <ScrollReveal key={paragraph} delay={120 + i * 80}>
-              <p className="text-base leading-relaxed text-white/70 md:text-lg">
+              <p className="text-base leading-relaxed text-foreground md:text-lg">
                 {paragraph}
               </p>
             </ScrollReveal>

@@ -15,7 +15,8 @@ import { FOOTER } from "@/content/copy";
  * faithful glyphs that do not sit together.
  *
  * fill="currentColor" is what lets the links keep the system's
- * white/60 -> white hover; aria-hidden because the anchor carries the
+ * `muted-foreground` to `foreground` hover (decision-log #47);
+ * aria-hidden because the anchor carries the
  * accessible name (the label the text link used to show).
  */
 

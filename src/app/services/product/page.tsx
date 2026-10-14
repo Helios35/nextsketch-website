@@ -25,7 +25,8 @@ export const metadata: Metadata = {
  *
  * Nav and footer mount here rather than in `src/app/layout.tsx`, the
  * same way `page.tsx` and `pricing/page.tsx` do it, so the 404 keeps
- * its own light paper surface. `QualificationModalProvider` is already
+ * its own bare surface (dark since decision-log #47; it was the one
+ * light paper page before). `QualificationModalProvider` is already
  * in the layout, so every CTA on the page reaches the modal without a
  * second provider.
  *
