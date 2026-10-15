@@ -44,7 +44,7 @@ import { FOOTER, NAV, SITE } from "@/content/copy";
  *   this site has no privacy/terms pages, so that row is absent
  *   rather than filled with links that would 404.
  *
- * Both grid children carry an explicit lg:row-[1] — placing only the
+ * Both grid children carry an explicit lg:row-1 — placing only the
  * columns would let sparse auto-placement push the legal line onto a
  * second row, since the anchors claim the cursor first.
  */
@@ -87,7 +87,7 @@ export function SiteFooter() {
           </ul>
         </div>
         <div className="mt-8 border-t border-border pt-8 lg:grid lg:grid-cols-10 lg:items-center">
-          <nav aria-label={FOOTER.label} className="lg:col-[4/11] lg:row-[1]">
+          <nav aria-label={FOOTER.label} className="lg:col-[4/11] lg:row-1">
             <ul className="flex flex-wrap items-center gap-x-8 gap-y-1 lg:justify-end">
               {NAV.items.map(({ href, label }) => (
                 <li key={href}>
@@ -101,7 +101,7 @@ export function SiteFooter() {
           {/* `muted-foreground` (the mono-caption step, 5.4:1 on
               `background`): the legal line is real text and must clear
               WCAG AA, and there is no dimmer legal text step. */}
-          <p className="mt-6 font-mono text-xs tracking-[0.14em] text-muted-foreground lg:col-[1/4] lg:row-[1] lg:mt-0">
+          <p className="mt-6 font-mono text-xs tracking-[0.14em] text-muted-foreground lg:col-[1/4] lg:row-1 lg:mt-0">
             © {year} {SITE.legalName}
           </p>
         </div>

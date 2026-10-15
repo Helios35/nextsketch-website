@@ -3,15 +3,15 @@ import { SectionHeading } from "@/components/section-heading";
 import { PROCESS } from "@/content/copy";
 
 /**
- * Presentation marker, not copy: the retention promise the headline
- * builds to takes the coral payoff treatment (docs/04-ux-spec.md
- * §Typography, decision-log #47). The period rides along so the final
- * beat lands as one coral unit after three linen ones: the same phrase
- * `ProcessSection` accents on `/`, so the two surfaces land the same
- * word. Degrades to an unaccented headline if the canonical copy
- * changes.
+ * The retention promise the headline builds to takes the coral payoff
+ * treatment (docs/04-ux-spec.md §Typography, decision-log #47): the
+ * same phrase `ProcessSection` accents on `/`, read from the same
+ * content field, so the two surfaces land the same word. The phrase
+ * lives in src/content beside the headline it is matched against
+ * (build-note 34, check 11); the heading degrades to unaccented if the
+ * two stop matching.
  */
-const ACCENT_PHRASE = "Stay.";
+const ACCENT_PHRASE = PROCESS.accentPhrase;
 
 /**
  * Content measure for the service routes (owner direction, 2026-08-30).

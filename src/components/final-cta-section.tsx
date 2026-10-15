@@ -4,13 +4,14 @@ import { SectionHeading } from "@/components/section-heading";
 import { FINAL_CTA } from "@/content/copy";
 
 /**
- * Presentation marker, not copy: the qualification promise the close
- * turns on takes the coral payoff treatment, `text-brand`
- * (docs/04-ux-spec.md §Typography: at most a couple of accent words
- * inside a linen Playfair display heading; decision-log #47).
- * Degrades to an unaccented headline if the canonical copy changes.
+ * The qualification promise the close turns on takes the coral payoff
+ * treatment, `text-brand` (docs/04-ux-spec.md §Typography: at most a
+ * couple of accent words inside a linen Playfair display heading;
+ * decision-log #47). The phrase lives in src/content beside the
+ * headline it is matched against (build-note 34, check 11); the
+ * heading degrades to unaccented if the two stop matching.
  */
-const ACCENT_PHRASE = "right fit";
+const ACCENT_PHRASE = FINAL_CTA.accentPhrase;
 
 /**
  * Final CTA (#start) — convert (docs/03-site-architecture.md row 11).

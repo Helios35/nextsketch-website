@@ -73,6 +73,12 @@ export const PRICING = {
   eyebrow: "Pricing",
   headline: "NextSketch puts the price upfront.",
   /**
+   * The headline's coral payoff word (docs/04-ux-spec.md §Typography),
+   * matched against `headline` verbatim. Moved here from
+   * pricing/page.tsx (build-note 34).
+   */
+  accentPhrase: "upfront",
+  /**
    * Brand Philosophy §6 in the site's voice. "No meter running during
    * meetings" and "no surprise invoices" are §6 verbatim.
    */

@@ -218,6 +218,13 @@ export const MANIFESTO = {
   eyebrow: "The problem",
   headline:
     "Most firms build what you ask for. We help you figure out what you actually need.",
+  /**
+   * The headline's coral payoff phrase (docs/04-ux-spec.md
+   * §Typography), matched against `headline` verbatim. Edit the two
+   * together: a phrase that stops matching renders the headline
+   * unaccented. Moved here from manifesto-section.tsx (build-note 34).
+   */
+  accentPhrase: "actually need",
   body: [
     "Most software projects fail for the same reasons: the idea wasn't validated before building started, the firm handed off at launch and disappeared, or nobody understood the business well enough to build the right thing.",
     "We fix all three. We validate first. We build through a proven workflow. We don't leave when launch happens. We're a partner, not a vendor.",
@@ -228,6 +235,14 @@ export const PROCESS = {
   /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
   eyebrow: "How we work",
   headline: "Strategy. Build. Validate. Stay.",
+  /**
+   * The headline's coral payoff phrase, matched against `headline`
+   * verbatim; the period rides along so the final beat lands as one
+   * coral unit. Shared by `/`'s Process section and the service routes'
+   * §How it works, so both land the same word. Moved here from those
+   * two components (build-note 34).
+   */
+  accentPhrase: "Stay.",
   /**
    * Aside shown with the Validate phase. Originally the handwritten
    * margin annotation of the retired sketch system; the redesign
@@ -319,6 +334,12 @@ export const ABOUT = {
    */
   portraitAlt: "Nathan, the person behind NextSketch",
   headline: "NextSketch is one person. On purpose.",
+  /**
+   * The headline's coral payoff phrase, matched against `headline`
+   * verbatim and without the trailing period, so the full stop stays
+   * linen. Moved here from about-section.tsx (build-note 34).
+   */
+  accentPhrase: "On purpose",
   body: [
     "I'm Nathan. I started in industrial design, drawing and prototyping physical products that had to survive tooling, cost, and a real person's hands. That training stuck. It taught me to design inside constraints instead of pretending they aren't there, and that nothing counts until it ships and someone uses it.",
     "Digital was the same job with faster feedback. Agents were the next step: systems that do the work, not just display it. Different material, same discipline.",
@@ -362,6 +383,12 @@ export const FINAL_CTA = {
   /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
   eyebrow: "The next step",
   headline: "Ready to build? Let's figure out if we're the right fit.",
+  /**
+   * The headline's coral payoff phrase, matched against `headline`
+   * verbatim. Shared by `/`'s Final CTA and the service routes' close.
+   * Moved here from those two components (build-note 34).
+   */
+  accentPhrase: "right fit",
   body: "Start with a conversation. We'll understand what you're trying to build, where you are, and whether NextSketch is the right partner. No pitch. No pressure. Just an honest assessment.",
   cta: "Start a Conversation",
 } as const;
