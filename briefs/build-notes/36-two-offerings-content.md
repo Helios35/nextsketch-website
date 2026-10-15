@@ -1,7 +1,7 @@
 # Build Note 36: Two offerings, content and structure (adhoc)
 
 **Date:** 2026-10-15 · **Branch:** `adhoc/two-offerings-content` · **Base:** `main` @ `d459c4e`
-**Status:** COMPLETE. The site sells two offerings, Agentic System Integration first, on every surface; Part B ships verbatim; the three home bands are in; the waitlist captures through the modal's seam. All four gates green. Nate settled builder calls 2, 3, 5 and 6 before merge and accepted the rest as built; the changes are under "Follow-ups before merge", with one new builder call (15).
+**Status:** COMPLETE. The site sells two offerings, Agentic System Integration first, on every surface; Part B ships verbatim; the three home bands are in; the waitlist captures through the modal's seam. All four gates green. Nate settled builder calls 2, 3, 5 and 6 before merge and accepted the rest as built; the changes are under "Follow-ups before merge", with one new builder call (15), which Nate kept.
 **Follows:** build-notes 34 and 35. **Decisions:** **#53 to #59** appended; the footer closes seven items and adds one. Next free row **#60**, next build note **37**.
 **Brief:** "Adhoc Unit: Two offerings, content and structure" (Nate, 2026-10-15; Brief 1 of 3). The visuals brief (2) and the About/team brief (3) follow.
 
@@ -140,7 +140,7 @@ Nate's calls on builder calls 2, 3, 5 and 6, made in session before merge; the r
 3. **The waitlist fallback's mailto subject is "Add me to the NextSketch waitlist".** `fallbackMailto` now takes a required subject, the modal's call unchanged.
 4. **The waitlist failure copy is its own:** "That didn't go through." / "Something failed on our end, not yours. Email us and we'll add you to the list." (`SERVICES_WAITLIST.failure`). The mechanics stay the modal's: the email preserved on screen, Back, and the escape-hatch button.
 
-**Builder call 15 (new, made with follow-up 1):** with the visual gone, each example card left half its width empty at `lg:` and up, which read as the missing frame Nate asked to remove. From `lg:` the "What we map first" panel now takes that half (the text column turns `lg:contents`, so the parts become cells of the row grid in reading order: name and line, map, CTA); below `lg:` the card stacks exactly as before. The alternative is a plain one-column card with the right half empty; reverting is one class string in `service-page.tsx`.
+**Builder call 15 (new, made with follow-up 1):** with the visual gone, each example card left half its width empty at `lg:` and up, which read as the missing frame Nate asked to remove. From `lg:` the "What we map first" panel now takes that half (the text column turns `lg:contents`, so the parts become cells of the row grid in reading order: name and line, map, CTA); below `lg:` the card stacks exactly as before. **Kept by Nate (2026-10-15)** over the plain one-column alternative.
 
 ## Deviations from the brief
 
