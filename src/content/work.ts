@@ -41,6 +41,13 @@ export const WORK_HEADLINE =
   "Real Products doing the job they were built to do";
 
 /**
+ * The headline's coral payoff phrase, matched against `WORK_HEADLINE`
+ * verbatim (the choice is explained above). Edit the two together.
+ * Moved here from work-section.tsx (build-note 34).
+ */
+export const WORK_ACCENT_PHRASE = "Real Products";
+
+/**
  * Supporting line under the headline — owner-specified verbatim
  * (2026-08-24), replacing a DRAFT line that asserted every screen was
  * live and still running. Two of the four linked projects read as case

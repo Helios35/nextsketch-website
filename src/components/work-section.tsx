@@ -2,6 +2,7 @@ import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { WorkRail } from "@/components/work-rail";
 import {
+  WORK_ACCENT_PHRASE,
   WORK_EYEBROW,
   WORK_HEADLINE,
   WORK_INTRO,
@@ -9,13 +10,14 @@ import {
 } from "@/content/work";
 
 /**
- * Presentation marker, not copy: the proof the section exists to land
- * takes the coral payoff treatment, `text-brand` (docs/04-ux-spec.md
- * §Typography: at most a couple of accent words inside a linen display
- * heading; decision-log #47).
- * Degrades to an unaccented headline if the canonical copy changes.
+ * The proof the section exists to land takes the coral payoff
+ * treatment, `text-brand` (docs/04-ux-spec.md §Typography: at most a
+ * couple of accent words inside a linen display heading; decision-log
+ * #47). The phrase lives in src/content beside the headline it is
+ * matched against (build-note 34, check 11); the heading degrades to
+ * unaccented if the two stop matching.
  */
-const ACCENT_PHRASE = "Real Products";
+const ACCENT_PHRASE = WORK_ACCENT_PHRASE;
 
 /**
  * Selected work (#work) — the proof band (owner direction 2026-08-24).

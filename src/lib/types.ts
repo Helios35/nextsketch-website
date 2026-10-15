@@ -81,11 +81,11 @@ export interface FaqItem {
  *
  * `image`/`alt` and `href` are optional on purpose, and independently:
  * a project whose screenshot is still owed renders the layout-final
- * ink placeholder in the same 16/9 frame (zero layout shift on
- * swap-in), and a project with no public URL renders as a non-linking
- * tile rather than a dead link. `alt` is required whenever `image` is
- * set — enforced by the union below, so a screenshot can never ship
- * without its accessible description.
+ * placeholder (a `secondary` frame with a mono label) in the same 16/9
+ * frame (zero layout shift on swap-in), and a project with no public
+ * URL renders as a non-linking tile rather than a dead link. `alt` is
+ * required whenever `image` is set — enforced by the union below, so a
+ * screenshot can never ship without its accessible description.
  */
 export type WorkItem = {
   /** Stable key; also the screenshot's file name under /public/work/. */
@@ -109,7 +109,7 @@ export type WorkItem = {
        * How hard the grading mask works on this screenshot. "light"
        * (default) suits anything from a mid-toned mockup to a mixed
        * one; "bright" is for a near-white screenshot that would
-       * otherwise glare against the ink band.
+       * otherwise glare against the dark `background` band.
        *
        * Measured, not guessed — the four shipped screenshots run
        * 0.40–0.92 mean luminance, and only the white dashboard (0.92)
@@ -318,7 +318,7 @@ export interface ServicePageBlock {
  * - `headline` — the one-line promise. Until it exists the `<h1>` falls
  *   back to `name`, which is canonical vocabulary rather than drafted
  *   copy, so the page is never headless and nothing invented ships.
- * - `accentPhrase` — the gold payoff word inside `headline`. Matched
+ * - `accentPhrase` — the coral payoff word inside `headline`. Matched
  *   against the string, so it degrades to an unaccented heading exactly
  *   like every other section's `ACCENT_PHRASE`.
  * - `intro` — the supporting paragraph. Supplied on both routes: the

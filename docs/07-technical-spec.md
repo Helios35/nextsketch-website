@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.3 · **Date:** 2026-10-14 · **Status:** Active: reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
+**Version:** 2.4 · **Date:** 2026-10-15 · **Status:** Active (2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -128,7 +128,7 @@ src/
                   #50), not-found.tsx (dark since #47), favicon.ico
                   (recoloured, #49),
                   api/qualify/route.ts (the only server surface)
-  components/     hero.tsx + hero-loop.tsx + hero-cta.tsx, site-nav.tsx,
+  components/     hero.tsx + hero-loop.tsx, site-nav.tsx,
                   site-footer.tsx, the six section components,
                   pricing-tiers.tsx (the /pricing grid, #25),
                   service-page.tsx + service-process.tsx (the two
@@ -136,7 +136,8 @@ src/
                   work-rail.tsx, scroll-reveal.tsx,
                   parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
                   qualification-modal(-provider).tsx, modal-trigger.tsx,
-                  button.tsx (variant + size, #26)
+                  button.tsx (variant + size, #26; the hero's `large`
+                  size, build-note 34)
                   (DORMANT, the retired paper plan: hero-section.tsx,
                    sketch-accent.tsx, the held sections, Reveal, etc.:
                    on disk, not rendered; delete vs. keep is an open

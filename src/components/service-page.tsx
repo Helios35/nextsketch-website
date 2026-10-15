@@ -13,13 +13,14 @@ import { SERVICES_CTA } from "@/content/services";
 import type { ServicePageContent } from "@/lib/types";
 
 /**
- * Presentation marker, not copy: the qualification promise the close
- * turns on takes the coral payoff treatment (docs/04-ux-spec.md
- * §Typography, decision-log #47). The same phrase `FinalCtaSection` accents on `/`, on
- * the same string. Degrades to an unaccented headline if the canonical
- * copy changes.
+ * The qualification promise the close turns on takes the coral payoff
+ * treatment (docs/04-ux-spec.md §Typography, decision-log #47): the
+ * same phrase `FinalCtaSection` accents on `/`, on the same string and
+ * from the same content field. The phrase lives in src/content beside
+ * the headline it is matched against (build-note 34, check 11); the
+ * heading degrades to unaccented if the two stop matching.
  */
-const CLOSE_ACCENT_PHRASE = "right fit";
+const CLOSE_ACCENT_PHRASE = FINAL_CTA.accentPhrase;
 
 /**
  * Content measure for the service routes (owner direction, 2026-08-30).

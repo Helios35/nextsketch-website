@@ -125,10 +125,11 @@
 }
 
 /*
- * fin's softened shadow scale: positive spread, a blur two to three
- * times the offset, 3–9% black. In dark it barely registers, which is
- * correct: every surface that casts one also carries a `border`, and
- * the border is what separates it from the page.
+ * fin's softened shadow scale: positive spread, a blur about three to
+ * five times the offset (2.7 times on `2xl`), 4–9% black. In dark it
+ * barely registers, which is correct: every surface that casts one
+ * also carries a `border`, and the border is what separates it from
+ * the page.
  *
  * The over-video shadows are the site's addition. They exist only for
  * the home hero, where text and the logo sit on moving footage; on the

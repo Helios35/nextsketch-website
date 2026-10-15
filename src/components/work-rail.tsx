@@ -254,7 +254,7 @@ export function WorkRail({ items, children }: WorkRailProps) {
           {items.map((item, i) => (
             <li
               key={item.id}
-              className="w-[82vw] shrink-0 snap-start sm:w-[24rem] lg:w-[26rem]"
+              className="w-[82vw] shrink-0 snap-start sm:w-96 lg:w-104"
             >
               <WorkCard item={item} index={i} />
             </li>
@@ -262,7 +262,7 @@ export function WorkRail({ items, children }: WorkRailProps) {
           {/* The trailing slide closes the rail with the archive link
               rather than a screenshot. It is a real snap position, so
               it carries a meter bar of its own (see `slides`). */}
-          <li className="w-[82vw] shrink-0 snap-start sm:w-[24rem] lg:w-[26rem]">
+          <li className="w-[82vw] shrink-0 snap-start sm:w-96 lg:w-104">
             <ViewAllCard />
           </li>
         </ul>
@@ -337,9 +337,9 @@ const CLEAR =
 
 const IMAGE_TONE: Record<"light" | "bright", string> = {
   /** The base grade — mid-toned and mixed screenshots alike. */
-  light: `saturate-[0.85] contrast-[0.95] brightness-[0.95] ${CLEAR}`,
+  light: `saturate-85 contrast-95 brightness-95 ${CLEAR}`,
   /** Near-white screenshot: pulled down harder so it doesn't glare. */
-  bright: `saturate-[0.85] contrast-[0.92] brightness-[0.86] ${CLEAR}`,
+  bright: `saturate-85 contrast-92 brightness-86 ${CLEAR}`,
 };
 
 const OVERLAY_TONE: Record<"light" | "bright", string> = {

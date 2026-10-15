@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 2.6 · **Date:** 2026-10-14 · **Status:** Active. One service vocabulary across every surface, and the slugs double as route segments (decision-log #27–#30); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
+**Version:** 2.7 · **Date:** 2026-10-15 · **Status:** Active (2.7: §8's component example follows the code after the design-system audit, build-note 34). One service vocabulary across every surface, and the slugs double as route segments (decision-log #27–#30); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code) · `src/app/globals.css`, `src/app/layout.tsx` (canonical token and font names in code)
 
@@ -250,7 +250,7 @@ The naming convention stands for any future section asset: `placeholder-{section
 
 ## 8. Naming conventions — **CURRENT**
 
-- Components: PascalCase (`QualificationModal`, `HeroCta`).
+- Components: PascalCase (`QualificationModal`, `ModalTrigger`).
 - Files/routes/slugs: kebab-case. Payload values: snake_case (§3). Apps Script reference: `scripts/inbound-leads.gs`.
 - Design tokens: fin's kebab-case names exactly as `src/app/globals.css` declares them (§5); a fill `X` pairs with `X-foreground`. A site addition takes a fin-shaped name (`brand-foreground`) or names its one use (`over-video`), never a hue (`gold`, `coral`).
 - Brand name: **NextSketch** (one word, capital N and S) in all copy; legal line: "Next Sketch LLC".

@@ -42,6 +42,13 @@ export const SERVICES_HEADLINE =
   "Products and agentic systems, built for how your business actually works.";
 
 /**
+ * The headline's coral payoff phrase (docs/04-ux-spec.md §Typography),
+ * matched against `SERVICES_HEADLINE` verbatim. Edit the two together.
+ * Moved here from services-section.tsx (build-note 34).
+ */
+export const SERVICES_ACCENT_PHRASE = "actually works";
+
+/**
  * Per-card CTA (owner direction 2026-08-04): opens the qualification
  * modal with that card's service preselected. Owner first asked for
  * the generic read-on phrasing that Rule 3.2 bans by name (the gate

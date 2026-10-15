@@ -4,13 +4,14 @@ import { SectionHeading } from "@/components/section-heading";
 import { MANIFESTO } from "@/content/copy";
 
 /**
- * Presentation marker, not copy: the reframe phrase the section
- * exists to land takes the coral payoff treatment, `text-brand`
- * (docs/04-ux-spec.md §Typography: at most a couple of accent words
- * inside a linen display heading; decision-log #47). Degrades to an
- * unaccented headline if the canonical copy changes.
+ * The reframe phrase the section exists to land takes the coral payoff
+ * treatment, `text-brand` (docs/04-ux-spec.md §Typography: at most a
+ * couple of accent words inside a linen display heading; decision-log
+ * #47). The phrase lives in src/content beside the headline it is
+ * matched against (build-note 34, check 11); the heading degrades to
+ * unaccented if the two stop matching.
  */
-const ACCENT_PHRASE = "actually need";
+const ACCENT_PHRASE = MANIFESTO.accentPhrase;
 
 /**
  * Manifesto (#why) — reframe the problem. Rebuilt in place to the

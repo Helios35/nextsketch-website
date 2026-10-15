@@ -202,7 +202,7 @@ const TAB_CLASS =
   "has-checked:border-brand has-checked:bg-brand has-checked:text-brand-foreground " +
   "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring " +
   // Conflicting need (new product ⟷ completion): grayed out and inert.
-  "has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50";
+  "has-disabled:pointer-events-none has-disabled:opacity-50";
 
 /* The check box rendered inside each tab (fin `rounded-sm`), the
  * multi-select affordance. Border/checkmark decoupled from the box fill:
@@ -217,9 +217,11 @@ const TAB_CHECK_CLASS =
   "peer-checked:border-brand-foreground peer-checked:text-brand-foreground";
 
 /* Forward action: the divided-arrow button (label segment + bordered
- * arrow box), matching button.tsx's primary and the hero CTA. `primary`
- * fill, `primary-foreground` mark, fin `rounded-md`. State is shown by
- * colour, not scale (fin); only the arrow nudges. */
+ * arrow box), hand-rolled from button.tsx's primary at the modal's own
+ * arrow scale (a `px-3.5` box and an 18px arrow against Button's `px-4`
+ * and 20px; build-note 34 records the copy). `primary` fill,
+ * `primary-foreground` mark, fin `rounded-md`. State is shown by colour,
+ * not scale (fin); only the arrow nudges. */
 const ADVANCE_CLASS =
   "group/adv inline-flex min-h-11 items-stretch rounded-md bg-primary text-base font-medium text-primary-foreground " +
   "transition-colors duration-150 hover:bg-primary/90 " +

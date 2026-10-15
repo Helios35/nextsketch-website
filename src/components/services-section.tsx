@@ -5,19 +5,21 @@ import {
   SERVICE_NEED,
   SERVICE_PAGE_HREF,
   SERVICES,
+  SERVICES_ACCENT_PHRASE,
   SERVICES_CTA,
   SERVICES_EYEBROW,
   SERVICES_HEADLINE,
 } from "@/content/services";
 
 /**
- * Presentation marker, not copy: the promise the section exists to
- * land takes the coral payoff treatment, `text-brand`
- * (docs/04-ux-spec.md §Typography: at most a couple of accent words
- * inside a linen display heading; decision-log #47). Degrades to an
- * unaccented headline if the canonical copy changes.
+ * The promise the section exists to land takes the coral payoff
+ * treatment, `text-brand` (docs/04-ux-spec.md §Typography: at most a
+ * couple of accent words inside a linen display heading; decision-log
+ * #47). The phrase lives in src/content beside the headline it is
+ * matched against (build-note 34, check 11); the heading degrades to
+ * unaccented if the two stop matching.
  */
-const ACCENT_PHRASE = "actually works";
+const ACCENT_PHRASE = SERVICES_ACCENT_PHRASE;
 
 /**
  * Services (#services) — name the four engagements

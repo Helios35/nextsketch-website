@@ -176,7 +176,7 @@ const LIST_ROWS: readonly string[] = [
 function NewProductVisual() {
   return (
     <div className={SHELL}>
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
+      <div className="relative aspect-4/3 w-full overflow-hidden">
         <div className="grid h-full grid-cols-[1.15fr_1.2fr_0.8fr] gap-2.5">
           {/* Left column. */}
           <div className="grid min-h-0 min-w-0 grid-rows-[1.05fr_1fr] gap-2.5">
@@ -597,7 +597,7 @@ const CODE: readonly {
 function ProductCompletionVisual() {
   return (
     <div className={SHELL}>
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
+      <div className="relative aspect-4/3 w-full overflow-hidden">
         <div className="flex h-full min-w-0">
           {/* Explorer. */}
           <div className="flex w-[36%] min-w-0 shrink-0 flex-col border-r border-border py-3">
@@ -820,7 +820,7 @@ const RAIL: readonly { w: string; active?: boolean; badge?: boolean }[] = [
 function ProductSupportVisual() {
   return (
     <div className={SHELL}>
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
+      <div className="relative aspect-4/3 w-full overflow-hidden">
         <div className="flex h-full min-w-0">
           {/* Rail. */}
           <div className="flex w-[22%] min-w-0 shrink-0 flex-col border-r border-border py-3">
@@ -1041,7 +1041,7 @@ const STATUS: readonly { tone: string; w: string; pill: string }[] = [
 function InternalToolVisual() {
   return (
     <div className={SHELL}>
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
+      <div className="relative aspect-4/3 w-full overflow-hidden">
         <div className="flex h-full min-w-0 gap-3 p-3">
           {/* Summary. A bordered sub-panel is chrome, not the outer box
               the owner asked to lose — the composition itself has no
@@ -1309,7 +1309,7 @@ function WorkflowVisual() {
           The spread hub-and-spoke layout fills the 4/3 stage the way
           the framed mocks fill theirs, so the fade sits on the stage
           for the same reason theirs can. Values unchanged. */}
-      <div className="relative aspect-[4/3] w-full">
+      <div className="relative aspect-4/3 w-full">
         <VisualFade />
         {/* The wiring lands first, then the hub, then the apps — the
             workflow graph's documented assembly order. Dotted, square

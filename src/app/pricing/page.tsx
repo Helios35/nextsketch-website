@@ -14,13 +14,14 @@ export const metadata: Metadata = {
 };
 
 /**
- * Presentation marker, not copy: the promise the page exists to make
- * takes the coral payoff treatment (docs/04-ux-spec.md §Typography: at
- * most a couple of `brand` words inside a linen display heading,
- * decision-log #47). Degrades to an unaccented headline if the copy
- * changes.
+ * The promise the page exists to make takes the coral payoff treatment
+ * (docs/04-ux-spec.md §Typography: at most a couple of `brand` words
+ * inside a linen display heading, decision-log #47). The phrase lives
+ * in src/content beside the headline it is matched against (build-note
+ * 34, check 11); the heading degrades to unaccented if the two stop
+ * matching.
  */
-const ACCENT_PHRASE = "upfront";
+const ACCENT_PHRASE = PRICING.accentPhrase;
 
 /**
  * `/pricing` — the site's one standalone route (decision-log #23,

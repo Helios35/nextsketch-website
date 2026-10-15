@@ -6,7 +6,7 @@ import type {
 import { ArrowIcon } from "@/components/arrow-icon";
 
 type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost";
-type ButtonSize = "default" | "compact";
+type ButtonSize = "default" | "compact" | "large";
 
 type AsButton = ButtonHTMLAttributes<HTMLButtonElement> & { href?: never };
 type AsAnchor = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string };
@@ -20,14 +20,17 @@ export type ButtonProps = {
    * (§Layout), so it carries a transparent `::after` that extends the
    * hit area back to 44px — thinner to look at, unchanged to tap. Use
    * it for dense chrome, never for a page's primary action.
+   *
+   * "large" is the home hero's scale: default's paddings a type step up
+   * (`text-lg`), so the hero's advance reads at the headline's weight.
    */
   size?: ButtonSize;
   /**
    * Divided-arrow treatment (docs/04-ux-spec.md §Interaction
    * vocabulary): a label segment plus a hairline-divided arrow box,
-   * the system's advance affordance, matching the hero CTA. Without
-   * it the button is the plain `rounded-md` block (terminal actions
-   * drop the arrow segment).
+   * the system's advance affordance (the home hero renders it at
+   * `large`). Without it the button is the plain `rounded-md` block
+   * (terminal actions drop the arrow segment).
    */
   arrow?: boolean;
 } & (AsButton | AsAnchor);
@@ -88,6 +91,17 @@ const SIZES: Record<
     arrowLabel: "px-4 py-2",
     arrowBox: "px-3 py-2",
   },
+  /**
+   * The home hero's advance: default's paddings at `text-lg`, 52px
+   * tall. It replaced the hand-rolled `HeroCta`, which drew exactly
+   * this (build-note 34, check 7).
+   */
+  large: {
+    plain: "min-h-11 text-lg px-7 py-3",
+    arrow: "min-h-11 text-lg items-stretch",
+    arrowLabel: "px-6 py-3",
+    arrowBox: "px-4 py-3",
+  },
 };
 
 /*
@@ -125,8 +139,8 @@ const DIVIDER: Record<ButtonVariant, string> = {
  * vocabulary (decision-log #47, corners #48; the squared rule is
  * retired). Renders an anchor when `href` is set, otherwise a real
  * <button>. Copy always comes from src/content/. Hover is a colour
- * change only; with `arrow`, the arrow nudges on hover exactly like
- * the hero CTA, gated by motion-safe, because it says "advance"
+ * change only; with `arrow`, the arrow nudges on hover, gated by
+ * motion-safe, because it says "advance"
  * (Tailwind v4 note: the standalone translate property is what
  * transitions).
  */

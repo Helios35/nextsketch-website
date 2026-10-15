@@ -5,14 +5,15 @@ import { SectionHeading } from "@/components/section-heading";
 import { ABOUT } from "@/content/copy";
 
 /**
- * Presentation marker, not copy: the deliberateness claim the section
- * exists to land takes the coral payoff treatment, `text-brand`
- * (docs/04-ux-spec.md §Typography: at most a couple of accent words
- * inside a linen display heading; decision-log #47). Matched without
- * the trailing period so the sentence's full stop stays linen.
- * Degrades to an unaccented headline if the canonical copy changes.
+ * The deliberateness claim the section exists to land takes the coral
+ * payoff treatment, `text-brand` (docs/04-ux-spec.md §Typography: at
+ * most a couple of accent words inside a linen display heading;
+ * decision-log #47). Matched without the trailing period so the
+ * sentence's full stop stays linen. The phrase lives in src/content
+ * beside the headline it is matched against (build-note 34, check 11);
+ * the heading degrades to unaccented if the two stop matching.
  */
-const ACCENT_PHRASE = "On purpose";
+const ACCENT_PHRASE = ABOUT.accentPhrase;
 
 /**
  * About (#about) — the person behind it, solo
@@ -91,7 +92,7 @@ export function AboutSection() {
                 width={1600}
                 height={1600}
                 sizes="(min-width: 768px) 24rem, 100vw"
-                className="aspect-[3/4] w-full object-cover"
+                className="aspect-3/4 w-full object-cover"
               />
               <div
                 aria-hidden="true"
