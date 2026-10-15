@@ -1,45 +1,42 @@
-import type { ProjectType } from "@/lib/schema";
+import type { QuickNeed } from "@/content/modal";
 import { serviceRoute } from "@/lib/types";
 import type { Service, ServiceSlug } from "@/lib/types";
 
 /**
- * The four canonical services — names and slugs per
- * docs/06-taxonomy.md §1; descriptions from Messaging Kit §05.
+ * The two offerings — decision-log **#53** (2026-10-15). Agentic System
+ * Integration leads; AI Product Development follows. Names, slugs and
+ * payload values per docs/06-taxonomy.md §1. Every rendered string here
+ * is owner copy from the two-offerings brief (2026-10-15), shipped
+ * verbatim.
  *
- * Decision-log #19 (2026-08-24) — no em dashes in rendered site copy,
- * a standing rule. It rewrote the section headline and replaced the one
- * em dash inside the `agentic` description with a comma. Both are edits
- * to canonical §05 copy, so Rule 4.1 now traces the headline to #19
- * rather than to the Kit; the four descriptions are otherwise §05 as
- * written. Em dashes remain in the doc blocks here — developer notes,
- * not site copy, and explicitly exempt under #19. The rule is not
- * enforced mechanically: adding an em-dash scan to the banned-terms
- * gate is an open owner call.
+ * **What retired.** The four services of #27 (New Product, Product
+ * Completion, Product Support, Agentic System) and the two agentic
+ * depths of #29 (AI Workflow Integration, Internal Tool) leave every
+ * surface a visitor can read. Product Completion and Product Support
+ * fold into AI Product Development as ways in, and keep their blocks
+ * and anchors on `/services/product`. Internal Tool comes off the site
+ * because NextSketch is building an installable product of its own:
+ * the waitlist band below is where it shows.
  *
- * **One vocabulary, everywhere (decision-log #27, 2026-08-28.)** The
- * four names are the quick door's "What do you need?" labels: New
- * Product, Product Completion, Product Support, Agentic System. The
- * modal is the reference because it is the only surface a visitor
- * reaches after choosing, so a name it does not use is a name that
- * disappears mid-conversion — a visitor who picked "Ongoing
- * Partnership" on a card was then asked to choose "Product support".
+ * **What did not move.** Routes, the `/services/product` anchors and
+ * the stored payload values (`new_product`, `rescue`, `agentic`,
+ * `partnership`): no lead data migrates and no old link 404s. An
+ * offering's slug is its page's slug (`agentic-system`, `product`), so a
+ * display name no longer mirrors its slug word for word.
  *
- * This closes the 2026-08-04 divergence, where the cards took short
- * forms while Taxonomy §1 and LANDING.capabilities kept long ones and
- * the split was flagged rather than resolved. All three now agree,
- * and §1 is the record.
- *
- * The slugs were renamed with the names (#27), so a slug is never a
- * fossil of a retired one. `ProjectType` in `schema.ts` is untouched:
- * the stored payload vocabulary is a contract, and this unit changes
- * only what the site calls things.
+ * Decision-log #19 (no em dashes in rendered site copy) binds every
+ * string here; the doc blocks are exempt.
  */
 
-/** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
+/**
+ * Section eyebrow. Drafted in Redesign Unit 02; the two-offerings brief
+ * (2026-10-15) carries it as owner copy, so it is no longer DRAFT.
+ */
 export const SERVICES_EYEBROW = "What we build";
 
+/** Owner copy, 2026-10-15 (#53). Supersedes the #19 headline. */
 export const SERVICES_HEADLINE =
-  "Products and agentic systems, built for how your business actually works.";
+  "Agentic systems and AI products, built for how your business actually works.";
 
 /**
  * The headline's coral payoff phrase (docs/04-ux-spec.md §Typography),
@@ -50,7 +47,7 @@ export const SERVICES_ACCENT_PHRASE = "actually works";
 
 /**
  * Per-card CTA (owner direction 2026-08-04): opens the qualification
- * modal with that card's service preselected. Owner first asked for
+ * modal with that card's offering preselected. Owner first asked for
  * the generic read-on phrasing that Rule 3.2 bans by name (the gate
  * scans this directory, so it is not repeated here); owner picked this
  * replacement from the Rule 3.1 required set. It is the set member
@@ -59,99 +56,102 @@ export const SERVICES_ACCENT_PHRASE = "actually works";
 export const SERVICES_CTA = "Build With Us";
 
 /**
- * Service slug -> the canonical project type its CTA preselects in the
- * quick door's "What do you need?" selector.
- *
- * **Rekeyed, not re-derived, by the #27 rename.** Every card still
- * preselects exactly what it preselected before; only the keys moved.
- * The two vocabularies are near-identical but not interchangeable and
- * the mapping stays spelled out: display slugs are kebab-case (§8) and
- * payload values snake_case (§3), and `product-support` stores as
- * `partnership` — a stored value that predates the rename and does not
- * move with it, because the lead record is a contract.
- *
- * Typed as a total map over ServiceSlug: a new service without a need
- * fails typecheck instead of shipping a CTA that preselects nothing.
+ * The published figures, once (#53, #56). The home cards ("a month"),
+ * the service routes ("upfront, then … a month") and `/pricing` ("per
+ * month") word them differently, so each composes its own string from
+ * these rather than repeating a figure that could then drift: a price
+ * change is one edit here.
  */
-export const SERVICE_NEED: Record<ServiceSlug, ProjectType> = {
-  "new-product": "new_product",
-  "product-completion": "rescue",
-  "product-support": "partnership",
+export const PRICES = {
+  "agentic-system": { upfront: "$3,998", monthly: "$2,998" },
+  product: { upfront: "$12,000", monthly: "$10,000" },
+} as const satisfies Record<ServiceSlug, { upfront: string; monthly: string }>;
+
+/**
+ * Offering slug -> the quick-door need its CTAs preselect.
+ *
+ * Typed to `QuickNeed`, the door's own options, so a card, tier or
+ * block can never preselect a value the door does not show. Every CTA
+ * on `/services/product` reads the `product` entry: Build from scratch,
+ * Finish what someone started and Ongoing product team are three ways
+ * into one offering, and the door offers that offering once. Display
+ * slugs are kebab-case (§8) and payload values snake_case (§3), so the
+ * mapping stays spelled out.
+ */
+export const SERVICE_NEED: Record<ServiceSlug, QuickNeed> = {
   "agentic-system": "agentic",
+  product: "new_product",
 };
 
 /**
- * Service slug -> the service route that card opens. Decision-log
- * **#30** (2026-08-28), **corrected 2026-08-30**.
+ * Offering slug -> the route its card opens (decision-log **#30**,
+ * corrected 2026-08-30): **every card opens its route at the top**, on
+ * the hero. Since #53 an offering's slug is its page's slug, so this is
+ * `serviceRoute` applied to each; it stays a total map over
+ * `ServiceSlug`, so a new offering without a destination fails
+ * typecheck instead of shipping a card that goes nowhere.
  *
- * **Every card opens its route at the top.** The first cut sent the
- * three product cards to their block anchors, because the owner's
- * 2026-08-28 direction was that a click "goes to the sections covering
- * each topic clicked". That was built before the routes had a hero
- * worth landing on: measured from `/`, a card put the visitor at
- * scrollY 544 with the `<h1>` 199px above the fold, so the ribbon, the
- * heading, the CTAs and the graphic were all skipped on arrival. The
- * owner corrected it (2026-08-30) — **the page loads on the hero.**
- *
- * That also makes all four cards behave the same way. Only the product
- * three ever carried anchors; `agentic-system` always pointed at its
- * route root, because that page *is* that service and its two blocks
- * are depths of it — which is why the inconsistency showed up on one
- * page and not the other.
- *
- * **The block anchors are untouched and still work.** They remain real
- * `<section id>` targets, so a shared or bookmarked
- * `/services/product#product-support` still lands on that block;
- * nothing on the site generates one any more. `serviceBlockHref` stays
- * exported for exactly that reason: it is the only typo-proof,
- * root-relative way to build one, and deleting it would leave the next
- * caller hand-writing the hash this unit exists to prevent.
- *
- * Typed as a total map over ServiceSlug: a new service without a
- * destination fails typecheck instead of shipping a card that goes
- * nowhere, the same guarantee `SERVICE_NEED` gives above.
+ * The block anchors still work for a shared or bookmarked link, and
+ * `serviceBlockHref` remains the only typo-proof way to build one.
  */
 export const SERVICE_PAGE_HREF: Record<ServiceSlug, string> = {
-  "new-product": serviceRoute("product"),
-  "product-completion": serviceRoute("product"),
-  "product-support": serviceRoute("product"),
   "agentic-system": serviceRoute("agentic-system"),
+  product: serviceRoute("product"),
 };
 
+/**
+ * The two cards, in owner order (#53). `examples` is the agentic
+ * page's four example jobs (#57): the card previews their names and
+ * the page's blocks and ribbon read them from here.
+ */
 export const SERVICES = [
   {
-    slug: "new-product",
-    name: "New Product",
-    description:
-      "You have an idea. We validate it, define the scope, and build it into a working product in production.",
-    accent: "gold",
-  },
-  {
-    slug: "product-completion",
-    name: "Product Completion",
-    description:
-      "Someone got you 70% there and disappeared. We assess what was built, validate the direction, and get you to launch.",
-    accent: "rose",
-  },
-  {
     slug: "agentic-system",
-    name: "Agentic System",
-    /**
-     * Owner-approved 2026-08-31 (decision-log #37, the avolis.ai
-     * comparison): "actually pay off" replaces "create real value" —
-     * the economic verb is harder to nod past. One verb phrase changed;
-     * the rest of the §05 line is as written. The Messaging Kit copy of
-     * §05 is owner-owned and still needs reconciling to match.
-     */
+    name: "Agentic System Integration",
+    subtitle: "AI automation for the work you already do",
     description:
-      "Your product or operations need intelligence built in. We assess where agents actually pay off and build them in, not because it's trendy, but because it solves the problem.",
-    accent: "lavender",
+      "We plug AI agents into the work your team already does (emails, reports, moving tasks along) and keep them running and improving every month.",
+    price: [
+      `${PRICES["agentic-system"].upfront} upfront`,
+      `${PRICES["agentic-system"].monthly} a month`,
+    ],
+    examples: [
+      "Email triage",
+      "Weekly reporting",
+      "Quoting and intake",
+      "Document and data entry",
+    ],
   },
   {
-    slug: "product-support",
-    name: "Product Support",
+    slug: "product",
+    name: "AI Product Development",
+    subtitle: "New software with AI agents built in",
     description:
-      "The product is live. Now it needs to grow. We stay on retainer to evolve it, maintain it, and build what comes next.",
-    accent: "sage",
+      "We build your product from scratch in 6 to 8 weeks, or finish one someone else started, with AI agents built in, and we stay on as your product team.",
+    price: [
+      `${PRICES.product.upfront} upfront`,
+      `${PRICES.product.monthly} a month`,
+    ],
   },
 ] as const satisfies readonly Service[];
+
+/**
+ * The waitlist band inside Services, under the cards (decision-log
+ * **#58**). Owner copy, 2026-10-15. The product it names is the
+ * installable tool that took Internal Tool's place (#53).
+ *
+ * "Join the Waitlist" is a **non-conversion carve-out from Rule 3.1**,
+ * the way the off-ramp's "Stay in Touch" is: it asks for interest in a
+ * product that does not exist yet, so a conversion CTA would promise
+ * the wrong thing. The capture runs through the modal's seam, guards
+ * and failure fallback (Rules 2.4, 2.7, 2.8) and carries its own signal
+ * label, `[Waitlist]`. There is no auto-reply: the on-page confirmation
+ * is the whole acknowledgement.
+ */
+export const SERVICES_WAITLIST = {
+  eyebrow: "Coming soon",
+  line: "An AI tool you install in your business. Join the waitlist and we'll tell you when it's ready.",
+  fieldLabel: "Your email",
+  submit: "Join the Waitlist",
+  success: "You're on the list. We'll email you when it's ready.",
+} as const;

@@ -17,6 +17,13 @@ import type { ServiceBlockId } from "@/lib/types";
  * service is "the product is live, now it needs to grow"). "Not apps"
  * was said twice, so no mock is a grid of equal squares.
  *
+ * **Since decision-log #53 (2026-10-15)** the product route's three
+ * blocks keep their three mocks, now under their ways-in names. The
+ * Internal Tool mock left with its block. The agentic route's four
+ * example jobs (#57) hold stand-ins until the visuals brief: the app
+ * cluster for Email triage, an empty frame for the other three. No
+ * visual was restyled or redrawn here.
+ *
  * **They are wireframes, and that is a Rule 4.3 requirement, not a
  * style choice.** Not one contains a readable string, a numeral, a
  * metric, a logo or a product name. A mock showing a chart with an
@@ -1015,172 +1022,11 @@ function ProductSupportVisual() {
 }
 
 /* ------------------------------------------------------------------ *
- * Internal Tool — an analytics panel.                                 *
- * A status summary beside a trend chart with a read-out on one point.  *
- * Replaces the framed dashboard mock (owner, 2026-08-30); **this block *
- * only** — nothing else on either route changes.                      *
- *                                                                      *
- * It is the right subject for the tier: "a real tool that you own",    *
- * something a team logs into to see what their agents did.            *
- *                                                                      *
- * Frameless like 01, 02 and 03. Rule 4.3 as everywhere: no label, no   *
- * count, no date, no axis value. The reference's two series map onto   *
- * plum `chart-4` and terracotta `chart-1`, its status marks onto the   *
- * #31 chrome set (fin chart steps, #47), and coral (`brand`) appears   *
- * once, on the read-out point, which is the one thing the whole        *
- * composition points at.                                               *
- * ------------------------------------------------------------------ */
-
-/** Status rows in the summary panel. */
-const STATUS: readonly { tone: string; w: string; pill: string }[] = [
-  { tone: "bg-chart-4/70", w: "w-12", pill: "w-6" },
-  { tone: "bg-chart-5/70", w: "w-10", pill: "w-2" },
-  { tone: "bg-chart-1/60", w: "w-16", pill: "w-4" },
-];
-
-function InternalToolVisual() {
-  return (
-    <div className={SHELL}>
-      <div className="relative aspect-4/3 w-full overflow-hidden">
-        <div className="flex h-full min-w-0 gap-3 p-3">
-          {/* Summary. A bordered sub-panel is chrome, not the outer box
-              the owner asked to lose — the composition itself has no
-              frame. */}
-          <div className="flex w-[34%] min-w-0 shrink-0 flex-col rounded-lg border border-border p-3">
-            <ScrollReveal delay={120}>
-              <Bar className="h-2 w-16 bg-muted-foreground" />
-            </ScrollReveal>
-            <div className="mt-4 space-y-2">
-              {STATUS.map((row, i) => (
-                <ScrollReveal key={i} delay={170 + i * 55}>
-                  {/* §Surfaces' sub-panel recipe for a data row. */}
-                  <span className="flex items-center gap-2.5 rounded-md border border-border bg-secondary px-2.5 py-2">
-                    <span className={`size-2 shrink-0 rotate-45 ${row.tone}`} />
-                    <Bar className={`${row.w} bg-muted-foreground/60`} />
-                    <span className="ml-auto flex h-4 shrink-0 items-center rounded-md border border-border px-1.5">
-                      <span className={`block h-1.5 rounded-full ${row.pill} bg-muted-foreground/50`} />
-                    </span>
-                  </span>
-                </ScrollReveal>
-              ))}
-            </div>
-            {/* The read-out note, with its own mark. */}
-            <ScrollReveal delay={345} className="mt-auto">
-              <span className="flex gap-2 pt-3">
-                <span className="mt-0.5 size-3 shrink-0 rotate-45 border border-muted-foreground/40" />
-                <span className="min-w-0 grow space-y-1.5">
-                  <Bar className="w-full bg-accent" />
-                  <Bar className="w-4/5 bg-accent" />
-                  <Bar className="w-3/5 bg-muted" />
-                </span>
-              </span>
-            </ScrollReveal>
-          </div>
-
-          {/* Trend. */}
-          <div className="flex min-w-0 grow flex-col">
-            <ScrollReveal delay={200}>
-              <span className="flex items-center justify-between gap-3">
-                <Bar className="h-2 w-24 bg-muted-foreground" />
-                {/* Range selector, at fin's control radius
-                    (`rounded-md`, #48). */}
-                <span className="flex shrink-0 items-stretch rounded-md border border-border">
-                  {["w-10", "w-8", "w-7"].map((w, i) => (
-                    <span
-                      key={i}
-                      className={`flex items-center px-2 py-1.5 ${
-                        i === 1 ? "bg-muted" : ""
-                      }`}
-                    >
-                      <span
-                        className={`block h-1.5 rounded-full ${w} ${
-                          i === 1 ? "bg-muted-foreground" : "bg-muted-foreground/40"
-                        }`}
-                      />
-                    </span>
-                  ))}
-                </span>
-              </span>
-            </ScrollReveal>
-
-            {/* Plot. */}
-            <ScrollReveal delay={260} className="mt-4 flex min-h-0 grow">
-              <span className="flex w-5 shrink-0 flex-col justify-between py-0.5">
-                {[0, 1, 2, 3].map((i) => (
-                  <span key={i} className="h-1.5 w-4 rounded-full bg-accent" />
-                ))}
-              </span>
-              <span className="relative min-w-0 grow">
-                <svg
-                  viewBox="0 0 200 100"
-                  preserveAspectRatio="none"
-                  className="h-full w-full"
-                  fill="none"
-                >
-                  {[40, 80, 120, 160].map((x) => (
-                    <line
-                      key={x}
-                      x1={x}
-                      y1="0"
-                      x2={x}
-                      y2="100"
-                      stroke="currentColor"
-                      strokeWidth="1"
-                      className="text-border"
-                    />
-                  ))}
-                  <path
-                    d="M0 28 C14 60 26 78 40 72 C54 66 58 34 72 32 C86 30 92 18 104 22 C116 26 122 58 136 60 C150 62 156 44 170 42 C184 40 192 28 200 20"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="text-chart-4/60"
-                  />
-                  <path
-                    d="M0 78 C12 70 20 52 32 48 C44 44 48 22 60 20 C72 18 78 46 90 52 C102 58 108 44 120 40 C132 36 138 72 150 76 C162 80 168 40 180 36 C192 32 196 58 200 62"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="text-chart-1/50"
-                  />
-                </svg>
-
-                {/* The read-out point. Coral (`brand`), and the only
-                    coral here. The reference glows; §Surfaces bans that,
-                    so presence comes from a round hairline halo instead
-                    (#48). */}
-                <span className="absolute top-[18%] left-[52%] flex size-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-muted-foreground/50">
-                  <span className="size-2 rotate-45 bg-brand" />
-                </span>
-
-                {/* Its read-out card. The sub-panel step (`secondary`),
-                    so it lifts off the `card` plane the way the old
-                    fill lifted off the old surface (#47). */}
-                <span className="absolute top-[2%] left-[56%] space-y-1.5 rounded-lg border border-border bg-secondary px-2.5 py-2">
-                  <Bar className="w-14 bg-muted-foreground/80" />
-                  <Bar className="w-12 bg-muted-foreground/40" />
-                </span>
-              </span>
-            </ScrollReveal>
-
-            {/* Scale. */}
-            <ScrollReveal delay={330}>
-              <span className="mt-2.5 flex items-center justify-between pl-5">
-                {[0, 1, 2, 3, 4, 5].map((i) => (
-                  <Bar key={i} className="w-6 bg-accent" />
-                ))}
-              </span>
-            </ScrollReveal>
-          </div>
-        </div>
-        <VisualFade />
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ *
- * AI Workflow Integration — the tile cluster. KEPT (owner direction). *
- * The reference's own shape, and the one block it actually suits:     *
- * agents dropped into the processes a business already runs.          *
+ * The app cluster. Built for AI Workflow Integration (KEPT, owner     *
+ * direction; #34), whose block retired with #53. It stands in for     *
+ * the Email triage example until the visuals brief, unchanged: agents *
+ * wired into the tools a business already runs, an envelope among     *
+ * them.                                                                *
  * ------------------------------------------------------------------ */
 
 /**
@@ -1354,15 +1200,33 @@ function WorkflowVisual() {
 }
 
 /**
+ * A visual slot with nothing in it yet: the shared 4/3 box as an empty
+ * `secondary` frame. Three of the agentic examples (#57) take it until
+ * the visuals brief draws theirs; it carries no mark, no string and no
+ * shape, so it asserts nothing (Rule 4.3) and is not an illustration.
+ */
+function SlotVisual() {
+  return (
+    <div className={SHELL}>
+      <div className="aspect-4/3 w-full rounded-xl border border-border bg-secondary" />
+    </div>
+  );
+}
+
+/**
  * Block -> its visual. Total over `ServiceBlockId`, so a new block
- * cannot ship without one and cannot silently inherit another's.
+ * cannot ship without one and cannot silently inherit another's. The
+ * Internal Tool visual left with its block (#53); the agentic examples
+ * hold stand-ins until the visuals brief.
  */
 const VISUALS: Record<ServiceBlockId, () => React.JSX.Element> = {
   "new-product": NewProductVisual,
   "product-completion": ProductCompletionVisual,
   "product-support": ProductSupportVisual,
-  "ai-workflow-integration": WorkflowVisual,
-  "internal-tool": InternalToolVisual,
+  "email-triage": WorkflowVisual,
+  "weekly-reporting": SlotVisual,
+  "quoting-and-intake": SlotVisual,
+  "document-and-data-entry": SlotVisual,
 };
 
 export function ServiceBlockVisual({ block }: { block: ServiceBlockId }) {

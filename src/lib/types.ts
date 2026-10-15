@@ -1,4 +1,4 @@
-import type { ProjectType } from "@/lib/schema";
+import type { QuickNeed } from "@/content/modal";
 
 /**
  * Shared domain types. Canonical names and values come from
@@ -30,35 +30,49 @@ export const ACCENT_NAMES = ["gold", "lavender", "rose", "sage"] as const;
 
 export type AccentName = (typeof ACCENT_NAMES)[number];
 
-/** Service slugs per Taxonomy §1. */
 /**
- * The four service slugs, kebab-case per docs/06-taxonomy.md §8 and
- * matching the display names one-for-one (decision-log #27).
+ * The two offerings' slugs, per docs/06-taxonomy.md §1 (decision-log
+ * #53). Agentic System Integration is `agentic-system` and AI Product
+ * Development is `product`: each is the route slug that offering's
+ * page already had (#30), so no URL moved. A display name no longer
+ * mirrors its slug word for word.
  *
- * A slug is never a fossil of a retired name: `rescue`, `agentic` and
- * `partnership` were the 2026-06 names and outlived them by two
- * renames. These are what unit 26's service routes will be built on,
- * so they are the display names slugified and nothing else.
+ * The four service slugs of #27 retire as offering keys. Three live on
+ * as the `/services/product` block anchors (`ServiceBlockId`, below),
+ * which is where a shared or bookmarked link still points.
  *
  * Distinct from `ProjectType` in `src/lib/schema.ts`, which is the
  * stored payload vocabulary (snake_case, §3) and does **not** change
  * with a rename — the lead record's values are a contract.
  */
-export type ServiceSlug =
-  | "new-product"
-  | "product-completion"
-  | "product-support"
-  | "agentic-system";
+export type ServiceSlug = "agentic-system" | "product";
 
+/**
+ * One offering on the home page's Services cards (#53). Copy lives in
+ * `src/content/services.ts`.
+ *
+ * The dead `accent` field retired with the four services it carried:
+ * it was never rendered (#47), and two new offerings would have needed
+ * invented values to keep it.
+ */
 export interface Service {
   readonly slug: ServiceSlug;
   readonly name: string;
+  /** The line under the name: what the offering is, in buyer words. */
+  readonly subtitle: string;
   readonly description: string;
-  readonly accent: AccentName;
+  /** The card's price row, upfront first, composed from `PRICES`. */
+  readonly price: readonly string[];
+  /**
+   * The example jobs the card previews (#57). They are the names of
+   * the blocks on that offering's page, read from here by
+   * `src/content/service-pages.ts`, so the two cannot drift.
+   */
+  readonly examples?: readonly string[];
 }
 
-/** Process phase slugs per Taxonomy §2, ordered, exactly four. */
-export type ProcessPhaseSlug = "strategy" | "build" | "validate" | "partner";
+/** Process phase slugs per Taxonomy §2, ordered, exactly four (#55). */
+export type ProcessPhaseSlug = "map" | "build" | "validate" | "optimize";
 
 export interface ProcessPhase {
   /** Two-digit display order, "01"–"04". */
@@ -156,15 +170,14 @@ export const ROUTES = {
  * The unit-26 brief specified four routes, one per service slug; the
  * owner reduced that to two pages, each covering a related group, with
  * an in-page anchored block per topic (owner direction, 2026-08-28).
- * So a service page slug is **not** a `ServiceSlug`: `product` groups
- * three of the four services, and `agentic-system` is one service sold
- * at two depths (Taxonomy §1 "Two kinds of agentic system", #29).
+ * Under #30 a page slug was therefore not a `ServiceSlug`.
  *
- * `agentic-system` is spelled exactly like its `ServiceSlug`, which is
- * the point — that page is that service. `product` is a group name and
- * has no service slug behind it.
+ * **Since #53 it is again.** The site sells two offerings, one per
+ * page, and each offering's slug is its page's slug, so the two names
+ * are one union. `ServicePageSlug` stays as the name the routing code
+ * reads.
  */
-export type ServicePageSlug = "product" | "agentic-system";
+export type ServicePageSlug = ServiceSlug;
 
 /**
  * Root-relative path for a service route — `/services/product`, never
@@ -181,18 +194,23 @@ export const serviceRoute = <P extends ServicePageSlug>(
  * of a real `<section>`, so `globals.css`'s `section[id]` scroll-margin
  * clears the fixed bar for free.
  *
- * The first three are the `ServiceSlug`s the `product` page groups. The
- * last two are the two depths `/pricing` sells the Agentic System
- * service at, kebab-cased from their tier names (§8) rather than from
- * the terse tier slugs (`workflow` / `tool`), because these are what a
- * visitor sees in the URL.
+ * The first three are the `product` page's three ways in (#53). They
+ * keep the anchors the retired service slugs gave them, so a shared or
+ * bookmarked `/services/product#product-support` still lands on its
+ * block. The last four are the agentic page's example jobs (#57),
+ * kebab-cased from their names (§8) because a visitor sees them in the
+ * URL. The two agentic depths' anchors (`ai-workflow-integration`,
+ * `internal-tool`) retired with their blocks; a link to either still
+ * opens the page, at the top.
  */
 export type ServiceBlockId =
   | "new-product"
   | "product-completion"
   | "product-support"
-  | "ai-workflow-integration"
-  | "internal-tool";
+  | "email-triage"
+  | "weekly-reporting"
+  | "quoting-and-intake"
+  | "document-and-data-entry";
 
 /**
  * Which route hosts each block. Total over `ServiceBlockId`, so a new
@@ -203,8 +221,10 @@ export const SERVICE_BLOCK_PAGE: Record<ServiceBlockId, ServicePageSlug> = {
   "new-product": "product",
   "product-completion": "product",
   "product-support": "product",
-  "ai-workflow-integration": "agentic-system",
-  "internal-tool": "agentic-system",
+  "email-triage": "agentic-system",
+  "weekly-reporting": "agentic-system",
+  "quoting-and-intake": "agentic-system",
+  "document-and-data-entry": "agentic-system",
 };
 
 /**
@@ -236,13 +256,19 @@ export const serviceBlockHref = (block: ServiceBlockId): string =>
  */
 export const sectionHref = <T extends SectionId>(id: T): `/#${T}` => `/#${id}`;
 
-/** Pricing tier slugs per docs/06-taxonomy.md, ordered, exactly four. */
-export type PricingTierSlug = "workflow" | "tool" | "rescue" | "custom";
+/**
+ * Pricing tier slugs, one per offering (decision-log #53, #56). They
+ * are unchanged by the move to two tiers, so `workflow` carries Agentic
+ * System Integration and `custom` carries AI Product Development: both
+ * are fossils of retired tier names, recorded rather than renamed. The
+ * `tool` and `rescue` slugs retired with their tiers.
+ */
+export type PricingTierSlug = "workflow" | "custom";
 
 /**
- * One tier on `/pricing` (decision-log #25). Copy lives in
- * `src/content/pricing.ts`; nothing here is rendered from a component
- * literal.
+ * One tier on `/pricing` (decision-log #25, reshaped by #56). Copy
+ * lives in `src/content/pricing.ts`; nothing here is rendered from a
+ * component literal.
  *
  * `upfront` and `ongoing` are **display strings, not numbers**. They
  * were chosen when two tiers had no numeric upfront (one retainer-only,
@@ -250,8 +276,8 @@ export type PricingTierSlug = "workflow" | "tool" | "rescue" | "custom";
  * stay because they already carry their own currency symbol and unit.
  * The figure a visitor reads is the figure in content.
  *
- * `features` is `readonly string[]` and may be empty: a tier renders no
- * list rather than an invented one (Rule 4.3). Bullets are owner-owed.
+ * The struck former price (`upfrontWas`) retired with #56: a discount
+ * that never expires stopped reading as one.
  */
 export interface PricingTier {
   readonly slug: PricingTierSlug;
@@ -260,76 +286,69 @@ export interface PricingTier {
   /** Headline figure, e.g. "$3,998" / "$12,000". */
   readonly upfront: string;
   /**
-   * The struck former figure shown beside `upfront`, e.g. "$5,000".
-   * Optional and present on only the tiers the owner has discounted, so
-   * a tier without one renders no strikethrough rather than an empty
-   * slot. A display string like `upfront`, and it carries its own
-   * currency symbol.
-   */
-  readonly upfrontWas?: string;
-  /**
-   * Caption under the headline figure. Optional since #45, the
-   * `upfrontWas` precedent: New Product's caption existed only to
-   * explain "Quoted", and a tier without one renders no caption rather
-   * than an invented line (Rule 4.3).
+   * Caption under the headline figure. Optional since #45: a tier
+   * without an approved caption renders none rather than an invented
+   * line (Rule 4.3).
    */
   readonly upfrontNote?: string;
   /** The retainer figure, e.g. "$2,998 per month". */
   readonly ongoing: string;
   /** Caption under the retainer figure — where the term is said out loud. */
   readonly ongoingNote: string;
+  /** "Included": what the upfront build delivers (#56). */
   readonly features: readonly string[];
+  /** "What the monthly covers" (#56). */
+  readonly monthlyCovers: readonly string[];
 }
 
 /**
- * One anchored block on a service route (decision-log **#30**) — the
- * §05 (or tier) description a visitor lands on when they click a topic,
- * plus the CTA that carries that topic into the modal.
+ * One anchored block on a service route (decision-log **#30**) — what a
+ * visitor lands on when they click a topic, plus the CTA that carries
+ * it into the modal.
  *
- * `need` is the canonical `ProjectType` the block's CTA preselects. It
- * is a field rather than a second slug-to-need map because the brief
- * binds this unit to the existing seam: every value is read out of
- * `SERVICE_NEED` or `PRICING_NEED` in content, so there is exactly one
- * mapping per vocabulary and this type only carries the result.
+ * `need` is the quick-door value the block's CTA preselects. It is a
+ * field rather than a second slug-to-need map because every value is
+ * read out of `SERVICE_NEED` in content, so there is exactly one
+ * mapping and this type only carries the result. It is typed to the
+ * quick door's own options (`QuickNeed`), so a CTA can never preselect
+ * a value the door does not show.
  *
  * `included` is `readonly string[]` and **may be empty**: a block with
- * no owner-approved bullets renders no list at all rather than an
- * invented one, and no empty frame either (Rule 4.3, and the empty
- * `PricingTier.features` precedent). Bullets are owner-owed.
+ * no bullets renders no list at all, and no empty frame either (Rule
+ * 4.3). `mapFirst` is the agentic example blocks' "What we map first"
+ * line (#57); a block without one renders no panel.
  */
 export interface ServicePageBlock {
   readonly id: ServiceBlockId;
-  /** Canonical service or tier name — Taxonomy §1. Never reworded. */
   readonly name: string;
-  /** Messaging Kit §05 or the tier's `/pricing` description, as-is (Rule 4.1). */
+  /** What the block delivers or what the agent does, in one paragraph. */
   readonly description: string;
-  readonly need: ProjectType;
+  readonly mapFirst?: string;
+  readonly need: QuickNeed;
   readonly included: readonly string[];
 }
 
 /**
- * One service route's content (decision-log **#30**).
+ * One service route's content (decision-log **#30**; one offering per
+ * route since **#53**).
  *
- * **Three fields are optional because the copy behind them is
- * owner-owed, and each renders nothing until it lands** (Rule 4.3, the
- * brief's "render nothing in that slot — not a placeholder heading, not
- * an empty frame"):
+ * **Optional fields render nothing when absent** (Rule 4.3: "render
+ * nothing in that slot — not a placeholder heading, not an empty
+ * frame"):
  *
- * - `headline` — the one-line promise. Until it exists the `<h1>` falls
- *   back to `name`, which is canonical vocabulary rather than drafted
- *   copy, so the page is never headless and nothing invented ships.
+ * - `headline` — the one-line promise. Without it the `<h1>` falls back
+ *   to `name`, which is canonical vocabulary rather than drafted copy,
+ *   so the page is never headless. Both routes carry one since #53.
  * - `accentPhrase` — the coral payoff word inside `headline`. Matched
  *   against the string, so it degrades to an unaccented heading exactly
  *   like every other section's `ACCENT_PHRASE`.
- * - `intro` — the supporting paragraph. Supplied on both routes: the
- *   agentic one is its §05 line, the product one is the group-level
- *   description approved by the owner on 2026-08-30. It stays optional
- *   so a future route without approved copy renders nothing rather than
- *   a placeholder.
+ * - `leadLine`, `intro`, `price` — the hero's lead line, supporting
+ *   paragraph and published price (#53, #56).
+ * - `offer` — the "What you get" and "What the monthly covers" lists,
+ *   the agentic page's (#57).
  *
  * `need` is optional for the same reason it is optional on
- * `ModalTrigger`: a page covering one service preselects it, and a page
- * covering three preselects nothing rather than guessing one of them.
+ * `ModalTrigger`; both routes carry one since each is one offering.
  */
 export interface ServicePageContent {
   readonly slug: ServicePageSlug;
@@ -338,20 +357,25 @@ export interface ServicePageContent {
   readonly description: string;
   /** Mono micro-label above the heading (docs/04-ux-spec.md §Typography). */
   readonly eyebrow: string;
-  /** Canonical name; the `<h1>` fallback until `headline` is approved. */
+  /** Canonical name; the `<h1>` fallback when there is no `headline`. */
   readonly name: string;
   readonly headline?: string;
   readonly accentPhrase?: string;
+  readonly leadLine?: string;
   readonly intro?: string;
-  readonly need?: ProjectType;
+  readonly price?: string;
+  readonly need?: QuickNeed;
   /**
    * Labels for the hero's capability strip — the same marquee the
    * landing hero carries (`CapabilityStrip`), with this route's own
-   * services in it (decision-log **#30**, owner direction 2026-08-30).
-   * Canonical names only, referenced from `SERVICES` / `PRICING_TIERS`
-   * rather than re-literalled, so a rename cannot leave the strip
-   * behind.
+   * block names in it (decision-log **#30**, owner direction
+   * 2026-08-30). Read from the blocks rather than re-literalled, so a
+   * rename cannot leave the strip behind.
    */
   readonly strip: readonly string[];
   readonly blocks: readonly ServicePageBlock[];
+  readonly offer?: {
+    readonly included: readonly string[];
+    readonly monthlyCovers: readonly string[];
+  };
 }

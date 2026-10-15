@@ -16,8 +16,9 @@ import type { WorkItem } from "@/lib/types";
  * Rule 4.3 (no invented project names or outcomes) is binding: names,
  * screenshots and links are the owner's, and the summaries describe
  * only what each product is. An item with no `image` renders the
- * layout-final ink placeholder instead, so a later screenshot swaps in
- * with zero layout shift (docs/06-taxonomy.md §7).
+ * layout-final placeholder instead (a `secondary` frame; it was `ink`
+ * until decision-log #47), so a later screenshot swaps in with zero
+ * layout shift (docs/06-taxonomy.md §7).
  */
 
 /** Section eyebrow — DRAFT pending owner approval. */
@@ -30,7 +31,8 @@ export const WORK_EYEBROW = "Work in production";
  * proof band restates the promise as evidence rather than introducing
  * a new claim.
  *
- * "Real Products" takes the gold payoff treatment in the section
+ * "Real Products" takes the coral payoff treatment (gold until
+ * decision-log #47) in the section
  * component (docs/04-ux-spec.md §Typography — at most a couple of
  * words). That phrase is a judgment call, not owner-specified: the
  * old accent ("in production") is gone with the rewrite, and the

@@ -22,7 +22,8 @@ const ACCENT_PHRASE = PROCESS.accentPhrase;
  * Inter semibold (decision-log #47). The native
  * <details name> exclusive accordion is canonical (build-note 03) and
  * survives the redesign untouched — works without JS (Business Rules
- * E3), keyboard-accessible by default, Strategy open on load. What
+ * E3), keyboard-accessible by default, the first phase (Map since
+ * decision-log #55) open on load, carrying the aside. What
  * changed is the skin: the retired <SketchAccent> circle draw-on
  * becomes the open row's phase number turning coral, `text-brand` (the
  * system's one accent doing the same "you are here" work), and the
@@ -87,7 +88,7 @@ export function ProcessSection() {
                 <p className="max-w-prose text-base leading-relaxed text-foreground md:text-lg">
                   {phase.description}
                 </p>
-                {phase.slug === "validate" && (
+                {phase.slug === PROCESS.annotationPhase && (
                   <p className="mt-5 font-serif text-brand italic">{PROCESS.annotation}</p>
                 )}
               </div>

@@ -9,7 +9,7 @@ import {
 } from "@/content/email";
 import { MODAL_CONTACT, MODAL_QUESTIONS, MODAL_QUICK } from "@/content/modal";
 import { labelFor, leadSignal } from "@/lib/lead-format";
-import type { LeadPayload } from "@/lib/schema";
+import type { LeadPayload, WaitlistPayload } from "@/lib/schema";
 
 /**
  * Lead notification (Sprint 02 Unit 03 — notify). Fires two emails via
@@ -22,6 +22,10 @@ import type { LeadPayload } from "@/lib/schema";
  *   • Alert to Nate — the Rule 2.5 signal in the subject + every answer
  *     and contact detail in the body, so he can respond without digging.
  *     Reply-to is the lead's address so one reply reaches them directly.
+ *
+ * A waitlist entry (decision-log #58) gets the alert only: no
+ * auto-reply, because the band's on-page confirmation is the whole
+ * acknowledgement.
  *
  * Best-effort by contract (brief Outcome 4): this is invoked from the
  * route via `after()`, so it runs *after* the response is sent and
@@ -105,10 +109,18 @@ export async function notifyLead(payload: LeadPayload): Promise<void> {
   const capturedAt = new Date().toISOString();
 
   // Send both concurrently; `allSettled` so one failing can never stop
-  // the other (mirrors lead-delivery). Both are best-effort.
+  // the other (mirrors lead-delivery). Both are best-effort. The
+  // waitlist band sends no auto-reply (decision-log #58): its on-page
+  // confirmation is the whole acknowledgement, so that slot resolves as
+  // nothing to send rather than as a failure. Nate's alert still fires,
+  // under the `[Waitlist]` label.
   const [autoReply, alert] = await Promise.allSettled([
-    sendAutoReply(resend, from, payload),
-    sendAlert(resend, from, payload, capturedAt),
+    payload.kind === "waitlist"
+      ? Promise.resolve(true)
+      : sendAutoReply(resend, from, payload),
+    payload.kind === "waitlist"
+      ? sendWaitlistAlert(resend, from, payload, capturedAt)
+      : sendAlert(resend, from, payload, capturedAt),
   ]);
 
   if (autoReply.status === "rejected") {
@@ -138,7 +150,7 @@ export async function notifyLead(payload: LeadPayload): Promise<void> {
 async function sendAutoReply(
   resend: Resend,
   from: string,
-  payload: LeadPayload,
+  payload: Exclude<LeadPayload, WaitlistPayload>,
 ): Promise<boolean> {
   const copy =
     payload.kind === "qualified"
@@ -193,7 +205,7 @@ async function sendAutoReply(
 async function sendAlert(
   resend: Resend,
   from: string,
-  payload: LeadPayload,
+  payload: Exclude<LeadPayload, WaitlistPayload>,
   capturedAt: string,
 ): Promise<boolean> {
   const to = process.env.NOTIFY_EMAIL;
@@ -324,6 +336,47 @@ async function sendAlert(
 
   if (error) {
     console.error("lead-notify: alert send error —", describeSendError(error));
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Alert to Nate for a waitlist entry (decision-log #58): the address and
+ * when it came in, under the `[Waitlist]` subject so it never reads as
+ * a lead. The lead alert's intro and reply hint both say "lead", which a
+ * waitlist entry is not, so neither is reused and nothing new is
+ * written: the body is two labelled values.
+ */
+async function sendWaitlistAlert(
+  resend: Resend,
+  from: string,
+  payload: WaitlistPayload,
+  capturedAt: string,
+): Promise<boolean> {
+  const to = process.env.NOTIFY_EMAIL;
+  if (!to) {
+    console.error(
+      "lead-notify: NOTIFY_EMAIL not set, so no waitlist alert (best-effort; the entry is already durably captured).",
+    );
+    return false;
+  }
+
+  const lines = [
+    `${MODAL_CONTACT.fields.email.label}: ${payload.email}`,
+    `${LEAD_ALERT.capturedLabel}: ${capturedAt}`,
+  ];
+  const { error } = await resend.emails.send({
+    from,
+    to,
+    replyTo: payload.email,
+    subject: `${leadSignal(payload).label} ${payload.email}`,
+    text: lines.join("\n"),
+    html: wrapHtml(lines.map((line) => `<p>${escapeHtml(line)}</p>`).join("\n")),
+  });
+
+  if (error) {
+    console.error("lead-notify: waitlist alert send error:", describeSendError(error));
     return false;
   }
   return true;

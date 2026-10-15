@@ -13,6 +13,9 @@ import type { LeadPayload } from "@/lib/schema";
  * the quick door (no answers). Both render into the SAME Sheet columns
  * and Asana task shape — the quick door simply leaves the qualifier
  * columns empty — so the owner's Apps Script column mapping is unchanged.
+ * The waitlist band (decision-log #58) is a third kind and not a lead:
+ * it fills the same columns with an email, `lead_type: waitlist` and
+ * its own `[Waitlist]` label, so it reads apart from leads everywhere.
  *
  * Answer labels are read straight from `MODAL_QUESTIONS` (the canonical
  * label↔value map, docs/06-taxonomy.md §3) — never re-typed here, so
@@ -47,7 +50,12 @@ function quickNeeds(values: readonly string[] | undefined): string {
     .join("; ");
 }
 
-export type LeadType = "qualified" | "flagged" | "quick" | "exploring";
+export type LeadType =
+  | "qualified"
+  | "flagged"
+  | "quick"
+  | "exploring"
+  | "waitlist";
 
 export interface LeadSignal {
   /** Taxonomy §4 lead type: `flagged` if any signal is set. */
@@ -59,6 +67,14 @@ export interface LeadSignal {
   /** The `[Lead …]` prefix (Rule 2.5), reused as the task/subject flag. */
   readonly label: string;
 }
+
+/**
+ * The waitlist band's signal label (decision-log #58). Deliberately not
+ * a `[Lead …]` label: a waitlist entry is interest in a product that
+ * does not exist yet, and the brief asks that Nate can tell it from a
+ * lead at a glance in the Sheet, the Asana task and the alert subject.
+ */
+export const WAITLIST_SIGNAL = "[Waitlist]";
 
 /**
  * Rule 2.5 signal-flag logic + Taxonomy §4 lead type. The `[Lead …]`
@@ -73,6 +89,15 @@ export interface LeadSignal {
  * the inbox and isn't mistaken for a ready one.
  */
 export function leadSignal(payload: LeadPayload): LeadSignal {
+  if (payload.kind === "waitlist") {
+    return {
+      type: "waitlist",
+      needsBuyIn: false,
+      buildFirst: false,
+      label: WAITLIST_SIGNAL,
+    };
+  }
+
   if (payload.kind === "quick") {
     const exploring = payload.source === "off_ramp";
     return {
@@ -111,6 +136,23 @@ export function toSheetRecord(
   capturedAt: string,
 ): Record<string, string> {
   const signal = leadSignal(payload);
+  if (payload.kind === "waitlist") {
+    // Same eleven columns, so the Apps Script mapping still never
+    // branches: an email, its type and its label, and nothing else.
+    return {
+      timestamp: capturedAt,
+      lead_type: signal.type,
+      signal: signal.label,
+      name: "",
+      email: payload.email,
+      company: "",
+      project_type: "",
+      readiness: "",
+      authority: "",
+      validation: "",
+      details: "",
+    };
+  }
   const qualified = payload.kind === "qualified";
   // Same columns for both doors so the owner's Apps Script mapping is
   // unchanged; the quick door simply leaves the qualifier columns empty.
@@ -149,6 +191,20 @@ export function toAsanaTask(
   capturedAt: string,
 ): { name: string; notes: string } {
   const signal = leadSignal(payload);
+
+  // Waitlist band (#58): an email and where it came from, nothing more.
+  if (payload.kind === "waitlist") {
+    return {
+      name: `${signal.label} ${payload.email}`,
+      notes: [
+        `Captured: ${capturedAt}`,
+        "",
+        `Email:   ${payload.email}`,
+        "",
+        "Door: Waitlist band (Services)",
+      ].join("\n"),
+    };
+  }
 
   // Quick door: no qualifier answers — a leaner task carrying the door
   // it came through and the optional one-line message.

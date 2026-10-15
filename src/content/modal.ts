@@ -23,11 +23,18 @@ type ValidationValue = QualificationPayload["validation"];
 export const MODAL_QUESTIONS = {
   project_type: {
     question: "What do you need built or improved?",
+    /**
+     * Two offerings, agentic first (decision-log #53). The stored
+     * values are unchanged: `rescue` and `partnership` are now ways
+     * into AI Product Development rather than offers of their own, and
+     * the lead record keeps telling them apart. Labels are owner copy
+     * (2026-10-15); "I'm still exploring" is unchanged.
+     */
     options: [
-      { value: "new_product", label: "New product from scratch" },
-      { value: "rescue", label: "Stuck at 70% — rescue or finish" },
-      { value: "agentic", label: "Agentic systems for my product or operations" },
-      { value: "partnership", label: "My live product needs a partner" },
+      { value: "agentic", label: "AI agents for the work my business already does" },
+      { value: "new_product", label: "A new product built from scratch" },
+      { value: "rescue", label: "Finishing a product someone else started" },
+      { value: "partnership", label: "Ongoing help with a live product" },
       { value: "exploring", label: "I'm still exploring" },
     ] as const satisfies readonly ModalOption<ProjectTypeValue>[],
   },
@@ -85,25 +92,36 @@ export const MODAL_QUICK = {
   /** Label for the optional needs selector. */
   messageLabel: "What do you need?",
   /**
-   * Multi-select options replacing the free-text line (Sprint 03 adhoc),
-   * laid out as two levels: the primary build (new product / product
-   * completion — mutually exclusive) then the add-ons (product support /
-   * agentic system — combine with either). Stored as `project_types` and
-   * written to the Sheet's existing `project_type` column as a delimited
-   * list. Values are canonical project types (docs/06-taxonomy.md §3) —
-   * "Product support" is the `partnership` type. The selection is optional.
+   * Multi-select options replacing the free-text line (Sprint 03 adhoc).
+   * Stored as `project_types` and written to the Sheet's existing
+   * `project_type` column as a delimited list. The selection is optional.
+   *
+   * **The two offerings, agentic first (decision-log #53).** Owner copy
+   * (2026-10-15). The stored values are unchanged, so no lead data
+   * migrates: Agentic System Integration stores as `agentic` and AI
+   * Product Development as `new_product`. Product Completion and Product
+   * Support left the door with their offers; `rescue` and `partnership`
+   * stay in the schema, where the qualifier still sends them. The two
+   * combine freely, so the mutual-exclusion rule the old pair needed
+   * (new product against completion) is gone with it.
    */
   needsOptions: [
-    { value: "new_product", label: "New product" },
-    { value: "rescue", label: "Product completion" },
-    { value: "partnership", label: "Product support" },
-    { value: "agentic", label: "Agentic system" },
+    { value: "agentic", label: "Agentic system integration" },
+    { value: "new_product", label: "AI product development" },
   ],
   /** Submit CTA (Rule 3.1 set). */
   submit: "Talk to Us",
   /** Secondary affordance into the full four-question qualifier. */
   toQualifier: "Rather walk us through it? Answer a few questions",
 } as const;
+
+/**
+ * A quick-door "What do you need?" value: one of the options above.
+ * Every CTA that preselects a need is typed to this (`ModalTrigger`,
+ * `ServiceCta`, `SERVICE_NEED`, `PRICING_NEED`), so a CTA can never
+ * preselect an option the door does not show (decision-log #53).
+ */
+export type QuickNeed = (typeof MODAL_QUICK.needsOptions)[number]["value"];
 
 /**
  * Escape hatch (Rule 2.6): visible at every step, always a plain

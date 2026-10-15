@@ -24,6 +24,7 @@ import {
   MODAL_QUESTIONS,
   MODAL_QUICK,
   MODAL_SUCCESS,
+  type QuickNeed,
 } from "@/content/modal";
 import { submitQualification } from "@/lib/qualify";
 import { leadPayloadSchema } from "@/lib/schema";
@@ -83,16 +84,13 @@ function screenAfter(key: QuestionKey, answers: Answers): Screen {
   }
 }
 
-/** A quick-door "what do you need" value — one of the canonical needs options. */
-type NeedValue = (typeof MODAL_QUICK.needsOptions)[number]["value"];
-
 interface ContactFields {
   name: string;
   email: string;
   company: string;
   details: string;
   /** Quick door's optional multi-select needs (Sprint 03 adhoc). */
-  projectTypes: NeedValue[];
+  projectTypes: QuickNeed[];
   /** Honeypot (Rule 2.8) — anything non-empty rejects at the schema. */
   hp: string;
 }
@@ -111,20 +109,19 @@ function needLabel(value: string): string {
   return MODAL_QUICK.needsOptions.find((o) => o.value === value)?.label ?? value;
 }
 
-/**
- * Mutually exclusive needs (Sprint 03 adhoc): a brand-new build and a
- * product completion are either-or — you can't start from scratch and
- * finish an existing build at once. Product support and agentic system
- * ride on top of either, so they never conflict (they're absent here).
- * Picking one of the pair grays out the other; the picked tab stays
- * toggleable so the visitor can switch back.
+/*
+ * The quick door's mutual-exclusion rule (Sprint 03 adhoc: a new build
+ * and a product completion were either-or, so picking one greyed out
+ * the other) retired with decision-log #53. The door now offers the two
+ * offerings, which combine freely.
  */
-const NEED_CONFLICTS: Partial<Record<NeedValue, NeedValue>> = {
-  new_product: "rescue",
-  rescue: "new_product",
-};
 
-interface ComposedAnswer {
+/**
+ * One label/value pair of a visitor's answers. Exported with
+ * `ComposedAnswers` and `fallbackMailto` so the waitlist band's failure
+ * fallback is this one, not a copy (decision-log #58, Rule 2.7).
+ */
+export interface ComposedAnswer {
   label: string;
   value: string;
 }
@@ -169,15 +166,20 @@ function composeAnswers(
  * display headings, JetBrains Mono micro-labels, and the flat coral
  * `brand` accent (no glows). Every focus indicator is `ring`. */
 
-/* Panel heading at display scale: Playfair Display 700 (fin §1). */
-const HEADING_CLASS =
+/* Panel heading at display scale: Playfair Display 700 (fin §1).
+ * Exported for the waitlist band's failure fallback (#58). */
+export const HEADING_CLASS =
   "font-serif text-2xl leading-[1.08] font-bold tracking-tight text-balance text-foreground outline-none md:text-3xl";
 
-/** Uppercase mono caption, the marquee label treatment, in `muted-foreground`. */
-const CAPTION_CLASS =
+/**
+ * Uppercase mono caption, the marquee label treatment, in
+ * `muted-foreground`. Exported with `INPUT_CLASS` so the waitlist band's
+ * field is this field, not a copy of it (decision-log #58).
+ */
+export const CAPTION_CLASS =
   "font-mono text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground";
 
-const INPUT_CLASS =
+export const INPUT_CLASS =
   "mt-2.5 w-full rounded-md border border-input bg-secondary px-4 py-3 text-base text-foreground " +
   "transition-colors duration-150 placeholder:text-muted-foreground " +
   "focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
@@ -194,15 +196,14 @@ const OPTION_CLASS =
 
 /* Single-select tabs replacing the quick door's free-text line: the same
  * selectable language as OPTION_CLASS (rounded-md, hairline, coral fill
- * on select) as a compact wrapping segmented set rather than full-width rows. */
+ * on select) as a compact wrapping segmented set rather than full-width rows.
+ * The greyed-out conflict state left with the exclusion rule (#53). */
 const TAB_CLASS =
   "flex min-h-11 cursor-pointer items-center justify-start gap-2 rounded-md border border-border bg-secondary " +
   "px-3 py-2.5 text-left text-sm font-medium text-foreground transition-colors duration-150 " +
   "hover:border-muted-foreground/50 " +
   "has-checked:border-brand has-checked:bg-brand has-checked:text-brand-foreground " +
-  "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring " +
-  // Conflicting need (new product ⟷ completion): grayed out and inert.
-  "has-disabled:pointer-events-none has-disabled:opacity-50";
+  "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring";
 
 /* The check box rendered inside each tab (fin `rounded-sm`), the
  * multi-select affordance. Border/checkmark decoupled from the box fill:
@@ -273,9 +274,9 @@ function AdvanceInner({ label, arrow = true }: { label: ReactNode; arrow?: boole
  * Honeypot (Rule 2.8): visually and AT-hidden; bots fill it, the schema
  * rejects anything non-empty. Shared by every door's form (Unit 04) so
  * the quick path and off-ramp capture carry the same anti-bot guard as
- * the qualifier's contact step.
+ * the qualifier's contact step, and by the waitlist band (#58).
  */
-function HoneypotField({
+export function HoneypotField({
   value,
   onChange,
 }: {
@@ -298,17 +299,52 @@ function HoneypotField({
 
 const MAILTO = `mailto:${MODAL_ESCAPE_HATCH.email}`;
 
+/**
+ * The Rule 2.7 escape hatch with the visitor's answers in the body, so a
+ * failed submit is one click from recovery. `subject` is optional: the
+ * waitlist band has no approved subject line of its own (build-note 36).
+ */
+export function fallbackMailto(
+  composed: readonly ComposedAnswer[],
+  subject?: string,
+): string {
+  const body = encodeURIComponent(
+    composed.map(({ label, value }) => `${label}\n${value}`).join("\n\n"),
+  );
+  return subject === undefined
+    ? `${MAILTO}?body=${body}`
+    : `${MAILTO}?subject=${encodeURIComponent(subject)}&body=${body}`;
+}
+
+/** The failure fallback's summary of what the visitor entered (Rule 2.7). */
+export function ComposedAnswers({
+  composed,
+}: {
+  composed: readonly ComposedAnswer[];
+}) {
+  return (
+    <dl className="mt-6 space-y-4 rounded-lg border border-border bg-secondary p-5">
+      {composed.map(({ label, value }) => (
+        <div key={label}>
+          <dt className={CAPTION_CLASS}>{label}</dt>
+          <dd className="mt-1 font-medium whitespace-pre-wrap text-foreground">
+            {value}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 interface QualificationModalProps {
   /** Fired after the native dialog closes; the provider unmounts us. */
   onClose: () => void;
   /**
    * Preselects one quick-door need — the service-card CTAs carry their
-   * card's service in here. Seeds initial state only: the visitor can
-   * clear or change it like any other selection, and its conflicting
-   * partner grays out through the same NEED_CONFLICTS path a manual
-   * pick takes.
+   * card's offering in here. Seeds initial state only: the visitor can
+   * clear or change it like any other selection.
    */
-  initialNeed?: NeedValue;
+  initialNeed?: QuickNeed;
 }
 
 /**
@@ -388,26 +424,14 @@ export function QualificationModal({
   const setAnswer = <K extends QuestionKey>(key: K, value: Answers[K]) =>
     setAnswers((current) => ({ ...current, [key]: value }));
 
-  /**
-   * Toggle a quick-door need on/off (multi-select, Sprint 03 adhoc).
-   * Adding one drops its mutually exclusive partner (NEED_CONFLICTS) so the
-   * new-product/completion pair can never both be set, even if the disabled
-   * guard were bypassed.
-   */
-  const toggleNeed = (value: NeedValue) =>
-    setContact((current) => {
-      if (current.projectTypes.includes(value)) {
-        return {
-          ...current,
-          projectTypes: current.projectTypes.filter((v) => v !== value),
-        };
-      }
-      const conflict = NEED_CONFLICTS[value];
-      const kept = conflict
-        ? current.projectTypes.filter((v) => v !== conflict)
-        : current.projectTypes;
-      return { ...current, projectTypes: [...kept, value] };
-    });
+  /** Toggle a quick-door need on/off (multi-select, Sprint 03 adhoc). */
+  const toggleNeed = (value: QuickNeed) =>
+    setContact((current) => ({
+      ...current,
+      projectTypes: current.projectTypes.includes(value)
+        ? current.projectTypes.filter((v) => v !== value)
+        : [...current.projectTypes, value],
+    }));
 
   const goNext = () => {
     if (isQuestionKey(screen) && answers[screen] !== undefined) {
@@ -537,11 +561,7 @@ export function QualificationModal({
   };
 
   const composed = composeAnswers(answers, contact);
-  const failureMailto = `${MAILTO}?subject=${encodeURIComponent(
-    MODAL_FAILURE_SUBJECT,
-  )}&body=${encodeURIComponent(
-    composed.map(({ label, value }) => `${label}\n${value}`).join("\n\n"),
-  )}`;
+  const failureMailto = fallbackMailto(composed, MODAL_FAILURE_SUBJECT);
 
   return (
     <dialog
@@ -647,39 +667,31 @@ export function QualificationModal({
                   <span className={CAPTION_CLASS}>
                     {MODAL_QUICK.messageLabel}
                   </span>
-                  {/* Multi-select tabs (optional), two levels: new product /
-                      product completion are mutually exclusive; product support
-                      and agentic system combine with either. Picks are stored
-                      as `project_types` → the Sheet's project_type column.
-                      Stacked on mobile, 2×2 from sm up. */}
+                  {/* Multi-select tabs (optional): the two offerings
+                      (#53), which combine freely. Picks are stored as
+                      `project_types` → the Sheet's project_type column.
+                      Stacked on mobile, side by side from sm up. */}
                   <div
                     role="group"
                     aria-label={MODAL_QUICK.messageLabel}
                     className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2"
                   >
-                    {MODAL_QUICK.needsOptions.map(({ value, label }) => {
-                      const conflict = NEED_CONFLICTS[value];
-                      const disabled =
-                        conflict !== undefined &&
-                        contact.projectTypes.includes(conflict);
-                      return (
-                        <label key={value} className={TAB_CLASS}>
-                          <input
-                            type="checkbox"
-                            name="quick_needs"
-                            value={value}
-                            checked={contact.projectTypes.includes(value)}
-                            disabled={disabled}
-                            onChange={() => toggleNeed(value)}
-                            className="peer sr-only"
-                          />
-                          <span aria-hidden="true" className={TAB_CHECK_CLASS}>
-                            <CheckIcon />
-                          </span>
-                          {label}
-                        </label>
-                      );
-                    })}
+                    {MODAL_QUICK.needsOptions.map(({ value, label }) => (
+                      <label key={value} className={TAB_CLASS}>
+                        <input
+                          type="checkbox"
+                          name="quick_needs"
+                          value={value}
+                          checked={contact.projectTypes.includes(value)}
+                          onChange={() => toggleNeed(value)}
+                          className="peer sr-only"
+                        />
+                        <span aria-hidden="true" className={TAB_CHECK_CLASS}>
+                          <CheckIcon />
+                        </span>
+                        {label}
+                      </label>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -980,16 +992,7 @@ export function QualificationModal({
             <p className="mt-4 text-base leading-relaxed text-foreground">
               {MODAL_FAILURE.body}
             </p>
-            <dl className="mt-6 space-y-4 rounded-lg border border-border bg-secondary p-5">
-              {composed.map(({ label, value }) => (
-                <div key={label}>
-                  <dt className={CAPTION_CLASS}>{label}</dt>
-                  <dd className="mt-1 font-medium whitespace-pre-wrap text-foreground">
-                    {value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            <ComposedAnswers composed={composed} />
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <button type="button" onClick={goBack} className={GHOST_CLASS}>
                 {MODAL_NAV.back}

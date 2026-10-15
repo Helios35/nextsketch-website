@@ -12,23 +12,17 @@ export const metadata: Metadata = {
 };
 
 /**
- * `/services/agentic-system` — decision-log **#30** (2026-08-28). The
- * site's second service route, and the only one whose segment is a
- * `ServiceSlug`: this page *is* the Agentic System service.
+ * `/services/agentic-system` — decision-log **#30** (2026-08-28): the
+ * page for **Agentic System Integration**, the lead offering since
+ * **#53** (2026-10-15).
  *
- * Its two anchored blocks are the **two depths** `/pricing` sells that
- * service at, which Taxonomy §1 records as positioning rather than an
- * implementation note and names this unit as the consumer of: **AI
- * Workflow Integration** (agents and custom tools dropped into
- * processes the business already runs) and **Internal Tool** (a full
- * product with a real interface and agents behind it). Both preselect
- * `agentic` in the modal (#29) — the modal asks what a visitor needs,
- * not how deep they want to go, and the depth is what the two price
- * points express.
- *
- * **No price on this page.** The two blocks name the two depths; the
- * close links to `/pricing`, which is where the figures live and stays
- * untouched by this unit.
+ * Its four anchored blocks are **example jobs** (#57): email triage,
+ * weekly reporting, quoting and intake, and document and data entry,
+ * each saying what the agent does and what we map first. Then what's
+ * included and what the monthly covers, and the price in the hero.
+ * Every CTA preselects `agentic`. The two depths of #29 (AI Workflow
+ * Integration, Internal Tool) and their anchors retired with #53; a
+ * link to either anchor still opens this page, at the top.
  *
  * Structure, surface and every solved trap live in `<ServicePage>`.
  * Nav and footer mount here, not in the layout, so the 404 keeps its

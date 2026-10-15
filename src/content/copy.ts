@@ -1,10 +1,14 @@
+import { SERVICES } from "@/content/services";
 import { ROUTES, sectionHref } from "@/lib/types";
-import type { AccentName, ProcessPhase } from "@/lib/types";
+import type { AccentName, ProcessPhase, ProcessPhaseSlug } from "@/lib/types";
 
 /**
  * Canonical site copy — Messaging Kit §05 (Rule 4.1: edits are owner
  * decisions, logged). Every user-facing string on the site lives in
- * src/content/*.ts; components never hardcode copy.
+ * src/content/*.ts; components never hardcode copy. Since the
+ * two-offerings brief (2026-10-15, #53 to #59) much of what the home
+ * page says traces to those rows rather than to §05; Rule 4.1 lists
+ * which.
  */
 
 export const SITE = {
@@ -12,13 +16,14 @@ export const SITE = {
   legalName: "Next Sketch LLC",
   email: "hello@nextsketch.com",
   /**
-   * Meta copy drafted per PRD N4 (software product development
-   * positioning) — not in Messaging Kit §05; pending owner approval,
-   * see briefs/build-notes/01-foundation.md.
+   * The site's search title and description, rewritten in the words
+   * buyers search for (decision-log #59, owner copy 2026-10-15). They
+   * replace the 2026-06 drafts approved under #3, which predated #19
+   * and carried its em dashes.
    */
-  title: "NextSketch — Software Products from Idea to Production",
+  title: "NextSketch | Agentic Systems and AI Automation for Small Business",
   description:
-    "NextSketch builds software products and agentic systems from idea to production — and stays. A product development partner for founders and small-to-medium businesses.",
+    "We map how your business runs, then build AI agents into the work and keep them improving. AI automation and AI product development, based in Downers Grove, IL.",
 } as const;
 
 /**
@@ -42,7 +47,7 @@ export const NAV = {
    * narrowly. That call was about conversion — the hero CTA and #start
    * carry it, and a third conversion button was redundant. This is
    * navigation to a page, not a conversion affordance, so it takes the
-   * de-emphasized ghost variant rather than the hero's white advance
+   * de-emphasized ghost variant rather than the hero's stone advance
    * surface, and the nav still has no conversion CTA.
    *
    * It stays in `items` as well, so the menu keeps its Pricing row.
@@ -114,12 +119,14 @@ export const FOOTER = {
 /**
  * 404 copy — not in Messaging Kit §05; drafted in brand voice
  * (Brand Philosophy §8) — DRAFT pending owner approval, see
- * briefs/build-notes/02-page-shell.md.
+ * briefs/build-notes/02-page-shell.md. `body` is owner copy (#59,
+ * 2026-10-15): the old line said the site was one page, which stopped
+ * being true with `/pricing` (#23).
  */
 export const NOT_FOUND = {
   eyebrow: "404",
   headline: "This page doesn't exist.",
-  body: "NextSketch lives on a single page now — everything you're looking for is there.",
+  body: "That page isn't here. Head back to see what we build.",
   cta: "Go to the page",
 } as const;
 
@@ -171,16 +178,18 @@ export const HERO = {
  * - supportingLine: owner-supplied, verbatim (#51, 2026-10-14). It
  *   replaced a builder draft ("Not a demo, not a pilot…") the same day,
  *   which had replaced Messaging Kit §03 Message 4 (The Relationship).
- * - capabilities: the four canonical services (Taxonomy §1, exact casing),
- *   shown as the slow capability strip sanctioned in UX spec §Motion inventory
- *   — no invented numbers or social proof (Brand Philosophy §10, Rule 4.3).
- *   **Aligned to the quick door's names by decision-log #28 (2026-08-28).**
- *   The strip carried the long Messaging Kit §05 forms while the cards
- *   carried short ones and the modal carried a third set; a visitor read
- *   three names for one thing before being asked to pick. This is a Rule
- *   4.1 edit to canonical §05 copy, so — like the hero headline under #18
- *   — **do not "correct" these back to the Kit's long forms.** The Kit
- *   lives outside this repo and is owner-owned to reconcile.
+ * - audienceLine: owner copy (#58, 2026-10-15), who the site is for. It
+ *   sits under the supporting line, which is where it fit: the brief
+ *   allowed it into the hero only if the hero still fit at 1024x768,
+ *   and the right column is shorter than the headline column there, so
+ *   it adds no height (build-note 36 has the measurements).
+ * - capabilities: the two offerings (Taxonomy §1, exact casing, #53),
+ *   shown as the slow capability strip sanctioned in UX spec §Motion
+ *   inventory — no invented numbers or social proof (Brand Philosophy
+ *   §10, Rule 4.3). **Read from `SERVICES`**, so the strip, the cards
+ *   and `/pricing` cannot disagree, which is the one-vocabulary rule of
+ *   #27/#28 carried onto the two names. The Messaging Kit (outside this
+ *   repo) still carries older names: **do not "correct" these to it.**
  * - cta: the Rule 3.1 primary; opens the qualification modal.
  *
  * backgroundVideo/backgroundPoster are config, not copy — the
@@ -196,12 +205,9 @@ export const LANDING = {
   accentWords: ["work", "in", "production"],
   supportingLine:
     "Software your business runs on that we maintain",
-  capabilities: [
-    "New Product",
-    "Product Completion",
-    "Product Support",
-    "Agentic System",
-  ],
+  audienceLine:
+    "For small and medium businesses that want AI doing real work, not another demo.",
+  capabilities: SERVICES.map((service) => service.name),
   cta: "Start a Conversation",
   /** Accessible name for the decorative capability strip. */
   capabilitiesLabel: "What we build",
@@ -209,32 +215,43 @@ export const LANDING = {
   backgroundPoster: "/hero-loop-poster.jpg",
 } as const;
 
+/**
+ * Why (#why) — process mapping (decision-log **#55**, owner-approved
+ * 2026-10-15). The section keeps its slot right after Work, its `#why`
+ * id and its "Why" nav label; what it argues changed. It no longer
+ * traces to Messaging Kit §05: the old "most firms build what you ask
+ * for" reframe is superseded by the thing that sets NextSketch apart,
+ * mapping how a business really works before building anything.
+ */
 export const MANIFESTO = {
-  /**
-   * Section eyebrow — mono micro-label above the headline (Redesign
-   * Unit 02). DRAFT in brand voice pending owner approval, as are the
-   * other section eyebrows added this unit.
-   */
-  eyebrow: "The problem",
-  headline:
-    "Most firms build what you ask for. We help you figure out what you actually need.",
+  /** Section eyebrow — mono micro-label above the headline. Owner copy (#55). */
+  eyebrow: "Process mapping",
+  headline: "Most firms drop agents in and hope. We map first.",
   /**
    * The headline's coral payoff phrase (docs/04-ux-spec.md
    * §Typography), matched against `headline` verbatim. Edit the two
    * together: a phrase that stops matching renders the headline
    * unaccented. Moved here from manifesto-section.tsx (build-note 34).
    */
-  accentPhrase: "actually need",
+  accentPhrase: "map first",
   body: [
-    "Most software projects fail for the same reasons: the idea wasn't validated before building started, the firm handed off at launch and disappeared, or nobody understood the business well enough to build the right thing.",
-    "We fix all three. We validate first. We build through a proven workflow. We don't leave when launch happens. We're a partner, not a vendor.",
+    "We come from product and UX, so we start where good products start: how the work really happens. Using the same process maps UX teams use, we trace how a request moves from inbox to done and mark every step someone repeats by hand.",
+    "That map shows where an agent saves real time and where it would just add noise. We build agents into those spots, check them against your live work, and keep tuning them every month. If the map shows nothing worth building, we'll tell you.",
   ],
 } as const;
 
+/**
+ * Process — Map, Build, Validate, Optimize (decision-log **#55**, owner
+ * copy 2026-10-15). Read by `/`'s Process section and by both service
+ * routes' §How it works. It no longer traces to Messaging Kit §05:
+ * Strategy became Map, Partner became Optimize, and Validate is
+ * unchanged. Slugs follow the names (Taxonomy §2), so none is a fossil;
+ * they appear in no URL and no payload.
+ */
 export const PROCESS = {
-  /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
+  /** Section eyebrow. Drafted in Redesign Unit 02; owner copy since #55. */
   eyebrow: "How we work",
-  headline: "Strategy. Build. Validate. Stay.",
+  headline: "Map. Build. Validate. Optimize.",
   /**
    * The headline's coral payoff phrase, matched against `headline`
    * verbatim; the period rides along so the final beat lands as one
@@ -242,22 +259,23 @@ export const PROCESS = {
    * §How it works, so both land the same word. Moved here from those
    * two components (build-note 34).
    */
-  accentPhrase: "Stay.",
+  accentPhrase: "Optimize.",
   /**
-   * Aside shown with the Validate phase. Originally the handwritten
-   * margin annotation of the retired sketch system; the redesign
-   * (Unit 02) reinterprets the same DRAFT text as the design system's
-   * gold-italic aside — the one sanctioned italic. Still pending
-   * owner approval.
+   * The aside, in the design system's coral-italic treatment (the one
+   * sanctioned italic). Originally the handwritten margin note of the
+   * retired sketch system. It moved from Validate to Map with #55, and
+   * `annotationPhase` says where it renders so neither component
+   * carries the phase as a literal.
    */
   annotation: "this is the part most firms skip",
+  annotationPhase: "map" satisfies ProcessPhaseSlug,
   phases: [
     {
       order: "01",
-      slug: "strategy",
-      name: "Strategy",
+      slug: "map",
+      name: "Map",
       description:
-        "We get into your business. Understand what you're trying to build. Validate the idea. Define exactly what needs to be built and why. No wasted effort — we move into build with clarity.",
+        "We map your process, your team, and how the work really gets done. Every step someone repeats by hand gets marked. That's where agents go, and where they don't.",
       accent: "gold",
     },
     {
@@ -265,7 +283,7 @@ export const PROCESS = {
       slug: "build",
       name: "Build",
       description:
-        "We execute through our proven internal workflow using AI-accelerated development. Fast, clean, and built correctly the first time.",
+        "We build what we mapped, with an AI-accelerated workflow. Agents go into the tools you already use, or into a new product built around them.",
       accent: "lavender",
     },
     {
@@ -278,14 +296,25 @@ export const PROCESS = {
     },
     {
       order: "04",
-      slug: "partner",
-      name: "Partner",
+      slug: "optimize",
+      name: "Optimize",
       description:
-        "We stay. Retainer-based. We evolve the product, manage what was built, and tackle what comes next — as long as the relationship is active.",
+        "We stay. Every month we watch what's running, fix what breaks when your tools change, and tune the agents so they keep getting better.",
       accent: "sage",
     },
   ] as const satisfies readonly ProcessPhase[],
 } as const;
+
+/**
+ * The proof band directly under the hero, above Work (decision-log
+ * **#58**). Three short claims, owner copy 2026-10-15; a band, not a
+ * section, so it takes no index, no heading and no nav item.
+ */
+export const PROOF = [
+  "Live in weeks, not quarters",
+  "Prices on the page",
+  "We stay after launch",
+] as const;
 
 /*
  * Selected-work (#work) copy moved to src/content/work.ts when the
@@ -393,13 +422,17 @@ export const FINAL_CTA = {
   cta: "Start a Conversation",
 } as const;
 
-/** Accent assignment sanity surface for downstream units (Taxonomy §2). */
+/**
+ * Accent assignment sanity surface for downstream units (Taxonomy §2).
+ * Dormant dead data (build-note 34, F10): never rendered. Its keys
+ * follow the phase slugs (#55) only so it keeps compiling.
+ */
 export const PROCESS_ACCENTS: Record<
   (typeof PROCESS.phases)[number]["slug"],
   AccentName
 > = {
-  strategy: "gold",
+  map: "gold",
   build: "lavender",
   validate: "rose",
-  partner: "sage",
+  optimize: "sage",
 };

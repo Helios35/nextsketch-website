@@ -1,6 +1,7 @@
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { ServiceCta } from "@/components/service-cta";
+import { WaitlistBand } from "@/components/waitlist-band";
 import {
   SERVICE_NEED,
   SERVICE_PAGE_HREF,
@@ -10,6 +11,7 @@ import {
   SERVICES_EYEBROW,
   SERVICES_HEADLINE,
 } from "@/content/services";
+import type { Service } from "@/lib/types";
 
 /**
  * The promise the section exists to land takes the coral payoff
@@ -22,8 +24,11 @@ import {
 const ACCENT_PHRASE = SERVICES_ACCENT_PHRASE;
 
 /**
- * Services (#services) — name the four engagements
- * (docs/03-site-architecture.md row 6). Rebuilt in place to the
+ * Services (#services) — the two offerings (decision-log #53;
+ * docs/03-site-architecture.md row 6), agentic first, each card naming
+ * the offering, what it is, what it does, its published price, and (on
+ * the agentic card) the four example jobs its page shows (#57). The
+ * waitlist band sits under the cards (#58). Rebuilt in place to the
  * hero-derived design system (Redesign Unit 02): a transparent band,
  * built to sit over the site's fixed scroll-synced video backdrop
  * (owner direction 2026-07-06). That backdrop is retired
@@ -67,14 +72,19 @@ export function ServicesSection() {
             </span>
           </SectionHeading>
         </ScrollReveal>
-        <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 xl:grid-cols-4">
-          {SERVICES.map((service, i) => (
+        {/* Two cards since #53: side by side from md. The 4-up `xl`
+            step left with the other two services. */}
+        <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2">
+          {/* Widened to `Service`: `as const satisfies` narrows each entry
+              to its own literal type, so `examples` would not exist on
+              the card that omits it. */}
+          {SERVICES.map((service: Service, i) => (
             <ScrollReveal
               key={service.slug}
               delay={120 + i * 80}
               className="h-full"
             >
-              {/* flex-col + mt-auto on the CTA row so the four CTAs
+              {/* flex-col + mt-auto on the CTA row so the two CTAs
                   line up across cards whose copy runs to different
                   lengths. */}
               <div className="flex h-full flex-col rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
@@ -86,18 +96,13 @@ export function ServicesSection() {
                   {String(i + 1).padStart(2, "0")}
                 </p>
                 {/* One line at every breakpoint (owner direction
-                    2026-08-04). nowrap is the guarantee; the xl step
-                    back down to text-lg is what keeps that guarantee
-                    from becoming an overflow. The 4-up grid starts at
-                    xl, where cards are at their narrowest. Measured in
-                    the retired Space Grotesk, the longest name cleared
-                    the card by under 4px at 20px, which the swap-in
-                    font fallback would have eaten, and by ~24px at
-                    18px. Inter semibold with tight tracking
-                    (decision-log #47) sets it about 5% narrower
-                    (164.9px against 173.7px at 18px), so the margin
-                    only grew. 1- and 2-up layouts have room to spare
-                    and keep the larger size. */}
+                    2026-08-04). nowrap is the guarantee. Measured for
+                    the #53 names in Inter semibold with tight tracking:
+                    the longer, "Agentic System Integration", sets at
+                    224px at 18px against a 264px column at 360, and at
+                    249px at 20px against a 280px column at 768, the two
+                    narrowest cards. The `xl:text-lg` step back down
+                    existed for the retired 4-up grid and went with it. */}
                 {/* The name is the card's second affordance
                     (decision-log #30): the CTA below still opens the
                     modal on this service, and the name now opens the
@@ -117,7 +122,7 @@ export function ServicesSection() {
                     here" work. An underline adds no width, so the
                     measured one-line nowrap guarantee above still
                     holds. */}
-                <h3 className="mt-6 font-sans text-lg font-semibold tracking-tight whitespace-nowrap text-foreground md:text-xl xl:text-lg">
+                <h3 className="mt-6 font-sans text-lg font-semibold tracking-tight whitespace-nowrap text-foreground md:text-xl">
                   <a
                     href={SERVICE_PAGE_HREF[service.slug]}
                     className="underline decoration-muted-foreground underline-offset-4 transition-colors duration-150 hover:text-brand hover:decoration-brand focus-visible:text-brand focus-visible:decoration-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -125,9 +130,48 @@ export function ServicesSection() {
                     {service.name}
                   </a>
                 </h3>
-                <p className="mt-3 text-base leading-relaxed text-foreground">
+                {/* What the offering is, in buyer words: secondary text
+                    under the name, the step the system keeps for it. */}
+                <p className="mt-2 text-base font-medium text-muted-foreground">
+                  {service.subtitle}
+                </p>
+                <p className="mt-4 text-base leading-relaxed text-foreground">
                   {service.description}
                 </p>
+                {/* The published price (#53): figures in Inter
+                    tabular-nums (fin §1), in linen, never coral (coral
+                    stays on `/pricing`'s monthly figures, where the
+                    accent rules put it). Stacked on a phone, where the
+                    pair does not fit one line; side by side from sm,
+                    with a hairline dividing upfront from monthly. */}
+                <ul className="mt-6 flex flex-col gap-1 font-sans text-base font-medium text-foreground tabular-nums sm:flex-row sm:items-baseline sm:gap-4">
+                  {service.price.map((item, j) => (
+                    <li
+                      key={item}
+                      className={j > 0 ? "sm:border-l sm:border-border sm:pl-4" : undefined}
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                {/* The four example jobs, previewed (#57). A list, so
+                    the system's coral list diamond marks each. */}
+                {service.examples !== undefined && (
+                  <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5">
+                    {service.examples.map((example) => (
+                      <li
+                        key={example}
+                        className="flex items-center gap-2.5 text-sm text-muted-foreground"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
+                        />
+                        {example}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <div className="mt-auto pt-6">
                   <ServiceCta
                     label={SERVICES_CTA}
@@ -139,6 +183,7 @@ export function ServicesSection() {
             </ScrollReveal>
           ))}
         </div>
+        <WaitlistBand />
       </div>
     </section>
   );

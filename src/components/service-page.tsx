@@ -9,6 +9,7 @@ import { ServiceBlockVisual } from "@/components/service-block-visual";
 import { ServiceCta } from "@/components/service-cta";
 import { ServiceProcess } from "@/components/service-process";
 import { FINAL_CTA, LANDING, NAV } from "@/content/copy";
+import { SERVICE_PAGE_LABELS } from "@/content/service-pages";
 import { SERVICES_CTA } from "@/content/services";
 import type { ServicePageContent } from "@/lib/types";
 
@@ -50,17 +51,59 @@ const MEASURE = "mx-auto w-full max-w-6xl";
 const BODY_CLASS = "text-base leading-relaxed text-foreground md:text-lg";
 
 /**
- * A service route, whole — decision-log **#30** (2026-08-28). Both
- * pages are this component plus their own metadata; the routes are thin
- * for the reason `/pricing` is thin.
+ * One list card in the agentic page's offer band (#57): "What you get"
+ * or "What the monthly covers". The site's card recipe with the
+ * How-it-works card title and the deliverables list's coral diamonds,
+ * so nothing here is new vocabulary.
+ */
+function OfferList({
+  title,
+  items,
+  delay,
+}: {
+  title: string;
+  items: readonly string[];
+  delay: number;
+}) {
+  return (
+    <ScrollReveal delay={delay} className="h-full">
+      <div className="h-full rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
+        <h2 className="font-sans text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+          {title}
+        </h2>
+        <ul className="mt-6 space-y-4">
+          {items.map((item) => (
+            <li key={item} className="flex gap-4">
+              <span
+                aria-hidden="true"
+                className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
+              />
+              <span className="text-base leading-relaxed text-foreground">
+                {item}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </ScrollReveal>
+  );
+}
+
+/**
+ * A service route, whole — decision-log **#30** (2026-08-28), one
+ * offering per route since **#53**. Both pages are this component plus
+ * their own metadata; the routes are thin for the reason `/pricing` is
+ * thin.
  *
- * **Four blocks, owner-specified (2026-08-28):** hero → the anchored
- * topic blocks → how it works → close. Nothing else. No proof band, no
- * FAQ, no testimonials, and **no price and no pricing link** — three of
- * those have no approved content, and the close's link to `/pricing`
- * was removed by the owner (2026-08-28) so the close carries one
- * action. `/pricing` is still reached from the nav bar's featured
- * button and the footer, on every page.
+ * **The blocks, owner-specified (2026-08-28), extended by #53 and
+ * #57:** hero → the anchored topic blocks → (the agentic page only)
+ * what you get and what the monthly covers → how it works → close. No
+ * proof band, no FAQ, no testimonials. **The price is on the page now**
+ * (#53, #56): one line in the hero, under the intro, in the `/pricing`
+ * term line's treatment, read from the same figures `/pricing` reads.
+ * The close's link to `/pricing` stays removed (owner, 2026-08-28), so
+ * the close carries one action; `/pricing` is still the hero's second
+ * button, the nav bar's featured button and a footer link.
  *
  * **The wordmark handoff is `/pricing`'s, reproduced exactly, and the
  * brief says so in as many words.** A page with no hero has to render
@@ -246,14 +289,40 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                   )}
                 </span>
               </SectionHeading>
-              {/* Absent on the grouped route, which has no approved
-                    group-level description (Rule 4.3). */}
+              {/* The lead line (#53): what the offering is, in the
+                    buyer words its card's subtitle uses, a step above
+                    the body in weight and size. */}
+              {page.leadLine !== undefined && (
+                <p
+                  className="mt-8 max-w-2xl text-lg leading-relaxed font-medium text-foreground motion-safe:animate-rise-in md:text-xl"
+                  style={{ animationDelay: "120ms" }}
+                >
+                  {page.leadLine}
+                </p>
+              )}
+              {/* Each field renders nothing when absent (Rule 4.3). */}
               {page.intro !== undefined && (
                 <p
-                  className={`mt-8 max-w-2xl motion-safe:animate-rise-in ${BODY_CLASS}`}
+                  className={`${page.leadLine !== undefined ? "mt-4" : "mt-8"} max-w-2xl motion-safe:animate-rise-in ${BODY_CLASS}`}
                   style={{ animationDelay: "120ms" }}
                 >
                   {page.intro}
+                </p>
+              )}
+              {/* The published price (#53, #56), in the treatment
+                  `/pricing` gives its term: the coral list marker
+                  beside a medium-weight line, so the figure and its
+                  commitment read as one stated fact, not a footnote. */}
+              {page.price !== undefined && (
+                <p
+                  className="mt-6 flex max-w-2xl gap-3 text-base leading-relaxed text-foreground motion-safe:animate-rise-in"
+                  style={{ animationDelay: "200ms" }}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
+                  />
+                  <span className="font-medium">{page.price}</span>
                 </p>
               )}
               {/* Primary plus Pricing (owner direction, 2026-08-30):
@@ -354,11 +423,26 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                     <p className={`mt-4 max-w-lg ${BODY_CLASS}`}>
                       {block.description}
                     </p>
+                    {/* "What we map first" (#57): the agentic examples'
+                        process-mapping step, in §Surfaces' sub-panel
+                        recipe (a `secondary` panel inside the card), so
+                        the map reads as its own part of each job. */}
+                    {block.mapFirst !== undefined && (
+                      <div className="mt-6 max-w-lg rounded-lg border border-border bg-secondary p-5">
+                        <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
+                          {SERVICE_PAGE_LABELS.mapFirst}
+                        </p>
+                        <p className="mt-2 text-base leading-relaxed text-foreground">
+                          {block.mapFirst}
+                        </p>
+                      </div>
+                    )}
                   </ScrollReveal>
-                  {/* The deliverables. Owner-owed (Rule 4.3): a block
-                      with no approved bullets renders no list *and no
-                      frame*, so the row simply ends at its description.
-                      They live in `src/content/service-pages.ts`. */}
+                  {/* The deliverables (owner copy since #53). A block
+                      with no bullets, like the agentic examples,
+                      renders no list *and no frame* (Rule 4.3), so the
+                      row ends at its description and its panel. They
+                      live in `src/content/service-pages.ts`. */}
                   {block.included.length > 0 && (
                     <ul className="mt-8 max-w-lg space-y-4">
                       {block.included.map((item, j) => (
@@ -419,6 +503,26 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
           })}
         </div>
       </div>
+
+      {/* What you get and what the monthly covers (#57): the agentic
+          page's two lists, side by side from md, before How it works.
+          The product page carries its deliverables in its blocks. */}
+      {page.offer !== undefined && (
+        <div className="w-full px-6 pb-24 sm:px-8 sm:pb-28 lg:px-16 lg:pb-32">
+          <div className={`${MEASURE} grid gap-4 md:grid-cols-2`}>
+            <OfferList
+              title={SERVICE_PAGE_LABELS.included}
+              items={page.offer.included}
+              delay={0}
+            />
+            <OfferList
+              title={SERVICE_PAGE_LABELS.monthlyCovers}
+              items={page.offer.monthlyCovers}
+              delay={120}
+            />
+          </div>
+        </div>
+      )}
       <ServiceProcess />
 
       <section
