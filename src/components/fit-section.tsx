@@ -48,7 +48,7 @@ export function FitSection() {
       <div className="mt-12 space-y-6 md:mt-16 lg:ml-auto lg:max-w-3xl">
         {FIT.body.map((paragraph, i) => (
           <Reveal key={paragraph} delay={i * 0.1}>
-            <p className="text-lg leading-relaxed text-ink/80">{paragraph}</p>
+            <p className="text-lg leading-relaxed text-foreground">{paragraph}</p>
           </Reveal>
         ))}
       </div>

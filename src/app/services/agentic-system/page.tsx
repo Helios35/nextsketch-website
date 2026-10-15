@@ -32,7 +32,8 @@ export const metadata: Metadata = {
  *
  * Structure, surface and every solved trap live in `<ServicePage>`.
  * Nav and footer mount here, not in the layout, so the 404 keeps its
- * own light paper surface.
+ * own bare surface (dark since decision-log #47; it was the one light
+ * paper page before).
  *
  * Server component — prerendered to static HTML. Decision #8 holds.
  */

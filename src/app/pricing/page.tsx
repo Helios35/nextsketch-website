@@ -15,9 +15,10 @@ export const metadata: Metadata = {
 
 /**
  * Presentation marker, not copy: the promise the page exists to make
- * takes the gold payoff treatment (docs/04-ux-spec.md §Typography — at
- * most a couple of accent words inside a white display heading).
- * Degrades to an unaccented headline if the copy changes.
+ * takes the coral payoff treatment (docs/04-ux-spec.md §Typography: at
+ * most a couple of `brand` words inside a linen display heading,
+ * decision-log #47). Degrades to an unaccented headline if the copy
+ * changes.
  */
 const ACCENT_PHRASE = "upfront";
 
@@ -31,8 +32,9 @@ const ACCENT_PHRASE = "upfront";
  * qualifies.**
  *
  * Nav and footer mount here rather than in `src/app/layout.tsx`, the
- * same way `page.tsx` does it, so the 404 keeps its own light paper
- * surface. `QualificationModalProvider` is already in the layout, so
+ * same way `page.tsx` does it, so the 404 keeps its own bare surface
+ * (dark since decision-log #47; it was the one light paper page
+ * before). `QualificationModalProvider` is already in the layout, so
  * every tier CTA reaches the modal without a second provider.
  *
  * No footage is mounted: the site's only video is the home page hero's
@@ -83,9 +85,9 @@ export default function Pricing() {
 
   return (
     <>
-      {/* The viewport-fixed gold glow (#35). The section and band
-          backgrounds below are transparent so it shows through — the
-          page's ground is the layout's `ink`. */}
+      {/* The viewport-fixed coral glow (#35, recoloured by #47). The
+          section and band backgrounds below are transparent so it shows
+          through: the page's ground is the layout's `background`. */}
       <PageGlow />
       <SiteNav />
       <main className="grow">
@@ -97,7 +99,7 @@ export default function Pricing() {
             <header>
               <a
                 href={NAV.home}
-                className="pointer-events-auto inline-flex px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-8 lg:px-16"
+                className="pointer-events-auto inline-flex px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-8 lg:px-16"
               >
                 <BrandWordmark className="h-7 w-auto" />
               </a>
@@ -115,33 +117,36 @@ export default function Pricing() {
                 ) : (
                   <>
                     {headline.slice(0, phraseStart)}
-                    <span className="text-gold">{ACCENT_PHRASE}</span>
+                    <span className="text-brand">{ACCENT_PHRASE}</span>
                     {headline.slice(phraseStart + ACCENT_PHRASE.length)}
                   </>
                 )}
               </span>
             </SectionHeading>
             <p
-              className="mt-8 max-w-2xl text-base leading-relaxed text-white/70 motion-safe:animate-rise-in md:text-lg"
+              className="mt-8 max-w-2xl text-base leading-relaxed text-foreground motion-safe:animate-rise-in md:text-lg"
               style={{ animationDelay: "120ms" }}
             >
               {PRICING.intro}
             </p>
-            {/* The commitment, at full-strength white against the /70
-                intro and behind the system's gold list marker. It is
-                deliberately not a muted footnote and not the gold-italic
-                aside: a term that hides is the surprise invoice Brand
-                Philosophy §6 rejects, and the aside is the hero's
-                decorative device, not a disclosure treatment. */}
+            {/* The commitment, in `foreground` at medium weight behind
+                the system's coral list marker (decision-log #47). The
+                intro above it is `foreground` too now that fin has one
+                body step, so the weight is what keeps the term the
+                emphasized line, as white once did against white/70. It is
+                deliberately not a muted footnote and not the coral
+                serif-italic aside: a term that hides is the surprise
+                invoice Brand Philosophy §6 rejects, and the aside is the
+                hero's decorative device, not a disclosure treatment. */}
             <p
-              className="mt-6 flex max-w-2xl gap-3 text-base leading-relaxed text-white motion-safe:animate-rise-in"
+              className="mt-6 flex max-w-2xl gap-3 text-base leading-relaxed text-foreground motion-safe:animate-rise-in"
               style={{ animationDelay: "200ms" }}
             >
               <span
                 aria-hidden="true"
-                className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
+                className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
               />
-              <span>{PRICING.term}</span>
+              <span className="font-medium">{PRICING.term}</span>
             </p>
           </div>
         </section>

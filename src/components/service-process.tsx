@@ -4,11 +4,12 @@ import { PROCESS } from "@/content/copy";
 
 /**
  * Presentation marker, not copy: the retention promise the headline
- * builds to takes the gold payoff treatment (docs/04-ux-spec.md
- * §Typography). The period rides along so the final beat lands as one
- * gold unit after three white ones — the same phrase `ProcessSection`
- * accents on `/`, so the two surfaces land the same word. Degrades to
- * an unaccented headline if the canonical copy changes.
+ * builds to takes the coral payoff treatment (docs/04-ux-spec.md
+ * §Typography, decision-log #47). The period rides along so the final
+ * beat lands as one coral unit after three linen ones: the same phrase
+ * `ProcessSection` accents on `/`, so the two surfaces land the same
+ * word. Degrades to an unaccented headline if the canonical copy
+ * changes.
  */
 const ACCENT_PHRASE = "Stay.";
 
@@ -47,7 +48,7 @@ const MEASURE = "mx-auto w-full max-w-6xl";
  * on a route that also links to `/#process`, and would import the home
  * page's section numbering onto a page that has none. The **content is
  * reused, the component is not** — this reads the same `PROCESS.phases`,
- * the same headline and the same gold-italic aside, so a phase edit
+ * the same headline and the same coral serif-italic aside, so a phase edit
  * still lands in one place (`src/content/copy.ts`).
  *
  * **Layout is adapted from an owner-supplied reference** (2026-08-28),
@@ -62,23 +63,26 @@ const MEASURE = "mx-auto w-full max-w-6xl";
  *   phase, and inventing one is Rule 4.3.
  * - **Three steps.** The process is four phases and has been since
  *   Taxonomy §2; the grid takes four columns, not three.
- * - **Its rounded cards, pill eyebrow and grey card fill.** Squared is
- *   the shape of the brand, the eyebrow is the mono micro-label, and
- *   the fill is this system's glass card.
+ * - **Its pill eyebrow and grey card fill.** The eyebrow is the mono
+ *   micro-label, and the fill is this system's `card`. Its rounded
+ *   cards are no longer refused: fin's `rounded-xl` is the card radius
+ *   since decision-log #48.
  *
- * The numeral is `phase.order` at display scale on the white alpha
- * ladder, `aria-hidden` because it is the reference's visual scaffold
- * and the reading order already carries the sequence. On `/` the same
+ * The numeral is `phase.order` at display size in `muted-foreground`,
+ * the text floor (#47: there is no dimmer legal text step), set in
+ * Inter like every figure, `aria-hidden` because it is the reference's
+ * visual scaffold and the reading order already carries the sequence.
+ * On `/` the same
  * number is announced, because there it is the accordion row's only
  * position marker.
  *
- * **Cards are solid `surface`, not §Surfaces' translucent-plus-blur.**
+ * **Cards are solid `card`, not §Surfaces' translucent-plus-blur.**
  * That recipe exists so a card reads over moving footage; the
  * service routes mount none, so there is nothing
  * behind the card to blur. Same call, same reason, as the Work band
  * (build-note 20) and the `/pricing` tiers (23). **No text shadow on
- * the heading** for the matching reason: it sits on plain ink, where
- * §Typography bans it.
+ * the heading** for the matching reason: it sits on plain `background`,
+ * where §Typography bans it.
  *
  * Server component. Entrances are the shared `ScrollReveal` at the hero
  * stagger (heading 0ms, cards 120 + i·80ms).
@@ -105,7 +109,7 @@ export function ServiceProcess() {
               ) : (
                 <>
                   {headline.slice(0, phraseStart)}
-                  <span className="text-gold">{ACCENT_PHRASE}</span>
+                  <span className="text-brand">{ACCENT_PHRASE}</span>
                   {headline.slice(phraseStart + ACCENT_PHRASE.length)}
                 </>
               )}
@@ -125,15 +129,15 @@ export function ServiceProcess() {
               <div className="flex h-full flex-col">
                 <p
                   aria-hidden="true"
-                  className="text-5xl leading-[1.05] font-medium tracking-tight text-white/20 md:text-6xl"
+                  className="font-sans text-5xl leading-[1.05] font-medium tracking-tight text-muted-foreground tabular-nums md:text-6xl"
                 >
                   {phase.order}
                 </p>
-                <div className="mt-5 flex grow flex-col border border-white/15 bg-surface p-6 transition-colors duration-150 hover:border-white/30 md:p-8">
-                  <h3 className="text-xl font-medium tracking-tight text-white md:text-2xl">
+                <div className="mt-5 flex grow flex-col rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
+                  <h3 className="font-sans text-xl font-semibold tracking-tight text-foreground md:text-2xl">
                     {phase.name}
                   </h3>
-                  <p className="mt-3 text-base leading-relaxed text-white/70">
+                  <p className="mt-3 text-base leading-relaxed text-foreground">
                     {phase.description}
                   </p>
                   {/* The one sanctioned italic (§Color), on the one phase
@@ -141,7 +145,7 @@ export function ServiceProcess() {
                     differentiator is not dropped on the pages a search
                     visitor lands on first. */}
                   {phase.slug === "validate" && (
-                    <p className="mt-5 text-gold italic">
+                    <p className="mt-5 font-serif text-brand italic">
                       {PROCESS.annotation}
                     </p>
                   )}

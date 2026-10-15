@@ -6,14 +6,13 @@ import { NOT_FOUND } from "@/content/copy";
 /**
  * Custom 404 per the sitemap (docs/03-site-architecture.md): the
  * root not-found handles every unmatched URL and routes visitors
- * back to the page. Rendered on its own light paper surface since the
- * layout body is now the dark landing theme.
+ * back to the page. Rendered dark on the `background` ground in
+ * `foreground` text like every other route (decision-log #47: the site
+ * is dark only, so the 404 no longer carries its own light surface).
  */
 export default function NotFound() {
   return (
-    /* [color-scheme:light] — the site-wide dark color-scheme (globals)
-       must not leak dark scrollbars/controls onto the one light page. */
-    <main className="flex grow items-center bg-paper text-ink [color-scheme:light]">
+    <main className="flex grow items-center bg-background text-foreground">
       <Container className="py-24">
         <SectionHeading as="h1" eyebrow={NOT_FOUND.eyebrow}>
           {NOT_FOUND.headline}

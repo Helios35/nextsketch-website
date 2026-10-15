@@ -11,12 +11,13 @@ interface HeroLoopProps {
 }
 
 /**
- * Hero footage (decision-log #46, owner call 2026-10-05): one silent
- * loop that plays on its own — rotating studio shot, then strategist,
- * builder and partner, joined by dissolves. It replaces the
- * scroll-scrubbed orbit and the scroll-scrubbed backdrop behind the
- * lower sections; nothing on the site is scroll-linked to video any
- * more, and this is the only video the site mounts.
+ * Hero footage (decision-log #46, owner call 2026-10-05; footage swapped
+ * by #50, 2026-10-14): one silent loop that plays on its own. Five
+ * motion-graphics shots in the fin dark palette: a process map draws
+ * itself and becomes a finished map, an app screen draws itself and
+ * becomes the finished app, and the camera pulls back to a small team
+ * using it. Nothing on the site is scroll-linked to video, and this is
+ * the only video the site mounts.
  *
  * **The seam is in the file, not here.** The clip is built so its last
  * frame flows into its first, so the native `loop` attribute is the
@@ -44,8 +45,19 @@ interface HeroLoopProps {
  * text: it is decorative paint behind it, not part of its layout.
  *
  * Decorative by contract (aria-hidden); the hero's image-band treatment
- * (ink/40 overlay + bottom scrim) rides above the footage so the white
- * headline stays legible on every frame.
+ * rides above the footage: a `background`/25 overlay plus the
+ * `bg-hero-scrim` utility, near-solid through the text band and released
+ * above it. Tuned for this footage by measurement (globals.css explains
+ * the numbers): every line of hero text, coral included, holds 4.5:1 on
+ * every frame of the loop.
+ *
+ * **It dissolves into the page on every edge** (owner direction,
+ * 2026-10-14: "fade out in all directions, no hard stops"). The
+ * `hero-fade` mask in globals.css sits on the wrapper, so the footage
+ * and both overlays fade together to transparent and the page's own
+ * `background` shows through: there is no rectangle edge anywhere, and
+ * the hero runs into the Work band below it without a seam. The mask is
+ * spatial only. The loop's seam in time is the file's, untouched.
  */
 export function HeroLoop({ src, poster }: HeroLoopProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -89,7 +101,7 @@ export function HeroLoop({ src, poster }: HeroLoopProps) {
   }, [reduceMotion]);
 
   return (
-    <div aria-hidden="true" className="absolute inset-0">
+    <div aria-hidden="true" className="hero-fade absolute inset-0">
       <video
         ref={videoRef}
         src={src}
@@ -100,8 +112,8 @@ export function HeroLoop({ src, poster }: HeroLoopProps) {
         preload="metadata"
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <div className="absolute inset-0 bg-ink/40" />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
+      <div className="absolute inset-0 bg-background/25" />
+      <div className="absolute inset-0 bg-hero-scrim" />
     </div>
   );
 }

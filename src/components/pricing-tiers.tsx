@@ -21,7 +21,7 @@ import type { PricingTier } from "@/lib/types";
  * `@radix-ui/react-slot`, `class-variance-authority` and
  * `react-aria-components`, plus shadcn `Card`/`Button`/`Switch` and a
  * `cn()` helper this repo does not have. None of it ships. The list
- * marker is the §Interaction-vocabulary gold diamond, not a lucide
+ * marker is the §Interaction-vocabulary coral diamond, not a lucide
  * `Check` ("Icons are inline SVG, never `lucide-react`"); the button is
  * the shared `<Button>` through `<ModalTrigger>`; class composition is
  * the repo's array join.
@@ -36,26 +36,29 @@ import type { PricingTier } from "@/lib/types";
  *   "surprise invoice" Brand Philosophy §6 rejects.
  * - **The `recommended` tier** — its badge, its `ring`, its `scale`
  *   emphasis. There is no recommended tier (owner call), and marking
- *   one would need a second accent, which decision #14 forbids. Gold is
- *   the only accent on this page as everywhere else.
+ *   one would need a second accent, which the one-accent rule forbids
+ *   (#14, carried by #47). Coral
+ *   (`brand`, #47) is the only accent on this page as everywhere else.
  * - **`included: false` features with a strikethrough X.** A
  *   what-you-do-not-get column is the comparison-table gimmickry the
  *   unit's guardrails ban, and the exclusions would be invented
  *   (Rule 4.3). Each tier lists what it includes, or lists nothing.
  * - **Seat counts** (`Up to 3 users`). We do not sell seats.
- * - **`rounded-xl` / `rounded-lg` / `rounded-full`, `hover:shadow-md`,
- *   and the shadcn token palette** (`bg-background`,
- *   `text-muted-foreground`, `text-primary`). Squared is the shape of
- *   the brand, and the default Tailwind palette is cleared in
- *   `globals.css` so only brand tokens compile.
+ * - **`hover:shadow-md`.** State is shown by colour, not by lift (fin),
+ *   so the hover moves the hairline instead. The reference's
+ *   `rounded-xl` and its shadcn token names are no longer refused: the
+ *   site now runs fin's shadcn-shaped tokens and radius scale
+ *   (decision-log #47, #48), and the default Tailwind palette is still
+ *   cleared in `globals.css` so only those tokens compile.
  *
- * **Surface.** Cards are the elevated glass of §Surfaces at **solid**
- * `surface`, not the spec's `surface/95 + backdrop-blur-xl`. That
- * recipe exists so a card reads over the moving backdrop; `/pricing`
- * mounts no video, so there is nothing behind the card to blur. This is
- * the Work band's precedent (build-note 20), applied for the same
- * reason. Surface colour is unchanged, so these read as one family with
- * the Services cards.
+ * **Surface.** Cards are the elevated surface of §Surfaces at **solid**
+ * `card` with a `border` hairline and fin's `rounded-xl` (#47, #48),
+ * not the glass `card/95 + backdrop-blur-xl`. Glass exists so a
+ * surface reads over something moving; `/pricing` mounts no video, so
+ * there is nothing behind the card to blur. This is the Work band's
+ * precedent (build-note 20), applied for the same reason. The fill is
+ * the same `card` the Services cards use, so these read as one family
+ * with them.
  *
  * **The CTA sits last**, where the reference puts it above the feature
  * list. It is the one place the reference's ordering was overridden.
@@ -119,35 +122,37 @@ export function PricingTiers() {
              longer provides, and is uniform on purpose. */
           <div
             key={tier.slug}
-            className="row-span-6 mb-4 grid grid-rows-subgrid border border-white/15 bg-surface p-6 transition-colors duration-150 hover:border-white/30 md:p-8 xl:mb-0"
+            className="row-span-6 mb-4 grid grid-rows-subgrid rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8 xl:mb-0"
           >
-            <h3 className="text-lg font-medium text-white md:text-xl">
+            <h3 className="font-sans text-lg font-semibold tracking-tight text-foreground md:text-xl">
               {tier.name}
             </h3>
-            <p className="mt-3 text-base leading-relaxed text-white/70">
+            <p className="mt-3 text-base leading-relaxed text-foreground">
               {tier.description}
             </p>
 
-            {/* Price block. The upfront figure is the display heading
-                scale; the retainer sits under a hairline as a second,
-                quieter figure — the commitment is stated on every card
+            {/* Price block. The upfront figure is at display size but
+                set as a figure (Inter, tabular numerals, never Playfair:
+                fin §1); the retainer sits under a hairline as a second,
+                quieter figure, so the commitment is stated on every card
                 rather than once in a footnote (#25). */}
             <div className="mt-8">
-              <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
+              <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
                 {PRICING.upfrontLabel}
               </p>
               {/* The struck former price sits to the right of the figure,
-                  baseline-aligned and at the white/55 caption stop (not
-                  /40 — it is real text and must clear AA contrast on
-                  ink, the same call the footer's legal line records).
-                  Gold is not used: it is the scarce payoff accent, and
-                  the figure a visitor actually pays is the white one. */}
+                  baseline-aligned and at the `muted-foreground` caption
+                  step, the text floor (it is real text and must clear AA
+                  contrast on `card`, the same call the footer's legal
+                  line records). Coral is not used: it is the scarce
+                  payoff accent, and the figure a visitor actually pays
+                  is the linen one. */}
               <p className="mt-2 flex flex-wrap items-baseline gap-x-3">
-                <span className="text-3xl leading-[1.05] font-medium tracking-tight text-white">
+                <span className="font-sans text-3xl leading-[1.05] font-medium tracking-tight text-foreground tabular-nums">
                   {tier.upfront}
                 </span>
                 {tier.upfrontWas !== undefined && (
-                  <s className="text-base leading-[1.05] text-white/55 line-through">
+                  <s className="font-sans text-base leading-[1.05] text-muted-foreground tabular-nums line-through">
                     <span className="sr-only">{PRICING.upfrontWasLabel} </span>
                     {tier.upfrontWas}
                   </s>
@@ -157,19 +162,19 @@ export function PricingTiers() {
                   none. The subgrid row is shared, so the card's bands
                   still line up with its neighbours'. */}
               {tier.upfrontNote !== undefined && (
-                <p className="mt-2 text-sm leading-relaxed text-white/55">
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {tier.upfrontNote}
                 </p>
               )}
             </div>
-            <div className="mt-6 border-t border-white/10 pt-6">
-              <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
+            <div className="mt-6 border-t border-border pt-6">
+              <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
                 {PRICING.ongoingLabel}
               </p>
-              <p className="mt-2 text-xl font-medium text-gold">
+              <p className="mt-2 font-sans text-xl font-medium text-brand tabular-nums">
                 {tier.ongoing}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-white/55">
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {tier.ongoingNote}
               </p>
             </div>
@@ -182,7 +187,7 @@ export function PricingTiers() {
             <div className={tier.features.length > 0 ? "mt-8" : undefined}>
               {tier.features.length > 0 && (
                 <>
-                  <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
+                  <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
                     {PRICING.featuresLabel}
                   </p>
                   <ul className="mt-4 space-y-3">
@@ -190,9 +195,9 @@ export function PricingTiers() {
                       <li key={feature} className="flex gap-3">
                         <span
                           aria-hidden="true"
-                          className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
+                          className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
                         />
-                        <span className="text-base leading-relaxed text-white/70">
+                        <span className="text-base leading-relaxed text-foreground">
                           {feature}
                         </span>
                       </li>
@@ -214,7 +219,7 @@ export function PricingTiers() {
           </div>
         ))}
       </div>
-      <p className="mt-10 max-w-2xl text-base leading-relaxed text-white/55">
+      <p className="mt-10 max-w-2xl text-base leading-relaxed text-muted-foreground">
         {PRICING.footnote}
       </p>
     </section>

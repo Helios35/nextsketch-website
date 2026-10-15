@@ -5,8 +5,8 @@ interface SectionHeadingProps {
   /** Mono micro-label rendered above the heading. */
   eyebrow?: string;
   /**
-   * Gold structural index rendered before the eyebrow, e.g. "01" —
-   * the redesign sections' shared "(01)" marker rhythm.
+   * Coral (`brand`) structural index rendered before the eyebrow, e.g.
+   * "01": the redesign sections' shared "(01)" marker rhythm.
    */
   index?: string;
   as?: "h1" | "h2" | "h3";
@@ -24,12 +24,13 @@ const SIZE_CLASS: Record<NonNullable<SectionHeadingProps["size"]>, string> = {
 };
 
 /**
- * Shared section heading, re-skinned to the hero-derived design
- * system (Redesign Unit 02): display face is Space Grotesk at
- * font-medium / tight tracking / tight leading (docs/04-ux-spec.md
- * §Typography), the eyebrow is the JetBrains Mono micro-label with an
- * optional gold index. Colors ride on currentColor so the heading
- * works on ink (white sections) and on the 404's paper surface alike.
+ * Shared section heading, re-skinned to fin's Zen Linen (decision-log
+ * #47): display face is Playfair Display at font-bold / tight tracking
+ * / 1.08 leading for its descenders (docs/04-ux-spec.md §Typography),
+ * the eyebrow is the JetBrains Mono micro-label in `muted-foreground`
+ * with an optional coral (`brand`) index. The heading itself rides on
+ * currentColor, which is `foreground` on every route now the 404 is
+ * dark too.
  */
 export function SectionHeading({
   children,
@@ -44,15 +45,15 @@ export function SectionHeading({
       {(eyebrow !== undefined || index !== undefined) && (
         <p className="mb-4 flex items-baseline gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase">
           {index !== undefined && (
-            <span className="text-gold">({index})</span>
+            <span className="text-brand">({index})</span>
           )}
           {eyebrow !== undefined && (
-            <span className="opacity-55">{eyebrow}</span>
+            <span className="text-muted-foreground">{eyebrow}</span>
           )}
         </p>
       )}
       <Tag
-        className={`${SIZE_CLASS[size]} leading-[1.05] font-medium tracking-tight text-balance`}
+        className={`${SIZE_CLASS[size]} font-serif leading-[1.08] font-bold tracking-tight text-balance`}
       >
         {children}
       </Tag>

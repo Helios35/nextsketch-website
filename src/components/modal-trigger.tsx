@@ -31,8 +31,9 @@ interface ModalTriggerProps {
  *
  * `need` extends this with the preselection `ServiceCta` already
  * carries (decision-log #25). The two are deliberately not merged:
- * `ServiceCta` is the §Interaction-vocabulary **gold underlined text
- * link** and this is the **squared block button**, so they are the same
+ * `ServiceCta` is the §Interaction-vocabulary **coral (`brand`)
+ * underlined text link** and this is the **`rounded-md` block button**
+ * (decision-log #47, #48), so they are the same
  * behaviour on two different affordances. The pricing tiers need a
  * button, and the provider's `openModal(need?)` signature already
  * supported this — nothing new was invented, the argument was simply

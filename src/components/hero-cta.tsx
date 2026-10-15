@@ -6,13 +6,14 @@ import { useQualificationModal } from "@/components/qualification-modal-provider
 import { MODAL_ESCAPE_HATCH } from "@/content/modal";
 
 /**
- * Hero CTA — the template's divided-arrow button (a label segment and
- * a bordered arrow segment), re-skinned to the brand (white surface /
- * ink mark). It opens the qualification modal and, without JS,
- * degrades to the email escape hatch (Business Rules E3) — the same
- * seam as <ModalTrigger>, rebuilt here so the button can take the
- * template's squared, segmented shape without fighting the shared
- * pill <Button>.
+ * Hero CTA: the template's divided-arrow button (a label segment and
+ * a bordered arrow segment), styled exactly as <Button> primary with
+ * `arrow` (fin's stone `primary` fill, charcoal `primary-foreground`
+ * mark, `rounded-md`; decision-log #47, corners #48). Only the type
+ * step differs: `text-lg`, the hero's scale. It opens the qualification
+ * modal and, without JS, degrades to the email escape hatch (Business
+ * Rules E3), the same seam as <ModalTrigger>, rebuilt here so the
+ * button can take the template's segmented shape at the hero's scale.
  */
 export function HeroCta({ label }: { label: string }) {
   const { openModal } = useQualificationModal();
@@ -24,10 +25,10 @@ export function HeroCta({ label }: { label: string }) {
         event.preventDefault();
         openModal();
       }}
-      className="group/cta inline-flex items-stretch bg-white text-lg font-medium text-ink transition-transform duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-safe:hover:scale-[1.02]"
+      className="group/cta inline-flex items-stretch rounded-md bg-primary text-lg font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       <span className="flex items-center px-6 py-3">{label}</span>
-      <span className="flex items-center border-l border-ink/15 px-4 py-3">
+      <span className="flex items-center border-l border-primary-foreground/20 px-4 py-3">
         <span className="transition-transform duration-150 motion-safe:group-hover/cta:translate-x-0.5">
           <ArrowIcon className="size-5" />
         </span>

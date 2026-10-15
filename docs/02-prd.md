@@ -1,6 +1,6 @@
 # PRD — NextSketch Website Rebuild
 
-**Version:** 2.1 · **Date:** 2026-07-06 · **Status:** Active — aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01)
+**Version:** 2.2 · **Date:** 2026-10-14 · **Status:** Active: aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the look reconciled to the fin Zen Linen dark rebrand (decision-log #47 to #50)
 **Answers:** What are we building?
 **References:** `01-vision.md` (why) · `03-site-architecture.md` (structure) · `04-ux-spec.md` (look/behavior) · `05-business-rules.md` (logic) · `06-taxonomy.md` (naming) · `07-technical-spec.md` (how) · `08-runbook.md` (ops)
 
@@ -17,6 +17,8 @@
 
 A marketing site for NextSketch on Next.js/Vercel, replacing the Webflow site. **As-built: a dark cinematic home page (hero + six sections), a standalone `/pricing` route, and two service routes under `/services/`** (**decision-log #23**, 2026-08-25 — the site is no longer single-page; **#30**, 2026-08-28 — the service routes), with a **two-door** branching qualification modal as the structured lead path. **Shipped (decision-log #13, extended by #16):** Selected Work, Manifesto, Services, Process, About and Final CTA, added one unit at a time, each designed against the hero-derived design system (`04-ux-spec.md`). The old eleven-section scrolling page is **RETIRED** (dormant in code, not a destination). The lead path writes to a durable Google Sheet + best-effort Asana, with transactional email — not a single notification email (see `07-technical-spec.md`).
 
+**The look, CHANGED (decision-log #47 to #50, 2026-10-14):** every route renders in the fin design system's Zen Linen theme, dark only with no theme toggle; coral replaces gold as the one accent (#47), corners follow fin's radius scale (#48), the logo is recoloured but not reshaped (#49), and the hero plays new footage that fades out on every edge (#50). The rebrand is visual only: every rendered word, route, section order (#13) and the modal's logic are unchanged.
+
 ## Background — **CURRENT**
 
 Brand repositioning completed June 2026 (Brand Philosophy v1.0, Messaging Kit v1.0). Autonomous Whales retired and folded in. See `01-vision.md`. The 2026-06-14 owner-directed pivot to the single dark hero is recorded in decision-log #1 and build-note 08.
@@ -30,7 +32,7 @@ Brand repositioning completed June 2026 (Brand Philosophy v1.0, Messaging Kit v1
 
 ## Non-goals — **CURRENT**
 
-See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-pivot "no dark mode at launch" is **moot** — the site ships **dark by design** (there is no light/dark toggle; dark is the only theme). No backend beyond the single serverless lead route (decision-log #8).
+See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-pivot "no dark mode at launch" is **moot**: the site ships **dark by design** (there is no light/dark toggle; dark is the only theme, since #47 fin's Zen Linen dark set, and fin's light set is not used). No backend beyond the single serverless lead route (decision-log #8).
 
 ## User stories
 
@@ -49,13 +51,13 @@ See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-piv
 | F3 | A completed lead (either door) is durably recorded to the **Google Sheet "Inbound Leads"** (system of record, gates capture success) + a **best-effort Asana task**, then triggers a lead **auto-reply** and Nathan's **alert** via Resend (`after()`, best-effort). No database (decision-log #8). | **CHANGED** |
 | F4 | Process section (four canonical phases — Taxonomy §2). Design decided at its section unit against `04-ux-spec.md`; the old expandable-rows/circled-numbers spec is **RETIRED**. | **PLANNED** (#13) |
 | F5 | Selected-work grid (4 placeholder tiles). Not in the #13 set; returning it requires a new decision. | **RETIRED** |
-| F6 | Services section (four canonical services — Taxonomy §1). The service **names** are live in the capability strip (**CURRENT**); the section is designed at its unit — gold-only accent (#14), the old four-accent cards are **RETIRED**. | **PLANNED** (#13) |
+| F6 | Services section (four canonical services, Taxonomy §1). The service **names** are live in the capability strip (**CURRENT**); the section is designed at its unit with one accent only (#14, coral since #47, which retired gold), and the old four-accent cards are **RETIRED**. | **PLANNED** (#13) |
 | F7 | About section ("about me", solo). | **PLANNED** (#13) |
 | F8 | Testimonials (2–3 placeholder quote blocks). Not in the #13 set. | **RETIRED** |
 | F9 | FAQ accordion (six Q&As verbatim). Not in the #13 set; the Q&A copy stays canonical in the Messaging Kit if it returns. | **RETIRED** |
-| F10 | Animation: live hero capability marquee + rise-in (`motion-safe`) — **CURRENT**. New-section entrances draw on the shipped motion vocabulary under the binding contract (`04-ux-spec.md` §Motion). Handwritten sketch accents are **RETIRED**. A scroll-driven background video + parallax is **PLANNED — not yet designed** (`04-ux-spec.md` §Motion). | **CHANGED** |
+| F10 | Animation: live hero capability marquee + rise-in (`motion-safe`), **CURRENT**. New-section entrances draw on the shipped motion vocabulary under the binding contract (`04-ux-spec.md` §Motion), which since #47 is fin's motion rule: everything animates in 200ms or less (the marquee and the hero footage are ambient and exempt), and reduced motion removes every transition. Handwritten sketch accents are **RETIRED**. The scroll-driven background video is **RETIRED** (#46): the home hero plays one muted, autoplaying loop instead (poster only under reduced motion), since #50 the fin-palette sketch footage, faded out on every edge with no hard stop. | **CHANGED** |
 | F11 | All CTA copy obeys Business Rules §3 (banned/required language). | **CURRENT** |
-| F12 | Custom 404 page (on-brand, light `paper` surface, links back to the page). | **CURRENT** |
+| F12 | Custom 404 page (on-brand, dark on the `background` ground like every other route, links back to the page). Its light `paper` surface ended with #47 (dark only). | **CHANGED** (#47) |
 
 ## Non-functional requirements
 
@@ -69,7 +71,7 @@ See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-piv
 
 ## Acceptance criteria
 
-- The live screen renders with approved Hero copy and the interim background image; no lorem ipsum — real Messaging Kit copy only. **CURRENT.** (The old multi-section placeholder-asset criteria are **RETIRED**; each redesign section defines its acceptance criteria in its own unit brief.)
+- The live screen renders with approved Hero copy over the hero loop (#46), which since #50 plays the delivered `hero-loop-sketch.mp4` footage, installed at `public/hero-loop.mp4` (the interim background image this criterion once named was replaced by #15); no lorem ipsum, real Messaging Kit copy only. **CHANGED** (#46, #50). (The old multi-section placeholder-asset criteria are **RETIRED**; each redesign section defines its acceptance criteria in its own unit brief.)
 - Modal: the "still exploring" path never reaches the qualifier contact step (it routes to the off-ramp, which may capture an email); a completed lead (quick or qualified) is durably recorded before success is shown — **no fake success** (Rule 2.7). **CHANGED.**
 - Grep sweep of build output finds zero banned terms (Business Rules §3.2). **CURRENT** (CI gate).
 - Site deploys from `main` to Vercel; preview deploys on branches. **CURRENT.**

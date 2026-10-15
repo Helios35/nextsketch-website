@@ -6,11 +6,11 @@ import { ABOUT } from "@/content/copy";
 
 /**
  * Presentation marker, not copy: the deliberateness claim the section
- * exists to land takes the gold payoff treatment (docs/04-ux-spec.md
- * §Typography — at most a couple of accent words inside a white
- * display heading). Matched without the trailing period so the
- * sentence's full stop stays white. Degrades to an unaccented
- * headline if the canonical copy changes.
+ * exists to land takes the coral payoff treatment, `text-brand`
+ * (docs/04-ux-spec.md §Typography: at most a couple of accent words
+ * inside a linen display heading; decision-log #47). Matched without
+ * the trailing period so the sentence's full stop stays linen.
+ * Degrades to an unaccented headline if the canonical copy changes.
  */
 const ACCENT_PHRASE = "On purpose";
 
@@ -20,21 +20,22 @@ const ACCENT_PHRASE = "On purpose";
  * hero-derived design system (Redesign Unit 02): the old contained
  * rounded ink panel was redundant on an all-ink page, so the section
  * now sits flat on the full-width band with the shared gutter rhythm,
- * the mono "(05)" eyebrow, and the gold payoff phrase. Entrances are
+ * the mono "(05)" eyebrow, and the coral payoff phrase. Entrances are
  * the shared ScrollReveal at the hero stagger (0 / 120+i·80 / 200ms);
  * the portrait carries the section's single whisper parallax. The
  * photo is the owner-supplied portrait (delivered 2026-07-06),
  * shipped under the taxonomy asset name it replaced
  * (docs/06-taxonomy.md §7) in the layout-final 3/4 crop — the square
- * source center-crops via object-cover. The portrait sits in the
- * hairline ink-surface frame (white/15 border, white/[0.03] fill)
- * under the image-band bottom scrim (docs/04-ux-spec.md §Surfaces)
- * so it carries the same ink grade as the page's footage — untreated,
- * it read as an outlier (owner feedback, 2026-07-07). The flat ink/40
- * layer is deliberately omitted: it exists for text legibility over
- * full-bleed backdrops, and no text rides this image — a judgment
- * call generalized from the hero recipe per 04-ux-spec §How to build
- * a new section.
+ * source center-crops via object-cover. The portrait sits in a
+ * hairline frame on a placeholder tile (`border` hairline, `muted`
+ * fill, fin's card radius `rounded-xl`; decision-log #47, #48) under
+ * the image-band bottom scrim in `background` (docs/04-ux-spec.md
+ * §Surfaces) so it carries the same grade as the page's footage:
+ * untreated, it read as an outlier (owner feedback, 2026-07-07). The
+ * flat `background/40` layer is deliberately omitted: it exists for
+ * text legibility over full-bleed backdrops, and no text rides this
+ * image (a judgment call generalized from the hero recipe per
+ * 04-ux-spec §How to build a new section).
  */
 export function AboutSection() {
   const headline = ABOUT.headline;
@@ -49,18 +50,14 @@ export function AboutSection() {
       <div className="grid gap-10 md:grid-cols-[3fr_2fr] md:gap-16">
         <div>
           <ScrollReveal>
-            <SectionHeading
-              index="05"
-              eyebrow={ABOUT.eyebrow}
-              className="[text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
-            >
+            <SectionHeading index="05" eyebrow={ABOUT.eyebrow}>
               <span id="about-headline">
                 {phraseStart === -1 ? (
                   headline
                 ) : (
                   <>
                     {headline.slice(0, phraseStart)}
-                    <span className="text-gold">{ACCENT_PHRASE}</span>
+                    <span className="text-brand">{ACCENT_PHRASE}</span>
                     {headline.slice(phraseStart + ACCENT_PHRASE.length)}
                   </>
                 )}
@@ -70,7 +67,7 @@ export function AboutSection() {
           <div className="mt-8 space-y-6">
             {ABOUT.body.map((paragraph, i) => (
               <ScrollReveal key={paragraph} delay={120 + i * 80}>
-                <p className="max-w-prose text-base leading-relaxed text-white/70 md:text-lg">
+                <p className="max-w-prose text-base leading-relaxed text-foreground md:text-lg">
                   {paragraph}
                 </p>
               </ScrollReveal>
@@ -87,7 +84,7 @@ export function AboutSection() {
           className="w-full self-center md:max-w-sm md:justify-self-end"
         >
           <Parallax speed={0.06}>
-            <div className="relative overflow-hidden border border-white/15 bg-white/[0.03]">
+            <div className="relative overflow-hidden rounded-xl border border-border bg-muted">
               <Image
                 src="/placeholders/placeholder-about-01.jpg"
                 alt={ABOUT.portraitAlt}
@@ -98,7 +95,7 @@ export function AboutSection() {
               />
               <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent"
+                className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/20 to-transparent"
               />
             </div>
           </Parallax>

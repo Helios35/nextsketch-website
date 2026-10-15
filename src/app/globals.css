@@ -1,81 +1,171 @@
 @import "tailwindcss";
 
 /*
- * Brand color tokens — canonical names per docs/06-taxonomy.md §5,
- * values per docs/04-ux-spec.md. The default Tailwind palette is
- * cleared so only brand tokens exist: accent pairing (accent bg ⇒
- * paired -ink text) stays enforceable because no off-palette
- * utilities compile.
+ * The token layer (docs/04-ux-spec.md §Color, §Typography, §Surfaces).
+ * Rebrand to the fin design system's Zen Linen theme, dark set only
+ * (decision-log #47, owner call 2026-10-14). The site is dark and has
+ * no theme toggle, so fin's `.dark` values are the site's only values
+ * and they live on :root.
+ *
+ * Built the way fin builds it: raw custom properties first, then an
+ * `@theme inline` bridge that republishes them into Tailwind's
+ * namespaces, so every utility in a component resolves to one of these
+ * tokens. **Every colour on the site is declared in this file and
+ * nowhere else**: a component never writes a hex, an rgb() or a
+ * named colour. The few literals below that are not on :root (the
+ * shadow scale, the over-video shadows, the dialog backdrop, the hero
+ * mask) are transparencies of black, never a surface or an ink.
+ *
+ * Values are fin's, copied as values (the brief: tokens move, code does
+ * not). `--brand-foreground` and the over-video shadows are the site's
+ * own additions, recorded in build-note 33.
+ */
+:root {
+  /* One radius token; every step below derives from it (fin). */
+  --radius: 0.5rem;
+
+  /* Surfaces and ink: fin's dark steps, verbatim. */
+  --background: #141414;
+  --foreground: #e8e3da;
+  --card: #1c1c1c;
+  --card-foreground: #e8e3da;
+  --popover: #1c1c1c;
+  --popover-foreground: #e8e3da;
+  --primary: #d1cfc0;
+  --primary-foreground: #363636;
+  --secondary: #222222;
+  --secondary-foreground: #d1cfc0;
+  --muted: #2a2a2a;
+  --muted-foreground: #8e8a83;
+  --accent: #363636;
+  --accent-foreground: #d1cfc0;
+  --destructive: #ef4444;
+  --border: #2c2c2c;
+  --input: #2c2c2c;
+  --ring: #d1cfc0;
+  --sidebar: #101010;
+
+  /*
+   * Coral: the one brand accent (supersedes gold, decision-log #14 →
+   * #47). Measured: 6.1:1 on background, 5.6:1 on card, so it is legal
+   * as text, links and marks on dark. Linen on coral is 2.4:1 and never
+   * used; a coral fill always carries `--brand-foreground`.
+   */
+  --brand: #f26a4b;
+  /* Site addition (fin has none): text on a coral fill, 6.1:1. It is
+     the background step, so a coral fill reads as cut out of the page. */
+  --brand-foreground: #141414;
+
+  /* fin's dark categorical steps. On this site they are interface
+     chrome inside the service routes' decorative wireframes only
+     (decision-log #31, carried by #47): never an accent, never on a
+     real control, never per service. */
+  --chart-1: #d17359;
+  --chart-2: #698edd;
+  --chart-3: #c2802d;
+  --chart-4: #b077c2;
+  --chart-5: #7a9f46;
+}
+
+/*
+ * Tailwind's stock palette and radius scale are removed, so a component
+ * cannot reach for a colour or a corner that is not in this file. Bare
+ * `rounded` therefore compiles to nothing, loudly (fin's posture).
  */
 @theme {
   --color-*: initial;
-
-  --color-paper: #e5e6e1;
-  --color-paper-bright: #f3f3f3;
-  --color-ink: #000000;
-  --color-white: #ffffff;
-  --color-gold: #e4b976;
-  --color-gold-ink: #65451d;
-  --color-lavender: #bbb2ce;
-  --color-lavender-ink: #453b60;
-  --color-rose: #cb9da2;
-  --color-rose-ink: #5c2529;
-  --color-sage: #aebbba;
-  --color-sage-ink: #3a4444;
+  --radius-*: initial;
 }
 
-/*
- * The elevated-surface fill (docs/04-ux-spec.md §Surfaces): every
- * card, panel, mock frame, and glass surface on the site. It was a
- * deliberate literal repeated per component; promoted to a token so it
- * is defined once and changes in one place (owner directive,
- * 2026-08-31 — decision-log #33). Never pure #000 for an elevated
- * surface (it reads flat); the page itself stays `ink`.
- *
- * `inline`, deliberately: utilities get the raw hex instead of a
- * `var()` reference, so `bg-surface/95` statically folds to the exact
- * same value the old `bg-[#0a0a0c]/95` literals compiled to. The
- * `var()` form mixes at runtime and lands one RGB step off the
- * build-time fold (measured: green 10 vs 9 over black).
- */
 @theme inline {
-  --color-surface: #0a0a0c;
-}
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
 
-/*
- * Premium material for the qualification modal (ui-ux-pro-max "Modern
- * Dark / Cinema"): its surface is never pure #000 (reads flat), the
- * elevated card carries a deep shadow, and one expo-out easing is
- * shared across its transitions (motion-consistency). Scoped to the
- * modal — the hero is the approved template treatment, untouched.
- */
-:root {
-  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
-  --shadow-modal: 0 40px 100px -24px rgb(0 0 0 / 0.85), 0 12px 32px -16px rgb(0 0 0 / 0.6);
-}
+  /* Radius: every step derived from the one --radius token (fin). The
+     squared-corner rule is retired (decision-log #48). */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
 
-/*
- * Font tokens reference next/font CSS variables (set on <html> in
- * layout.tsx), so they must live in an inline theme block. Landing
- * re-skin (2026-06-14, owner-directed): Space Grotesk for display/UI,
- * JetBrains Mono for the capability strip and other mono labels —
- * Inter/Caveat retired.
- */
-@theme inline {
-  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  /*
+   * Type (fin §1): Inter for the interface and every figure, Playfair
+   * Display for display headings and the brand voice, JetBrains Mono for
+   * labels. Loaded through next/font in layout.tsx, so these reference
+   * its variables. Space Grotesk is retired.
+   */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair-display), ui-serif, Georgia, serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
 /*
- * Qualification modal motion per docs/04-ux-spec.md §Motion
- * inventory: open is scale 0.97→1 + fade over 250ms; step
- * transitions are 200ms slide/fade. Both are applied motion-safe
- * only, so reduced-motion users get instant visibility — the same
- * contract as <Reveal>/<SketchAccent>.
+ * fin's softened shadow scale: positive spread, a blur two to three
+ * times the offset, 3–9% black. In dark it barely registers, which is
+ * correct: every surface that casts one also carries a `border`, and
+ * the border is what separates it from the page.
+ *
+ * The over-video shadows are the site's addition. They exist only for
+ * the home hero, where text and the logo sit on moving footage; on the
+ * page or a card there is no text shadow (§Typography).
  */
 @theme {
-  --animate-modal-in: modal-in 280ms var(--ease-premium);
-  --animate-step-in: step-in 220ms var(--ease-premium);
+  --shadow-*: initial;
+  --shadow-xs: 0 1px 4px 1px rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 2px 10px 2px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 18px 3px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 8px 30px 5px rgb(0 0 0 / 0.06);
+  --shadow-xl: 0 14px 44px 7px rgb(0 0 0 / 0.07);
+  --shadow-2xl: 0 24px 64px 10px rgb(0 0 0 / 0.09);
+
+  --text-shadow-*: initial;
+  --text-shadow-over-video: 0 1px 24px rgb(0 0 0 / 0.6);
+  --drop-shadow-*: initial;
+  --drop-shadow-over-video: 0 1px 16px rgb(0 0 0 / 0.6);
+}
+
+/*
+ * Motion (fin §8, binding on this site since #47): everything animates
+ * in 200ms or less, or not at all, and reduced motion removes it (see
+ * the block at the foot of this file). One easing is shared.
+ */
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@theme {
+  --animate-modal-in: modal-in 200ms var(--ease-out);
+  --animate-step-in: step-in 180ms var(--ease-out);
+  --animate-rise-in: rise-in 200ms var(--ease-out) both;
+  /* The capability strip's marquee is continuous, ambient motion like
+     the hero footage, not a transition: exempt from the 200ms ceiling
+     and stopped under reduced motion (components gate it motion-safe). */
+  --animate-marquee: marquee var(--duration, 42s) linear infinite;
 
   @keyframes modal-in {
     from {
@@ -90,19 +180,13 @@
       transform: translateX(12px);
     }
   }
-}
 
-/*
- * Landing-hero motion (docs/04-ux-spec.md §Motion inventory): the
- * capability strip is a slow continuous marquee (--duration/--gap are
- * set on the strip element); hero content rises in on load. Applied
- * motion-safe only in the components, so reduced-motion users get a
- * static strip and instant visibility — the same contract as the
- * modal animations above.
- */
-@theme {
-  --animate-marquee: marquee var(--duration, 42s) linear infinite;
-  --animate-rise-in: rise-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
 
   @keyframes marquee {
     from {
@@ -112,19 +196,107 @@
       transform: translateX(calc(-100% - var(--gap, 2.75rem)));
     }
   }
-
-  @keyframes rise-in {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-  }
 }
 
 /*
- * Anchor navigation under the sticky nav: smooth scrolling is
- * motion-gated (docs/04-ux-spec.md §Motion inventory); scroll-margin
- * keeps section tops clear of the shrunken nav bar.
+ * The hero footage dissolves into the page on all four edges, with no
+ * hard stop anywhere (owner direction, 2026-10-14). Two masks, one per
+ * axis, intersected, so a corner fades on both. Each ramp follows a
+ * smoothstep curve over nine stops rather than a straight two-stop
+ * line: a linear ramp has a visible crease where it starts (Mach
+ * banding), and that crease is a hard stop to the eye. The edge length
+ * scales with the smaller viewport side so the fade reads the same on a
+ * phone and a wide screen. Spatial only: nothing here fades the loop in
+ * time, so the delivered seam is untouched.
+ */
+@utility hero-fade {
+  --edge: clamp(4rem, 22vmin, 14rem);
+  --ramp:
+    rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.043) calc(var(--edge) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--edge) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--edge) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--edge) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--edge) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--edge) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--edge) * 0.875), rgb(0 0 0) var(--edge);
+  --ramp-end:
+    rgb(0 0 0) calc(100% - var(--edge)),
+    rgb(0 0 0 / 0.957) calc(100% - var(--edge) * 0.875),
+    rgb(0 0 0 / 0.844) calc(100% - var(--edge) * 0.75),
+    rgb(0 0 0 / 0.684) calc(100% - var(--edge) * 0.625),
+    rgb(0 0 0 / 0.5) calc(100% - var(--edge) * 0.5),
+    rgb(0 0 0 / 0.316) calc(100% - var(--edge) * 0.375),
+    rgb(0 0 0 / 0.156) calc(100% - var(--edge) * 0.25),
+    rgb(0 0 0 / 0.043) calc(100% - var(--edge) * 0.125), rgb(0 0 0 / 0) 100%;
+  mask-image:
+    linear-gradient(to right, var(--ramp), var(--ramp-end)),
+    linear-gradient(to bottom, var(--ramp), var(--ramp-end));
+  mask-composite: intersect;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+/*
+ * The hero's bottom scrim, tuned for the #50 footage. Coral is a darker
+ * colour than gold was (luminance 0.30 against 0.52), so it holds 4.5:1
+ * only over a background no lighter than about #2D2D2D, and the footage
+ * passes bright linen line-work and a coral bar chart behind the
+ * headline. Measured frame by frame over the whole loop, the old
+ * 40% flat overlay plus a short scrim left the coral payoff words at
+ * 2.2:1 and the supporting line at 4.1:1 on their worst frames. The scrim is sized in rem from the bottom, because the
+ * text block is bottom-anchored and roughly the same height at every
+ * width: near-solid through the band where the headline and the
+ * supporting line sit (to 26rem), then a smoothstep release to nothing
+ * at 48rem, so the footage stays vivid above the text and the ramp has
+ * no crease. Paired with a 25% flat overlay in hero-loop.tsx.
+ */
+@utility bg-hero-scrim {
+  background-image: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--background) 95%, transparent) 0rem,
+    color-mix(in srgb, var(--background) 86%, transparent) 26rem,
+    color-mix(in srgb, var(--background) 82.3%, transparent) 28.75rem,
+    color-mix(in srgb, var(--background) 72.6%, transparent) 31.5rem,
+    color-mix(in srgb, var(--background) 58.8%, transparent) 34.25rem,
+    color-mix(in srgb, var(--background) 43%, transparent) 37rem,
+    color-mix(in srgb, var(--background) 27.2%, transparent) 39.75rem,
+    color-mix(in srgb, var(--background) 13.4%, transparent) 42.5rem,
+    color-mix(in srgb, var(--background) 3.7%, transparent) 45.25rem,
+    transparent 48rem
+  );
+}
+
+/*
+ * The page glow behind /pricing and the service routes (decision-log
+ * #35): the source's spotlight geometry, recoloured from gold to coral
+ * (#47) and tempered further, because coral is hotter than gold at the
+ * same alpha and the accent is meant to stay scarce.
+ */
+@utility bg-page-glow {
+  background-image: radial-gradient(
+    circle 560px at 50% 200px,
+    color-mix(in srgb, var(--brand) 16%, transparent),
+    transparent
+  );
+}
+
+/*
+ * The fade every decorative wireframe on the service routes shares
+ * (visual-fade.tsx): transparent at the centre, dissolving into the
+ * card it sits on at every edge.
+ */
+@utility bg-visual-fade {
+  background-image: radial-gradient(
+    ellipse 50% 50% at 50% 50%,
+    transparent 25%,
+    var(--card) 100%
+  );
+}
+
+/*
+ * Anchor navigation under the fixed nav: smooth scrolling is
+ * motion-gated; scroll-margin keeps section tops clear of the shrunken
+ * nav bar.
  */
 @media (prefers-reduced-motion: no-preference) {
   html {
@@ -132,11 +304,7 @@
   }
 }
 
-/*
- * The page is ink — tell the browser so native UI (scrollbars,
- * form controls) renders dark instead of clashing white against the
- * full-page dark surface (Redesign Unit 02).
- */
+/* Dark only: native UI (scrollbars, form controls) renders dark. */
 html {
   color-scheme: dark;
 }
@@ -145,14 +313,51 @@ section[id] {
   scroll-margin-top: 5rem;
 }
 
+@layer base {
+  /* Tailwind v4's default border colour is currentColor; a bare
+     `border` would draw in the text colour. fin's rule: it is the
+     border token. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--border);
+  }
+
+  /* One thin scrollbar on the border token, track transparent (fin). */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  /*
+   * fin §8: `prefers-reduced-motion` removes all transitions, with no
+   * exceptions, stated once here so no component has to remember.
+   * Transitions go to 0s (a 0.01ms transition is still a transition);
+   * animations keep 0.01ms so any `animationend` still fires.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      transition-duration: 0s !important;
+      transition-delay: 0s !important;
+      animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
 /*
- * Qualification-modal backdrop. A literal, not the backdrop:bg-ink
- * utility: the oklab()/color-mix() forms Tailwind compiles tokens to
- * computed correctly but failed to *paint* on ::backdrop in the
- * verification browser. The value is the ink token (#000) at 72%,
- * with a light blur so the dark modal card reads against the hero.
+ * Qualification-modal backdrop. A literal, not a utility: ::backdrop did
+ * not inherit custom properties in the verification browser, so a
+ * var()/color-mix() form computed but did not paint. The value is the
+ * background token (#141414) at 72%, with a light blur.
  */
 dialog::backdrop {
-  background-color: rgb(0 0 0 / 0.72);
+  background-color: rgb(20 20 20 / 0.72);
   backdrop-filter: blur(8px);
 }

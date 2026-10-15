@@ -27,12 +27,16 @@ import type { ServiceBlockId } from "@/lib/types";
  * assert nothing, and every visual is `aria-hidden` so it says nothing
  * to assistive tech either.
  *
- * **Colour — a narrow supersession of decision #14 (owner direction,
- * 2026-08-28).** #14 orphaned every accent but gold, and the unit-26
+ * **Colour: a narrow supersession of decision #14 (owner direction,
+ * 2026-08-28), recoloured by the rebrand (#47).** #14 orphaned every
+ * accent but one (gold then, coral `brand` since #47), and the unit-26
  * brief repeats it: "Do not read the per-service `accent` field… those
  * values are dead data." The owner asked for these mocks to carry
  * colour "in the same colour range as our palette (reds greens and
- * others)", which is `rose`, `sage` and `lavender`. That is honoured
+ * others)". Under fin that range is the dark chart steps: terracotta
+ * (`chart-1`, was `rose`), sage (`chart-5`, was `sage`) and plum
+ * (`chart-4`, was `lavender`), with indigo (`chart-2`) as the fourth
+ * hue the editor's file types need. That is honoured
  * **narrowly, the way #26 narrowly superseded "no CTA in the nav"**:
  *
  * - The colours appear **only as interface chrome inside a decorative
@@ -43,15 +47,22 @@ import type { ServiceBlockId } from "@/lib/types";
  *   owns a colour, the `accent` field in `src/content/services.ts` is
  *   still unread and still dead, and the retired accent-block card
  *   vocabulary stays retired.
- * - **`gold` remains the only emphasis.** Each mock spends it at full
- *   strength on the element that is the point of it — the primary
- *   action, the active tab, the current release, the active nav item,
- *   the centre tile. The others sit at 45–85% alpha, which was tuned
- *   in-browser rather than guessed: below ~70% a 1.25px stroke on a
- *   near-black tile reads grey, and above ~85% they start competing
- *   with gold. They are chrome, and they stay under it.
+ * - **Coral (`brand`) remains the only emphasis** (#47: it took gold's
+ *   place one for one). Each mock spends it at full strength on the
+ *   element that is the point of it: the area chart, the active tab and
+ *   its parked caret, the today line, the read-out point, the hub tile.
+ *   The chrome sits at 30 to 75% alpha. fin's chart steps are more
+ *   saturated than the old pastels, so the old 45 to 85% ladder came
+ *   down about ten points (glyphs 75%, strokes and marks 60 to 70%,
+ *   token bars 50 to 60%, avatar chips 40%, area fills 15 to 20%), and
+ *   terracotta sits a further ten points under the others because it
+ *   shares coral's hue family and is the one chrome hue that could be
+ *   read as the accent. They are chrome, and they stay under coral.
  * - **No new token.** #14's "no new tokens" clause is untouched: these
- *   are the four that already exist in `globals.css`.
+ *   are fin's chart steps, already in `globals.css` and scoped there to
+ *   these wireframes (#47). The neutral ladder is `muted`, `accent`,
+ *   `muted-foreground` and `foreground` at alpha; hairlines are
+ *   `border`.
  *
  * **Adapted from an owner-supplied shadcn reference, layout only** —
  * the posture PR #27 took with the gallery and build-note 23 with the
@@ -60,8 +71,11 @@ import type { ServiceBlockId } from "@/lib/types";
  * the page. It did **not** contribute any of its dependencies (`Card`,
  * `Button`, `lucide-react`, `@radix-ui/react-slot`,
  * `class-variance-authority`, a `cn()` helper, a `/components/ui`
- * directory — **none installed**), its third-party product logos, its
- * `rounded-xl`, or its shadcn token palette.
+ * directory, **none installed**), its third-party product logos, or
+ * its token palette. The corners the mocks carry now are fin's radius
+ * scale (#48: frames `rounded-xl`, panels `rounded-lg`, controls
+ * `rounded-md`, skeleton bars and dots `rounded-full`), not the
+ * reference's.
  *
  * **One box, one fade (owner direction).** All five sit in the same
  * `4/3` frame so the rows line up down the page, and all five carry the
@@ -89,7 +103,7 @@ const SHELL = "relative mx-auto w-full max-w-md lg:max-w-none";
 
 /** A skeleton line. Width and tone come from the caller. */
 function Bar({ className }: { className: string }) {
-  return <span className={`block h-1.5 ${className}`} />;
+  return <span className={`block h-1.5 rounded-full ${className}`} />;
 }
 
 /** A status dot in the interface-chrome palette. */
@@ -107,8 +121,8 @@ function Dot({ tone }: { tone: string }) {
  * Rule 4.3 is unchanged and is why every figure, label and logo in     *
  * that reference is a bar here: a dashboard printing invented balances  *
  * and brand marks is exactly the claim decision #5 retired the stat     *
- * strip over. Chrome tints are the #31 set; `gold` appears once, on     *
- * the area chart, and nowhere else.                                    *
+ * strip over. Chrome tints are the #31 set (fin chart steps, #47);     *
+ * coral (`brand`) appears once, on the area chart, and nowhere else.   *
  * ------------------------------------------------------------------ */
 
 /**
@@ -135,7 +149,7 @@ function MosaicTile({
   return (
     <ScrollReveal delay={delay} className="min-h-0 min-w-0">
       <div
-        className={`flex h-full min-w-0 flex-col overflow-hidden border border-white/15 bg-surface ${className}`}
+        className={`flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card ${className}`}
       >
         {children}
       </div>
@@ -145,18 +159,18 @@ function MosaicTile({
 
 /** Ranked rows: a filled bar of decreasing width beside a value bar. */
 const RANKED: readonly { w: string; tone: string }[] = [
-  { w: "w-full", tone: "bg-lavender/70" },
-  { w: "w-4/5", tone: "bg-sage/70" },
-  { w: "w-3/5", tone: "bg-rose/70" },
-  { w: "w-2/5", tone: "bg-white/25" },
+  { w: "w-full", tone: "bg-chart-4/60" },
+  { w: "w-4/5", tone: "bg-chart-5/60" },
+  { w: "w-3/5", tone: "bg-chart-1/50" },
+  { w: "w-2/5", tone: "bg-muted-foreground/40" },
 ];
 
 /** List rows: a tinted mark beside a label. */
 const LIST_ROWS: readonly string[] = [
-  "bg-rose/70",
-  "bg-sage/70",
-  "bg-lavender/70",
-  "bg-white/25",
+  "bg-chart-1/50",
+  "bg-chart-5/60",
+  "bg-chart-4/60",
+  "bg-muted-foreground/40",
 ];
 
 function NewProductVisual() {
@@ -167,14 +181,16 @@ function NewProductVisual() {
           {/* Left column. */}
           <div className="grid min-h-0 min-w-0 grid-rows-[1.05fr_1fr] gap-2.5">
             {/* Headline figure over an area chart. The chart is the one
-                gold element in the whole mosaic; everything else is
-                chrome or the white alpha ladder. */}
+                coral element in the whole mosaic; everything else is
+                chrome or the neutral token ladder. Its area fill is
+                tempered to 24% because coral runs hotter at the same
+                alpha (#47). */}
             <MosaicTile delay={120} className="p-3.5">
-              <Bar className="w-16 bg-white/35" />
-              <span className="mt-3 block h-4 w-3/4 bg-white/85" />
+              <Bar className="w-16 bg-muted-foreground/60" />
+              <span className="mt-3 block h-4 w-3/4 rounded-sm bg-foreground/85" />
               <span className="mt-2.5 flex items-center gap-2">
-                <Dot tone="bg-sage/80" />
-                <Bar className="w-20 bg-white/20" />
+                <Dot tone="bg-chart-5/70" />
+                <Bar className="w-20 bg-accent" />
               </span>
               <div className="-mx-3.5 -mb-3.5 mt-auto h-1/2">
                 <svg
@@ -186,12 +202,12 @@ function NewProductVisual() {
                     <linearGradient id="np-area" x1="0" y1="0" x2="0" y2="1">
                       <stop
                         offset="0%"
-                        stopColor="var(--color-gold)"
-                        stopOpacity="0.32"
+                        stopColor="var(--color-brand)"
+                        stopOpacity="0.24"
                       />
                       <stop
                         offset="100%"
-                        stopColor="var(--color-gold)"
+                        stopColor="var(--color-brand)"
                         stopOpacity="0"
                       />
                     </linearGradient>
@@ -203,7 +219,7 @@ function NewProductVisual() {
                   <path
                     d="M0 58 L18 52 L34 54 L52 44 L70 46 L88 34 L104 37 L122 26 L140 22 L158 14 L176 12 L200 4"
                     fill="none"
-                    stroke="var(--color-gold)"
+                    stroke="var(--color-brand)"
                     strokeWidth="2"
                   />
                 </svg>
@@ -212,21 +228,21 @@ function NewProductVisual() {
 
             {/* Two-series line chart over a gridded plot. */}
             <MosaicTile delay={190} className="p-3.5">
-              <Bar className="w-20 bg-white/35" />
+              <Bar className="w-20 bg-muted-foreground/60" />
               <span className="mt-2.5 flex items-center gap-3">
                 <span className="flex items-center gap-1.5">
-                  <span className="h-1 w-4 bg-rose/80" />
-                  <Bar className="w-8 bg-white/20" />
+                  <span className="h-1 w-4 rounded-full bg-chart-1/60" />
+                  <Bar className="w-8 bg-accent" />
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="h-1 w-4 bg-white/45" />
-                  <Bar className="w-8 bg-white/20" />
+                  <span className="h-1 w-4 rounded-full bg-muted-foreground/80" />
+                  <Bar className="w-8 bg-accent" />
                 </span>
               </span>
               <div className="mt-auto flex grow items-stretch gap-2 pt-3">
                 <span className="flex w-4 shrink-0 flex-col justify-between py-0.5">
                   {[0, 1, 2, 3, 4].map((i) => (
-                    <span key={i} className="h-1 w-3 bg-white/15" />
+                    <span key={i} className="h-1 w-3 rounded-full bg-accent" />
                   ))}
                 </span>
                 <span className="relative grow">
@@ -244,7 +260,7 @@ function NewProductVisual() {
                         y2={y}
                         stroke="currentColor"
                         strokeWidth="1"
-                        className="text-white/10"
+                        className="text-border"
                       />
                     ))}
                     <path
@@ -252,19 +268,19 @@ function NewProductVisual() {
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
-                      className="text-white/45"
+                      className="text-muted-foreground/80"
                     />
                     <path
                       d="M0 78 L30 76 L60 72 L90 66 L120 62 L150 58 L200 54 L200 80 L0 80 Z"
                       fill="currentColor"
-                      className="text-rose/25"
+                      className="text-chart-1/15"
                     />
                     <path
                       d="M0 78 L30 76 L60 72 L90 66 L120 62 L150 58 L200 54"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
-                      className="text-rose/80"
+                      className="text-chart-1/60"
                     />
                   </svg>
                 </span>
@@ -277,52 +293,52 @@ function NewProductVisual() {
             {/* Goal card with a progress track. */}
             <MosaicTile delay={250} className="p-3.5">
               <span className="flex items-center gap-2.5">
-                <span className="size-7 shrink-0 border border-white/20 bg-white/5" />
+                <span className="size-7 shrink-0 rounded-md border border-border bg-muted" />
                 <span className="space-y-1.5">
-                  <Bar className="w-24 bg-white/35" />
-                  <Bar className="w-14 bg-white/20" />
+                  <Bar className="w-24 bg-muted-foreground/60" />
+                  <Bar className="w-14 bg-accent" />
                 </span>
               </span>
-              <span className="mt-auto block h-2 w-full bg-white/[0.07]">
-                <span className="block h-full w-[62%] bg-sage/75" />
+              <span className="mt-auto block h-2 w-full rounded-full bg-muted">
+                <span className="block h-full w-[62%] rounded-full bg-chart-5/60" />
               </span>
               <span className="mt-2.5 flex items-center gap-2">
-                <Dot tone="bg-sage/80" />
-                <Bar className="w-16 bg-white/20" />
+                <Dot tone="bg-chart-5/70" />
+                <Bar className="w-16 bg-accent" />
               </span>
             </MosaicTile>
 
             {/* Ranked category bars. */}
             <MosaicTile delay={310} className="p-3.5">
-              <Bar className="w-28 bg-white/35" />
+              <Bar className="w-28 bg-muted-foreground/60" />
               <div className="mt-auto space-y-2.5">
                 {RANKED.map((row, i) => (
                   <span key={i} className="flex items-center gap-3">
                     <span
-                      className={`flex h-6 items-center gap-2 px-2 ${row.w} ${row.tone}`}
+                      className={`flex h-6 items-center gap-2 rounded-sm px-2 ${row.w} ${row.tone}`}
                     >
-                      <span className="size-1.5 shrink-0 rotate-45 bg-ink/40" />
-                      <span className="h-1.5 w-8 bg-ink/30" />
+                      <span className="size-1.5 shrink-0 rotate-45 bg-background/40" />
+                      <span className="h-1.5 w-8 rounded-full bg-background/30" />
                     </span>
-                    <Bar className="w-10 shrink-0 bg-white/25" />
+                    <Bar className="w-10 shrink-0 bg-muted-foreground/40" />
                   </span>
                 ))}
               </div>
             </MosaicTile>
 
-            {/* Three-figure stat row beside a squared gauge. */}
+            {/* Three-figure stat row beside a ring gauge. */}
             <MosaicTile delay={370} className="p-3.5">
               <span className="flex items-start justify-between">
-                <Bar className="h-2.5 w-20 bg-white/45" />
-                <span className="flex size-9 shrink-0 items-center justify-center border-2 border-white/12 border-t-sage/80 border-r-sage/80">
-                  <span className="size-3 bg-white/15" />
+                <Bar className="h-2.5 w-20 bg-muted-foreground/80" />
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-border border-t-chart-5/70 border-r-chart-5/70">
+                  <span className="size-3 rounded-full bg-accent" />
                 </span>
               </span>
               <div className="mt-auto grid grid-cols-3 gap-2">
-                {["bg-white/70", "bg-white/70", "bg-sage/80"].map((tone, i) => (
+                {["bg-foreground/70", "bg-foreground/70", "bg-chart-5/70"].map((tone, i) => (
                   <span key={i} className="space-y-2">
-                    <Bar className="w-10 bg-white/20" />
-                    <span className={`block h-2.5 w-12 ${tone}`} />
+                    <Bar className="w-10 bg-accent" />
+                    <span className={`block h-2.5 w-12 rounded-full ${tone}`} />
                   </span>
                 ))}
               </div>
@@ -333,21 +349,21 @@ function NewProductVisual() {
           <div className="grid min-h-0 min-w-0 grid-rows-[1.1fr_1fr] gap-2.5">
             {/* Scheduled list: a mark and a two-line row, hairline divided. */}
             <MosaicTile delay={430}>
-              <span className="border-b border-white/10 px-3.5 py-3">
-                <Bar className="w-20 bg-white/40" />
+              <span className="border-b border-border px-3.5 py-3">
+                <Bar className="w-20 bg-muted-foreground/80" />
               </span>
               <div className="flex grow flex-col justify-around">
                 {LIST_ROWS.map((tone, i) => (
                   <span
                     key={i}
-                    className="flex items-center gap-2.5 border-b border-white/[0.07] px-3.5 py-2.5 last:border-b-0"
+                    className="flex items-center gap-2.5 border-b border-border px-3.5 py-2.5 last:border-b-0"
                   >
                     <span
-                      className={`size-5 shrink-0 border border-white/15 ${tone}`}
+                      className={`size-5 shrink-0 rounded-md border border-border ${tone}`}
                     />
                     <span className="space-y-1.5">
-                      <Bar className="w-12 bg-white/30" />
-                      <Bar className="w-8 bg-white/15" />
+                      <Bar className="w-12 bg-muted-foreground/50" />
+                      <Bar className="w-8 bg-accent" />
                     </span>
                   </span>
                 ))}
@@ -356,14 +372,14 @@ function NewProductVisual() {
 
             {/* Activity list: a mark and a single line. */}
             <MosaicTile delay={490}>
-              <span className="border-b border-white/10 px-3.5 py-3">
-                <Bar className="w-16 bg-white/40" />
+              <span className="border-b border-border px-3.5 py-3">
+                <Bar className="w-16 bg-muted-foreground/80" />
               </span>
               <div className="flex grow flex-col justify-around px-3.5">
                 {LIST_ROWS.map((tone, i) => (
                   <span key={i} className="flex items-center gap-2.5">
                     <span className={`size-1.5 shrink-0 rotate-45 ${tone}`} />
-                    <Bar className="w-16 bg-white/30" />
+                    <Bar className="w-16 bg-muted-foreground/50" />
                   </span>
                 ))}
               </div>
@@ -390,11 +406,13 @@ function NewProductVisual() {
  * shared `VisualFade` dissolves the edges instead.                     *
  *                                                                      *
  * Rule 4.3 as everywhere else: no filename, no code, no numeral, no    *
- * logo. The reference's syntax colours map onto the #31 chrome set —   *
- * `lavender` for keywords and component files, `sage` for strings,     *
- * `rose` for values and stylesheets, the white alpha ladder for        *
- * identifiers and punctuation, `white/12` for comments. `gold` appears *
- * once, on the active tab, and nowhere else.                           *
+ * logo. The reference's syntax colours map onto the #31 chrome set     *
+ * (fin chart steps, #47): plum `chart-4` for keywords and component    *
+ * files, sage `chart-5` for strings, terracotta `chart-1` for values   *
+ * and stylesheets, indigo `chart-2` for the config file type, the      *
+ * `muted-foreground` ladder for identifiers and punctuation, `muted`   *
+ * for comments. Coral (`brand`) marks the active tab and the parked    *
+ * caret, and nowhere else.                                             *
  * ------------------------------------------------------------------ */
 
 /** Disclosure caret for a tree row. Inline SVG, per §Interaction vocabulary. */
@@ -402,7 +420,7 @@ function Caret({ open = false }: { open?: boolean }) {
   return (
     <svg
       viewBox="0 0 12 12"
-      className={`size-2.5 shrink-0 text-white/35 ${open ? "rotate-90" : ""}`}
+      className={`size-2.5 shrink-0 text-muted-foreground/60 ${open ? "rotate-90" : ""}`}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.5"
@@ -418,7 +436,7 @@ function TabClose() {
   return (
     <svg
       viewBox="0 0 12 12"
-      className="size-2.5 shrink-0 text-white/25"
+      className="size-2.5 shrink-0 text-muted-foreground/40"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.5"
@@ -447,16 +465,16 @@ const TREE: readonly {
   { depth: 0, folder: true, open: true, w: "w-8" },
   { depth: 1, folder: true, w: "w-12" },
   { depth: 1, folder: true, open: true, w: "w-11" },
-  { depth: 2, tone: "bg-rose/70", w: "w-14" },
+  { depth: 2, tone: "bg-chart-1/50", w: "w-14" },
   { depth: 1, folder: true, open: true, w: "w-16" },
-  { depth: 2, tone: "bg-lavender/70", w: "w-12" },
-  { depth: 2, tone: "bg-lavender/70", w: "w-14", active: true },
-  { depth: 2, tone: "bg-lavender/70", w: "w-16" },
-  { depth: 2, tone: "bg-lavender/70", w: "w-11" },
+  { depth: 2, tone: "bg-chart-4/60", w: "w-12" },
+  { depth: 2, tone: "bg-chart-4/60", w: "w-14", active: true },
+  { depth: 2, tone: "bg-chart-4/60", w: "w-16" },
+  { depth: 2, tone: "bg-chart-4/60", w: "w-11" },
   { depth: 1, folder: true, w: "w-10" },
   { depth: 1, folder: true, w: "w-11" },
-  { depth: 1, tone: "bg-gold/70", w: "w-13" },
-  { depth: 1, tone: "bg-lavender/70", w: "w-12" },
+  { depth: 1, tone: "bg-chart-2/60", w: "w-13" },
+  { depth: 1, tone: "bg-chart-4/60", w: "w-12" },
   { depth: 1, folder: true, w: "w-14" },
   { depth: 1, folder: true, w: "w-8" },
   { depth: 1, folder: true, w: "w-16" },
@@ -471,10 +489,10 @@ const INDENT: Record<0 | 1 | 2 | 3, string> = {
 
 /** Editor tabs. The first is active. */
 const TABS: readonly { tone: string; w: string }[] = [
-  { tone: "bg-lavender/70", w: "w-12" },
-  { tone: "bg-gold/70", w: "w-11" },
-  { tone: "bg-white/30", w: "w-14" },
-  { tone: "bg-sage/70", w: "w-10" },
+  { tone: "bg-chart-4/60", w: "w-12" },
+  { tone: "bg-chart-2/60", w: "w-11" },
+  { tone: "bg-muted-foreground/50", w: "w-14" },
+  { tone: "bg-chart-5/60", w: "w-10" },
 ];
 
 /**
@@ -490,86 +508,86 @@ const CODE: readonly {
   {
     indent: 0,
     tokens: [
-      { w: "w-10", tone: "bg-lavender/70" },
-      { w: "w-8", tone: "bg-white/30" },
-      { w: "w-6", tone: "bg-lavender/70" },
-      { w: "w-12", tone: "bg-sage/60" },
+      { w: "w-10", tone: "bg-chart-4/60" },
+      { w: "w-8", tone: "bg-muted-foreground/50" },
+      { w: "w-6", tone: "bg-chart-4/60" },
+      { w: "w-12", tone: "bg-chart-5/50" },
     ],
   },
   {
     indent: 0,
     tokens: [
-      { w: "w-10", tone: "bg-lavender/70" },
-      { w: "w-4", tone: "bg-white/20" },
-      { w: "w-9", tone: "bg-white/30" },
-      { w: "w-14", tone: "bg-sage/60" },
+      { w: "w-10", tone: "bg-chart-4/60" },
+      { w: "w-4", tone: "bg-accent" },
+      { w: "w-9", tone: "bg-muted-foreground/50" },
+      { w: "w-14", tone: "bg-chart-5/50" },
     ],
   },
   {
     indent: 0,
     tokens: [
-      { w: "w-10", tone: "bg-lavender/70" },
-      { w: "w-7", tone: "bg-white/30" },
-      { w: "w-16", tone: "bg-sage/60" },
+      { w: "w-10", tone: "bg-chart-4/60" },
+      { w: "w-7", tone: "bg-muted-foreground/50" },
+      { w: "w-16", tone: "bg-chart-5/50" },
     ],
   },
   {
     indent: 0,
     tokens: [
-      { w: "w-10", tone: "bg-lavender/70" },
-      { w: "w-12", tone: "bg-white/30" },
-      { w: "w-10", tone: "bg-sage/60" },
+      { w: "w-10", tone: "bg-chart-4/60" },
+      { w: "w-12", tone: "bg-muted-foreground/50" },
+      { w: "w-10", tone: "bg-chart-5/50" },
     ],
   },
   { indent: 0, tokens: [] },
   {
     indent: 0,
     tokens: [
-      { w: "w-8", tone: "bg-lavender/70" },
-      { w: "w-9", tone: "bg-rose/60" },
-      { w: "w-3", tone: "bg-white/20" },
+      { w: "w-8", tone: "bg-chart-4/60" },
+      { w: "w-9", tone: "bg-chart-1/40" },
+      { w: "w-3", tone: "bg-accent" },
     ],
   },
-  { indent: 1, tokens: [{ w: "w-3", tone: "bg-white/20" }] },
+  { indent: 1, tokens: [{ w: "w-3", tone: "bg-accent" }] },
   {
     indent: 2,
     tokens: [
-      { w: "w-4", tone: "bg-white/30" },
-      { w: "w-3", tone: "bg-rose/60" },
-    ],
-  },
-  {
-    indent: 2,
-    tokens: [
-      { w: "w-8", tone: "bg-white/30" },
-      { w: "w-10", tone: "bg-sage/60" },
+      { w: "w-4", tone: "bg-muted-foreground/50" },
+      { w: "w-3", tone: "bg-chart-1/40" },
     ],
   },
   {
     indent: 2,
     tokens: [
-      { w: "w-6", tone: "bg-white/30" },
-      { w: "w-20", tone: "bg-sage/60" },
+      { w: "w-8", tone: "bg-muted-foreground/50" },
+      { w: "w-10", tone: "bg-chart-5/50" },
     ],
   },
   {
     indent: 2,
     tokens: [
-      { w: "w-9", tone: "bg-white/30" },
-      { w: "w-16", tone: "bg-sage/60" },
-      { w: "w-3", tone: "bg-white/20" },
+      { w: "w-6", tone: "bg-muted-foreground/50" },
+      { w: "w-20", tone: "bg-chart-5/50" },
     ],
   },
-  { indent: 1, tokens: [{ w: "w-24", tone: "bg-white/12" }] },
-  { indent: 1, tokens: [{ w: "w-3", tone: "bg-white/20" }] },
+  {
+    indent: 2,
+    tokens: [
+      { w: "w-9", tone: "bg-muted-foreground/50" },
+      { w: "w-16", tone: "bg-chart-5/50" },
+      { w: "w-3", tone: "bg-accent" },
+    ],
+  },
+  { indent: 1, tokens: [{ w: "w-24", tone: "bg-muted" }] },
+  { indent: 1, tokens: [{ w: "w-3", tone: "bg-accent" }] },
   {
     indent: 0,
     tokens: [
-      { w: "w-6", tone: "bg-lavender/70" },
-      { w: "w-4", tone: "bg-white/20" },
+      { w: "w-6", tone: "bg-chart-4/60" },
+      { w: "w-4", tone: "bg-accent" },
     ],
   },
-  { indent: 1, tokens: [{ w: "w-5", tone: "bg-white/25" }] },
+  { indent: 1, tokens: [{ w: "w-5", tone: "bg-muted-foreground/40" }] },
   /* Where it was abandoned: the caret, parked on an empty line. It is a
      CODE entry rather than a trailing element so the gutter and the code
      column hold the same number of items and stay aligned. */
@@ -582,11 +600,11 @@ function ProductCompletionVisual() {
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         <div className="flex h-full min-w-0">
           {/* Explorer. */}
-          <div className="flex w-[36%] min-w-0 shrink-0 flex-col border-r border-white/10 py-3">
+          <div className="flex w-[36%] min-w-0 shrink-0 flex-col border-r border-border py-3">
             <ScrollReveal delay={120}>
               <span className="flex items-center justify-between px-3 pb-2.5">
-                <Bar className="h-2 w-14 bg-white/45" />
-                <span className="size-2.5 rounded-none border border-white/25" />
+                <Bar className="h-2 w-14 bg-muted-foreground/80" />
+                <span className="size-2.5 rounded-sm border border-muted-foreground/40" />
               </span>
             </ScrollReveal>
             <div className="flex min-h-0 grow flex-col justify-between">
@@ -594,7 +612,7 @@ function ProductCompletionVisual() {
                 <ScrollReveal key={i} delay={170 + i * 22}>
                   <span
                     className={`flex items-center gap-1.5 py-[3px] pr-2 ${
-                      row.active ? "bg-white/[0.07]" : ""
+                      row.active ? "bg-muted" : ""
                     }`}
                   >
                     <span
@@ -603,21 +621,21 @@ function ProductCompletionVisual() {
                       {row.folder ? (
                         <>
                           <Caret open={row.open} />
-                          <span className="size-2.5 shrink-0 border border-white/30" />
+                          <span className="size-2.5 shrink-0 rounded-sm border border-muted-foreground/50" />
                         </>
                       ) : (
                         <>
                           <span className="size-2.5 shrink-0" />
-                          <span className={`size-2 shrink-0 ${row.tone}`} />
+                          <span className={`size-2 shrink-0 rounded-sm ${row.tone}`} />
                         </>
                       )}
                       <Bar
                         className={`${row.w} ${
                           row.active
-                            ? "bg-white/60"
+                            ? "bg-foreground/60"
                             : row.folder
-                              ? "bg-white/30"
-                              : "bg-white/25"
+                              ? "bg-muted-foreground/50"
+                              : "bg-muted-foreground/40"
                         }`}
                       />
                     </span>
@@ -629,19 +647,20 @@ function ProductCompletionVisual() {
 
           {/* Editor. */}
           <div className="flex min-w-0 grow flex-col">
-            {/* Tab strip. The active tab is the one gold element. */}
+            {/* Tab strip. The active tab carries the coral (`brand`)
+                top rule. */}
             <ScrollReveal delay={260}>
-              <span className="flex items-stretch border-b border-white/10">
+              <span className="flex items-stretch border-b border-border">
                 {TABS.map((tab, i) => (
                   <span
                     key={i}
-                    className={`flex items-center gap-2 border-r border-white/[0.07] px-2.5 py-2.5 ${
-                      i === 0 ? "border-t border-t-gold bg-white/[0.04]" : ""
+                    className={`flex items-center gap-2 border-r border-border px-2.5 py-2.5 ${
+                      i === 0 ? "border-t border-t-brand bg-secondary" : ""
                     }`}
                   >
-                    <span className={`size-2.5 shrink-0 ${tab.tone}`} />
+                    <span className={`size-2.5 shrink-0 rounded-sm ${tab.tone}`} />
                     <Bar
-                      className={`${tab.w} ${i === 0 ? "bg-white/55" : "bg-white/25"}`}
+                      className={`${tab.w} ${i === 0 ? "bg-muted-foreground" : "bg-muted-foreground/40"}`}
                     />
                     <TabClose />
                   </span>
@@ -653,7 +672,7 @@ function ProductCompletionVisual() {
             <div className="flex min-h-0 grow pt-2.5">
               <span className="flex w-7 shrink-0 flex-col items-end justify-between pr-2">
                 {CODE.map((_, i) => (
-                  <span key={i} className="h-1.5 w-2.5 bg-white/15" />
+                  <span key={i} className="h-1.5 w-2.5 rounded-full bg-accent" />
                 ))}
               </span>
               <div className="flex min-w-0 grow flex-col justify-between pr-3">
@@ -665,11 +684,11 @@ function ProductCompletionVisual() {
                       {line.tokens.map((t, j) => (
                         <span
                           key={j}
-                          className={`block h-1.5 ${t.w} ${t.tone}`}
+                          className={`block h-1.5 rounded-full ${t.w} ${t.tone}`}
                         />
                       ))}
                       {line.caret === true && (
-                        <span className="block h-3 w-0.5 bg-gold" />
+                        <span className="block h-3 w-0.5 bg-brand" />
                       )}
                     </span>
                   </ScrollReveal>
@@ -696,17 +715,21 @@ function ProductCompletionVisual() {
  *                                                                      *
  * Frameless, like 01 and 02 — a border makes it read as a screenshot.  *
  * Rule 4.3 as everywhere: no title, no date, no name, no numeral, no   *
- * avatar photo. `gold` appears once, on the today line.                *
+ * avatar photo. Coral (`brand`) appears once, on the today line and   *
+ * its tick on the date scale.                                          *
  * ------------------------------------------------------------------ */
 
-/** Overlapping squares, the system's stand-in for an avatar stack. */
+/**
+ * Overlapping circles, the system's stand-in for an avatar stack
+ * (avatars are `rounded-full`, #48).
+ */
 function AvatarStack() {
   return (
     <span className="flex shrink-0 items-center">
-      {["bg-lavender/45", "bg-sage/45", "bg-rose/45"].map((tone, i) => (
+      {["bg-chart-4/40", "bg-chart-5/40", "bg-chart-1/30"].map((tone, i) => (
         <span
           key={i}
-          className={`size-3 shrink-0 border border-white/20 ${tone} ${
+          className={`size-3 shrink-0 rounded-full border border-border ${tone} ${
             i > 0 ? "-ml-1" : ""
           }`}
         />
@@ -720,27 +743,32 @@ function Kebab() {
   return (
     <span className="flex shrink-0 flex-col gap-[2px]">
       {[0, 1, 2].map((i) => (
-        <span key={i} className="size-[2px] bg-white/30" />
+        <span key={i} className="size-[2px] rounded-full bg-muted-foreground/50" />
       ))}
     </span>
   );
 }
 
 /**
- * A squared progress gauge. The reference uses a donut; round is not in
- * this system's vocabulary, so it is a square whose leading edges carry
- * the tint — the same device the bento's stat tile uses.
+ * A ring progress gauge, the reference's donut. With the squared rule
+ * retired (#48) it is a `rounded-full` ring whose leading edges carry
+ * the tint, the same device the bento's stat tile uses.
  */
 function Gauge({ tone }: { tone: string }) {
   return (
     <span
-      className={`size-4 shrink-0 border-2 border-white/12 ${tone}`}
+      className={`size-4 shrink-0 rounded-full border-2 border-border ${tone}`}
       aria-hidden="true"
     />
   );
 }
 
-/** One task bar on the timeline. */
+/**
+ * One task bar on the timeline. The selected one takes the sub-panel
+ * step (`secondary`), a lift off the `card` plane as its old fill was off
+ * the old surface (#47); its brighter hairline is what sets it apart
+ * from the selected row band, which shares that fill.
+ */
 function TaskCard({
   at,
   delay,
@@ -755,20 +783,20 @@ function TaskCard({
   return (
     <ScrollReveal delay={delay} className={`absolute ${at}`}>
       <span
-        className={`flex items-center gap-2 border px-2 py-2 ${
+        className={`flex items-center gap-2 rounded-lg border px-2 py-2 ${
           selected
-            ? "border-white/45 bg-[#101013] shadow-[var(--shadow-modal)]"
-            : "border-white/15 bg-surface"
+            ? "border-muted-foreground/50 bg-secondary shadow-2xl"
+            : "border-border bg-card"
         }`}
       >
         <Gauge tone={gauge} />
         <span className="min-w-0 grow space-y-1.5">
           <Bar
-            className={selected ? "w-full bg-white/55" : "w-full bg-white/35"}
+            className={selected ? "w-full bg-muted-foreground" : "w-full bg-muted-foreground/60"}
           />
           <span className="flex items-center gap-1.5">
-            <span className="size-2 shrink-0 border border-white/20" />
-            <Bar className="w-2/3 bg-white/15" />
+            <span className="size-2 shrink-0 rounded-sm border border-accent" />
+            <Bar className="w-2/3 bg-accent" />
           </span>
         </span>
         <AvatarStack />
@@ -795,11 +823,11 @@ function ProductSupportVisual() {
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         <div className="flex h-full min-w-0">
           {/* Rail. */}
-          <div className="flex w-[22%] min-w-0 shrink-0 flex-col border-r border-white/10 py-3">
+          <div className="flex w-[22%] min-w-0 shrink-0 flex-col border-r border-border py-3">
             <ScrollReveal delay={120}>
               <span className="flex items-center gap-1.5 px-3 pb-4">
-                <span className="size-3 shrink-0 border border-white/30" />
-                <Bar className="w-10 bg-white/45" />
+                <span className="size-3 shrink-0 rounded-sm border border-muted-foreground/50" />
+                <Bar className="w-10 bg-muted-foreground/80" />
               </span>
             </ScrollReveal>
             <div className="flex min-h-0 grow flex-col justify-start gap-[7px]">
@@ -807,23 +835,23 @@ function ProductSupportVisual() {
                 <ScrollReveal key={i} delay={160 + i * 28}>
                   <span
                     className={`flex items-center gap-2 px-3 py-1.5 ${
-                      item.active === true ? "bg-white/[0.07]" : ""
+                      item.active === true ? "bg-muted" : ""
                     }`}
                   >
                     <span
-                      className={`size-2.5 shrink-0 border ${
+                      className={`size-2.5 shrink-0 rounded-sm border ${
                         item.active === true
-                          ? "border-white/45"
-                          : "border-white/25"
+                          ? "border-muted-foreground/80"
+                          : "border-muted-foreground/40"
                       }`}
                     />
                     <Bar
                       className={`${item.w} ${
-                        item.active === true ? "bg-white/55" : "bg-white/25"
+                        item.active === true ? "bg-muted-foreground" : "bg-muted-foreground/40"
                       }`}
                     />
                     {item.badge === true && (
-                      <span className="ml-auto size-2.5 shrink-0 bg-rose/70" />
+                      <span className="ml-auto size-2.5 shrink-0 rounded-full bg-chart-1/50" />
                     )}
                   </span>
                 </ScrollReveal>
@@ -835,42 +863,42 @@ function ProductSupportVisual() {
           <div className="flex min-w-0 grow flex-col">
             {/* Header: breadcrumb, title, actions. */}
             <ScrollReveal delay={200}>
-              <span className="flex items-start justify-between gap-3 border-b border-white/10 px-3 py-3">
+              <span className="flex items-start justify-between gap-3 border-b border-border px-3 py-3">
                 <span className="min-w-0 space-y-2">
                   <span className="flex items-center gap-1.5">
-                    <Bar className="w-8 bg-white/20" />
-                    <span className="size-1 shrink-0 rotate-45 bg-white/20" />
-                    <Bar className="w-7 bg-white/20" />
-                    <span className="size-1 shrink-0 rotate-45 bg-white/20" />
-                    <Bar className="w-9 bg-white/20" />
+                    <Bar className="w-8 bg-accent" />
+                    <span className="size-1 shrink-0 rotate-45 bg-accent" />
+                    <Bar className="w-7 bg-accent" />
+                    <span className="size-1 shrink-0 rotate-45 bg-accent" />
+                    <Bar className="w-9 bg-accent" />
                   </span>
-                  <Bar className="h-2.5 w-28 bg-white/60" />
+                  <Bar className="h-2.5 w-28 bg-foreground/60" />
                 </span>
                 <span className="flex shrink-0 items-center gap-2">
                   <Kebab />
-                  <span className="size-2.5 border border-white/25" />
+                  <span className="size-2.5 rounded-sm border border-muted-foreground/40" />
                   <span className="relative">
-                    <span className="block size-2.5 border border-white/25" />
-                    <span className="absolute -top-0.5 -right-0.5 size-1.5 bg-rose/80" />
+                    <span className="block size-2.5 rounded-sm border border-muted-foreground/40" />
+                    <span className="absolute -top-0.5 -right-0.5 size-1.5 rounded-full bg-chart-1/60" />
                   </span>
                   <AvatarStack />
-                  <span className="h-4 w-8 border border-white/20" />
+                  <span className="h-4 w-8 rounded-md border border-accent" />
                 </span>
               </span>
             </ScrollReveal>
 
             {/* Tabs. */}
             <ScrollReveal delay={250}>
-              <span className="flex items-stretch gap-4 border-b border-white/10 px-3">
+              <span className="flex items-stretch gap-4 border-b border-border px-3">
                 {["w-10", "w-9", "w-7", "w-12", "w-9"].map((w, i) => (
                   <span
                     key={i}
                     className={`py-2.5 ${
-                      i === 0 ? "border-b border-white/70" : ""
+                      i === 0 ? "border-b border-foreground/70" : ""
                     }`}
                   >
                     <Bar
-                      className={`${w} ${i === 0 ? "bg-white/60" : "bg-white/22"}`}
+                      className={`${w} ${i === 0 ? "bg-foreground/60" : "bg-muted-foreground/40"}`}
                     />
                   </span>
                 ))}
@@ -879,11 +907,11 @@ function ProductSupportVisual() {
 
             {/* Date scale. */}
             <ScrollReveal delay={295}>
-              <span className="flex items-center justify-between border-b border-white/10 px-3 py-2">
+              <span className="flex items-center justify-between border-b border-border px-3 py-2">
                 {Array.from({ length: 12 }, (_, i) => (
                   <Bar
                     key={i}
-                    className={`w-4 ${i === 7 ? "bg-gold/80" : "bg-white/20"}`}
+                    className={`w-4 ${i === 7 ? "bg-brand/80" : "bg-accent"}`}
                   />
                 ))}
               </span>
@@ -898,17 +926,17 @@ function ProductSupportVisual() {
                 {Array.from({ length: 12 }, (_, i) => (
                   <span
                     key={i}
-                    className={`h-full grow border-r border-white/[0.06] ${
+                    className={`h-full grow border-r border-border ${
                       i === 5 || i === 6 || i === 11
-                        ? "bg-[repeating-linear-gradient(135deg,currentColor_0_1px,transparent_1px_7px)] text-white/[0.05]"
+                        ? "bg-[repeating-linear-gradient(135deg,currentColor_0_1px,transparent_1px_7px)] text-muted"
                         : ""
                     }`}
                   />
                 ))}
               </span>
 
-              {/* Today. The one gold element on the plane. */}
-              <span className="absolute top-0 bottom-0 left-[62%] w-0.5 bg-gold" />
+              {/* Today. The one coral (`brand`) element on the plane. */}
+              <span className="absolute top-0 bottom-0 left-[62%] w-0.5 bg-brand" />
 
               {/* Dependency link: one task waiting on another. */}
               <svg
@@ -922,7 +950,7 @@ function ProductSupportVisual() {
                   stroke="currentColor"
                   strokeWidth="1.5"
                   strokeDasharray="4 4"
-                  className="text-lavender/60"
+                  className="text-chart-4/50"
                 />
               </svg>
 
@@ -932,9 +960,9 @@ function ProductSupportVisual() {
                 className="absolute top-[3%] right-[4%] left-[3%]"
               >
                 <span className="flex items-center gap-2">
-                  <span className="size-2 shrink-0 rotate-45 bg-sage/80" />
-                  <Bar className="w-10 shrink-0 bg-white/40" />
-                  <span className="h-px grow bg-white/20" />
+                  <span className="size-2 shrink-0 rotate-45 bg-chart-5/70" />
+                  <Bar className="w-10 shrink-0 bg-muted-foreground/80" />
+                  <span className="h-px grow bg-border" />
                 </span>
               </ScrollReveal>
               <ScrollReveal
@@ -942,40 +970,40 @@ function ProductSupportVisual() {
                 className="absolute top-[70%] right-[4%] left-[3%]"
               >
                 <span className="flex items-center gap-2">
-                  <span className="size-2 shrink-0 rotate-45 bg-rose/80" />
-                  <Bar className="w-14 shrink-0 bg-white/40" />
-                  <span className="h-px grow bg-white/20" />
+                  <span className="size-2 shrink-0 rotate-45 bg-chart-1/60" />
+                  <Bar className="w-14 shrink-0 bg-muted-foreground/80" />
+                  <span className="h-px grow bg-border" />
                 </span>
               </ScrollReveal>
 
               {/* Selected row band, behind its card. */}
-              <span className="absolute top-[26%] right-0 left-0 h-[16%] bg-white/[0.04]" />
+              <span className="absolute top-[26%] right-0 left-0 h-[16%] bg-secondary" />
 
               <TaskCard
                 at="top-[12%] left-[6%] w-[52%]"
                 delay={370}
-                gauge="border-t-sage/80 border-r-sage/80"
+                gauge="border-t-chart-5/70 border-r-chart-5/70"
               />
               <TaskCard
                 at="top-[28%] left-[22%] w-[54%]"
                 delay={420}
-                gauge="border-t-lavender/80 border-r-lavender/80"
+                gauge="border-t-chart-4/70 border-r-chart-4/70"
                 selected
               />
               <TaskCard
                 at="top-[45%] left-[12%] w-[50%]"
                 delay={465}
-                gauge="border-t-white/45 border-r-white/45"
+                gauge="border-t-muted-foreground/80 border-r-muted-foreground/80"
               />
               <TaskCard
                 at="top-[58%] left-[34%] w-[52%]"
                 delay={505}
-                gauge="border-t-rose/80 border-r-rose/80"
+                gauge="border-t-chart-1/60 border-r-chart-1/60"
               />
               <TaskCard
                 at="top-[80%] left-[46%] w-[50%]"
                 delay={560}
-                gauge="border-t-sage/80 border-r-sage/80"
+                gauge="border-t-chart-5/70 border-r-chart-5/70"
               />
             </div>
           </div>
@@ -997,16 +1025,17 @@ function ProductSupportVisual() {
  *                                                                      *
  * Frameless like 01, 02 and 03. Rule 4.3 as everywhere: no label, no   *
  * count, no date, no axis value. The reference's two series map onto   *
- * `lavender` and `rose`, its status marks onto the #31 chrome set, and *
- * `gold` appears once — on the read-out point, which is the one thing  *
- * the whole composition points at.                                     *
+ * plum `chart-4` and terracotta `chart-1`, its status marks onto the   *
+ * #31 chrome set (fin chart steps, #47), and coral (`brand`) appears   *
+ * once, on the read-out point, which is the one thing the whole        *
+ * composition points at.                                               *
  * ------------------------------------------------------------------ */
 
 /** Status rows in the summary panel. */
 const STATUS: readonly { tone: string; w: string; pill: string }[] = [
-  { tone: "bg-lavender/80", w: "w-12", pill: "w-6" },
-  { tone: "bg-sage/80", w: "w-10", pill: "w-2" },
-  { tone: "bg-rose/80", w: "w-16", pill: "w-4" },
+  { tone: "bg-chart-4/70", w: "w-12", pill: "w-6" },
+  { tone: "bg-chart-5/70", w: "w-10", pill: "w-2" },
+  { tone: "bg-chart-1/60", w: "w-16", pill: "w-4" },
 ];
 
 function InternalToolVisual() {
@@ -1017,19 +1046,19 @@ function InternalToolVisual() {
           {/* Summary. A bordered sub-panel is chrome, not the outer box
               the owner asked to lose — the composition itself has no
               frame. */}
-          <div className="flex w-[34%] min-w-0 shrink-0 flex-col border border-white/15 p-3">
+          <div className="flex w-[34%] min-w-0 shrink-0 flex-col rounded-lg border border-border p-3">
             <ScrollReveal delay={120}>
-              <Bar className="h-2 w-16 bg-white/50" />
+              <Bar className="h-2 w-16 bg-muted-foreground" />
             </ScrollReveal>
             <div className="mt-4 space-y-2">
               {STATUS.map((row, i) => (
                 <ScrollReveal key={i} delay={170 + i * 55}>
                   {/* §Surfaces' sub-panel recipe for a data row. */}
-                  <span className="flex items-center gap-2.5 border border-white/12 bg-white/[0.02] px-2.5 py-2">
+                  <span className="flex items-center gap-2.5 rounded-md border border-border bg-secondary px-2.5 py-2">
                     <span className={`size-2 shrink-0 rotate-45 ${row.tone}`} />
-                    <Bar className={`${row.w} bg-white/35`} />
-                    <span className="ml-auto flex h-4 shrink-0 items-center border border-white/15 px-1.5">
-                      <span className={`block h-1.5 ${row.pill} bg-white/30`} />
+                    <Bar className={`${row.w} bg-muted-foreground/60`} />
+                    <span className="ml-auto flex h-4 shrink-0 items-center rounded-md border border-border px-1.5">
+                      <span className={`block h-1.5 rounded-full ${row.pill} bg-muted-foreground/50`} />
                     </span>
                   </span>
                 </ScrollReveal>
@@ -1038,11 +1067,11 @@ function InternalToolVisual() {
             {/* The read-out note, with its own mark. */}
             <ScrollReveal delay={345} className="mt-auto">
               <span className="flex gap-2 pt-3">
-                <span className="mt-0.5 size-3 shrink-0 rotate-45 border border-white/25" />
+                <span className="mt-0.5 size-3 shrink-0 rotate-45 border border-muted-foreground/40" />
                 <span className="min-w-0 grow space-y-1.5">
-                  <Bar className="w-full bg-white/20" />
-                  <Bar className="w-4/5 bg-white/20" />
-                  <Bar className="w-3/5 bg-white/12" />
+                  <Bar className="w-full bg-accent" />
+                  <Bar className="w-4/5 bg-accent" />
+                  <Bar className="w-3/5 bg-muted" />
                 </span>
               </span>
             </ScrollReveal>
@@ -1052,19 +1081,20 @@ function InternalToolVisual() {
           <div className="flex min-w-0 grow flex-col">
             <ScrollReveal delay={200}>
               <span className="flex items-center justify-between gap-3">
-                <Bar className="h-2 w-24 bg-white/50" />
-                {/* Range selector. Squared, not the reference's pill. */}
-                <span className="flex shrink-0 items-stretch border border-white/15">
+                <Bar className="h-2 w-24 bg-muted-foreground" />
+                {/* Range selector, at fin's control radius
+                    (`rounded-md`, #48). */}
+                <span className="flex shrink-0 items-stretch rounded-md border border-border">
                   {["w-10", "w-8", "w-7"].map((w, i) => (
                     <span
                       key={i}
                       className={`flex items-center px-2 py-1.5 ${
-                        i === 1 ? "bg-white/[0.08]" : ""
+                        i === 1 ? "bg-muted" : ""
                       }`}
                     >
                       <span
-                        className={`block h-1.5 ${w} ${
-                          i === 1 ? "bg-white/55" : "bg-white/25"
+                        className={`block h-1.5 rounded-full ${w} ${
+                          i === 1 ? "bg-muted-foreground" : "bg-muted-foreground/40"
                         }`}
                       />
                     </span>
@@ -1077,7 +1107,7 @@ function InternalToolVisual() {
             <ScrollReveal delay={260} className="mt-4 flex min-h-0 grow">
               <span className="flex w-5 shrink-0 flex-col justify-between py-0.5">
                 {[0, 1, 2, 3].map((i) => (
-                  <span key={i} className="h-1.5 w-4 bg-white/20" />
+                  <span key={i} className="h-1.5 w-4 rounded-full bg-accent" />
                 ))}
               </span>
               <span className="relative min-w-0 grow">
@@ -1096,34 +1126,37 @@ function InternalToolVisual() {
                       y2="100"
                       stroke="currentColor"
                       strokeWidth="1"
-                      className="text-white/[0.08]"
+                      className="text-border"
                     />
                   ))}
                   <path
                     d="M0 28 C14 60 26 78 40 72 C54 66 58 34 72 32 C86 30 92 18 104 22 C116 26 122 58 136 60 C150 62 156 44 170 42 C184 40 192 28 200 20"
                     stroke="currentColor"
                     strokeWidth="2"
-                    className="text-lavender/75"
+                    className="text-chart-4/60"
                   />
                   <path
                     d="M0 78 C12 70 20 52 32 48 C44 44 48 22 60 20 C72 18 78 46 90 52 C102 58 108 44 120 40 C132 36 138 72 150 76 C162 80 168 40 180 36 C192 32 196 58 200 62"
                     stroke="currentColor"
                     strokeWidth="2"
-                    className="text-rose/75"
+                    className="text-chart-1/50"
                   />
                 </svg>
 
-                {/* The read-out point. Gold, and the only gold here. The
-                    reference glows; §Surfaces bans that, so presence
-                    comes from a hairline halo instead. */}
-                <span className="absolute top-[18%] left-[52%] flex size-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center border border-white/30">
-                  <span className="size-2 rotate-45 bg-gold" />
+                {/* The read-out point. Coral (`brand`), and the only
+                    coral here. The reference glows; §Surfaces bans that,
+                    so presence comes from a round hairline halo instead
+                    (#48). */}
+                <span className="absolute top-[18%] left-[52%] flex size-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-muted-foreground/50">
+                  <span className="size-2 rotate-45 bg-brand" />
                 </span>
 
-                {/* Its read-out card. */}
-                <span className="absolute top-[2%] left-[56%] space-y-1.5 border border-white/20 bg-[#101013] px-2.5 py-2">
-                  <Bar className="w-14 bg-white/45" />
-                  <Bar className="w-12 bg-white/25" />
+                {/* Its read-out card. The sub-panel step (`secondary`),
+                    so it lifts off the `card` plane the way the old
+                    fill lifted off the old surface (#47). */}
+                <span className="absolute top-[2%] left-[56%] space-y-1.5 rounded-lg border border-border bg-secondary px-2.5 py-2">
+                  <Bar className="w-14 bg-muted-foreground/80" />
+                  <Bar className="w-12 bg-muted-foreground/40" />
                 </span>
               </span>
             </ScrollReveal>
@@ -1132,7 +1165,7 @@ function InternalToolVisual() {
             <ScrollReveal delay={330}>
               <span className="mt-2.5 flex items-center justify-between pl-5">
                 {[0, 1, 2, 3, 4, 5].map((i) => (
-                  <Bar key={i} className="w-6 bg-white/20" />
+                  <Bar key={i} className="w-6 bg-accent" />
                 ))}
               </span>
             </ScrollReveal>
@@ -1200,9 +1233,10 @@ type AppKey = keyof typeof APP_ICONS;
  * out a bit"). Positions are percentages of the 4/3 stage, tile
  * centres; the connector SVG derives its line ends from the same
  * numbers so the two cannot drift. Tones are the #31 chrome set the
- * old cluster carried, reassigned — `gold` still appears once, on the
- * centre. Kept inside roughly 70% of the fade's radius so the veil
- * dims the edge tiles into the card without erasing the marks.
+ * old cluster carried, reassigned and recoloured to fin's chart steps
+ * (#47); coral (`brand`) still appears once, on the centre. Kept
+ * inside roughly 70% of the fade's radius so the veil dims the edge
+ * tiles into the card without erasing the marks.
  */
 const HUB = { x: 50, y: 50 };
 const SATELLITES: readonly {
@@ -1211,12 +1245,12 @@ const SATELLITES: readonly {
   x: number;
   y: number;
 }[] = [
-  { icon: "envelope", tone: "text-sage/85", x: 29, y: 24 },
-  { icon: "linkedin", tone: "text-lavender/85", x: 71, y: 24 },
-  { icon: "slack", tone: "text-rose/85", x: 15, y: 55 },
-  { icon: "github", tone: "text-white/45", x: 85, y: 55 },
-  { icon: "calendar", tone: "text-white/45", x: 33, y: 81 },
-  { icon: "google", tone: "text-sage/70", x: 67, y: 81 },
+  { icon: "envelope", tone: "text-chart-5/75", x: 29, y: 24 },
+  { icon: "linkedin", tone: "text-chart-4/75", x: 71, y: 24 },
+  { icon: "slack", tone: "text-chart-1/65", x: 15, y: 55 },
+  { icon: "github", tone: "text-muted-foreground/80", x: 85, y: 55 },
+  { icon: "calendar", tone: "text-muted-foreground/80", x: 33, y: 81 },
+  { icon: "google", tone: "text-chart-5/60", x: 67, y: 81 },
 ];
 
 function Tile({
@@ -1231,12 +1265,13 @@ function Tile({
   delay: number;
 }) {
   /* The emphasized tile is the reference's highlighted card in this
-     system's terms: a brighter hairline, the shared depth token, and
-     the one gold mark. `group-target:` carries the deep-link "you are
+     system's terms: a brighter hairline, the shared depth token
+     (`shadow-2xl`), and the one coral (`brand`) mark. `group-target:`
+     carries the deep-link "you are
      here" onto it, so the visual answers the anchor as the index does. */
   const surface = emphasis
-    ? "border-white/45 shadow-[var(--shadow-modal)] group-target:border-gold/60"
-    : "border-white/15";
+    ? "border-muted-foreground/50 shadow-2xl group-target:border-brand/60"
+    : "border-border";
 
   /* The satellites' 16-grid glyphs fill their viewBox edge to edge
      where the old 24-grid marks sat inside a 3.5px margin, so they
@@ -1247,7 +1282,7 @@ function Tile({
   return (
     <ScrollReveal delay={delay}>
       <div
-        className={`flex size-16 items-center justify-center border bg-surface transition-colors duration-150 md:size-[74px] ${surface} ${tone}`}
+        className={`flex size-16 items-center justify-center rounded-xl border bg-card transition-colors duration-150 md:size-[74px] ${surface} ${tone}`}
       >
         <svg
           viewBox={viewBox}
@@ -1278,13 +1313,13 @@ function WorkflowVisual() {
         <VisualFade />
         {/* The wiring lands first, then the hub, then the apps — the
             workflow graph's documented assembly order. Dotted, square
-            caps (the system has no round joins), on the white ladder.
+            caps, on the `muted-foreground` ladder.
             The SVG shares the satellites' percent coordinates (times
             4.48 / 3.36 for the 448x336 viewBox, the stage's own 4/3),
-            and the tiles' opaque `surface` fill masks the line ends,
+            and the tiles' opaque `card` fill masks the line ends,
             so each spoke visually stops at a tile edge. */}
         <ScrollReveal delay={120} className="absolute inset-0">
-          <svg viewBox="0 0 448 336" className="h-full w-full text-white/25">
+          <svg viewBox="0 0 448 336" className="h-full w-full text-muted-foreground/40">
             {SATELLITES.map(({ icon, x, y }) => (
               <path
                 key={icon}
@@ -1311,7 +1346,7 @@ function WorkflowVisual() {
           className="absolute -translate-x-1/2 -translate-y-1/2"
           style={{ left: `${HUB.x}%`, top: `${HUB.y}%` }}
         >
-          <Tile icon="anthropic" tone="text-gold" emphasis delay={200} />
+          <Tile icon="anthropic" tone="text-brand" emphasis delay={200} />
         </div>
       </div>
     </div>

@@ -164,67 +164,74 @@ function composeAnswers(
   return composed;
 }
 
-/* Visual language matched to the landing template: squared corners,
- * hairline borders, glassy dark surfaces, JetBrains-Mono micro-labels,
- * and the flat gold accent (no glows). */
+/* Visual language per the fin Zen Linen system (decision-log #47, #48):
+ * fin's radius steps, `border` hairlines, the `card` glass, Playfair
+ * display headings, JetBrains Mono micro-labels, and the flat coral
+ * `brand` accent (no glows). Every focus indicator is `ring`. */
 
+/* Panel heading at display scale: Playfair Display 700 (fin §1). */
 const HEADING_CLASS =
-  "text-2xl font-medium tracking-tight text-balance text-white outline-none md:text-3xl";
+  "font-serif text-2xl leading-[1.08] font-bold tracking-tight text-balance text-foreground outline-none md:text-3xl";
 
-/** Uppercase mono caption — the template's marquee label treatment. */
+/** Uppercase mono caption, the marquee label treatment, in `muted-foreground`. */
 const CAPTION_CLASS =
-  "font-mono text-[0.7rem] uppercase tracking-[0.14em] text-white/55";
+  "font-mono text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground";
 
 const INPUT_CLASS =
-  "mt-2.5 w-full rounded-none border border-white/15 bg-white/[0.03] px-4 py-3 text-base text-white " +
-  "transition-colors duration-150 placeholder:text-white/40 " +
-  "focus-visible:border-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
+  "mt-2.5 w-full rounded-md border border-input bg-secondary px-4 py-3 text-base text-foreground " +
+  "transition-colors duration-150 placeholder:text-muted-foreground " +
+  "focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
-/* Squared hairline rows; selected fills flat gold with paired ink text
- * (UX-spec pairing rule, the template's text-primary accent) — no glow. */
+/* Hairline `secondary` rows with fin's `rounded-md`; hover moves to the
+ * border; selected is a flat coral fill with `brand-foreground` text
+ * (UX-spec pairing rule, decision-log #47), no glow. */
 const OPTION_CLASS =
-  "flex min-h-12 cursor-pointer items-center rounded-none border border-white/12 bg-white/[0.02] " +
-  "px-5 py-4 text-left text-base font-medium text-white/90 transition-colors duration-150 " +
-  "hover:border-white/30 hover:bg-white/[0.05] " +
-  "has-checked:border-gold has-checked:bg-gold has-checked:text-gold-ink " +
-  "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-gold";
+  "flex min-h-12 cursor-pointer items-center rounded-md border border-border bg-secondary " +
+  "px-5 py-4 text-left text-base font-medium text-foreground transition-colors duration-150 " +
+  "hover:border-muted-foreground/50 " +
+  "has-checked:border-brand has-checked:bg-brand has-checked:text-brand-foreground " +
+  "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring";
 
-/* Single-select tabs replacing the quick door's free-text line — the same
- * selectable language as OPTION_CLASS (squared, hairline, gold-fill-on-select)
- * as a compact wrapping segmented set rather than full-width rows. */
+/* Single-select tabs replacing the quick door's free-text line: the same
+ * selectable language as OPTION_CLASS (rounded-md, hairline, coral fill
+ * on select) as a compact wrapping segmented set rather than full-width rows. */
 const TAB_CLASS =
-  "flex min-h-11 cursor-pointer items-center justify-start gap-2 rounded-none border border-white/12 bg-white/[0.02] " +
-  "px-3 py-2.5 text-left text-sm font-medium text-white/90 transition-colors duration-150 " +
-  "hover:border-white/30 hover:bg-white/[0.05] " +
-  "has-checked:border-gold has-checked:bg-gold has-checked:text-gold-ink " +
-  "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-gold " +
+  "flex min-h-11 cursor-pointer items-center justify-start gap-2 rounded-md border border-border bg-secondary " +
+  "px-3 py-2.5 text-left text-sm font-medium text-foreground transition-colors duration-150 " +
+  "hover:border-muted-foreground/50 " +
+  "has-checked:border-brand has-checked:bg-brand has-checked:text-brand-foreground " +
+  "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring " +
   // Conflicting need (new product ⟷ completion): grayed out and inert.
-  "has-[:disabled]:pointer-events-none has-[:disabled]:opacity-40";
+  "has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50";
 
-/* The squared check box rendered inside each tab — the multi-select
- * affordance. Border/checkmark decoupled from the box fill: white hairline
- * + hidden mark by default; ink border + visible ink checkmark once the
- * (sr-only) checkbox is checked and the tab turns gold. */
+/* The check box rendered inside each tab (fin `rounded-sm`), the
+ * multi-select affordance. Border/checkmark decoupled from the box fill:
+ * `muted-foreground` border (about 4.6:1 on `secondary`, so the empty box
+ * clears 3:1 non-text contrast; a `border` hairline is about 1.1:1 and
+ * invisible) + hidden mark by default; `brand-foreground` border
+ * + visible `brand-foreground` checkmark once the (sr-only) checkbox is
+ * checked and the tab turns coral (decision-log #47, #48). */
 const TAB_CHECK_CLASS =
-  "flex size-4 shrink-0 items-center justify-center rounded-[2px] border border-white/45 " +
+  "flex size-4 shrink-0 items-center justify-center rounded-sm border border-muted-foreground " +
   "text-transparent transition-colors duration-150 " +
-  "peer-checked:border-gold-ink peer-checked:text-gold-ink";
+  "peer-checked:border-brand-foreground peer-checked:text-brand-foreground";
 
-/* Forward action — the template's divided-arrow button (label segment +
- * bordered arrow box), matching the hero CTA. White surface / ink mark. */
+/* Forward action: the divided-arrow button (label segment + bordered
+ * arrow box), matching button.tsx's primary and the hero CTA. `primary`
+ * fill, `primary-foreground` mark, fin `rounded-md`. State is shown by
+ * colour, not scale (fin); only the arrow nudges. */
 const ADVANCE_CLASS =
-  "group/adv inline-flex min-h-11 items-stretch bg-white text-base font-medium text-ink " +
-  // Tailwind v4 scale/translate compile to the standalone scale/translate
-  // CSS properties — transition those (not `transform`) so the hover animates.
-  "transition-[scale,opacity] duration-150 motion-safe:hover:scale-[1.02] " +
+  "group/adv inline-flex min-h-11 items-stretch rounded-md bg-primary text-base font-medium text-primary-foreground " +
+  "transition-colors duration-150 hover:bg-primary/90 " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 " +
-  "focus-visible:outline-white disabled:pointer-events-none disabled:opacity-40";
+  "focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50";
 
-/* Secondary action — a squared hairline ghost. */
+/* Secondary action: button.tsx's secondary/ghost recipe (`secondary`
+ * fill, `border` hairline, `accent` on hover, fin `rounded-md`). */
 const GHOST_CLASS =
-  "inline-flex min-h-11 items-center rounded-none border border-white/30 bg-transparent px-6 py-3 " +
-  "text-base font-medium text-white transition-colors duration-150 " +
-  "hover:border-white/60 hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+  "inline-flex min-h-11 items-center rounded-md border border-border bg-secondary px-6 py-3 " +
+  "text-base font-medium text-foreground transition-colors duration-150 " +
+  "hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 /** Inline checkmark — fills the tab's check box when a need is selected. */
 function CheckIcon() {
@@ -250,7 +257,7 @@ function AdvanceInner({ label, arrow = true }: { label: ReactNode; arrow?: boole
     <>
       <span className="flex items-center px-6 py-3">{label}</span>
       {arrow && (
-        <span className="flex items-center border-l border-ink/15 px-3.5 py-3">
+        <span className="flex items-center border-l border-primary-foreground/20 px-3.5 py-3">
           <span className="transition-[translate] duration-150 motion-safe:group-hover/adv:translate-x-0.5">
             <ArrowIcon className="size-[18px]" />
           </span>
@@ -313,8 +320,9 @@ interface QualificationModalProps {
  * top-layer rendering are the platform's. Escape hatch and a back
  * control on every step (Rules 1.6, 2.6). Interim submit resolves to
  * the failure-fallback per docs/decision-log.md #6 — see
- * @/lib/qualify. Styling matches the landing template (squared,
- * hairline, glassy, mono labels, flat gold accent).
+ * @/lib/qualify. Styling follows the fin Zen Linen system
+ * (decision-log #47, #48): fin radius steps, hairline borders, the
+ * card glass, Playfair headings, mono labels, flat coral accent.
  */
 export function QualificationModal({
   onClose,
@@ -539,10 +547,11 @@ export function QualificationModal({
       onClose={onClose}
       aria-labelledby={headingId}
       className={[
-        // Squared, hairline, glassy near-black — the template's surface
-        // language (border-y/backdrop-blur strips), not a rounded card.
-        "flex h-dvh max-h-none w-full max-w-none flex-col rounded-none bg-surface p-0 text-white",
-        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:border md:border-white/15 md:bg-surface/95 md:backdrop-blur-xl md:shadow-[var(--shadow-modal)]",
+        // Full-screen solid `card` on mobile; from md a centred glass
+        // card (`card`/95 + blur, `border` hairline, fin `rounded-xl`,
+        // decision-log #47, #48).
+        "flex h-dvh max-h-none w-full max-w-none flex-col rounded-none bg-card p-0 text-foreground",
+        "md:m-auto md:h-auto md:max-h-[85dvh] md:w-full md:max-w-[560px] md:rounded-xl md:border md:border-border md:bg-card/95 md:backdrop-blur-xl md:shadow-2xl",
         // backdrop color lives in globals.css (::backdrop var-inheritance quirk)
         "motion-safe:animate-modal-in",
       ].join(" ")}
@@ -555,13 +564,15 @@ export function QualificationModal({
             <p className="sr-only">
               {MODAL_PROGRESS.step(stepIndex + 1, PROGRESS_STEPS.length)}
             </p>
-            {/* Thin segmented meter — sharp, matches the hairline strips. */}
+            {/* Thin segmented meter: rounded-full segments, coral for
+                steps reached, `muted-foreground` at 70% at rest (about 3.1:1 on
+                `card`, fin's 3:1 floor for marks; decision-log #47). */}
             <div aria-hidden="true" className="flex items-center gap-1.5">
               {PROGRESS_STEPS.map((step, i) => (
                 <span
                   key={step}
-                  className={`h-[3px] w-7 ${
-                    i <= stepIndex ? "bg-gold" : "bg-white/15"
+                  className={`h-[3px] w-7 rounded-full ${
+                    i <= stepIndex ? "bg-brand" : "bg-muted-foreground/70"
                   }`}
                 />
               ))}
@@ -572,7 +583,7 @@ export function QualificationModal({
           type="button"
           aria-label={MODAL_NAV.close}
           onClick={close}
-          className="inline-flex min-h-11 min-w-11 items-center justify-center text-white/60 transition-colors hover:text-white"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           <CloseIcon />
         </button>
@@ -592,7 +603,7 @@ export function QualificationModal({
             >
               {MODAL_QUICK.heading}
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-white/70">
+            <p className="mt-4 text-base leading-relaxed text-foreground">
               {MODAL_QUICK.body}
             </p>
             <form onSubmit={handleQuickSubmit} className="mt-6">
@@ -691,7 +702,7 @@ export function QualificationModal({
             <button
               type="button"
               onClick={() => setScreen("project_type")}
-              className="group/more mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="group/more mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               {MODAL_QUICK.toQualifier}
               <span className="transition-[translate] duration-150 motion-safe:group-hover/more:translate-x-0.5">
@@ -853,14 +864,14 @@ export function QualificationModal({
             >
               {MODAL_OFF_RAMP.headline}
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-white/70">
+            <p className="mt-4 text-base leading-relaxed text-foreground">
               {MODAL_OFF_RAMP.body}
             </p>
             <p className="mt-6 text-base leading-relaxed">
               {MODAL_OFF_RAMP.closing}{" "}
               <a
                 href={MAILTO}
-                className="font-medium text-gold underline underline-offset-4"
+                className="font-medium text-brand underline underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 {MODAL_ESCAPE_HATCH.email}
               </a>
@@ -869,9 +880,9 @@ export function QualificationModal({
                 not a hard sell (Rule 2.2 intent preserved). */}
             <form
               onSubmit={handleOffRampSubmit}
-              className="mt-8 border-t border-white/10 pt-6"
+              className="mt-8 border-t border-border pt-6"
             >
-              <p className="text-base leading-relaxed text-white/70">
+              <p className="text-base leading-relaxed text-foreground">
                 {MODAL_OFF_RAMP.capture.prompt}
               </p>
               <div className="mt-5 flex flex-col gap-5">
@@ -941,7 +952,7 @@ export function QualificationModal({
                 ? MODAL_OFF_RAMP_SUCCESS.headline
                 : MODAL_SUCCESS.headline}
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-white/70">
+            <p className="mt-4 text-base leading-relaxed text-foreground">
               {returnScreen === "off_ramp"
                 ? MODAL_OFF_RAMP_SUCCESS.body
                 : MODAL_SUCCESS.body}
@@ -964,14 +975,14 @@ export function QualificationModal({
             >
               {MODAL_FAILURE.headline}
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-white/70">
+            <p className="mt-4 text-base leading-relaxed text-foreground">
               {MODAL_FAILURE.body}
             </p>
-            <dl className="mt-6 space-y-4 rounded-none border border-white/12 bg-white/[0.02] p-5">
+            <dl className="mt-6 space-y-4 rounded-lg border border-border bg-secondary p-5">
               {composed.map(({ label, value }) => (
                 <div key={label}>
                   <dt className={CAPTION_CLASS}>{label}</dt>
-                  <dd className="mt-1 font-medium whitespace-pre-wrap text-white">
+                  <dd className="mt-1 font-medium whitespace-pre-wrap text-foreground">
                     {value}
                   </dd>
                 </div>
@@ -990,11 +1001,11 @@ export function QualificationModal({
       </div>
 
       {/* Escape hatch, persistent at every step (Rule 2.6). */}
-      <footer className="flex items-center gap-2 border-t border-white/10 px-6 py-4 md:px-10">
+      <footer className="flex items-center gap-2 border-t border-border px-6 py-4 md:px-10">
         <span className={CAPTION_CLASS}>{MODAL_ESCAPE_HATCH.prompt}</span>
         <a
           href={MAILTO}
-          className="text-sm font-medium text-gold underline underline-offset-4"
+          className="text-sm font-medium text-brand underline underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           {MODAL_ESCAPE_HATCH.email}
         </a>

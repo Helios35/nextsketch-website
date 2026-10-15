@@ -3,8 +3,8 @@
  * accordions (Process, FAQ): rotates 45° while the owning row's
  * `group` is open, gated motion-safe. Extracted from process-section
  * in unit 05 so FAQ reuses rather than forks. Color rides on
- * currentColor so the affordance works on ink and paper alike
- * (Redesign Unit 02) — the owning row sets the text color.
+ * currentColor so the affordance works on any surface (decision-log
+ * #47): the owning row sets the text color.
  */
 export function PlusIcon() {
   return (

@@ -24,19 +24,22 @@ export type ButtonProps = {
   size?: ButtonSize;
   /**
    * Divided-arrow treatment (docs/04-ux-spec.md §Interaction
-   * vocabulary): a label segment plus a hairline-divided arrow box —
+   * vocabulary): a label segment plus a hairline-divided arrow box,
    * the system's advance affordance, matching the hero CTA. Without
-   * it the button is the plain squared block (terminal actions drop
-   * the arrow segment).
+   * it the button is the plain `rounded-md` block (terminal actions
+   * drop the arrow segment).
    */
   arrow?: boolean;
 } & (AsButton | AsAnchor);
 
+/* fin's button: `rounded-md` (decision-log #48), state shown by colour
+ * on a 150ms transition, never by transform (the whole-button hover
+ * scale is retired with #47). One focus colour site-wide: `ring`. */
 const BASE =
-  "group/button inline-flex items-center justify-center rounded-none " +
-  "font-medium transition-transform duration-150 " +
-  "motion-safe:hover:scale-[1.02] " +
-  "focus-visible:outline-2 focus-visible:outline-offset-2";
+  "group/button inline-flex items-center justify-center rounded-md " +
+  "font-medium transition-colors duration-150 disabled:opacity-50 " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 " +
+  "focus-visible:outline-ring";
 
 /**
  * The hit-area extension that lets a control be shorter than the
@@ -87,26 +90,29 @@ const SIZES: Record<
   },
 };
 
-/* Outline color lives with the variant: the focus ring must contrast
- * with the surface the button sits on (ink ring is invisible on ink). */
+/*
+ * The site is dark only (decision-log #47), so the four variant names
+ * converge on two looks. The names stay so no caller changes; the focus
+ * ring is `ring` on every surface and lives in BASE.
+ */
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-ink text-white focus-visible:outline-ink",
+  /** The advance: fin's stone `primary` fill, charcoal text (7.7:1). */
+  primary: "bg-primary text-primary-foreground hover:bg-primary/90",
   secondary:
-    "border border-ink bg-transparent text-ink focus-visible:outline-ink",
-  /** The advance surface on ink (nav / final CTA): white bg / ink text. */
-  inverse: "bg-white text-ink focus-visible:outline-white",
-  /** Secondary's role on ink surfaces (§Interaction vocabulary): white hairline. */
+    "border border-border bg-secondary text-foreground hover:bg-accent",
+  /** The advance on a dark band; dark only, so it is `primary`. */
+  inverse: "bg-primary text-primary-foreground hover:bg-primary/90",
+  /** Secondary's role on a dark band; dark only, so it is `secondary`. */
   ghost:
-    "border border-white/30 bg-transparent text-white transition-colors " +
-    "hover:border-white/60 hover:bg-white/[0.06] focus-visible:outline-white",
+    "border border-border bg-secondary text-foreground hover:bg-accent",
 };
 
-/** Hairline divider between the label and arrow segments, per surface. */
+/** Hairline divider between the label and arrow segments, per fill. */
 const DIVIDER: Record<ButtonVariant, string> = {
-  primary: "border-white/15",
-  secondary: "border-ink/15",
-  inverse: "border-ink/15",
-  ghost: "border-white/30",
+  primary: "border-primary-foreground/20",
+  secondary: "border-border",
+  inverse: "border-primary-foreground/20",
+  ghost: "border-border",
 };
 
 /**
@@ -115,13 +121,14 @@ const DIVIDER: Record<ButtonVariant, string> = {
  * must carry it, or the control silently drops under the binding 44px
  * touch target.
  *
- * Squared button per docs/04-ux-spec.md §Interaction vocabulary
- * (Redesign Unit 02 re-skin — the pill is retired with the paper
- * system). Renders an anchor when `href` is set, otherwise a real
- * <button>. Copy always comes from src/content/. Hover scale is
- * CSS-only and gated by motion-safe; with `arrow`, the arrow nudges
- * on hover exactly like the hero CTA (Tailwind v4 note: the
- * standalone scale/translate properties are what transition).
+ * fin `rounded-md` button per docs/04-ux-spec.md §Interaction
+ * vocabulary (decision-log #47, corners #48; the squared rule is
+ * retired). Renders an anchor when `href` is set, otherwise a real
+ * <button>. Copy always comes from src/content/. Hover is a colour
+ * change only; with `arrow`, the arrow nudges on hover exactly like
+ * the hero CTA, gated by motion-safe, because it says "advance"
+ * (Tailwind v4 note: the standalone translate property is what
+ * transitions).
  */
 export function Button({
   variant = "primary",

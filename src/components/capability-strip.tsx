@@ -12,11 +12,13 @@ import type { CSSProperties } from "react";
  * hiding and the hover pause are unchanged, so the home page's rendered
  * markup is byte-identical before and after.
  *
- * **The surface is deliberately not parameterised.** `bg-ink/30
+ * **The surface is deliberately not parameterised.** `bg-background/40
  * backdrop-blur-sm` exists because the landing hero has footage behind
- * it. A service route mounts no footage, so `ink/30` over a
- * solid `ink` page resolves to the same black and the blur has nothing
- * to work on — identical classes, identical result, one strip.
+ * it. A service route mounts no footage, so `background/40` over a
+ * solid `background` page resolves to the same ground and the blur has
+ * nothing to work on: identical classes, identical result, one strip.
+ * Its rule is the `border` hairline and its diamonds are the coral
+ * `brand` accent (decision-log #47).
  *
  * `--duration` and `--gap` are set inline because `--gap` has to be
  * read by two different consumers: the flex gaps here and the
@@ -62,7 +64,7 @@ export function CapabilityStrip({
     <div
       role="group"
       aria-label={label}
-      className="group overflow-hidden border-y border-white/10 bg-ink/30 py-2.5 backdrop-blur-sm"
+      className="group overflow-hidden border-y border-border bg-background/40 py-2.5 backdrop-blur-sm"
       style={{ "--duration": duration, "--gap": gap } as CSSProperties}
     >
       <div className="flex [gap:var(--gap)]">
@@ -81,9 +83,9 @@ export function CapabilityStrip({
               >
                 <span
                   aria-hidden="true"
-                  className="h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
+                  className="h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
                 />
-                <span className="font-mono text-xs tracking-[0.12em] text-white/70 sm:text-sm">
+                <span className="font-mono text-xs tracking-[0.12em] text-foreground sm:text-sm">
                   {item}
                 </span>
               </li>

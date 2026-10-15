@@ -12,10 +12,10 @@ import {
 
 /**
  * Presentation marker, not copy: the promise the section exists to
- * land takes the gold payoff treatment (docs/04-ux-spec.md
- * §Typography — at most a couple of accent words inside a white
- * display heading). Degrades to an unaccented headline if the
- * canonical copy changes.
+ * land takes the coral payoff treatment, `text-brand`
+ * (docs/04-ux-spec.md §Typography: at most a couple of accent words
+ * inside a linen display heading; decision-log #47). Degrades to an
+ * unaccented headline if the canonical copy changes.
  */
 const ACCENT_PHRASE = "actually works";
 
@@ -26,11 +26,12 @@ const ACCENT_PHRASE = "actually works";
  * built to sit over the site's fixed scroll-synced video backdrop
  * (owner direction 2026-07-06). That backdrop is retired
  * (decision-log #46, 2026-10-05), so the band now sits on the page's
- * ink. The display heading still carries the over-imagery text shadow
- * and the four engagements are still elevated-glass cards (§Surfaces:
- * translucent surface + backdrop blur) — both made for footage, both
- * left as shipped by #46 (no type or colour change in that unit) and
- * flagged in build-note 32. This replaces the paper-era accent-block cards
+ * `background`. The two leftovers #46 shipped and build-note 32
+ * flagged are settled by the rebrand (decision-log #47): the display
+ * heading drops the over-imagery text shadow, and the four engagements
+ * are solid `card` panels with a `border` hairline at fin's card
+ * radius, `rounded-xl` (decision-log #48), since the glass blur had
+ * nothing behind it to blur. This replaces the paper-era accent-block cards
  * (accent bg + paired -ink text + sketch arrow); the per-service
  * `accent` field is orphaned by the redesign and deliberately unread.
  */
@@ -49,7 +50,7 @@ export function ServicesSection() {
           <SectionHeading
             index="03"
             eyebrow={SERVICES_EYEBROW}
-            className="max-w-4xl [text-shadow:0_2px_30px_rgba(0,0,0,0.5)]"
+            className="max-w-4xl"
           >
             <span id="services-headline">
               {phraseStart === -1 ? (
@@ -57,7 +58,7 @@ export function ServicesSection() {
               ) : (
                 <>
                   {headline.slice(0, phraseStart)}
-                  <span className="text-gold">{ACCENT_PHRASE}</span>
+                  <span className="text-brand">{ACCENT_PHRASE}</span>
                   {headline.slice(phraseStart + ACCENT_PHRASE.length)}
                 </>
               )}
@@ -74,11 +75,11 @@ export function ServicesSection() {
               {/* flex-col + mt-auto on the CTA row so the four CTAs
                   line up across cards whose copy runs to different
                   lengths. */}
-              <div className="flex h-full flex-col border border-white/15 bg-surface/95 p-6 backdrop-blur-xl transition-colors duration-150 hover:border-white/30 md:p-8">
-                <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-white/55">
+              <div className="flex h-full flex-col rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
+                <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
                   <span
                     aria-hidden="true"
-                    className="h-1.5 w-1.5 rotate-45 bg-gold"
+                    className="h-1.5 w-1.5 rotate-45 bg-brand"
                   />
                   {String(i + 1).padStart(2, "0")}
                 </p>
@@ -86,11 +87,15 @@ export function ServicesSection() {
                     2026-08-04). nowrap is the guarantee; the xl step
                     back down to text-lg is what keeps that guarantee
                     from becoming an overflow. The 4-up grid starts at
-                    xl, where cards are at their narrowest — at 20px
-                    the longest name cleared the card by under 4px,
-                    which the swap-in font fallback would have eaten.
-                    At 18px it clears by ~24px. 1- and 2-up layouts
-                    have room to spare and keep the larger size. */}
+                    xl, where cards are at their narrowest. Measured in
+                    the retired Space Grotesk, the longest name cleared
+                    the card by under 4px at 20px, which the swap-in
+                    font fallback would have eaten, and by ~24px at
+                    18px. Inter semibold with tight tracking
+                    (decision-log #47) sets it about 5% narrower
+                    (164.9px against 173.7px at 18px), so the margin
+                    only grew. 1- and 2-up layouts have room to spare
+                    and keep the larger size. */}
                 {/* The name is the card's second affordance
                     (decision-log #30): the CTA below still opens the
                     modal on this service, and the name now opens the
@@ -99,24 +104,26 @@ export function ServicesSection() {
                     href through `serviceBlockHref`, so nothing here is
                     a hand-written hash.
 
-                    Deliberately not the §Interaction-vocabulary gold
-                    text link: gold on the card heading would put a
-                    second gold element above the gold CTA and spend the
-                    page's one accent twice per card. It rests as the
-                    white heading it already was under a white/25
-                    hairline underline, and takes gold only on hover and
-                    focus, where the accent is doing "you are here"
-                    work. An underline adds no width, so the measured
-                    one-line nowrap guarantee above still holds. */}
-                <h3 className="mt-6 text-lg font-medium whitespace-nowrap text-white md:text-xl xl:text-lg">
+                    Deliberately not the §Interaction-vocabulary coral
+                    text link: coral on the card heading would put a
+                    second coral element above the coral CTA and spend
+                    the page's one accent twice per card. It rests as
+                    the linen (`foreground`) heading it already was
+                    under a `muted-foreground` hairline underline, and
+                    takes coral (`brand`, decision-log #47) only on
+                    hover and focus, where the accent is doing "you are
+                    here" work. An underline adds no width, so the
+                    measured one-line nowrap guarantee above still
+                    holds. */}
+                <h3 className="mt-6 font-sans text-lg font-semibold tracking-tight whitespace-nowrap text-foreground md:text-xl xl:text-lg">
                   <a
                     href={SERVICE_PAGE_HREF[service.slug]}
-                    className="underline decoration-white/25 underline-offset-4 transition-colors duration-150 hover:text-gold hover:decoration-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    className="underline decoration-muted-foreground underline-offset-4 transition-colors duration-150 hover:text-brand hover:decoration-brand focus-visible:text-brand focus-visible:decoration-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                   >
                     {service.name}
                   </a>
                 </h3>
-                <p className="mt-3 text-base leading-relaxed text-white/70">
+                <p className="mt-3 text-base leading-relaxed text-foreground">
                   {service.description}
                 </p>
                 <div className="mt-auto pt-6">

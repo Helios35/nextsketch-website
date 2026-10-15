@@ -27,26 +27,27 @@
  *    the bento mosaic shipped once at `66% → 100%` and read as a hard
  *    edge. **If in doubt, lengthen it.**
  *
- * A literal gradient rather than a token utility, for the reason
- * `globals.css` gives for the dialog backdrop: the `color-mix()` form
- * Tailwind compiles tokens to computes correctly but does not always
- * paint. `--color-surface` is a plain hex, so referencing it is safe.
+ * The value lives in the token layer as the `bg-visual-fade` utility
+ * in `globals.css`, not in an arbitrary class here. Its far stop is a
+ * plain `var(--card)`, never a `color-mix()`, for the reason
+ * `globals.css` gives for the dialog backdrop: that form computes
+ * correctly but does not always paint.
  *
  * It fills its positioned parent, so the parent is what decides *what*
  * dissolves — a framed mock fades to its frame, and the tile cluster
  * fades to the cluster's own box rather than the stage around it.
  *
- * The far stop is `surface`, not `ink`: since the rows became cards
+ * The far stop is `card`, not `background`: since the rows became cards
  * (owner direction, 2026-08-31) every consumer of this fade sits on
- * the `surface` card fill, and dissolving to `ink` there would ring
- * each mock with a slightly darker vignette instead of dissolving it
- * into the card behind it.
+ * the `card` fill (decision-log #47), and dissolving to `background`
+ * there would ring each mock with a slightly darker vignette instead of
+ * dissolving it into the card behind it.
  */
 export function VisualFade() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,transparent_25%,var(--color-surface)_100%)]"
+      className="pointer-events-none absolute inset-0 z-10 bg-visual-fade"
     />
   );
 }
