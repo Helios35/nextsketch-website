@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 2.8 · **Date:** 2026-10-15 · **Status:** Active (2.8: `bg-page-glow` at 12%, #52; 2.7: §8's component example follows the code after the design-system audit, build-note 34). One service vocabulary across every surface, and the slugs double as route segments (decision-log #27–#30); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
+**Version:** 2.9 · **Date:** 2026-10-15 · **Status:** Active (2.9: two offerings, decision-log #53 to #58: §1 the two names, §2 Map / Build / Validate / Optimize, §3 the modal labels, §4 the waitlist kind, §6 the route anchors, §9; 2.8: `bg-page-glow` at 12%, #52; 2.7: §8's component example follows the code after the design-system audit, build-note 34). One vocabulary across every surface, now two offerings, each slug its route segment (decision-log #27, #30, #53); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code) · `src/app/globals.css`, `src/app/layout.tsx` (canonical token and font names in code)
 
@@ -20,54 +20,45 @@
 8. Naming conventions
 9. Deprecation log
 
-## 1. Services (canonical names, exact casing) — **CHANGED (decision-log #27–#28, 2026-08-28)** · **RETIRED** (accent mapping)
+## 1. Services: the two offerings (canonical names, exact casing) — **CHANGED (decision-log #53, 2026-10-15)** · **RETIRED** (the four services of #27, the two agentic depths of #29, the accent mapping)
 
-**These four names are what the site says everywhere a visitor can read them** — the Services cards, the hero **capability strip**, the `/pricing` tiers, and the modal's quick-door selector. The quick door is the reference: it is the only surface a visitor reaches *after* choosing, so a name it does not use is a name that disappears mid-conversion.
+**These two names are what the site says everywhere a visitor can read them**, agentic first — the hero **capability strip**, the Services cards, the `/pricing` tiers, both service routes' eyebrows, and the modal's quick-door selector (in sentence case there, §3). The one-vocabulary rule of #27 stands: a name the quick door does not use is a name that disappears mid-conversion.
 
 | Display name | Slug | Payload value (§3) | Status |
 |---|---|---|---|
-| New Product | `new-product` | `new_product` | **CURRENT** (#27) |
-| Product Completion | `product-completion` | `rescue` | **CHANGED** (#27, was "Rescue & Completion" / `rescue`) |
-| Product Support | `product-support` | `partnership` | **CHANGED** (#27, was "Ongoing Product Partnership" / `partnership`) |
-| Agentic System | `agentic-system` | `agentic` | **CHANGED** (#27, was "Agentic Systems Integration" / `agentic`) |
+| Agentic System Integration | `agentic-system` | `agentic` | **CHANGED** (#53; was "Agentic System") |
+| AI Product Development | `product` | `new_product` | **CHANGED** (#53, new; the page slug it already had) |
 
-**Three vocabularies, and only one of them renames.** The *display name* is what a visitor reads. The *slug* is kebab-case (§8), matches the display name one-for-one, and is now **live in URLs** — three of the four are anchors on `/services/product` and the fourth, `agentic-system`, is a route segment (#30, §6). The *payload value* is snake_case (§3), is written to the lead record, and is a **contract that does not move with a rename** — which is why `product-support` still stores as `partnership`. Canonical in `src/lib/types.ts` → `ServiceSlug`, `src/content/services.ts` → `SERVICES` + `SERVICE_NEED`, and `src/lib/schema.ts` → `PROJECT_TYPE_VALUES`.
+**Three vocabularies, and the display name no longer mirrors its slug word for word.** The *display name* is what a visitor reads. The *slug* is kebab-case (§8) and is **the slug of the offering's page** (`/services/agentic-system`, `/services/product`; §6), which #53 left unchanged, so `ServiceSlug` and `ServicePageSlug` are one union. The *payload value* is snake_case (§3), is written to the lead record, and is a **contract that does not move with a rename**: no lead data migrates. Canonical in `src/lib/types.ts` → `ServiceSlug`, `src/content/services.ts` → `SERVICES` + `SERVICE_NEED` + `PRICES`, and `src/lib/schema.ts` → `PROJECT_TYPE_VALUES`.
 
-This closes a divergence open since **2026-08-04**, when the cards took short names while this table and `LANDING.capabilities` kept long ones. Aligning the capability strip is a **Rule 4.1 edit to Messaging Kit §05** canonical copy and carries its own row (#28) — like the hero headline under #18, **do not "correct" the strip back to the Kit's long forms.**
+**What retired, and where it went.** The four services of #27 (New Product, Product Completion, Product Support, Agentic System) leave every surface a visitor reads. **Internal Tool**, one of #29's two agentic depths, retires from the site (NextSketch is building an installable product of its own; the waitlist band of #58 shows it). **Product Completion and Product Support fold into AI Product Development** as two of its three ways in, which keep their blocks and anchors on `/services/product` (§6). Their payload values (`rescue`, `partnership`) stay in the schema, where the qualifier still records them (§3). The capability strip reads its names from `SERVICES`, so it cannot drift from the cards; **do not "correct" it to the Messaging Kit**, which is out of date and outside this repo (Rule 4.1).
 
-The service **descriptions** are still §05 as written; a rename is not permission to reword them (Rule 4.1). Coral (`brand`) is the only accent (#47, superseding #14's gold); the old per-service accent pairs (gold/rose/lavender/sage) and the paper-design service cards are **RETIRED**, and the dormant `accent` field is dead data: `SERVICES` in `src/content/services.ts` still names `gold`, `rose`, `lavender` and `sage` (typed by `ACCENT_NAMES` in `src/lib/types.ts`), none of which is a token any more, and it is never rendered (§5 RETIRED).
+Coral (`brand`) is the only accent (#47); the old per-service accent pairs are **RETIRED**, and the dead `accent` field retired from `SERVICES` with the four services that carried it (#53).
 
-### Two kinds of agentic system — **CURRENT (#29)**
+### Two kinds of agentic system — **RETIRED (#53)**
 
-`/pricing` sells the Agentic System service at **two depths**, which is why two tiers share one project type rather than one of them being mis-mapped:
+`/pricing` sold the old Agentic System service at two depths, **AI Workflow Integration** and **Internal Tool** (#29, #36), both preselecting `agentic`. Internal Tool retired from the site and AI Workflow Integration's offer became Agentic System Integration, so there is one agentic tier and one agentic page. The page's blocks are now four example jobs (§6, #57), not depths. Recorded so the two names cannot be mistaken for current.
 
-| Tier | What it is | Preselects |
-|---|---|---|
-| **AI Workflow Integration** | Agents and custom tools dropped into processes the business already runs. Workflow level, no product wrapped around them. | `agentic` |
-| **Internal Tool** | A full product with a real interface and agents behind it, owned by the client and logged into by their team. | `agentic` |
+## 2. Process phases (ordered, exactly four) — **CHANGED (decision-log #55, 2026-10-15)** (model) · **RETIRED** (accent mapping)
 
-The modal asks a visitor **what they need, not how deep they want to go** — the depth is what the two price points express. This is positioning language, not an implementation note, and the service routes now consume it: **the two depths are the two anchored blocks on `/services/agentic-system`** (`#ai-workflow-integration`, `#internal-tool`), rendering the tier names and tier descriptions from `src/content/pricing.ts` with no price (#30).
+The four-phase model is canonical in code (`src/content/copy.ts` → `PROCESS`), rendered by `/`'s Process section and both service routes' How it works. **#55 renamed two phases**: Strategy became **Map**, Partner became **Optimize**; Build and Validate keep their names. Slugs follow the names, so none is a fossil; they appear in no URL and no payload. The "this is the part most firms skip" aside renders on the phase `PROCESS.annotationPhase` names, **Map** since #55 (it was Validate). The old per-phase accent pairs are **RETIRED**: coral (`brand`) is the only accent (decision-log #47, superseding #14's gold). The `PROCESS` copy's accent fields (`gold` / `lavender` / `rose` / `sage`) and the dormant `PROCESS_ACCENTS` map are a leftover of the retired design, not a spec, and none of those names is a token any more (§5 RETIRED).
 
-## 2. Process phases (ordered, exactly four) — **CURRENT** (model) · **RETIRED** (accent mapping)
-
-The four-phase model is canonical and still exists in code (`src/content/copy.ts` → `PROCESS`); a **Process section** is in the redesign set (decision-log #13), designed later against `04-ux-spec.md`. The old per-phase accent pairs are **RETIRED**: coral (`brand`) is the only accent (decision-log #47, superseding #14's gold). The dormant `PROCESS` copy's accent fields (`gold` / `lavender` / `rose` / `sage`, `src/content/copy.ts`) are a leftover of the retired design, not a spec, and none of those names is a token any more (§5 RETIRED).
-
-| Order | Display | Slug |
-|---|---|---|
-| 01 | Strategy | `strategy` |
-| 02 | Build | `build` |
-| 03 | Validate | `validate` |
-| 04 | Partner | `partner` |
+| Order | Display | Slug | Status |
+|---|---|---|---|
+| 01 | Map | `map` | **CHANGED** (#55; was Strategy / `strategy`) |
+| 02 | Build | `build` | CURRENT |
+| 03 | Validate | `validate` | CURRENT |
+| 04 | Optimize | `optimize` | **CHANGED** (#55; was Partner / `partner`) |
 
 ## 3. Modal answers — label-to-payload mapping — **CURRENT** (qualifier) · **CHANGED** (quick door added)
 
 Payload values are what the lead record stores (the Sheet writes the display **labels**; the snake_case values are the schema/contract). Builders never invent alternates. Canonical in `src/content/modal.ts` + `src/lib/schema.ts`.
 
-**Lead `kind` discriminator (CHANGED — Sprint 02 Unit 04):** every lead is `kind: "qualified"` (the full four-question qualifier) or `kind: "quick"` (the low-friction door). The quick kind also carries `source: "quick_door" | "off_ramp"`.
+**Lead `kind` discriminator (CHANGED — Sprint 02 Unit 04; #58):** every lead is `kind: "qualified"` (the full four-question qualifier) or `kind: "quick"` (the low-friction door). The quick kind also carries `source: "quick_door" | "off_ramp"`. A third kind, `kind: "waitlist"`, is the waitlist band's entry and not a lead (below).
 
 **Qualifier (`kind: "qualified"`) — CURRENT:**
 
-**Q1 `project_type`:** New product from scratch → `new_product` · Stuck at 70% — rescue or finish → `rescue` · Agentic systems for my product or operations → `agentic` · My live product needs a partner → `partnership` · I'm still exploring → `exploring`
+**Q1 `project_type` — CHANGED (decision-log #53; labels and order only, values unchanged):** AI agents for the work my business already does → `agentic` · A new product built from scratch → `new_product` · Finishing a product someone else started → `rescue` · Ongoing help with a live product → `partnership` · I'm still exploring → `exploring`
 
 **Q2 `readiness`:** Ready now → `now` · Within 1–3 months → `soon` · Just exploring → `exploring`
 
@@ -79,16 +70,18 @@ Payload values are what the lead record stores (the Sheet writes the display **l
 
 > `exploring` is a **UI-only** value (Q1/Q2): it routes to the off-ramp (Rule 2.1) and is deliberately absent from the submit schema's qualifier enums, so it can never be POSTed as a qualified lead (`src/lib/schema.ts`).
 
-**Quick door (`kind: "quick"`) — CHANGED (new):** collects `name`, `email`, an optional `details` line, and an optional **multi-select** `project_types` (zero or more canonical project-type values). The quick door labels are **shorter** than the qualifier's for the same values (`src/content/modal.ts` → `MODAL_QUICK.needsOptions`):
+**Quick door (`kind: "quick"`) — CHANGED (new):** collects `name`, `email`, an optional `details` line, and an optional **multi-select** `project_types`. **Since #53 the door offers the two offerings**, agentic first, which combine freely (the old new-product / completion exclusion retired with them). The schema still accepts all four canonical values in `project_types`; the door shows two (`src/content/modal.ts` → `MODAL_QUICK.needsOptions`, typed as `QuickNeed`, which is also the type of every CTA's preselect):
 
 | Value | Qualifier label (Q1) | Quick-door label |
 |---|---|---|
-| `new_product` | New product from scratch | New product |
-| `rescue` | Stuck at 70% — rescue or finish | Product completion |
-| `partnership` | My live product needs a partner | Product support |
-| `agentic` | Agentic systems for my product or operations | Agentic system |
+| `agentic` | AI agents for the work my business already does | Agentic system integration |
+| `new_product` | A new product built from scratch | AI product development |
+| `rescue` | Finishing a product someone else started | (not offered; a way into AI Product Development) |
+| `partnership` | Ongoing help with a live product | (not offered; a way into AI Product Development) |
 
 The off-ramp capture (`source: "off_ramp"`) collects only `name` + `email` (no `project_types`).
+
+**Waitlist (`kind: "waitlist"`) — CHANGED (new, decision-log #58):** the Services waitlist band's entry: `email` and the §2.8 guards, nothing else. Not a lead (§4).
 
 ## 4. Lead types & signals — **CHANGED**
 
@@ -100,8 +93,9 @@ Computed in `src/lib/lead-format.ts` (`leadSignal`). The pre-pivot set (`qualifi
 | `flagged` | Qualifier completed with Q3 = `none` and/or Q4 = `build_first` | `[Lead — needs buy-in]` · `[Lead — build-first mindset]` · `[Lead — review answers]` (both) |
 | `quick` | Quick-door lead (no qualifier answers) | `[Lead — quick]` |
 | `exploring` | Off-ramp capture (still-exploring visitor who opted to stay in touch) | `[Lead — exploring]` |
+| `waitlist` | Waitlist band entry (#58): an email for the installable product, not a lead | `[Waitlist]` |
 
-**Lead `source` (quick kind only):** `quick_door` (primary quick path) · `off_ramp` (the still-exploring capture). The signal label encodes which one.
+**Lead `source` (quick kind only):** `quick_door` (primary quick path) · `off_ramp` (the still-exploring capture). The signal label encodes which one. A waitlist entry has no `source`: its `kind` is its own.
 
 ## 5. Design tokens · **CHANGED (decision-log #47–#48, 2026-10-14)**
 
@@ -184,9 +178,9 @@ These names have **left the token layer** and no longer compile. Successors are 
 | `--ease-premium` | `--ease-out` (the same curve, renamed) |
 | `--font-space-grotesk` | `--font-inter` / `--font-playfair-display` (Type, above) |
 
-**The names survive as data, not as tokens.** The dead `accent` data in `src/content` still uses four of them as **data values**: `SERVICES` (`src/content/services.ts`), `PROCESS` and `PROCESS_ACCENTS` (`src/content/copy.ts`) carry `gold`, `lavender`, `rose` and `sage`, typed by `ACCENT_NAMES` / `AccentName` in `src/lib/types.ts`. **It is never rendered**, it names no token (nothing in `globals.css` answers to those strings), and it stays as it is, because the rebrand did not touch `src/content`. The dormant held-section components use the type too (none is imported by a route): `testimonials-section.tsx`, `sketch-accent.tsx` and `placeholder.tsx` key their class maps by `AccentName`, so the string `gold` survives there as a **map key**, now resolving to `brand` classes, with the other three keys resolving to neutrals (except `sketch-accent.tsx`'s on-fill map, which gives every key `brand-foreground`); `hero-section.tsx` and `fit-section.tsx` pass `gold` and `sage` as an `accent` **prop value** to `SketchAccent`. A grep for `gold` that lands in any of these places is reading dead data, a key or a prop value, not a leftover token.
+**The names survive as data, not as tokens.** The dead `accent` data in `src/content` still uses four of them as **data values**: `PROCESS` and `PROCESS_ACCENTS` (`src/content/copy.ts`) carry `gold`, `lavender`, `rose` and `sage`, typed by `ACCENT_NAMES` / `AccentName` in `src/lib/types.ts`. (`SERVICES` carried them too until its `accent` field retired with the four services, #53.) **It is never rendered**, it names no token (nothing in `globals.css` answers to those strings), and it stays as it is, because the rebrand did not touch `src/content`. The dormant held-section components use the type too (none is imported by a route): `testimonials-section.tsx`, `sketch-accent.tsx` and `placeholder.tsx` key their class maps by `AccentName`, so the string `gold` survives there as a **map key**, now resolving to `brand` classes, with the other three keys resolving to neutrals (except `sketch-accent.tsx`'s on-fill map, which gives every key `brand-foreground`); `hero-section.tsx` and `fit-section.tsx` pass `gold` and `sage` as an `accent` **prop value** to `SketchAccent`. A grep for `gold` that lands in any of these places is reading dead data, a key or a prop value, not a leftover token.
 
-## 6. Routes and section IDs — **CHANGED** (four routes; service slugs are now route segments) · **RETIRED** (held-section IDs)
+## 6. Routes and section IDs — **CHANGED** (four routes; an offering's slug is its route segment) · **RETIRED** (held-section IDs)
 
 ### Routes — **CHANGED (decision-log #23, 2026-08-25; #30, 2026-08-28)**
 
@@ -194,24 +188,24 @@ These names have **left the token layer** and no longer compile. Successors are 
 |---|---|---|
 | `/` | The home page — hero + six sections, one scroll | **CURRENT** |
 | `/pricing` | Standalone pricing page, statically prerendered | **CHANGED (new, #23)** |
-| `/services/product` | New Product · Product Completion · Product Support, as anchored blocks | **CHANGED (new, #30)** |
-| `/services/agentic-system` | Agentic System, at its two depths | **CHANGED (new, #30)** |
+| `/services/product` | AI Product Development: its three ways in, as anchored blocks | **CHANGED (new, #30; one offering since #53)** |
+| `/services/agentic-system` | Agentic System Integration: four example jobs, as anchored blocks | **CHANGED (new, #30; #53, #57)** |
 | `/api/qualify` | POST-only lead endpoint, no page | **CURRENT** (see `07-technical-spec.md`) |
 
 Route paths are kebab-case per §8. **None of these is a server surface** — all four pages prerender to static HTML, so decision #8 is untouched. Canonical in `src/lib/types.ts` → `ROUTES` (the two static paths) and `serviceRoute` (the service segments, built from `ServicePageSlug` so the segment and the slug cannot disagree).
 
 **There is no `/services` index route** (#30): the home page's `#services` section is the hub.
 
-### Service page slugs and block anchors — **CURRENT (#30)**
+### Service page slugs and block anchors — **CHANGED (#30; #53, #57)**
 
-A **service page slug is not a `ServiceSlug`.** Two pages cover four services, so one of them is a group:
+**Since #53 a service page slug is a `ServiceSlug` again**: each of the two offerings has one page, and its slug is that page's (`ServicePageSlug` is the same union). Under #30 it was not, because one page grouped three services.
 
 | Page slug | Route | Blocks (anchor ids) |
 |---|---|---|
-| `product` | `/services/product` | `new-product` · `product-completion` · `product-support` — the §1 slugs, one per service |
-| `agentic-system` | `/services/agentic-system` | `ai-workflow-integration` · `internal-tool` — the two depths of §1's "Two kinds of agentic system" |
+| `product` | `/services/product` | `new-product` · `product-completion` · `product-support`: the three ways into AI Product Development (Build from scratch, Finish what someone started, Ongoing product team), **on the anchors the retired service slugs gave them**, so an old shared link still lands on its block |
+| `agentic-system` | `/services/agentic-system` | `email-triage` · `weekly-reporting` · `quoting-and-intake` · `document-and-data-entry`: the four example jobs (#57), kebab-cased from their names because they appear in the URL |
 
-`agentic-system` is spelled exactly like its `ServiceSlug` because that page *is* that service; `product` is a group name with no service behind it. The agentic blocks are kebab-cased from the **tier names**, not the terse tier slugs (`workflow` / `tool`), because these appear in the URL. Canonical in `src/lib/types.ts` → `ServicePageSlug`, `ServiceBlockId`, `SERVICE_BLOCK_PAGE`, and `src/content/service-pages.ts` → `SERVICE_PAGES`.
+**Retired anchors (#53):** `ai-workflow-integration` and `internal-tool`, the two depths' blocks. A link to either still opens `/services/agentic-system`, at the top: a fragment with no target is ignored, never an error. Canonical in `src/lib/types.ts` → `ServicePageSlug`, `ServiceBlockId`, `SERVICE_BLOCK_PAGE`, and `src/content/service-pages.ts` → `SERVICE_PAGES`.
 
 The home page's cards link to the **route root**, so a visitor lands on the hero (#30, corrected 2026-08-30). The block anchors stay live for a shared or bookmarked URL, and `serviceBlockHref` remains the only sanctioned way to build one — it looks a block's page out of `SERVICE_BLOCK_PAGE`, so a link can never pair a block with a page that does not carry it and every href is root-relative by construction.
 
@@ -232,7 +226,7 @@ Six items, in this order, rendered by both `SiteNav`'s overlay and `SiteFooter` 
 | 5 | About | `/#about` | section anchor |
 | 6 | **Pricing** | **`/pricing`** | **route** — last slot (#24) |
 
-**The two service routes are not nav items (#30).** The nav is settled (#22, #24, #26) and this unit does not reopen it: the service pages are reached from the `#services` cards, where each card's **name** links to that service's block. Adding them to `NAV.items` is a separate owner call.
+**The two service routes are not nav items (#30).** The nav is settled (#22, #24, #26) and was not reopened by #53 or #58: the service pages are reached from the `#services` cards, where each card's **name** links to its offering's route. Adding them to `NAV.items` is a separate owner call.
 
 **Destinations are root-relative, never bare hashes** (#23). A bare `#work` resolves against the current route, so on `/pricing` it would mean `/pricing#work` — nothing. `NAV.items` therefore carries a finished `href` per item rather than a `SectionId` the components turn into `#${id}`; anchors are built by `sectionHref()` in `src/lib/types.ts`, which keeps the `SectionId` literal so a mistyped anchor still fails typecheck. Both wordmark targets are `NAV.home` = `/#top`.
 
@@ -276,6 +270,13 @@ The naming convention stands for any future section asset: `placeholder-{section
 | Service slugs `rescue`, `agentic`, `partnership` | `product-completion`, `agentic-system`, `product-support` | Decision-log #27 — a slug should not be a fossil of a retired name | Internal only; never appeared in a URL or a payload. **Pricing tier slugs are NOT renamed** — `custom` ("New Product") and `rescue` ("Product Completion") stay as they are, and the mismatch is a separate owner call |
 | Pricing tier names "Save Your Project", "Custom Product" | "Product Completion", "New Product" | Decision-log #27 | Display only; prices, descriptions, notes, order and the empty `features` arrays are untouched |
 | Brand: Autonomous Whales | NextSketch (single brand) | DBA retired | Banned term (Rule 3.4) |
-| Term: "automations" / "agentic workflows" | "embedded agents" / "agentic systems" | Brand Philosophy changelog | Banned term (Rule 3.2) |
+| Term: "automations" / "agentic workflows" | "embedded agents" / "agentic systems" | Brand Philosophy changelog | Banned term (Rule 3.2) until **#54 (2026-10-15)** lifted "automation" / "automations": "AI automation" now describes the offer that "agentic system" names (Rule 3.3) |
+| Service names New Product, Product Completion, Product Support, Agentic System (#27), and the agentic depths AI Workflow Integration and Internal Tool (#29) | The two offerings (§1): **Agentic System Integration** and **AI Product Development** | Decision-log #53 (2026-10-15): two offerings, agentic first; Internal Tool retires from the site | Display only. **Payload values unchanged**, so no lead data migrates. Product Completion and Product Support live on as ways into AI Product Development, on their old block anchors (§6) |
+| Service slugs `new-product`, `product-completion`, `product-support` as offering keys | `agentic-system`, `product`: the route slugs the two pages already had | #53 | Internal only. The three survive as `/services/product` block anchors, so no URL moved |
+| Agentic block anchors `ai-workflow-integration`, `internal-tool` | `email-triage` · `weekly-reporting` · `quoting-and-intake` · `document-and-data-entry` (§6) | #53, #57 | A link to an old anchor opens the page at the top |
+| Pricing tier Internal Tool (`tool`), the struck former prices and their "Down from" label; tier slugs `tool` and `rescue` | Two tiers, `workflow` (Agentic System Integration) and `custom` (AI Product Development), each with "Included" and "What the monthly covers" lists | #56 | Display only; the two kept slugs are unchanged fossils (§1) |
+| Process phases Strategy (`strategy`) and Partner (`partner`) | **Map** (`map`) and **Optimize** (`optimize`) (§2) | #55 | No URL or payload carries a phase slug |
+| Quick-door labels New product, Product completion, Product support, Agentic system; the qualifier's Q1 labels | "Agentic system integration", "AI product development"; the #53 Q1 labels (§3) | #53 | Values unchanged. `rescue` and `partnership` stay in the schema, where the qualifier sends them |
+| Vocabulary: "from idea to production" (Rule 3.3) | none: retired from the vocabulary | #54 | Its last live uses (site title and description, the product route description) were replaced by #59; the dormant `HERO` copy keeps it on disk |
 | CTA: "Book a free chat" + Calendly links | Modal + Rule 3.1 CTA set | Qualification mindset | Calendly removed entirely |
 | Pages: /projects, /about-us, /contact-us | Single page | Architecture decision | 301 redirects (`08-runbook.md`) — owner-executed at domain cutover |

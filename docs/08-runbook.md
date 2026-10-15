@@ -1,6 +1,6 @@
 # Runbook — NextSketch Website Rebuild
 
-**Version:** 2.0 · **Date:** 2026-06-22 · **Status:** Active (pre-launch) — reconciled to the as-built pipeline (Sprint 03 doc audit)
+**Version:** 2.1 · **Date:** 2026-10-15 · **Status:** Active (pre-launch) — reconciled to the as-built pipeline (Sprint 03 doc audit); the smoke test covers the waitlist band (decision-log #58)
 **Answers:** How do we run it?
 **References:** `07-technical-spec.md` (what's deployed)
 
@@ -22,6 +22,7 @@ Run on the deployed site **after** the env vars below are set. Proves both doors
 1. **Quick path:** open the modal (it opens to the quick door) → name + email + pick a need → "Talk to Us" → success ("…within two business days"). Confirm all four artifacts: a Sheet row (`lead_type: quick`, signal `[Lead — quick]`), an Asana task, the lead auto-reply, and Nate's `[Lead …]` alert.
 2. **Full qualifier:** "Rather walk us through it?" → answer the four questions on a qualified (non-exploring) path → contact step → submit. Confirm the same four artifacts (`lead_type: qualified` or `flagged`).
 3. **Off-ramp capture:** pick "I'm still exploring" → off-ramp → "Stay in Touch" with name + email. Confirm the gentle success, a Sheet row (`lead_type: exploring`, signal `[Lead — exploring]`), and the gentler auto-reply (no two-day promise).
+3a. **Waitlist band (#58):** on `/`, in Services under the two cards, enter an email → "Join the Waitlist" (wait three seconds after load; the minimum-time guard applies). Confirm the on-page "You're on the list…" line, a Sheet row (`lead_type: waitlist`, signal `[Waitlist]`, email only), an Asana task titled `[Waitlist] <email>`, Nate's `[Waitlist]` alert, and **no** auto-reply.
 4. **Honest failure (no fake success):** temporarily point `LEADS_SHEET_WEBHOOK_URL` at a failing/empty value and submit → the modal shows "That didn't go through — your answers are safe." with answers preserved + the escape hatch (Rule 2.7); restore the webhook after.
 5. **As-built checks:** modal renders full-height on mobile (≤375px); reduced-motion users get no animation; banned-terms gate green (CI).
 
