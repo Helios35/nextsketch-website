@@ -137,8 +137,9 @@ function OfferList({
  * direction, 2026-08-28, third revision, against a supplied
  * reference).** It has now been a stack of glass cards and a flat
  * multi-column band; both are scrapped. Each block is a two-column row
- * — the text on one side, a `<ServiceBlockVisual>` tile cluster on the
- * other — and **the sides alternate down the page**, which is the
+ * — the text on one side, the block's `<ServiceBlockVisual>` diagram
+ * on the other (decision-log #60; a wireframe mock until then) — and
+ * **the sides alternate down the page**, which is the
  * rhythm the owner asked for and what stops five rows reading as one
  * table. The text is always **first in the DOM** and `lg:order-*` does
  * the swapping, so the single-column stack and the reading order both
@@ -154,9 +155,9 @@ function OfferList({
  * card radius (decision-log #48) and its `bg-muted` becomes `card`
  * (#47). What the
  * reference actually contributed is the split, the alternation and the
- * fading tile cluster — the rest lives in `service-block-visual.tsx`,
- * which records the visual half's own refusals (third-party logos
- * above all).
+ * fading tile cluster (since retired with the wireframes, #60); the
+ * visual half is `service-block-visual.tsx` and the diagram language
+ * it draws in, `diagram.tsx`.
  *
  * The deliverables list stays on the text side, which the reference
  * does not have. Dropping it would leave the section that is *called*
@@ -186,10 +187,10 @@ function OfferList({
  * The hero entrance is the load-time `rise-in`, not a scroll trigger,
  * because it is above the fold on arrival. In the "what you get" band
  * each row's text reveals as one block, its deliverables land at
- * `120 + j·70ms`, and the tile cluster assembles row by row
- * (`120 + r·90 + n·60ms`) so the visual builds rather than appears —
- * the §Motion-inventory list rhythm (120 + i·80ms), tightened because
- * these rows are shorter than a card. The **`target:` treatment** is
+ * `120 + j·70ms`, and the diagram reveals with its frame and then its
+ * parts (`diagram.tsx`) — the §Motion-inventory list rhythm
+ * (120 + i·80ms), tightened because these rows are shorter than a
+ * card. The diagrams' own ambient motion is #62's. The **`target:` treatment** is
  * the one new interaction, and it earns its place: the rows are tall,
  * so arriving from a service card has to say *which* one you arrived
  * at. The block's **index goes coral** (#47) at the 150ms
@@ -201,11 +202,12 @@ function OfferList({
  * motion to suppress.
  *
  * **A block with no visual renders no visual cell at all** (owner
- * direction, 2026-10-15: the agentic examples carry none until the
- * visuals brief, and no empty or stand-in frame reaches production).
- * From `lg:` its "What we map first" panel takes the half the visual
- * would have had, so the card is not half empty; it does not
- * alternate, and below `lg:` it stacks as every row does.
+ * direction, 2026-10-15: no empty or stand-in frame reaches
+ * production). From `lg:` its "What we map first" panel takes the half
+ * the visual would have had, so the card is not half empty; it does
+ * not alternate, and below `lg:` it stacks as every row does. Since
+ * #60 every block has a diagram, so no row takes this path today; it
+ * stays for a block added before its diagram is drawn.
  *
  * Server component throughout. The CTAs bring their own client
  * boundary, so the pages prerender to static HTML.
@@ -374,8 +376,8 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                block). */
             const visual = hasBlockVisual(block.id);
             const visualLeads = i % 2 === 1;
-            /* No visual but a map line (the agentic examples until the
-               visuals brief): from `lg:` the "What we map first" panel
+            /* No visual but a map line (the agentic examples until
+               their diagrams landed, #60): from `lg:` the "What we map first" panel
                takes the half the visual would have, so the card is not
                half empty. The text column turns `lg:contents` so its
                parts become cells of the row's grid, in reading order
