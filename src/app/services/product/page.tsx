@@ -12,11 +12,12 @@ export const metadata: Metadata = {
 };
 
 /**
- * `/services/product` — decision-log **#30** (2026-08-28). One of the
- * site's two service routes, carrying **New Product**, **Product
- * Completion** and **Product Support** as anchored blocks, so a visitor
- * who clicks a service card lands on that service rather than at the
- * top of a page about three of them.
+ * `/services/product` — decision-log **#30** (2026-08-28): the page for
+ * **AI Product Development** since **#53** (2026-10-15), one offer with
+ * three ways in. Build from scratch, finish what someone started and
+ * ongoing product team are anchored blocks on the anchors the retired
+ * services gave them (`#new-product`, `#product-completion`,
+ * `#product-support`), so an old shared link still lands on its block.
  *
  * Four thin routes were the unit-26 brief's shape; two grouped pages
  * are the owner's (2026-08-28). Structure, surface and every solved

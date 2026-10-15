@@ -141,10 +141,10 @@ export function ServiceProcess() {
                     {phase.description}
                   </p>
                   {/* The one sanctioned italic (§Color), on the one phase
-                    it belongs to — carried across from `/` so the
-                    differentiator is not dropped on the pages a search
-                    visitor lands on first. */}
-                  {phase.slug === "validate" && (
+                    it belongs to (Map since decision-log #55) — carried
+                    across from `/` so the differentiator is not dropped
+                    on the pages a search visitor lands on first. */}
+                  {phase.slug === PROCESS.annotationPhase && (
                     <p className="mt-5 font-serif text-brand italic">
                       {PROCESS.annotation}
                     </p>

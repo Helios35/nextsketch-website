@@ -24,8 +24,9 @@ export const metadata: Metadata = {
 const ACCENT_PHRASE = PRICING.accentPhrase;
 
 /**
- * `/pricing` — the site's one standalone route (decision-log #23,
- * 2026-08-25), now carrying the four tiers (**#25**). Pricing was owed
+ * `/pricing` — the site's first standalone route (decision-log #23,
+ * 2026-08-25), carrying the tiers (**#25**; two since **#56**, one per
+ * offering). Pricing was owed
  * as a *section* under #16; the owner superseded that with a nav item
  * plus a separate page. A static route is not a backend, so #8 still
  * holds: `/api/qualify` remains the entire server-side footprint, and

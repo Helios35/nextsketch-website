@@ -1,5 +1,5 @@
 import { toAsanaTask, toSheetRecord } from "@/lib/lead-format";
-import type { LeadPayload } from "@/lib/schema";
+import type { LeadPayload, WaitlistPayload } from "@/lib/schema";
 
 /**
  * Outbound timeouts (`AbortSignal.timeout`) so a hung destination can
@@ -62,9 +62,15 @@ export async function deliverLead(
   // Attempt both destinations concurrently; `allSettled` so one
   // throwing can never short-circuit the other — the lead should reach
   // as many destinations as possible regardless of partial failure.
+  // A waitlist entry (decision-log #58) is recorded in the Sheet and
+  // never tasked in Asana (owner direction, 2026-10-15): it is interest
+  // in a product, not work to pick up. That slot resolves as nothing to
+  // do, so it never logs as a missing action item.
   const [sheetResult, asanaResult] = await Promise.allSettled([
     writeLeadToSheet(payload, capturedAt),
-    createAsanaTask(payload, capturedAt),
+    payload.kind === "waitlist"
+      ? Promise.resolve(true)
+      : createAsanaTask(payload, capturedAt),
   ]);
 
   const sheetOk =
@@ -140,7 +146,7 @@ async function writeLeadToSheet(
  * record.
  */
 async function createAsanaTask(
-  payload: LeadPayload,
+  payload: Exclude<LeadPayload, WaitlistPayload>,
   capturedAt: string,
 ): Promise<boolean> {
   const token = process.env.ASANA_ACCESS_TOKEN;

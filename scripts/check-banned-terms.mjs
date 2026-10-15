@@ -9,6 +9,11 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 
 // Rule 3.2 grep targets + Rule 3.4 retired-brand sweep.
+//
+// "automation" and "automations" were lifted from Rule 3.2 by
+// decision-log #54 (2026-10-15): it is the word buyers search for, and
+// Rule 3.3 now uses "AI automation" to describe the offer that
+// "agentic system" names. Every other term still fails the build.
 const TERMS = [
   "get started",
   "free consultation",
@@ -17,8 +22,6 @@ const TERMS = [
   "request a quote",
   "contact us",
   "learn more",
-  "automation", // singular and plural are both banned (Rule 3.2)
-  "automations",
   "ai-powered",
   "full-service agency",
   "end-to-end solutions",
@@ -66,8 +69,8 @@ const TERMS = [
  * service line Rule 3.4 exists to stop. Keep entries long, specific,
  * and scoped.
  *
- * ⚠ OWED: a decision-log entry and a §3.4 amendment recording the
- * carve-out. Flagged, not yet written.
+ * The carve-out is recorded as decision-log #20 and in the §3.4
+ * amendment of docs/05-business-rules.md.
  */
 const ALLOWED = [
   {
@@ -79,8 +82,8 @@ const ALLOWED = [
 
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-// Lookaround boundaries instead of \b: "automation" must not fire
-// inside "automational"-style words, and \b misbehaves around
+// Lookaround boundaries instead of \b: a term must not fire inside a
+// longer word ("contact usage"), and \b misbehaves around
 // apostrophes/hyphens. Spaces match any whitespace run (markup-safe).
 const PATTERNS = TERMS.map((term) => ({
   term,

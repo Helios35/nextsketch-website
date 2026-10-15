@@ -3,8 +3,7 @@
 import type { MouseEvent, ReactNode } from "react";
 import { Button, type ButtonProps } from "@/components/button";
 import { useQualificationModal } from "@/components/qualification-modal-provider";
-import { MODAL_ESCAPE_HATCH } from "@/content/modal";
-import type { ProjectType } from "@/lib/schema";
+import { MODAL_ESCAPE_HATCH, type QuickNeed } from "@/content/modal";
 
 interface ModalTriggerProps {
   children: ReactNode;
@@ -22,7 +21,7 @@ interface ModalTriggerProps {
    * form. Omitted, the modal opens with nothing selected, exactly as
    * every other CTA on the site does.
    */
-  need?: ProjectType;
+  need?: QuickNeed;
 }
 
 /**

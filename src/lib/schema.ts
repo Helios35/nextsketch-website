@@ -11,6 +11,9 @@ import { z } from "zod";
  *     one-line message, no qualifier answers. `source` records which
  *     low-friction entry it came from (the primary quick path or the
  *     off-ramp capture offered to an "exploring" visitor).
+ *   • "waitlist"  — the Services waitlist band (decision-log #58): an
+ *     email and nothing else. Not a lead; it rides the same seam so it
+ *     gets the same durable record, guards and failure fallback.
  *
  * The server re-validating with these schemas (POST /api/qualify) is what
  * keeps the guards un-bypassable by a direct POST:
@@ -39,14 +42,23 @@ export const PROJECT_TYPE_VALUES = [
  */
 export type ProjectType = (typeof PROJECT_TYPE_VALUES)[number];
 
+/** Anti-bot guards every entry carries (Business Rules 2.8). */
+const botGuards = {
+  /** Honeypot (Business Rules 2.8): absent or empty, anything else rejects. */
+  _hp: z.literal("").optional(),
+  /**
+   * Milliseconds since the form was shown — the modal opening, or the
+   * waitlist band mounting (Business Rules 2.8): sub-3s completions
+   * reject.
+   */
+  _t: z.number().int().min(3000),
+};
+
 /** Contact + anti-bot guards every door shares (Business Rules 1.5, 2.8). */
 const leadContact = {
   name: z.string().trim().min(1).max(100),
   email: z.email(),
-  /** Honeypot (Business Rules 2.8): absent or empty, anything else rejects. */
-  _hp: z.literal("").optional(),
-  /** Milliseconds since modal open (Business Rules 2.8): sub-3s completions reject. */
-  _t: z.number().int().min(3000),
+  ...botGuards,
 };
 
 /** The full four-question qualifier (Business Rules §1). */
@@ -83,7 +95,18 @@ export const quickLeadPayloadSchema = z.object({
 });
 
 /**
- * Either door — the contract the endpoint and the delivery seam validate
+ * The waitlist band (decision-log #58): an email for the installable
+ * product, and the same anti-bot guards as every door. No name, no
+ * answers, no message.
+ */
+export const waitlistPayloadSchema = z.object({
+  kind: z.literal("waitlist"),
+  email: z.email(),
+  ...botGuards,
+});
+
+/**
+ * Every entry — the contract the endpoint and the delivery seam validate
  * against. Discriminated on `kind` so the right shape is enforced and a
  * direct POST can't smuggle qualifier answers past the quick guards (or
  * vice versa).
@@ -91,9 +114,11 @@ export const quickLeadPayloadSchema = z.object({
 export const leadPayloadSchema = z.discriminatedUnion("kind", [
   qualificationPayloadSchema,
   quickLeadPayloadSchema,
+  waitlistPayloadSchema,
 ]);
 
 export type QualificationPayload = z.infer<typeof qualificationPayloadSchema>;
 export type QuickLeadPayload = z.infer<typeof quickLeadPayloadSchema>;
+export type WaitlistPayload = z.infer<typeof waitlistPayloadSchema>;
 export type LeadPayload = z.infer<typeof leadPayloadSchema>;
 export type LeadSource = QuickLeadPayload["source"];

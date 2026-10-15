@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.4 · **Date:** 2026-10-15 · **Status:** Active (2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
+**Version:** 2.5 · **Date:** 2026-10-15 · **Status:** Active (2.5: the waitlist band's third payload kind, `waitlist`, decision-log #58, and the two offerings' tree, #53; 2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -32,10 +32,12 @@
 
 ## Data model — **CHANGED** (no database; the Zod union is the contract, the Sheet is the record)
 
-**No database** (decision-log #8). The durable record is the **Google Sheet "Inbound Leads"** (system of record) plus a best-effort **Asana** task. The **Zod discriminated union** (`src/lib/schema.ts`) is the de-facto data contract — a lead is one of two `kind`s:
+**No database** (decision-log #8). The durable record is the **Google Sheet "Inbound Leads"** (system of record) plus a best-effort **Asana** task. The **Zod discriminated union** (`src/lib/schema.ts`) is the de-facto data contract — a lead is one of two `kind`s, and a third, `waitlist`, carries the Services waitlist band's email (decision-log #58; not a lead, but the same seam):
 
 ```
-LeadPayload = QualificationPayload | QuickLeadPayload   // discriminated on `kind`
+LeadPayload = QualificationPayload | QuickLeadPayload | WaitlistPayload   // discriminated on `kind`
+
+WaitlistPayload { kind: "waitlist"; email: valid email; _hp?: ""; _t: number ≥ 3000 }   // #58
 
 QualificationPayload {                       QuickLeadPayload {
   kind: "qualified"                            kind: "quick"
@@ -57,12 +59,12 @@ QualificationPayload {                       QuickLeadPayload {
 
 `timestamp · lead_type · signal · name · email · company · project_type · readiness · authority · validation · details`
 
-Stored values are the **display labels** the visitor saw (resolved from the canonical `MODAL_QUESTIONS` map, `06-taxonomy.md` §3 — never re-typed). The quick door leaves the qualifier columns (`company`, `readiness`, `authority`, `validation`) empty and writes its multi-select needs as a `"; "`-joined list into `project_type`. `lead_type` ∈ `qualified`/`flagged`/`quick`/`exploring`; `signal` is the Rule 2.5 label.
+Stored values are the **display labels** the visitor saw (resolved from the canonical `MODAL_QUESTIONS` map, `06-taxonomy.md` §3 — never re-typed). The quick door leaves the qualifier columns (`company`, `readiness`, `authority`, `validation`) empty and writes its multi-select needs as a `"; "`-joined list into `project_type`. A waitlist entry fills `email`, `lead_type: waitlist` and `signal: [Waitlist]` and leaves every other column empty (#58). `lead_type` ∈ `qualified`/`flagged`/`quick`/`exploring`/`waitlist`; `signal` is the Rule 2.5 label.
 
 ## API design — **CHANGED**
 
 `POST /api/qualify` — **the only server-side surface.**
-- **Accepts:** `LeadPayload` JSON. Validated with `leadPayloadSchema` (the discriminated union). The discriminator enforces the right shape per `kind`; the qualifier enums exclude `exploring` (Rule 2.1); both kinds require an empty honeypot and `_t ≥ 3000` (Rule 2.8). **Server-side re-validation is the security boundary** — off-ramp/honeypot/too-fast submissions reject here even on a direct POST.
+- **Accepts:** `LeadPayload` JSON. Validated with `leadPayloadSchema` (the discriminated union). The discriminator enforces the right shape per `kind`; the qualifier enums exclude `exploring` (Rule 2.1); every kind, the waitlist's included, requires an empty honeypot and `_t ≥ 3000` (Rule 2.8). **Server-side re-validation is the security boundary** — off-ramp/honeypot/too-fast submissions reject here even on a direct POST.
 - **Does:** hands the validated lead to `deliverLead` (the durable seam). On a durable success, schedules `after(() => notifyLead(payload))` so the auto-reply + alert run **after** the response is flushed (best-effort; an email failure can never block or reverse the capture). Reports `{ ok }` **honestly** — success only once the lead is durably recorded.
 - **Returns:** `200 {ok:true}` (durably recorded) · `503 {ok:false}` (valid but not deliverable — destination unreachable or not yet configured) · `400 {ok:false}` (validation reject or malformed JSON) · `500 {ok:false}` (unexpected thrown error) · `405` (non-POST, Next default). The body is a **generic `{ ok }`** on every rejection — a probe is never told which guard tripped. The client reads `ok` + HTTP-ok and runs Rule 2.7 on anything but `ok:true`.
 - **No rate limit.** The pre-pivot `429`/"5-per-hour in-memory per IP" was **never implemented** (unreliable on Vercel serverless; build-note 09 §3). There is also no application-level request-body size cap beyond Vercel's platform limit (~4.5 MB) and the schema's field caps. Both sit in the same deferred abuse-hardening bucket.
@@ -71,12 +73,12 @@ Stored values are the **display labels** the visitor saw (resolved from the cano
 
 `deliverLead(payload): Promise<boolean>` attempts both destinations concurrently (`Promise.allSettled` — one throwing can't short-circuit the other) and **gates success on the Sheet**:
 - **Google Sheet "Inbound Leads"** — the **durable system of record**. A single `fetch` POST of the formatted record to the owner-provided Apps Script web-app webhook (`LEADS_SHEET_WEBHOOK_URL`); any non-2xx or missing URL resolves `false` → capture reports not-ok (no fake success). Timeout 10s. Chosen over a service account + `googleapis` to add **no dependency** (smallest diff).
-- **Asana "Inbound Leads" project** — **best-effort**. `POST https://app.asana.com/api/1.0/tasks` with a Bearer token (`ASANA_ACCESS_TOKEN`, `ASANA_PROJECT_ID`). A failure/missing config is logged but **never fails the capture** — the Sheet is the record. Timeout 8s.
+- **Asana "Inbound Leads" project** — **best-effort**, for leads only: a waitlist entry is never tasked (decision-log #58, owner direction 2026-10-15), and `createAsanaTask` does not accept one. `POST https://app.asana.com/api/1.0/tasks` with a Bearer token (`ASANA_ACCESS_TOKEN`, `ASANA_PROJECT_ID`). A failure/missing config is logged but **never fails the capture** — the Sheet is the record. Timeout 8s.
 - **Resiliency model (decided in build-note 10):** the Sheet gates success; Asana is best-effort. Every reported success is genuinely, durably recorded; a flaky Asana can't manufacture a false failure for a saved lead. Accepted trade-off: a Sheet-fail/Asana-succeed case reports not-ok, and a retry can create a duplicate Asana task (cheaper than a lost lead; dedupe by hand).
 
 ## Notification — **CHANGED** (`src/lib/lead-notify.ts`)
 
-`notifyLead(payload)` fires **two emails via Resend**, concurrently and best-effort (`Promise.allSettled`), only after a durable capture:
+`notifyLead(payload)` fires **two emails via Resend**, concurrently and best-effort (`Promise.allSettled`), only after a durable capture. A waitlist entry gets the alert only, under its `[Waitlist]` subject, with no auto-reply (#58):
 - **Auto-reply to the lead** — instant acknowledgment honoring the success-screen promise. Reply-to is `hello@nextsketch.com`. Copy is chosen per door (qualified / quick / exploring) so it never describes content the lead didn't provide; the exploring variant drops the two-business-day promise.
 - **Alert to Nathan** (`NOTIFY_EMAIL`) — subject carries the Rule 2.5 signal label; body carries contact details + every answer as display labels. Reply-to is the lead's address.
 - **Sender:** `LEAD_FROM_EMAIL` (verified branded sender) if set, else Resend's interim `onboarding@resend.dev` (decision-log #9 / Decision 3) so email works pre-DNS. HTML user fields are escaped; send errors are logged sanitized (code + status + message, never a raw object).
@@ -84,7 +86,7 @@ Stored values are the **display labels** the visitor saw (resolved from the cano
 ## Business logic implementation — **CURRENT**
 
 - Branching (Rules 2.1–2.3): client-side state machine in `QualificationModal`; the server re-validates so the off-ramp can't be bypassed by a direct POST.
-- Two doors share one submit seam (`submitQualification` → `/api/qualify`); downstream code branches on `kind` (Unit 04) — no parallel system.
+- Two doors and the waitlist band share one submit seam (`submitQualification` → `/api/qualify`); downstream code branches on `kind` (Unit 04, #58) — no parallel system.
 - Language rules (§3): all copy in `src/content/*.ts`; a CI check greps the built output for Rule 3.2/3.4 banned terms and fails the build on a hit.
 
 ## Auth and permissions — **CURRENT**
@@ -118,7 +120,8 @@ Resend (email — best-effort, via `after()`) · **Google Apps Script webhook** 
 src/
   app/            layout.tsx (the dark `background` shell, the three
                   next/font families, modal provider; #47),
-                  page.tsx (home: hero + six sections),
+                  page.tsx (home: hero, the proof band and six
+                  sections; the waitlist band inside Services, #58),
                   pricing/page.tsx (the standalone route, #23),
                   services/product/page.tsx +
                   services/agentic-system/page.tsx (the two service
@@ -132,7 +135,9 @@ src/
                   site-footer.tsx, the six section components,
                   pricing-tiers.tsx (the /pricing grid, #25),
                   service-page.tsx + service-process.tsx (the two
-                  service routes' four blocks, #30),
+                  service routes, one offering each since #53),
+                  proof-band.tsx + waitlist-band.tsx (the home
+                  bands, #58),
                   work-rail.tsx, scroll-reveal.tsx,
                   parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
                   qualification-modal(-provider).tsx, modal-trigger.tsx,
@@ -144,9 +149,11 @@ src/
                    owner call, build-note 08)
   content/        copy.ts (SITE + NAV + LANDING live; retired-plan copy
                   dormant), work.ts, pricing.ts, services.ts,
-                  service-pages.ts (the two routes' content, #30;
-                  references services.ts/pricing.ts, never re-literals
-                  their copy), modal.ts, email.ts, faq.ts
+                  service-pages.ts (the two routes' content, #30,
+                  #53; references services.ts/pricing.ts, never
+                  re-literals their names or figures), modal.ts,
+                  email.ts, faq.ts. services.ts holds the two
+                  offerings and `PRICES`, the one place a figure lives
   lib/            types.ts (SectionId, ROUTES, sectionHref,
                   PricingTier + PricingTierSlug, ServicePageSlug +
                   ServiceBlockId + serviceRoute/serviceBlockHref, #30),

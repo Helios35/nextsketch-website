@@ -118,6 +118,18 @@ export function Hero() {
               >
                 {LANDING.supportingLine}
               </p>
+              {/* The audience line (#58), under the supporting line in
+                  the same column. The column is bottom-anchored and far
+                  shorter than the headline column from `sm:` up, so the
+                  line adds no height there; it takes the over-video
+                  text shadow like every text over the footage, and it is
+                  linen, not muted, because the footage behind it moves. */}
+              <p
+                className="mt-3 text-sm leading-relaxed text-foreground text-shadow-over-video motion-safe:animate-rise-in sm:text-right md:text-base"
+                style={{ animationDelay: "200ms" }}
+              >
+                {LANDING.audienceLine}
+              </p>
             </div>
           </div>
         </div>

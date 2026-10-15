@@ -9,13 +9,15 @@ import {
 import type { PricingTier } from "@/lib/types";
 
 /**
- * The four pricing tiers (`/pricing`) — decision-log #25.
+ * The pricing tiers (`/pricing`) — decision-log #25; **two since #56**,
+ * one per offering.
  *
  * Composition is adapted from an owner-supplied pricing-module
  * reference, which contributed **layout only**, the same posture PR #27
- * took with the gallery reference: a titled block above a 4-up card
- * grid, each card running name -> description -> price -> included
- * list -> CTA. Its own vocabulary was refused wholesale.
+ * took with the gallery reference: a titled block above a card grid,
+ * each card running name -> description -> price -> included list ->
+ * CTA. Its own vocabulary was refused wholesale. #56 adds a second list,
+ * "What the monthly covers", under "Included".
  *
  * **Zero new dependencies.** The reference imports `lucide-react`,
  * `@radix-ui/react-slot`, `class-variance-authority` and
@@ -64,15 +66,16 @@ import type { PricingTier } from "@/lib/types";
  * list. It is the one place the reference's ordering was overridden.
  *
  * **Every band starts on the same line across the row — CSS subgrid.**
- * The four descriptions run three to five lines, so a plain flex column
+ * The descriptions run to different lengths, so a plain flex column
  * staggers `Upfront` and `Ongoing` down the row and only the
  * `mt-auto` CTA lines up (owner feedback, 2026-08-25). Each card is
- * therefore a **six-row subgrid** — name, description, upfront,
- * ongoing, included, CTA — sharing its neighbours' row tracks, so each
- * band's track is the tallest across the row and every card's bands
- * start together. Content-driven, so it survives a copy edit, a font
- * swap and every breakpoint; a `min-h` in pixels or `lh` survives none
- * of those, and clamping would truncate a price description.
+ * therefore a **seven-row subgrid** — name, description, upfront,
+ * ongoing, included, what the monthly covers, CTA (six until #56) —
+ * sharing its neighbours' row tracks, so each band's track is the
+ * tallest across the row and every card's bands start together.
+ * Content-driven, so it survives a copy edit, a font swap and every
+ * breakpoint; a `min-h` in pixels or `lh` survives none of those, and
+ * clamping would truncate a price description.
  *
  * Two things were measured in-browser rather than assumed, because both
  * decide the markup:
@@ -89,18 +92,57 @@ import type { PricingTier } from "@/lib/types";
  *    padding shifts them; all four cards carry the same `p-6 md:p-8`,
  *    so they shift identically and stay aligned with each other.
  *
- * The `Included` row is rendered even when a tier has no approved
- * bullets: every card must span the same six rows or the subgrids stop
- * lining up. Empty, its track collapses to nothing.
+ * Both list rows are rendered even when a tier has no bullets for one:
+ * every card must span the same seven rows or the subgrids stop lining
+ * up. Empty, a row's track collapses to nothing.
  *
- * Alignment is per grid row, which is what matters visually — the four
- * cards at `xl`, each visible pair at `md`. `mt-auto` is gone; the CTA
- * no longer needs pinning because its row is shared.
+ * Alignment is per grid row, which is what matters visually — the two
+ * cards side by side from `md`. `mt-auto` is gone; the CTA no longer
+ * needs pinning because its row is shared.
  *
  * Server component — `<ModalTrigger>` is the only interactive part, and
  * it carries each tier's `need` so the modal opens with that tier
  * already selected (the `SERVICE_NEED` pattern, `PRICING_NEED` here).
  */
+/**
+ * One labelled list row inside a tier card: the mono micro-label over
+ * the system's coral-diamond list. A tier with no items for a row shows
+ * no list rather than an invented one (Rule 4.3), and the cell
+ * collapses to nothing.
+ */
+function TierList({
+  label,
+  items,
+}: {
+  label: string;
+  items: readonly string[];
+}) {
+  return (
+    <div className={items.length > 0 ? "mt-8" : undefined}>
+      {items.length > 0 && (
+        <>
+          <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
+            {label}
+          </p>
+          <ul className="mt-4 space-y-3">
+            {items.map((item) => (
+              <li key={item} className="flex gap-3">
+                <span
+                  aria-hidden="true"
+                  className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
+                />
+                <span className="text-base leading-relaxed text-foreground">
+                  {item}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function PricingTiers() {
   return (
     <section
@@ -110,19 +152,20 @@ export function PricingTiers() {
       <h2 id="pricing-tiers-heading" className="sr-only">
         {PRICING.tiersHeading}
       </h2>
-      <div className="grid gap-x-4 gap-y-0 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-x-4 gap-y-0 md:grid-cols-2">
         {/* Widened to PricingTier: `as const satisfies` narrows each entry
-            to its own literal type, so `upfrontWas` would not exist on the
-            two tiers that omit it. The component reads the interface, not
-            the content's literals, which is the right coupling anyway. */}
+            to its own literal type, so an optional field would not exist
+            on a tier that omits it. The component reads the interface,
+            not the content's literals, which is the right coupling anyway. */}
         {PRICING_TIERS.map((tier: PricingTier) => (
-          /* Six-row subgrid: the row tracks are the parent's, so every
+          /* Seven-row subgrid: the row tracks are the parent's, so every
              card's bands start on the same line as its neighbours'. The
              mb-4 is the row separation the parent's zeroed row-gap no
-             longer provides, and is uniform on purpose. */
+             longer provides, and is uniform on purpose; from md both
+             cards share one row and need none. */
           <div
             key={tier.slug}
-            className="row-span-6 mb-4 grid grid-rows-subgrid rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8 xl:mb-0"
+            className="row-span-7 mb-4 grid grid-rows-subgrid rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:mb-0 md:p-8"
           >
             <h3 className="font-sans text-lg font-semibold tracking-tight text-foreground md:text-xl">
               {tier.name}
@@ -140,23 +183,10 @@ export function PricingTiers() {
               <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
                 {PRICING.upfrontLabel}
               </p>
-              {/* The struck former price sits to the right of the figure,
-                  baseline-aligned and at the `muted-foreground` caption
-                  step, the text floor (it is real text and must clear AA
-                  contrast on `card`, the same call the footer's legal
-                  line records). Coral is not used: it is the scarce
-                  payoff accent, and the figure a visitor actually pays
-                  is the linen one. */}
-              <p className="mt-2 flex flex-wrap items-baseline gap-x-3">
-                <span className="font-sans text-3xl leading-[1.05] font-medium tracking-tight text-foreground tabular-nums">
-                  {tier.upfront}
-                </span>
-                {tier.upfrontWas !== undefined && (
-                  <s className="font-sans text-base leading-[1.05] text-muted-foreground tabular-nums line-through">
-                    <span className="sr-only">{PRICING.upfrontWasLabel} </span>
-                    {tier.upfrontWas}
-                  </s>
-                )}
+              {/* The figure alone: the struck former price that sat
+                  beside it retired with #56. */}
+              <p className="mt-2 font-sans text-3xl leading-[1.05] font-medium tracking-tight text-foreground tabular-nums">
+                {tier.upfront}
               </p>
               {/* Optional (#45): a tier with no approved caption renders
                   none. The subgrid row is shared, so the card's bands
@@ -179,33 +209,15 @@ export function PricingTiers() {
               </p>
             </div>
 
-            {/* Row five. Always rendered, even empty: the six-row spans
-                must match across cards or the subgrids stop aligning.
-                Owner-owed (Rule 4.3) — a tier with no approved bullets
-                shows no list rather than an invented one, and its cell
-                collapses to nothing. */}
-            <div className={tier.features.length > 0 ? "mt-8" : undefined}>
-              {tier.features.length > 0 && (
-                <>
-                  <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
-                    {PRICING.featuresLabel}
-                  </p>
-                  <ul className="mt-4 space-y-3">
-                    {tier.features.map((feature) => (
-                      <li key={feature} className="flex gap-3">
-                        <span
-                          aria-hidden="true"
-                          className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
-                        />
-                        <span className="text-base leading-relaxed text-foreground">
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
+            {/* Rows five and six (#56): what the upfront build includes,
+                then what the monthly covers. Always rendered, even
+                empty: the seven-row spans must match across cards or
+                the subgrids stop aligning. */}
+            <TierList label={PRICING.featuresLabel} items={tier.features} />
+            <TierList
+              label={PRICING.monthlyCoversLabel}
+              items={tier.monthlyCovers}
+            />
 
             <div className="mt-8">
               <ModalTrigger

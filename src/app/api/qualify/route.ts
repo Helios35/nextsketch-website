@@ -9,8 +9,9 @@ import { leadPayloadSchema } from "@/lib/schema";
  * (docs/07-technical-spec.md §API; no database, no auth — owner
  * decision). Receives a completed lead from either door (Sprint 02
  * Unit 04: the full qualifier or the quick path / off-ramp capture),
- * re-validates it with the shared `leadPayloadSchema`, and hands the
- * lead to the durable delivery seam.
+ * or a waitlist email from the Services band (decision-log #58),
+ * re-validates it with the shared `leadPayloadSchema`, and hands it to
+ * the durable delivery seam. Still the only server-side surface (#8).
  *
  * Server-side re-validation is the security boundary: the discriminated
  * union enforces the right shape per `kind`, the qualifier enums

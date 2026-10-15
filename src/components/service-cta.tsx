@@ -3,8 +3,7 @@
 import type { MouseEvent } from "react";
 import { ArrowIcon } from "@/components/arrow-icon";
 import { useQualificationModal } from "@/components/qualification-modal-provider";
-import { MODAL_ESCAPE_HATCH } from "@/content/modal";
-import type { ProjectType } from "@/lib/schema";
+import { MODAL_ESCAPE_HATCH, type QuickNeed } from "@/content/modal";
 
 /**
  * Per-service conversion CTA (owner direction 2026-08-04): opens the
@@ -25,7 +24,7 @@ import type { ProjectType } from "@/lib/schema";
 interface ServiceCtaProps {
   label: string;
   /** The project type this card's CTA preselects in the modal. */
-  need: ProjectType;
+  need: QuickNeed;
   /**
    * Names the service in the accessible name, so four identical
    * "Build With Us" links don't read as four identical links out of

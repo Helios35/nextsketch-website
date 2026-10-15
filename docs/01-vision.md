@@ -1,6 +1,6 @@
 # Vision — NextSketch Website Rebuild
 
-**Version:** 2.2 · **Date:** 2026-10-14 · **Status:** Active: aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the hero headline updated to #51
+**Version:** 2.3 · **Date:** 2026-10-15 · **Status:** Active: aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the hero headline updated to #51; the capability strip names the two offerings (#53)
 **Answers:** Why does this exist?
 **Upstream sources:** NextSketch Brand Philosophy v1.0, NextSketch Messaging & Branding Kit v1.0, `concept-website-rebuild.md`
 
@@ -10,7 +10,7 @@
 
 ## Problem statement — **CURRENT**
 
-The current nextsketch.com sells a company that no longer exists: an industrial/mechanical design consultancy with hardware case studies, template SaaS pricing, Calendly "book a free chat" CTAs, and SEO targeting design-services keywords. NextSketch has repositioned as a product development firm — software products and agentic systems, from idea to production, with a partner who stays. Every visitor today receives the wrong story, and the site's conversion paths (Calendly, "free chat") directly violate the new brand's qualification mindset.
+The current nextsketch.com sells a company that no longer exists: an industrial/mechanical design consultancy with hardware case studies, template SaaS pricing, Calendly "book a free chat" CTAs, and SEO targeting design-services keywords. NextSketch has repositioned as a product development firm — software products and agentic systems, from idea to production, with a partner who stays. Every visitor today receives the wrong story, and the site's conversion paths (Calendly, "free chat") directly violate the new brand's qualification mindset. **CHANGED (decision-log #53 to #55, 2026-10-15):** the offer is now two offerings, **Agentic System Integration** (which leads) and **AI Product Development**, sold on process mapping: mapping how a business really works before building anything. "From idea to production" retired from the vocabulary with #54.
 
 ## Target user — **CURRENT**
 
@@ -24,7 +24,7 @@ Three buyer profiles, defined canonically in Messaging Kit §04:
 
 A website that is itself proof of capability: sleek, modern, fast, with purposeful animation — "a product, not a brochure." It tells the new story in the Messaging Kit's words and qualifies visitors through a **two-door qualification modal** instead of a contact page, self-filtering away people who are still exploring.
 
-**As-built (the live MVP):** a dark cinematic landing hero opening a scrolling home page, plus a standalone `/pricing` route and **two service routes** under `/services/` (decision-log #30). The old "the landing page is the entire site for now" (decision-log #1; build-note 08) is **superseded** — by #13/#16 which grew the page, and by **#23** (2026-08-25) which added the second route. The hero screen is still the opening: headline ("We build agentic systems and digital products that work in production", decision-log #51, 2026-10-14, superseding #18's "From idea to production. Gain a real partner.", which had superseded the locked Messaging Kit Option A "From idea to production. And we stay."), a supporting line, a capability strip naming the four services, and the primary CTA that opens the modal. **PLANNED (decision-log #13):** the page grows section-by-section — Manifesto, Services, Process, About, Final CTA — each designed against the hero-derived design system. The old eleven-section light storytelling is **RETIRED** (its code dormant on disk; sections outside the #13 set return only by a new decision).
+**As-built (the live MVP):** a dark cinematic landing hero opening a scrolling home page, plus a standalone `/pricing` route and **two service routes** under `/services/` (decision-log #30). The old "the landing page is the entire site for now" (decision-log #1; build-note 08) is **superseded** — by #13/#16 which grew the page, and by **#23** (2026-08-25) which added the second route. The hero screen is still the opening: headline ("We build agentic systems and digital products that work in production", decision-log #51, 2026-10-14, superseding #18's "From idea to production. Gain a real partner.", which had superseded the locked Messaging Kit Option A "From idea to production. And we stay."), a supporting line with the audience line under it (#58), a capability strip naming the **two offerings**, Agentic System Integration and AI Product Development (decision-log #53, 2026-10-15; four services before), and the primary CTA that opens the modal. **PLANNED (decision-log #13):** the page grows section-by-section — Manifesto, Services, Process, About, Final CTA — each designed against the hero-derived design system. The old eleven-section light storytelling is **RETIRED** (its code dormant on disk; sections outside the #13 set return only by a new decision).
 
 ## Success metrics
 

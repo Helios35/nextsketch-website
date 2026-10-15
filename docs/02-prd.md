@@ -1,6 +1,6 @@
 # PRD — NextSketch Website Rebuild
 
-**Version:** 2.2 · **Date:** 2026-10-14 · **Status:** Active: aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the look reconciled to the fin Zen Linen dark rebrand (decision-log #47 to #50)
+**Version:** 2.3 · **Date:** 2026-10-15 · **Status:** Active: aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the look reconciled to the fin Zen Linen dark rebrand (decision-log #47 to #50); the offer set is the two offerings of #53 (F6 and the user stories)
 **Answers:** What are we building?
 **References:** `01-vision.md` (why) · `03-site-architecture.md` (structure) · `04-ux-spec.md` (look/behavior) · `05-business-rules.md` (logic) · `06-taxonomy.md` (naming) · `07-technical-spec.md` (how) · `08-runbook.md` (ops)
 
@@ -37,8 +37,8 @@ See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-piv
 ## User stories
 
 - As a **founder with an idea**, I want to understand **from the hero** that NextSketch takes ideas to production and stays, so that I trust them enough to start the modal. **CHANGED** (was "in one scroll").
-- As a **burned business owner**, I want to see the partner-not-vendor positioning, so that I feel safe raising my hand again. **CURRENT** (the rescue service appears in the capability strip); deeper treatment lands with the **PLANNED** Services/Manifesto sections (#13).
-- As an **SMB owner exploring AI**, I want plain-language signal that agentic systems apply to me. **CURRENT** (capability strip); deeper treatment lands with the **PLANNED** Services section (#13).
+- As a **burned business owner**, I want to see the partner-not-vendor positioning, so that I feel safe raising my hand again. **CURRENT** (finishing a product someone else started is one of AI Product Development's ways in, on the Services card and `/services/product`; decision-log #53).
+- As an **SMB owner exploring AI**, I want plain-language signal that agentic systems apply to me. **CURRENT** (the capability strip and the Agentic System Integration card, page and example jobs, in buyer words: "AI automation for the work you already do"; #53, #54, #57).
 - As a **visitor who is still exploring**, I want an honest signal that I'm not ready yet — and an optional way to stay in touch. **CHANGED** (off-ramp now captures).
 - As **Nathan (owner)**, I want every lead durably recorded **and** an alert with all answers, so I can qualify and respond personally. **CHANGED** (Sheet system of record + Asana + a `[Lead …]` alert email; not a single email).
 
@@ -51,7 +51,7 @@ See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-piv
 | F3 | A completed lead (either door) is durably recorded to the **Google Sheet "Inbound Leads"** (system of record, gates capture success) + a **best-effort Asana task**, then triggers a lead **auto-reply** and Nathan's **alert** via Resend (`after()`, best-effort). No database (decision-log #8). | **CHANGED** |
 | F4 | Process section (four canonical phases — Taxonomy §2). Design decided at its section unit against `04-ux-spec.md`; the old expandable-rows/circled-numbers spec is **RETIRED**. | **PLANNED** (#13) |
 | F5 | Selected-work grid (4 placeholder tiles). Not in the #13 set; returning it requires a new decision. | **RETIRED** |
-| F6 | Services section (four canonical services, Taxonomy §1). The service **names** are live in the capability strip (**CURRENT**); the section is designed at its unit with one accent only (#14, coral since #47, which retired gold), and the old four-accent cards are **RETIRED**. | **PLANNED** (#13) |
+| F6 | Services section: **the two offerings** (Taxonomy §1, decision-log #53), each card naming the offering, what it does and its price, with the waitlist band under them (#58). One accent only (#14, coral since #47); the old four-accent cards are **RETIRED**. | **CURRENT** (live since Redesign Unit 02; two offerings since #53) |
 | F7 | About section ("about me", solo). | **PLANNED** (#13) |
 | F8 | Testimonials (2–3 placeholder quote blocks). Not in the #13 set. | **RETIRED** |
 | F9 | FAQ accordion (six Q&As verbatim). Not in the #13 set; the Q&A copy stays canonical in the Messaging Kit if it returns. | **RETIRED** |

@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { QualificationModal } from "@/components/qualification-modal";
-import type { ProjectType } from "@/lib/schema";
+import type { QuickNeed } from "@/content/modal";
 
 interface QualificationModalContextValue {
   /**
@@ -17,7 +17,7 @@ interface QualificationModalContextValue {
    * service into the form. Omitted, the modal opens with nothing
    * selected, exactly as every other CTA does.
    */
-  openModal: (need?: ProjectType) => void;
+  openModal: (need?: QuickNeed) => void;
 }
 
 const QualificationModalContext =
@@ -49,10 +49,10 @@ export function QualificationModalProvider({
 }) {
   const [open, setOpen] = useState(false);
   /** Preselection for the next open; cleared by the unmount on close. */
-  const [need, setNeed] = useState<ProjectType | undefined>(undefined);
+  const [need, setNeed] = useState<QuickNeed | undefined>(undefined);
   const value = useMemo(
     () => ({
-      openModal: (need?: ProjectType) => {
+      openModal: (need?: QuickNeed) => {
         setNeed(need);
         setOpen(true);
       },
