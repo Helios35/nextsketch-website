@@ -73,7 +73,7 @@ Stored values are the **display labels** the visitor saw (resolved from the cano
 
 `deliverLead(payload): Promise<boolean>` attempts both destinations concurrently (`Promise.allSettled` — one throwing can't short-circuit the other) and **gates success on the Sheet**:
 - **Google Sheet "Inbound Leads"** — the **durable system of record**. A single `fetch` POST of the formatted record to the owner-provided Apps Script web-app webhook (`LEADS_SHEET_WEBHOOK_URL`); any non-2xx or missing URL resolves `false` → capture reports not-ok (no fake success). Timeout 10s. Chosen over a service account + `googleapis` to add **no dependency** (smallest diff).
-- **Asana "Inbound Leads" project** — **best-effort**. `POST https://app.asana.com/api/1.0/tasks` with a Bearer token (`ASANA_ACCESS_TOKEN`, `ASANA_PROJECT_ID`). A failure/missing config is logged but **never fails the capture** — the Sheet is the record. Timeout 8s.
+- **Asana "Inbound Leads" project** — **best-effort**, for leads only: a waitlist entry is never tasked (decision-log #58, owner direction 2026-10-15), and `createAsanaTask` does not accept one. `POST https://app.asana.com/api/1.0/tasks` with a Bearer token (`ASANA_ACCESS_TOKEN`, `ASANA_PROJECT_ID`). A failure/missing config is logged but **never fails the capture** — the Sheet is the record. Timeout 8s.
 - **Resiliency model (decided in build-note 10):** the Sheet gates success; Asana is best-effort. Every reported success is genuinely, durably recorded; a flaky Asana can't manufacture a false failure for a saved lead. Accepted trade-off: a Sheet-fail/Asana-succeed case reports not-ok, and a retry can create a duplicate Asana task (cheaper than a lost lead; dedupe by hand).
 
 ## Notification — **CHANGED** (`src/lib/lead-notify.ts`)

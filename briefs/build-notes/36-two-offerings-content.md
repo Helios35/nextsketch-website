@@ -1,7 +1,7 @@
 # Build Note 36: Two offerings, content and structure (adhoc)
 
 **Date:** 2026-10-15 · **Branch:** `adhoc/two-offerings-content` · **Base:** `main` @ `d459c4e`
-**Status:** COMPLETE. The site sells two offerings, Agentic System Integration first, on every surface; Part B ships verbatim; the three home bands are in; the waitlist captures through the modal's seam. All four gates green. Fourteen builder calls come back to Nate below; three want his word (2, 3 and 5).
+**Status:** COMPLETE. The site sells two offerings, Agentic System Integration first, on every surface; Part B ships verbatim; the three home bands are in; the waitlist captures through the modal's seam. All four gates green. Nate settled builder calls 2, 3, 5 and 6 before merge and accepted the rest as built; the changes are under "Follow-ups before merge", with one new builder call (15).
 **Follows:** build-notes 34 and 35. **Decisions:** **#53 to #59** appended; the footer closes seven items and adds one. Next free row **#60**, next build note **37**.
 **Brief:** "Adhoc Unit: Two offerings, content and structure" (Nate, 2026-10-15; Brief 1 of 3). The visuals brief (2) and the About/team brief (3) follow.
 
@@ -47,7 +47,7 @@ Traced from `src/content/` and `src/app/` before anything changed. The brief was
 - **About, Final CTA:** untouched.
 - **Search title and description:** Part B's.
 
-**`/services/agentic-system`:** title and description; eyebrow "Agentic System Integration"; the #37 `<h1>` unchanged; the lead line, the new intro and the price in the hero; the ribbon carries the four example names; **four example blocks** (Email triage, Weekly reporting, Quoting and intake, Document and data entry), each with what the agent does, a "What we map first" panel and a visual slot; then **"What you get" and "What the monthly covers"**; How it works and the close as before. The Internal Tool and AI Workflow Integration blocks are gone.
+**`/services/agentic-system`:** title and description; eyebrow "Agentic System Integration"; the #37 `<h1>` unchanged; the lead line, the new intro and the price in the hero; the ribbon carries the four example names; **four example blocks** (Email triage, Weekly reporting, Quoting and intake, Document and data entry), each with what the agent does and a "What we map first" panel, and **no visual until the visuals brief** (from `lg:` the panel sits beside the text; follow-up 1); then **"What you get" and "What the monthly covers"**; How it works and the close as before. The Internal Tool and AI Workflow Integration blocks are gone.
 
 **`/services/product`:** title and description; eyebrow "AI Product Development"; the owner `<h1>` with "stay" in coral (closing the `<h1>` owed since #30); lead line, intro and price; the ribbon carries the three ways in; **Build from scratch, Finish what someone started and Ongoing product team** on the existing blocks, anchors and visuals, each with its four bullets.
 
@@ -66,14 +66,14 @@ Traced from `src/content/` and `src/app/` before anything changed. The brief was
 | | Added | Renamed / changed | Retired |
 |---|---|---|---|
 | `src/lib/types.ts` | `Service.subtitle`, `.price`, `.examples`; `PricingTier.monthlyCovers`; `ServicePageBlock.mapFirst`; `ServicePageContent.leadLine`, `.price`, `.offer` | `ServiceSlug` is now `"agentic-system" \| "product"` (each offering's existing route slug), and `ServicePageSlug` is the same union; `ProcessPhaseSlug` is `map \| build \| validate \| optimize`; `ServiceBlockId` gains the four example anchors; every `need` is `QuickNeed` | `Service.accent` (dead data, #47); `PricingTier.upfrontWas`; `PricingTierSlug` loses `tool` and `rescue`; `ServiceBlockId` loses `ai-workflow-integration` and `internal-tool` |
-| `src/content/services.ts` | `PRICES` (the one place a figure lives), `SERVICES_WAITLIST` | `SERVICES` (two entries), `SERVICE_NEED` and `SERVICE_PAGE_HREF` (keyed by the two slugs), `SERVICES_HEADLINE` | the four service entries |
+| `src/content/services.ts` | `PRICES` (the one place a figure lives), `SERVICES_WAITLIST` (with its own `failure` headline, body and mailto `subject`, follow-up 4) | `SERVICES` (two entries), `SERVICE_NEED` and `SERVICE_PAGE_HREF` (keyed by the two slugs), `SERVICES_HEADLINE` | the four service entries |
 | `src/content/pricing.ts` | `PRICING.monthlyCoversLabel` | `PRICING.title`, `.description`, `.intro`; `PRICING_NEED` reads `SERVICE_NEED`; `PRICING_TIERS` (two, names from `SERVICES`, figures from `PRICES`) | `PRICING.upfrontWasLabel`; the `tool` and `rescue` tiers |
 | `src/content/service-pages.ts` | `SERVICE_PAGE_LABELS` | both pages rewritten; ribbons read their blocks' names | the two-depth blocks |
 | `src/content/copy.ts` | `LANDING.audienceLine`, `PROOF`, `PROCESS.annotationPhase` | `SITE.title`, `.description`; `NOT_FOUND.body`; `LANDING.capabilities` reads `SERVICES`; `MANIFESTO`; `PROCESS`; `PROCESS_ACCENTS` keys | |
 | `src/content/modal.ts` | `QuickNeed` (type) | `MODAL_QUICK.needsOptions` (two); Q1 labels and order | |
 | `src/lib/schema.ts` | `waitlistPayloadSchema`, `WaitlistPayload`; `botGuards` (the two guards, shared) | `leadPayloadSchema` gains the third kind | |
-| `src/lib/lead-format.ts`, `lead-notify.ts` | `WAITLIST_SIGNAL`; the `waitlist` lead type; `sendWaitlistAlert` | `leadSignal`, `toSheetRecord`, `toAsanaTask` handle the kind; `notifyLead` skips the auto-reply for it | |
-| Components | `proof-band.tsx`, `waitlist-band.tsx`; in `qualification-modal.tsx`, the exports `CAPTION_CLASS`, `INPUT_CLASS`, `HEADING_CLASS`, `HoneypotField`, `ComposedAnswers`, `fallbackMailto` (the modal now renders through the last two itself) | `pricing-tiers.tsx` (`TierList`, seven rows, two columns); `service-page.tsx` (`OfferList`, the hero lines, the map panel); `service-block-visual.tsx` (`SlotVisual`) | `InternalToolVisual`; `NEED_CONFLICTS` and the tabs' disabled state |
+| `src/lib/lead-format.ts`, `lead-notify.ts`, `lead-delivery.ts` | `WAITLIST_SIGNAL`; the `waitlist` lead type; `sendWaitlistAlert` | `leadSignal` and `toSheetRecord` handle the kind; `deliverLead` skips Asana for it, and `toAsanaTask` and `createAsanaTask` refuse it by type (follow-up 2); `notifyLead` skips the auto-reply for it | |
+| Components | `proof-band.tsx`, `waitlist-band.tsx`; in `qualification-modal.tsx`, the exports `CAPTION_CLASS`, `INPUT_CLASS`, `HEADING_CLASS`, `HoneypotField`, `ComposedAnswers`, `fallbackMailto` (the modal now renders through the last two itself; its `subject` is required); `hasBlockVisual` | `pricing-tiers.tsx` (`TierList`, seven rows, two columns); `service-page.tsx` (`OfferList`, the hero lines, the map panel, which takes the visual's half when a block has none) | `InternalToolVisual`; the #34 app cluster (`WorkflowVisual`, `APP_ICONS`, `Tile`) and the empty-frame `SlotVisual` (follow-up 1); `NEED_CONFLICTS` and the tabs' disabled state |
 
 **Unchanged, as the brief requires:** routes; the `/services/product` anchors; the payload values `new_product`, `rescue`, `agentic`, `partnership`; the pricing tier slugs `workflow` and `custom`; the Sheet's eleven columns and their order.
 
@@ -109,18 +109,19 @@ All clear 4.5:1. Every other new text sits on a flat fill at a ratio the UX spec
 
 - **Payload:** `kind: "waitlist"`, `email`, and the two guards (`_hp`, `_t`, the latter timed from when the band mounted). No name, no answers.
 - **Sheet row:** the same eleven columns: `lead_type: waitlist`, `signal: [Waitlist]`, the email, every other column empty.
-- **Asana task:** `[Waitlist] <email>`, notes "Door: Waitlist band (Services)".
+- **No Asana task** (Nate, 2026-10-15; follow-up 2). `createAsanaTask` does not accept a waitlist entry, so one cannot be tasked by accident.
 - **Alert to Nate:** subject `[Waitlist] <email>`, body the email and the capture time. **No auto-reply.**
 - **`[Waitlist]` is deliberately not a `[Lead …]` label**, so an entry reads apart from a lead wherever Nate sees it.
+- **Failure fallback:** its own copy, "That didn't go through." over "Something failed on our end, not yours. Email us and we'll add you to the list.", with the email preserved on screen and the escape hatch's mailto carrying it under the subject "Add me to the NextSketch waitlist" (follow-ups 3 and 4).
 
 ## Builder calls (each comes back to Nate)
 
 1. **`/services/product`'s hero and close now preselect AI product development** (`new_product`). Under #30 they preselected nothing because three services shared the page; it is one offering now. Every CTA on both routes preselects its page's offering.
-2. **Visual stand-ins on the agentic route:** the app cluster of #34 (whose block retired) stands in for **Email triage**, and the other three blocks show an **empty `secondary` 4/3 frame**. Only the Internal Tool mock was deleted. Brief 2 replaces all four. *Wants Nate's word if the empty frames should not reach production before Brief 2.*
-3. **Waitlist routing:** an entry goes to the Sheet (which gates success), an Asana task in Inbound Leads, and Nate's alert; only the auto-reply is carved out, which is the literal reading of "the same durable capture path" and Rule 2.4. *Wants Nate's word: keeping waitlist entries out of Asana, or out of the inbox, is a one-line change each.*
+2. **Visual stand-ins on the agentic route:** the app cluster of #34 (whose block retired) stands in for **Email triage**, and the other three blocks show an **empty `secondary` 4/3 frame**. Only the Internal Tool mock was deleted. Brief 2 replaces all four. **Settled by Nate (2026-10-15):** hide all four until Brief 2; no empty or stand-in frames in production (follow-up 1).
+3. **Waitlist routing:** an entry goes to the Sheet (which gates success), an Asana task in Inbound Leads, and Nate's alert; only the auto-reply is carved out, which is the literal reading of "the same durable capture path" and Rule 2.4. **Settled by Nate (2026-10-15):** the Sheet and his alert only, no Asana task (follow-up 2).
 4. **The waitlist alert carries no new copy:** subject `[Waitlist] <email>`, body the labelled email and time. The lead alert's "New lead from the NextSketch site." and "Reply to this email to reach the lead directly." are not reused, because a waitlist entry is not a lead.
-5. **The waitlist fallback's mailto has no subject line.** Part B is silent, and the modal's subject ("Project inquiry — my qualification answers") would mislabel the email. *Wants a line from Nate.*
-6. **The waitlist fallback reuses the modal's failure copy** (as Part B says), which reads "your answers are safe" / "Your answers are below" for a single email, and carries two em dashes in lines this unit did not touch. *Flagged.*
+5. **The waitlist fallback's mailto has no subject line.** Part B is silent, and the modal's subject ("Project inquiry — my qualification answers") would mislabel the email. **Settled by Nate (2026-10-15):** "Add me to the NextSketch waitlist" (follow-up 3).
+6. **The waitlist fallback reuses the modal's failure copy** (as Part B says), which reads "your answers are safe" / "Your answers are below" for a single email, and carries two em dashes in lines this unit did not touch. **Settled by Nate (2026-10-15):** the band has its own copy (follow-up 4).
 7. **No-JS waitlist:** the form's action is the escape-hatch mailto, so a no-JS submit reaches a person (Business Rules E3) instead of putting the address in a URL.
 8. **Placement:** the service routes' price sits in the hero, under the intro, in `/pricing`'s term-line treatment; the agentic "What you get / What the monthly covers" band sits after the four examples, before How it works.
 9. **Each example block keeps the "Build With Us" CTA** every service-route block carries (owner direction, #30). Part B lists the block's name, line, map line and visual, and is silent on the CTA.
@@ -129,6 +130,17 @@ All clear 4.5:1. Every other new text sits on a flat fill at a ratio the UX spec
 12. **Service cards:** Part B's order (name, subtitle, line, price, examples), then the CTA. The subtitle is `muted-foreground` medium; the price row is linen, never coral (coral stays on `/pricing`'s monthly figures), stacked on a phone and divided by a hairline from `sm:`. Both names still fit one line at every width (measured: "Agentic System Integration" 224px against a 264px column at 360, 249px against 280px at 768), so the owner's one-line rule holds; the `xl:text-lg` step for the old 4-up grid went with it.
 13. **Grids:** the Services cards and the pricing tiers run two columns from `md` at every wider width, full-bleed as before.
 14. **Single sources:** `LANDING.capabilities` reads `SERVICES`; the tier names read `SERVICES`; the figures live in `PRICES`; the example names are the offering's `examples`, read by the card, the blocks and the ribbon; the agentic monthly list is the tier's.
+
+## Follow-ups before merge (Nate, 2026-10-15)
+
+Nate's calls on builder calls 2, 3, 5 and 6, made in session before merge; the rest were accepted as built. Recorded as same-day amendments to #57 and #58 (the #45 precedent) and in the log's footer.
+
+1. **The agentic example blocks carry no visual until Brief 2; no empty or stand-in frame reaches production.** `VISUALS` maps the four example ids to `null`, and `ServiceBlockVisual` renders nothing for them. The #34 app cluster and the empty-frame `SlotVisual` had no block left and were deleted; git keeps both (`6d74344`).
+2. **A waitlist entry reaches the Sheet and Nate's alert only, with no Asana task.** `deliverLead` skips Asana for `kind: "waitlist"` and treats the skipped slot as nothing to do, so no "action item missing" error is logged; `toAsanaTask` and `createAsanaTask` no longer accept the kind at all.
+3. **The waitlist fallback's mailto subject is "Add me to the NextSketch waitlist".** `fallbackMailto` now takes a required subject, the modal's call unchanged.
+4. **The waitlist failure copy is its own:** "That didn't go through." / "Something failed on our end, not yours. Email us and we'll add you to the list." (`SERVICES_WAITLIST.failure`). The mechanics stay the modal's: the email preserved on screen, Back, and the escape-hatch button.
+
+**Builder call 15 (new, made with follow-up 1):** with the visual gone, each example card left half its width empty at `lg:` and up, which read as the missing frame Nate asked to remove. From `lg:` the "What we map first" panel now takes that half (the text column turns `lg:contents`, so the parts become cells of the row grid in reading order: name and line, map, CTA); below `lg:` the card stacks exactly as before. The alternative is a plain one-column card with the right half empty; reverting is one class string in `service-page.tsx`.
 
 ## Deviations from the brief
 
@@ -143,13 +155,13 @@ Headless Chrome over the DevTools protocol against `next start` production build
 
 | Check | Result |
 |---|---|
-| Every surface at 360, 768, 1280, 1920 | 143 before-captures from `main`, 154 after (5 routes as scrolled tiles plus 12 modal states per width). Page heights grow where content was added (the agentic route +1,515 to +2,384px); the 404 is the same height. From the second question on, every 360 modal state is byte-identical to `main`, so the fallback refactor changed nothing in the modal |
+| Every surface at 360, 768, 1280, 1920 | 143 before-captures from `main`, 154 after the first push and 151 after the follow-ups (5 routes as scrolled tiles plus 12 modal states per width). Page heights grow where content was added (the agentic route +790 to +1,406px over `main` now, after the visuals came out); the 404 is the same height. From the second question on, every 360 modal state is byte-identical to `main`, so the fallback refactor changed nothing in the modal. Against the first push, the follow-ups change only the agentic route's tiles (plus 30 anti-aliasing pixels, at most 2/255, on one modal state) |
 | Built HTML and RSC (41 files) | No "Internal Tool", "AI Workflow Integration", "Product Completion", "Product Support", "Down from", "$5,000", "$7,998", "$6,998" or "from idea to production". The remaining case-insensitive hits are Part B's own words ("a new product built from scratch", "We stay. Every month…") and a script attribute (`strategy`) |
 | Em dashes | None in the visible text of any route (there were 22 on `main`). Every em dash in a line this unit added sits in a code comment (#19 exempts them) |
 | Preselects, modal stubbed | 17 CTAs: home cards `agentic` / `new_product`; tiers `agentic` / `new_product`; all six agentic-route CTAs `agentic`; all five product-route CTAs `new_product`; home hero and Final CTA nothing, as before. The door shows exactly the two options |
 | Both doors, stubbed | Qualifier → success; quick door → failure fallback on a stubbed 500; off-ramp → its capture and success. Payloads keep their keys and order |
-| Waitlist, at 1280 and 360 | Success: `{kind:"waitlist", email, _hp:"", _t≥3000}` sent, confirmation shown and focused. Stubbed 500: the fallback with the email preserved, mailto `?body=Your%20email%0A…`; Back returns to the field, focused, value kept. Under 3s: nothing sent, the fallback shown |
-| The real route, Sheet webhook pointed at a local recorder | waitlist → 200 and the row above; too fast, honeypot, no email, bad email, unknown kind → 400; quick door with both offerings → `project_type: "Agentic system integration; AI product development"`; qualifier `rescue` → "Finishing a product someone else started" |
+| Waitlist, at 1280 and 360 | Success: `{kind:"waitlist", email, _hp:"", _t≥3000}` sent, confirmation shown and focused. Stubbed 500: the band's own fallback ("That didn't go through." and its body), the email preserved, mailto `?subject=Add%20me%20to%20the%20NextSketch%20waitlist&body=Your%20email%0A…`; Back returns to the field, focused, value kept. Under 3s: nothing sent, the fallback shown |
+| The real route, Sheet webhook pointed at a local recorder | waitlist → 200 and the row above, with **no Asana attempt** (the server log shows only the alert step for it, while a lead posted next still tries Asana); too fast, honeypot, no email, bad email, unknown kind → 400; quick door with both offerings → `project_type: "Agentic system integration; AI product development"`; qualifier `rescue` → "Finishing a product someone else started" |
 | Links and anchors | 30 internal hrefs on the four routes, every one 200, every anchor present. `/services/agentic-system#internal-tool` and `#ai-workflow-integration` open the page at the top with no error. An unknown path returns 404 |
 | Hero at 1024×768, contrast | The two tables above |
 | Console | Only the known local noise (the Vercel insights 404, the Apollo pixel 400) and the stubbed 500 |
