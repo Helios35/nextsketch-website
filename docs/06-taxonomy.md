@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 2.7 · **Date:** 2026-10-15 · **Status:** Active (2.7: §8's component example follows the code after the design-system audit, build-note 34). One service vocabulary across every surface, and the slugs double as route segments (decision-log #27–#30); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
+**Version:** 2.8 · **Date:** 2026-10-15 · **Status:** Active (2.8: `bg-page-glow` at 12%, #52; 2.7: §8's component example follows the code after the design-system audit, build-note 34). One service vocabulary across every surface, and the slugs double as route segments (decision-log #27–#30); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code) · `src/app/globals.css`, `src/app/layout.tsx` (canonical token and font names in code)
 
@@ -160,7 +160,7 @@ One easing, **`--ease-out`** (on `:root`), and four animations: **`animate-modal
 |---|---|---|
 | `hero-fade` | The hero footage's all-edge spatial mask: two smoothstep ramps, one per axis, intersected, so the footage and its overlays dissolve into the page on every edge with no hard stop (#50). A mask, not a background, hence no `bg-` prefix | `hero-loop.tsx` only |
 | `bg-hero-scrim` | The hero's bottom scrim under the headline, tuned for the #50 footage (the frame-by-frame contrast measurements are in build-note 33) | `hero-loop.tsx` only |
-| `bg-page-glow` | The page glow of #35, recolored from gold to `brand` (#47) | `page-glow.tsx` (`/pricing`, `/services/*`) |
+| `bg-page-glow` | The page glow of #35, recolored from gold to `brand` (#47), at 12% since #52 | `page-glow.tsx` (`/pricing`, `/services/*`) |
 | `bg-visual-fade` | The fade every service-route wireframe shares, transparent at the center and dissolving into `card` | `visual-fade.tsx` |
 
 `dialog::backdrop` carries a literal (the `background` value at 72%, plus a blur) rather than a token, because `::backdrop` did not inherit custom properties in the verification browser; it is a value, not a name, and nothing references it.

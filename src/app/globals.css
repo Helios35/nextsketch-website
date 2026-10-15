@@ -271,12 +271,15 @@
  * The page glow behind /pricing and the service routes (decision-log
  * #35): the source's spotlight geometry, recoloured from gold to coral
  * (#47) and tempered further, because coral is hotter than gold at the
- * same alpha and the accent is meant to stay scarce.
+ * same alpha and the accent is meant to stay scarce. 12% since #52: at
+ * the 16% #47 set, `muted-foreground` text on the page ground measured
+ * 4.36:1 where it crossed the glow's centre, under the 4.5:1 floor
+ * (build-note 34, F1). Above about 13% it fails again.
  */
 @utility bg-page-glow {
   background-image: radial-gradient(
     circle 560px at 50% 200px,
-    color-mix(in srgb, var(--brand) 16%, transparent),
+    color-mix(in srgb, var(--brand) 12%, transparent),
     transparent
   );
 }

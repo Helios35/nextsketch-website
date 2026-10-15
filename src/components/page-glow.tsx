@@ -30,8 +30,9 @@
  * here. **The mix percentage there is the intensity knob**: the source
  * ships its orange at full strength, which here would flood the hero
  * and cost the linen headline its contrast, so it is tempered (further
- * than the retired accent was, since coral is hotter); raise it for
- * more glow.
+ * than the retired accent was, since coral is hotter). It is 12%
+ * (decision-log #52), and contrast sets the ceiling: much above 13%,
+ * `muted-foreground` text crossing the glow's centre falls under 4.5:1.
  *
  * `fixed inset-0 -z-10` is the source's own mounting: the glow rides
  * the viewport, above the `background` page ground and beneath every
