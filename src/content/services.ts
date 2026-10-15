@@ -143,10 +143,15 @@ export const SERVICES = [
  * "Join the Waitlist" is a **non-conversion carve-out from Rule 3.1**,
  * the way the off-ramp's "Stay in Touch" is: it asks for interest in a
  * product that does not exist yet, so a conversion CTA would promise
- * the wrong thing. The capture runs through the modal's seam, guards
- * and failure fallback (Rules 2.4, 2.7, 2.8) and carries its own signal
- * label, `[Waitlist]`. There is no auto-reply: the on-page confirmation
- * is the whole acknowledgement.
+ * the wrong thing. The capture runs through the modal's seam and guards
+ * (Rules 2.4, 2.8) and carries its own signal label, `[Waitlist]`; it
+ * reaches the Sheet and Nate's alert, with no Asana task and no
+ * auto-reply (the on-page confirmation is the whole acknowledgement).
+ *
+ * **`failure` is the band's own Rule 2.7 fallback** (owner copy,
+ * 2026-10-15), not the modal's: the modal's speaks of "your answers",
+ * and the band asks for one email. `subject` heads the escape-hatch
+ * mailto, which carries the email in its body.
  */
 export const SERVICES_WAITLIST = {
   eyebrow: "Coming soon",
@@ -154,4 +159,9 @@ export const SERVICES_WAITLIST = {
   fieldLabel: "Your email",
   submit: "Join the Waitlist",
   success: "You're on the list. We'll email you when it's ready.",
+  failure: {
+    headline: "That didn't go through.",
+    body: "Something failed on our end, not yours. Email us and we'll add you to the list.",
+    subject: "Add me to the NextSketch waitlist",
+  },
 } as const;

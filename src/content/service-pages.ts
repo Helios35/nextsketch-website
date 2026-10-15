@@ -64,8 +64,9 @@ const EXAMPLES = SERVICE["agentic-system"].examples;
 
 /**
  * The four example jobs (#57), in owner order. Each block is the job's
- * name, what the agent does, and what we map first, plus a visual slot
- * (`service-block-visual.tsx`; the visuals are the next brief's).
+ * name, what the agent does, and what we map first. No visual until the
+ * visuals brief (owner direction, 2026-10-15; `service-block-visual.tsx`),
+ * so the map panel takes the visual's half of each row.
  */
 const AGENTIC_BLOCKS = [
   {

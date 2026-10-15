@@ -12,7 +12,7 @@ import {
   type ComposedAnswer,
 } from "@/components/qualification-modal";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { MODAL_ESCAPE_HATCH, MODAL_FAILURE, MODAL_NAV } from "@/content/modal";
+import { MODAL_ESCAPE_HATCH, MODAL_NAV } from "@/content/modal";
 import { SERVICES_WAITLIST } from "@/content/services";
 import { submitQualification } from "@/lib/qualify";
 import { leadPayloadSchema } from "@/lib/schema";
@@ -28,14 +28,15 @@ type Status = "idle" | "submitting" | "success" | "failure";
  * **One capture path, not a second one.** It submits through the
  * modal's seam (`submitQualification` → `POST /api/qualify`), so the
  * entry is re-validated server-side, written to the Sheet that gates
- * success, mirrored to Asana and alerted to Nate (Rule 2.4), all under
- * its own `[Waitlist]` label (`kind: "waitlist"`), with no auto-reply.
- * It carries the same anti-bot guards (Rule 2.8): the shared honeypot,
- * and the minimum-time check measured from when the band mounted. And
- * it falls back the way the modal does (Rule 2.7): the modal's failure
- * copy, the visitor's entry preserved on screen, and the escape hatch
- * with the entry in the body. The field, the honeypot, the summary and
- * the mailto are the modal's own exports, not copies.
+ * success and alerted to Nate (Rule 2.4) under its own `[Waitlist]`
+ * label (`kind: "waitlist"`). No Asana task and no auto-reply (owner
+ * direction, 2026-10-15). It carries the same anti-bot guards (Rule
+ * 2.8): the shared honeypot, and the minimum-time check measured from
+ * when the band mounted. Its failure fallback (Rule 2.7) is its own
+ * copy (owner, 2026-10-15) over the modal's mechanics: the visitor's
+ * entry preserved on screen, and the escape hatch with the entry in the
+ * body under the band's own subject. The field, the honeypot, the
+ * summary and the mailto builder are the modal's exports, not copies.
  *
  * **No success is shown for an entry that was not stored**: `ok` is the
  * server's verdict, which is true only once the Sheet row is written.
@@ -129,10 +130,10 @@ export function WaitlistBand() {
           {status === "failure" && (
             <>
               <h3 ref={failureRef} tabIndex={-1} className={HEADING_CLASS}>
-                {MODAL_FAILURE.headline}
+                {SERVICES_WAITLIST.failure.headline}
               </h3>
               <p className="mt-4 text-base leading-relaxed text-foreground">
-                {MODAL_FAILURE.body}
+                {SERVICES_WAITLIST.failure.body}
               </p>
               <ComposedAnswers composed={composed} />
               <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -143,7 +144,10 @@ export function WaitlistBand() {
                 >
                   {MODAL_NAV.back}
                 </Button>
-                <Button href={fallbackMailto(composed)} arrow>
+                <Button
+                  href={fallbackMailto(composed, SERVICES_WAITLIST.failure.subject)}
+                  arrow
+                >
                   {MODAL_ESCAPE_HATCH.email}
                 </Button>
               </div>

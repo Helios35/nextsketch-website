@@ -20,9 +20,11 @@ import type { ServiceBlockId } from "@/lib/types";
  * **Since decision-log #53 (2026-10-15)** the product route's three
  * blocks keep their three mocks, now under their ways-in names. The
  * Internal Tool mock left with its block. The agentic route's four
- * example jobs (#57) hold stand-ins until the visuals brief: the app
- * cluster for Email triage, an empty frame for the other three. No
- * visual was restyled or redrawn here.
+ * example jobs (#57) carry no visual until the visuals brief (owner
+ * direction, 2026-10-15: no empty or stand-in frame in production). The
+ * app cluster of #34, which stood in for Email triage for a day, had no
+ * block left and was deleted; git history keeps it. No visual was
+ * restyled or redrawn here.
  *
  * **They are wireframes, and that is a Rule 4.3 requirement, not a
  * style choice.** Not one contains a readable string, a numeral, a
@@ -1021,216 +1023,33 @@ function ProductSupportVisual() {
   );
 }
 
-/* ------------------------------------------------------------------ *
- * The app cluster. Built for AI Workflow Integration (KEPT, owner     *
- * direction; #34), whose block retired with #53. It stands in for     *
- * the Email triage example until the visuals brief, unchanged: agents *
- * wired into the tools a business already runs, an envelope among     *
- * them.                                                                *
- * ------------------------------------------------------------------ */
-
 /**
- * Real product marks (owner direction, 2026-08-31 — decision-log #34,
- * a narrow supersession of #30's logo refusal for this one visual):
- * the tiles carry actual app icons, "like the behance and linkedin
- * icons in the footer". Satellites are **Bootstrap Icons** (MIT) — the
- * footer's own set (`social-icon.tsx` precedent: one matched 16-unit
- * grid beats mixed sources) — including the LinkedIn mark the footer
- * already ships. The centre is the **Anthropic logomark** (Simple
- * Icons, 24-unit grid), the one mark Bootstrap does not carry; swap
- * its path for OpenAI's if the owner prefers ChatGPT at the hub.
- * `fill="currentColor"` keeps the #31 chrome tints working unchanged.
+ * Block -> its visual, or `null` for none. Total over `ServiceBlockId`,
+ * so a new block cannot ship without a decision about its visual and
+ * cannot silently inherit another's. The Internal Tool visual left with
+ * its block (#53). **The four agentic examples (#57) carry none until
+ * the visuals brief** (owner direction, 2026-10-15: no empty or
+ * stand-in frame in production); their rows render no visual cell, and
+ * `service-page.tsx` gives the visual's half to the map panel.
  */
-const APP_ICONS = {
-  anthropic: {
-    viewBox: "0 0 24 24",
-    d: "M17.3041 3.541h-3.6718l6.696 16.918H24Zm-10.6082 0L0 20.459h3.7442l1.3693-3.5527h7.0052l1.3693 3.5528h3.7442L10.5363 3.5409Zm-.3712 10.2232 2.2914-5.9456 2.2914 5.9456Z",
-  },
-  envelope: {
-    viewBox: "0 0 16 16",
-    d: "M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z",
-  },
-  linkedin: {
-    viewBox: "0 0 16 16",
-    d: "M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z",
-  },
-  slack: {
-    viewBox: "0 0 16 16",
-    d: "M3.362 10.11c0 .926-.756 1.681-1.681 1.681S0 11.036 0 10.111.756 8.43 1.68 8.43h1.682zm.846 0c0-.924.756-1.68 1.681-1.68s1.681.756 1.681 1.68v4.21c0 .924-.756 1.68-1.68 1.68a1.685 1.685 0 0 1-1.682-1.68zM5.89 3.362c-.926 0-1.682-.756-1.682-1.681S4.964 0 5.89 0s1.68.756 1.68 1.68v1.682zm0 .846c.924 0 1.68.756 1.68 1.681S6.814 7.57 5.89 7.57H1.68C.757 7.57 0 6.814 0 5.89c0-.926.756-1.682 1.68-1.682zm6.749 1.682c0-.926.755-1.682 1.68-1.682S16 4.964 16 5.889s-.756 1.681-1.68 1.681h-1.681zm-.848 0c0 .924-.755 1.68-1.68 1.68A1.685 1.685 0 0 1 8.43 5.89V1.68C8.43.757 9.186 0 10.11 0c.926 0 1.681.756 1.681 1.68zm-1.681 6.748c.926 0 1.682.756 1.682 1.681S11.036 16 10.11 16s-1.681-.756-1.681-1.68v-1.682h1.68zm0-.847c-.924 0-1.68-.755-1.68-1.68s.756-1.681 1.68-1.681h4.21c.924 0 1.68.756 1.68 1.68 0 .926-.756 1.681-1.68 1.681z",
-  },
-  github: {
-    viewBox: "0 0 16 16",
-    d: "M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8",
-  },
-  calendar: {
-    viewBox: "0 0 16 16",
-    d: "M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2",
-  },
-  google: {
-    viewBox: "0 0 16 16",
-    d: "M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z",
-  },
-} as const;
-
-type AppKey = keyof typeof APP_ICONS;
-
-/**
- * The satellites, spread around the centre hub (owner: "spread them
- * out a bit"). Positions are percentages of the 4/3 stage, tile
- * centres; the connector SVG derives its line ends from the same
- * numbers so the two cannot drift. Tones are the #31 chrome set the
- * old cluster carried, reassigned and recoloured to fin's chart steps
- * (#47); coral (`brand`) still appears once, on the centre. Kept
- * inside roughly 70% of the fade's radius so the veil dims the edge
- * tiles into the card without erasing the marks.
- */
-const HUB = { x: 50, y: 50 };
-const SATELLITES: readonly {
-  icon: AppKey;
-  tone: string;
-  x: number;
-  y: number;
-}[] = [
-  { icon: "envelope", tone: "text-chart-5/75", x: 29, y: 24 },
-  { icon: "linkedin", tone: "text-chart-4/75", x: 71, y: 24 },
-  { icon: "slack", tone: "text-chart-1/65", x: 15, y: 55 },
-  { icon: "github", tone: "text-muted-foreground/80", x: 85, y: 55 },
-  { icon: "calendar", tone: "text-muted-foreground/80", x: 33, y: 81 },
-  { icon: "google", tone: "text-chart-5/60", x: 67, y: 81 },
-];
-
-function Tile({
-  icon,
-  tone,
-  emphasis,
-  delay,
-}: {
-  icon: AppKey;
-  tone: string;
-  emphasis: boolean;
-  delay: number;
-}) {
-  /* The emphasized tile is the reference's highlighted card in this
-     system's terms: a brighter hairline, the shared depth token
-     (`shadow-2xl`), and the one coral (`brand`) mark. `group-target:`
-     carries the deep-link "you are
-     here" onto it, so the visual answers the anchor as the index does. */
-  const surface = emphasis
-    ? "border-muted-foreground/50 shadow-2xl group-target:border-brand/60"
-    : "border-border";
-
-  /* The satellites' 16-grid glyphs fill their viewBox edge to edge
-     where the old 24-grid marks sat inside a 3.5px margin, so they
-     step down one size to hold the same optical weight; the centre
-     keeps the larger cut — the focus stays on the hub. */
-  const { viewBox, d } = APP_ICONS[icon];
-
-  return (
-    <ScrollReveal delay={delay}>
-      <div
-        className={`flex size-16 items-center justify-center rounded-xl border bg-card transition-colors duration-150 md:size-[74px] ${surface} ${tone}`}
-      >
-        <svg
-          viewBox={viewBox}
-          fill="currentColor"
-          className={emphasis ? "size-7 md:size-8" : "size-6 md:size-7"}
-        >
-          <path d={d} />
-        </svg>
-      </div>
-    </ScrollReveal>
-  );
-}
-
-function WorkflowVisual() {
-  return (
-    <div className={SHELL}>
-      {/* Same 4/3 box as the framed mocks, so all five rows line up.
-          Frameless on purpose: this one is a cluster, not a screen.
-
-          **The fade rides the stage now, and that is correct.** The
-          compact 2-3-2 cluster needed the fade on its own ~240px box —
-          `inset-0` on the frame put every tile inside the clear zone
-          and the dissolve vanished (see the git history of this file).
-          The spread hub-and-spoke layout fills the 4/3 stage the way
-          the framed mocks fill theirs, so the fade sits on the stage
-          for the same reason theirs can. Values unchanged. */}
-      <div className="relative aspect-4/3 w-full">
-        <VisualFade />
-        {/* The wiring lands first, then the hub, then the apps — the
-            workflow graph's documented assembly order. Dotted, square
-            caps, on the `muted-foreground` ladder.
-            The SVG shares the satellites' percent coordinates (times
-            4.48 / 3.36 for the 448x336 viewBox, the stage's own 4/3),
-            and the tiles' opaque `card` fill masks the line ends,
-            so each spoke visually stops at a tile edge. */}
-        <ScrollReveal delay={120} className="absolute inset-0">
-          <svg viewBox="0 0 448 336" className="h-full w-full text-muted-foreground/40">
-            {SATELLITES.map(({ icon, x, y }) => (
-              <path
-                key={icon}
-                d={`M${HUB.x * 4.48} ${HUB.y * 3.36}L${x * 4.48} ${y * 3.36}`}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeDasharray="1.5 5.5"
-                strokeLinecap="square"
-              />
-            ))}
-          </svg>
-        </ScrollReveal>
-        {SATELLITES.map(({ icon, tone, x, y }, i) => (
-          <div
-            key={icon}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={{ left: `${x}%`, top: `${y}%` }}
-          >
-            <Tile icon={icon} tone={tone} emphasis={false} delay={260 + i * 55} />
-          </div>
-        ))}
-        <div
-          className="absolute -translate-x-1/2 -translate-y-1/2"
-          style={{ left: `${HUB.x}%`, top: `${HUB.y}%` }}
-        >
-          <Tile icon="anthropic" tone="text-brand" emphasis delay={200} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/**
- * A visual slot with nothing in it yet: the shared 4/3 box as an empty
- * `secondary` frame. Three of the agentic examples (#57) take it until
- * the visuals brief draws theirs; it carries no mark, no string and no
- * shape, so it asserts nothing (Rule 4.3) and is not an illustration.
- */
-function SlotVisual() {
-  return (
-    <div className={SHELL}>
-      <div className="aspect-4/3 w-full rounded-xl border border-border bg-secondary" />
-    </div>
-  );
-}
-
-/**
- * Block -> its visual. Total over `ServiceBlockId`, so a new block
- * cannot ship without one and cannot silently inherit another's. The
- * Internal Tool visual left with its block (#53); the agentic examples
- * hold stand-ins until the visuals brief.
- */
-const VISUALS: Record<ServiceBlockId, () => React.JSX.Element> = {
+const VISUALS: Record<ServiceBlockId, (() => React.JSX.Element) | null> = {
   "new-product": NewProductVisual,
   "product-completion": ProductCompletionVisual,
   "product-support": ProductSupportVisual,
-  "email-triage": WorkflowVisual,
-  "weekly-reporting": SlotVisual,
-  "quoting-and-intake": SlotVisual,
-  "document-and-data-entry": SlotVisual,
+  "email-triage": null,
+  "weekly-reporting": null,
+  "quoting-and-intake": null,
+  "document-and-data-entry": null,
 };
+
+/** Whether a block has a visual, so its row knows to split in two. */
+export function hasBlockVisual(block: ServiceBlockId): boolean {
+  return VISUALS[block] !== null;
+}
 
 export function ServiceBlockVisual({ block }: { block: ServiceBlockId }) {
   const Visual = VISUALS[block];
+  if (Visual === null) return null;
 
   return (
     /* Decorative in full: every mock is skeleton matter carrying no

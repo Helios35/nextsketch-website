@@ -119,7 +119,8 @@ function needLabel(value: string): string {
 /**
  * One label/value pair of a visitor's answers. Exported with
  * `ComposedAnswers` and `fallbackMailto` so the waitlist band's failure
- * fallback is this one, not a copy (decision-log #58, Rule 2.7).
+ * fallback runs on these mechanics rather than copies of them; its
+ * words are its own (decision-log #58, Rule 2.7).
  */
 export interface ComposedAnswer {
   label: string;
@@ -301,19 +302,17 @@ const MAILTO = `mailto:${MODAL_ESCAPE_HATCH.email}`;
 
 /**
  * The Rule 2.7 escape hatch with the visitor's answers in the body, so a
- * failed submit is one click from recovery. `subject` is optional: the
- * waitlist band has no approved subject line of its own (build-note 36).
+ * failed submit is one click from recovery. Each caller names its own
+ * subject: the modal's `MODAL_FAILURE_SUBJECT`, the waitlist band's
+ * `SERVICES_WAITLIST.failure.subject` (decision-log #58).
  */
 export function fallbackMailto(
   composed: readonly ComposedAnswer[],
-  subject?: string,
+  subject: string,
 ): string {
-  const body = encodeURIComponent(
+  return `${MAILTO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
     composed.map(({ label, value }) => `${label}\n${value}`).join("\n\n"),
-  );
-  return subject === undefined
-    ? `${MAILTO}?body=${body}`
-    : `${MAILTO}?subject=${encodeURIComponent(subject)}&body=${body}`;
+  )}`;
 }
 
 /** The failure fallback's summary of what the visitor entered (Rule 2.7). */

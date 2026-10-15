@@ -1,5 +1,5 @@
 import { MODAL_QUESTIONS, MODAL_QUICK } from "@/content/modal";
-import type { LeadPayload } from "@/lib/schema";
+import type { LeadPayload, WaitlistPayload } from "@/lib/schema";
 
 /**
  * Lead formatting (Sprint 02 Unit 02; extended Unit 04) — turns a
@@ -15,7 +15,9 @@ import type { LeadPayload } from "@/lib/schema";
  * columns empty — so the owner's Apps Script column mapping is unchanged.
  * The waitlist band (decision-log #58) is a third kind and not a lead:
  * it fills the same columns with an email, `lead_type: waitlist` and
- * its own `[Waitlist]` label, so it reads apart from leads everywhere.
+ * its own `[Waitlist]` label, so it reads apart from leads in the Sheet
+ * and in Nate's alert. It never becomes an Asana task (owner direction,
+ * 2026-10-15), so `toAsanaTask` does not take it.
  *
  * Answer labels are read straight from `MODAL_QUESTIONS` (the canonical
  * label↔value map, docs/06-taxonomy.md §3) — never re-typed here, so
@@ -72,7 +74,7 @@ export interface LeadSignal {
  * The waitlist band's signal label (decision-log #58). Deliberately not
  * a `[Lead …]` label: a waitlist entry is interest in a product that
  * does not exist yet, and the brief asks that Nate can tell it from a
- * lead at a glance in the Sheet, the Asana task and the alert subject.
+ * lead at a glance in the Sheet and the alert subject.
  */
 export const WAITLIST_SIGNAL = "[Waitlist]";
 
@@ -187,24 +189,10 @@ export function toSheetRecord(
  * details, and the capture timestamp.
  */
 export function toAsanaTask(
-  payload: LeadPayload,
+  payload: Exclude<LeadPayload, WaitlistPayload>,
   capturedAt: string,
 ): { name: string; notes: string } {
   const signal = leadSignal(payload);
-
-  // Waitlist band (#58): an email and where it came from, nothing more.
-  if (payload.kind === "waitlist") {
-    return {
-      name: `${signal.label} ${payload.email}`,
-      notes: [
-        `Captured: ${capturedAt}`,
-        "",
-        `Email:   ${payload.email}`,
-        "",
-        "Door: Waitlist band (Services)",
-      ].join("\n"),
-    };
-  }
 
   // Quick door: no qualifier answers — a leaner task carrying the door
   // it came through and the optional one-line message.
