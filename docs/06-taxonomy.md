@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 2.9 · **Date:** 2026-10-15 · **Status:** Active (2.9: two offerings, decision-log #53 to #58: §1 the two names, §2 Map / Build / Validate / Optimize, §3 the modal labels, §4 the waitlist kind, §6 the route anchors, §9; 2.8: `bg-page-glow` at 12%, #52; 2.7: §8's component example follows the code after the design-system audit, build-note 34). One vocabulary across every surface, now two offerings, each slug its route segment (decision-log #27, #30, #53); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
+**Version:** 3.0 · **Date:** 2026-10-15 · **Status:** Active (3.0: the diagram language, decision-log #60 to #62: §5 the diagram animations and utilities, `bg-visual-fade` and the `chart-*` chrome retired, §8 the diagram names, §9; 2.9: two offerings, decision-log #53 to #58: §1 the two names, §2 Map / Build / Validate / Optimize, §3 the modal labels, §4 the waitlist kind, §6 the route anchors, §9; 2.8: `bg-page-glow` at 12%, #52; 2.7: §8's component example follows the code after the design-system audit, build-note 34). One vocabulary across every surface, now two offerings, each slug its route segment (decision-log #27, #30, #53); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code) · `src/app/globals.css`, `src/app/layout.tsx` (canonical token and font names in code)
 
@@ -111,19 +111,19 @@ Computed in `src/lib/lead-format.ts` (`leadSignal`). The pre-pivot set (`qualifi
 | `primary` · `primary-foreground` | the advance button · text on it | yes |
 | `secondary` · `secondary-foreground` | sub-panel and control fill · text on it | `secondary` yes; `secondary-foreground` defined, unused |
 | `muted` · `muted-foreground` | decorative fill · secondary text | yes |
-| `accent` · `accent-foreground` | fin's **hover fill** (also the brighter skeleton fill inside the wireframes) · text on it | `accent` yes; `accent-foreground` defined, unused |
+| `accent` · `accent-foreground` | fin's **hover fill** (also the skeleton lines inside the diagrams) · text on it | `accent` yes; `accent-foreground` defined, unused |
 | `destructive` | error mark | defined, unused |
 | `border` · `input` | every hairline · input borders | yes (`border` is also the base-layer default border color and the scrollbar thumb) |
 | `ring` | every focus indicator, one color site-wide | yes |
 | `sidebar` | fin's darkest step | defined, unused |
 | `brand` · `brand-foreground` | **coral, the one accent** · text and marks on a coral fill | yes. `brand-foreground` is **the site's own addition** (fin has none; #47, build-note 33) |
-| `chart-1` · `chart-2` · `chart-3` · `chart-4` · `chart-5` | fin's dark categorical steps (terracotta · indigo · ochre · plum · sage) | `chart-1`, `-2`, `-4`, `-5` yes, **only as interface chrome inside the service routes' wireframes** (`service-block-visual.tsx`; #31 carried by #47); `chart-3` defined, unused |
+| `chart-1` · `chart-2` · `chart-3` · `chart-4` · `chart-5` | fin's dark categorical steps (terracotta · indigo · ochre · plum · sage) | defined, **unused since #60**: `chart-1`, `-2`, `-4` and `-5` were interface chrome inside the service routes' wireframes (#31, carried by #47), which retired; the diagrams use none of them |
 
 **Three things called "accent", and only one is the accent.** The site's one accent (#47, the rule #14 set for gold) is the token **`brand`**. fin's token named **`accent`** is a neutral hover fill (a gray step), never a highlight. The **`accent` field** in `src/content` (§1, §2, RETIRED below) is dead data that names no token. Prose that says "the accent" means `brand`; a builder reaching for emphasis never uses `accent`.
 
 **Pairing rule (fin's naming, CURRENT/binding):** a fill `X` pairs with `X-foreground` for the text and marks that sit on it. The old `-ink` pairing rule (accent bg ⇒ paired `-ink` text) is **RETIRED** with its tokens; its one live descendant is `brand` ⇒ `brand-foreground`: a coral fill always carries `brand-foreground`, never `foreground` (roles and ratios in `04-ux-spec.md` §Color).
 
-**`chart-*` is not a service palette.** The wireframes took the retired hues' places one for one (`rose` → `chart-1`, `lavender` → `chart-4`, `sage` → `chart-5`, the old gold file-type tints → `chart-2`), and the numbers say nothing about a service: no block, tier or phase owns a step, and the dead `accent` data must never be wired to them.
+**`chart-*` is not a service palette** (and since #60 not in use at all; the paragraph stays as the record). The wireframes took the retired hues' places one for one (`rose` → `chart-1`, `lavender` → `chart-4`, `sage` → `chart-5`, the old gold file-type tints → `chart-2`), and the numbers say nothing about a service: no block, tier or phase owns a step, and the dead `accent` data must never be wired to them.
 
 ### Radius · **CHANGED (decision-log #48)**
 
@@ -146,7 +146,7 @@ One token, **`--radius`**, and five derived steps in the Tailwind radius namespa
 
 ### Motion · **CHANGED (decision-log #47)**
 
-One easing, **`--ease-out`** (on `:root`), and four animations: **`animate-modal-in` · `animate-step-in` · `animate-rise-in` · `animate-marquee`** (the marquee reads the component-local `--duration` and `--gap`). Durations and the reduced-motion rule are `04-ux-spec.md` §Motion.
+One easing, **`--ease-out`** (on `:root`), and nine animations: **`animate-modal-in` · `animate-step-in` · `animate-rise-in` · `animate-marquee`** (the marquee reads the component-local `--duration` and `--gap`), and the diagrams' ambient five (#62): **`animate-diagram-travel` · `animate-diagram-dash` · `animate-diagram-pulse` · `animate-diagram-trace` · `animate-diagram-sheet`**. Durations and the reduced-motion rule are `04-ux-spec.md` §Motion.
 
 ### Custom utilities (`@utility` in `globals.css`) · **CHANGED**
 
@@ -155,7 +155,9 @@ One easing, **`--ease-out`** (on `:root`), and four animations: **`animate-modal
 | `hero-fade` | The hero footage's all-edge spatial mask: two smoothstep ramps, one per axis, intersected, so the footage and its overlays dissolve into the page on every edge with no hard stop (#50). A mask, not a background, hence no `bg-` prefix | `hero-loop.tsx` only |
 | `bg-hero-scrim` | The hero's bottom scrim under the headline, tuned for the #50 footage (the frame-by-frame contrast measurements are in build-note 33) | `hero-loop.tsx` only |
 | `bg-page-glow` | The page glow of #35, recolored from gold to `brand` (#47), at 12% since #52 | `page-glow.tsx` (`/pricing`, `/services/*`) |
-| `bg-visual-fade` | The fade every service-route wireframe shares, transparent at the center and dissolving into `card` | `visual-fade.tsx` |
+| `bg-diagram-grid` | The diagram canvas's dot grid: a 1px `border` dot every 16px (#60) | `diagram.tsx` (`DiagramFrame`) |
+| `diagram-packet` | A dot that travels a diagram line: invisible until its `motion-safe` animation runs, dropped where `offset-path` is unsupported (#60, #62). Not a `bg-` utility because it paints nothing itself | `diagram.tsx` (`Flow`), `process-map-diagram.tsx` |
+| `bg-visual-fade` | **RETIRED (#60):** the fade every service-route wireframe shared. Deleted with `visual-fade.tsx` and the wireframes | none |
 
 `dialog::backdrop` carries a literal (the `background` value at 72%, plus a blur) rather than a token, because `::backdrop` did not inherit custom properties in the verification browser; it is a value, not a name, and nothing references it.
 
@@ -172,7 +174,7 @@ These names have **left the token layer** and no longer compile. Successors are 
 | `gold-ink` | `brand-foreground` |
 | `paper` | `background`: the 404 goes dark (#47), which ends `paper`'s last live use |
 | `paper-bright` | none |
-| `lavender` · `rose` · `sage` | none as tokens; inside the wireframes only, `chart-4` · `chart-1` · `chart-5` (#31 carried) |
+| `lavender` · `rose` · `sage` | none as tokens; inside the wireframes only, `chart-4` · `chart-1` · `chart-5` (#31 carried), until the wireframes retired (#60) |
 | `lavender-ink` · `rose-ink` · `sage-ink` | none (the `-ink` pairing retired; pairs are `-foreground` now) |
 | `--shadow-modal` | `shadow-2xl` |
 | `--ease-premium` | `--ease-out` (the same curve, renamed) |
@@ -245,6 +247,7 @@ The naming convention stands for any future section asset: `placeholder-{section
 ## 8. Naming conventions — **CURRENT**
 
 - Components: PascalCase (`QualificationModal`, `ModalTrigger`).
+- Diagrams (#60): a component that draws a diagram ends in `Diagram` and names its job (`ProcessMapDiagram`, `EmailTriageDiagram`, `WeeklyReportingDiagram`, `QuotingIntakeDiagram`, `DocumentEntryDiagram`, `BuildFromScratchDiagram`, `FinishStartedDiagram`, `ProductTeamDiagram`); the shared parts are `DiagramFrame`, `DiagramStage`, `DiagramSvg`, `Flow`, `AgentHub`, `Panel`, `Place`, `ProductWindow`, `RowDiagram`, `BeforeAfterDiagram`, and the mark alone is `BrandMark`. Files: `diagram.tsx`, `diagram-stage.tsx`, `process-map-diagram.tsx`, `agentic-diagrams.tsx`, `weekly-reporting-diagram.tsx`, `product-diagrams.tsx`, `product-team-diagram.tsx`. Their strings are one export per diagram in `src/content/diagrams.ts` (`PROCESS_MAP`, `EMAIL_TRIAGE`, `WEEKLY_REPORT`, `QUOTING_INTAKE`, `DOCUMENT_ENTRY`, `BUILD_FROM_SCRATCH`, `FINISH_STARTED`, `ONGOING_TEAM`, plus the shared `DIAGRAM_WORDS`).
 - Files/routes/slugs: kebab-case. Payload values: snake_case (§3). Apps Script reference: `scripts/inbound-leads.gs`.
 - Design tokens: fin's kebab-case names exactly as `src/app/globals.css` declares them (§5); a fill `X` pairs with `X-foreground`. A site addition takes a fin-shaped name (`brand-foreground`) or names its one use (`over-video`), never a hue (`gold`, `coral`).
 - Brand name: **NextSketch** (one word, capital N and S) in all copy; legal line: "Next Sketch LLC".
@@ -278,5 +281,7 @@ The naming convention stands for any future section asset: `placeholder-{section
 | Process phases Strategy (`strategy`) and Partner (`partner`) | **Map** (`map`) and **Optimize** (`optimize`) (§2) | #55 | No URL or payload carries a phase slug |
 | Quick-door labels New product, Product completion, Product support, Agentic system; the qualifier's Q1 labels | "Agentic system integration", "AI product development"; the #53 Q1 labels (§3) | #53 | Values unchanged. `rescue` and `partnership` stay in the schema, where the qualifier sends them |
 | Vocabulary: "from idea to production" (Rule 3.3) | none: retired from the vocabulary | #54 | Its last live uses (site title and description, the product route description) were replaced by #59; the dormant `HERO` copy keeps it on disk |
+| The service routes' decorative wireframes (`NewProductVisual`, `ProductCompletionVisual`, `ProductSupportVisual`), `VisualFade` / `bg-visual-fade`, and `chart-*` as wireframe chrome (#31) | The diagrams (§8; `04-ux-spec.md` §Diagrams) | Decision-log #60 (2026-10-15): one diagram language, the Ink Orbit style | Deleted; git keeps them. The `chart-*` tokens stay defined, unused |
+| The no-text rule for visuals (#30; Rule 4.3 as applied to visuals) | Visuals may carry labels, sample names, sample numbers and generic tool names | Decision-log #61 | Copy outside visuals still states only real facts |
 | CTA: "Book a free chat" + Calendly links | Modal + Rule 3.1 CTA set | Qualification mindset | Calendly removed entirely |
 | Pages: /projects, /about-us, /contact-us | Single page | Architecture decision | 301 redirects (`08-runbook.md`) — owner-executed at domain cutover |

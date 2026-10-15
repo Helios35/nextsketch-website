@@ -56,10 +56,11 @@
      the background step, so a coral fill reads as cut out of the page. */
   --brand-foreground: #141414;
 
-  /* fin's dark categorical steps. On this site they are interface
-     chrome inside the service routes' decorative wireframes only
-     (decision-log #31, carried by #47): never an accent, never on a
-     real control, never per service. */
+  /* fin's dark categorical steps. Defined, unused since decision-log
+     #60: they were interface chrome inside the service routes'
+     decorative wireframes (#31, carried by #47), which retired. The
+     diagrams use none of them. Never an accent, never on a real
+     control, never per service. */
   --chart-1: #d17359;
   --chart-2: #698edd;
   --chart-3: #c2802d;
@@ -197,6 +198,113 @@
       transform: translateX(calc(-100% - var(--gap, 2.75rem)));
     }
   }
+
+  /*
+   * Ambient diagram motion (decision-log #62): the dots that travel a
+   * diagram's lines, the dashes that run along a line being traced, the
+   * slow pulse on an agent or a live product, and the weekly report
+   * landing. Continuous, like the marquee, so exempt from the 200ms
+   * ceiling; components apply them motion-safe only, so reduced motion
+   * sees every diagram complete and still. `diagram.tsx` records which
+   * element takes which.
+   */
+  --animate-diagram-travel: diagram-travel 2.8s linear infinite;
+  --animate-diagram-dash: diagram-dash 1.4s linear infinite;
+  --animate-diagram-pulse: diagram-pulse 2.4s ease-in-out infinite;
+  --animate-diagram-trace: diagram-trace 10s linear infinite;
+  --animate-diagram-sheet: diagram-sheet 7s var(--ease-out) infinite;
+
+  /* A dot along its `offset-path`, fading in and out at the ends. */
+  @keyframes diagram-travel {
+    0% {
+      offset-distance: 0%;
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    88% {
+      opacity: 1;
+    }
+    100% {
+      offset-distance: 100%;
+      opacity: 0;
+    }
+  }
+
+  /* Dashes running along a line: one dash-plus-gap of 3 4, twice. */
+  @keyframes diagram-dash {
+    to {
+      stroke-dashoffset: -14;
+    }
+  }
+
+  @keyframes diagram-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.35;
+      transform: scale(1.18);
+    }
+  }
+
+  /*
+   * The process map's request: six evenly spaced steps along one line,
+   * holding at each. It holds longest at the three steps done by hand
+   * (20%, 40%, 80%), briefly where a person decides (60%).
+   */
+  @keyframes diagram-trace {
+    0% {
+      offset-distance: 0%;
+      opacity: 0;
+    }
+    3%,
+    8% {
+      offset-distance: 0%;
+      opacity: 1;
+    }
+    14%,
+    28% {
+      offset-distance: 20%;
+    }
+    34%,
+    48% {
+      offset-distance: 40%;
+    }
+    54%,
+    60% {
+      offset-distance: 60%;
+    }
+    66%,
+    80% {
+      offset-distance: 80%;
+    }
+    86%,
+    95% {
+      offset-distance: 100%;
+      opacity: 1;
+    }
+    100% {
+      offset-distance: 100%;
+      opacity: 0;
+    }
+  }
+
+  /* The weekly report's top sheet landing, once a cycle. */
+  @keyframes diagram-sheet {
+    0% {
+      opacity: 0;
+      transform: translate(8px, -8px);
+    }
+    8%,
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 /*
@@ -285,16 +393,33 @@
 }
 
 /*
- * The fade every decorative wireframe on the service routes shares
- * (visual-fade.tsx): transparent at the centre, dissolving into the
- * card it sits on at every edge.
+ * The diagram canvas (decision-log #60, diagram.tsx): a dot grid in the
+ * `border` hairline colour, the map paper the hero's sketch footage
+ * draws on. Decorative, and no mark sits on it unframed.
  */
-@utility bg-visual-fade {
+@utility bg-diagram-grid {
   background-image: radial-gradient(
-    ellipse 50% 50% at 50% 50%,
-    transparent 25%,
-    var(--card) 100%
+    circle at 1px 1px,
+    var(--border) 1px,
+    transparent 0
   );
+  background-size: 16px 16px;
+}
+
+/*
+ * A dot that travels a diagram line (diagram.tsx `Flow`). Invisible
+ * until its motion-safe `animate-diagram-travel` or
+ * `animate-diagram-trace` runs, so reduced motion never sees one parked
+ * at a line's start, and dropped entirely where a browser cannot place
+ * it on a path (it would otherwise sit at the canvas's top-left corner).
+ */
+@utility diagram-packet {
+  opacity: 0;
+  offset-rotate: 0deg;
+
+  @supports not (offset-path: path("M0 0 L1 1")) {
+    display: none;
+  }
 }
 
 /*

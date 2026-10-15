@@ -1,4 +1,5 @@
 import { Parallax } from "@/components/parallax";
+import { ProcessMapDiagram } from "@/components/process-map-diagram";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { MANIFESTO } from "@/content/copy";
@@ -21,7 +22,9 @@ const ACCENT_PHRASE = MANIFESTO.accentPhrase;
  * shadow: it sits on plain `background`, decision-log #47), and the
  * body offset right in the two-column editorial rhythm. Entrances are
  * the shared ScrollReveal at the hero stagger (0 / 120 / 200ms); the
- * body block carries the shared whisper parallax.
+ * body block carries the shared whisper parallax. Under the body, in
+ * its column, the process map draws what the body describes
+ * (decision-log #60, `process-map-diagram.tsx`).
  */
 export function ManifestoSection() {
   const headline = MANIFESTO.headline;
@@ -63,6 +66,14 @@ export function ManifestoSection() {
           ))}
         </div>
       </Parallax>
+      {/* The process map (decision-log #60): the body's "trace how a
+          request moves from inbox to done and mark every step someone
+          repeats by hand", drawn. It takes the body's column but sits
+          outside its Parallax, so the body's drift is measured exactly
+          as before; the gap clears the drift's 48px cap. */}
+      <div className="mt-16 md:mt-20 lg:ml-auto lg:max-w-4xl">
+        <ProcessMapDiagram />
+      </div>
     </section>
   );
 }
