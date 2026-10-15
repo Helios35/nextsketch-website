@@ -168,10 +168,9 @@ export const HERO = {
  *   Each entry is matched as a whole word against `headline`,
  *   punctuation-insensitively, so "in" colours only that one word; if
  *   the headline changes, an unmatched word simply renders un-accented.
- * - supportingLine: DRAFT pending owner approval (#51). Rewritten to
- *   carry the new headline's claim; it echoes the Validate phase's own
- *   "In production. Not in a demo." The line it replaces was Messaging
- *   Kit §03 Message 4 (The Relationship), verbatim.
+ * - supportingLine: owner-supplied, verbatim (#51, 2026-10-14). It
+ *   replaced a builder draft ("Not a demo, not a pilot…") the same day,
+ *   which had replaced Messaging Kit §03 Message 4 (The Relationship).
  * - capabilities: the four canonical services (Taxonomy §1, exact casing),
  *   shown as the slow capability strip sanctioned in UX spec §Motion inventory
  *   — no invented numbers or social proof (Brand Philosophy §10, Rule 4.3).
@@ -196,7 +195,7 @@ export const LANDING = {
     "We build agentic systems and digital products that work in production",
   accentWords: ["work", "in", "production"],
   supportingLine:
-    "Not a demo, not a pilot. Software your business runs on every day.",
+    "Software your business runs on that we maintain",
   capabilities: [
     "New Product",
     "Product Completion",

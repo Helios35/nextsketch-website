@@ -228,18 +228,18 @@ The 28px no-logo window on `/` (#46; the header block was again out of scope), `
 
 ## Addendum: the hero headline (#51, same day, after the first push)
 
-**Owner direction:** "The hero main text should say 'We build agentic systems and digital products that work in production'. Change the sub text in the hero to match the message. This is a content change everything visually should persist."
+**Owner direction:** "The hero main text should say 'We build agentic systems and digital products that work in production'. Change the sub text in the hero to match the message. This is a content change everything visually should persist." Then, before review: "Subtext should say 'Software your business runs on that we maintain'".
 
 | | Was | Now |
 |---|---|---|
 | `LANDING.headline` | "From idea to production. Gain a real partner." (#18) | "We build agentic systems and digital products that work in production" (verbatim, no period, as given) |
 | `LANDING.accentWords` | `production`, `partner` | `work`, `in`, `production`: the closing phrase, one coral run |
-| `LANDING.supportingLine` | "You're not hiring a vendor. You're gaining a product partner." (Messaging Kit §03 Message 4) | "Not a demo, not a pilot. Software your business runs on every day." **DRAFT, needs your approval** |
+| `LANDING.supportingLine` | "You're not hiring a vendor. You're gaining a product partner." (Messaging Kit §03 Message 4) | "Software your business runs on that we maintain" (yours, verbatim; it replaced my draft, "Not a demo, not a pilot. Software your business runs on every day.") |
 
 **Why the coral moved to the end.** The first cut put coral on "agentic" and "production". Measured over every frame of the loop, "agentic" fell to 3.5:1 at 1280×800, 3.65:1 at 768×1024 and 4.49:1 at 1440×900: the longer headline lifts its upper lines above the scrim's solid band, and coral has little headroom over the footage (see "The hero"). Darkening the scrim further would have hidden most of the footage on laptops. The closing phrase sits in the solid band at every width, and the old payoff sat at the end too. Linen words higher up keep plenty of headroom.
 
 **The one non-copy change: a guard against the logo.** At 1024×768 the headline runs to seven lines, the bottom-anchored block outgrew the screen, and the capability strip slid under the logo (strip top at 0px). The stage now carries `pt-19` (76px, exactly the absolute header block's height). It does nothing while the copy fits, which is every size measured except two: at 1024×768 the hero is now 882px tall (114px past the screen) and at 1280×720 727px, with the strip stopping just below the logo. Same classes, faces, colours, overlays and fade everywhere.
 
-**Measured** (dev server, 0.5s steps over the whole loop, twelve sizes: 1920×1080, 1536×864, 1440×900, 1366×768, 1280×800, 1280×720, 1024×768, 768×1024, 414×896, 390×844, 375×667, 360×780): headline 7.59:1 or better, "work in production" 5.12:1 or better, supporting line 5.61:1 or better, strip 5.65:1 or better. Gates green (lint, typecheck, build, banned-terms).
+**Measured** (dev server, 0.5s steps over the whole loop, twelve sizes: 1920×1080, 1536×864, 1440×900, 1366×768, 1280×800, 1280×720, 1024×768, 768×1024, 414×896, 390×844, 375×667, 360×780): headline 7.59:1 or better, "work in production" 5.12:1 or better, supporting line 5.61:1 or better, strip 5.65:1 or better. Your supporting line, re-measured at six of those sizes after it landed: 5.67:1 or better. Gates green (lint, typecheck, build, banned-terms).
 
-**Docs:** decision-log #51 (supersedes #18's headline; #18 carries the note; the drafted supporting line is an open owner item), `01-vision.md` 2.2, `03-site-architecture.md` (hero row), `04-ux-spec.md` (accent rules, the coral payoff rule now says keep the hero's coral at the end, the hero loop's measurements, the guard, the hero bullet). The Messaging Kit, outside the repo, is yours to reconcile.
+**Docs:** decision-log #51 (supersedes #18's headline; #18 carries the note; the Messaging Kit's hero lines are the open owner item), `01-vision.md` 2.2, `03-site-architecture.md` (hero row), `04-ux-spec.md` (accent rules, the coral payoff rule now says keep the hero's coral at the end, the hero loop's measurements, the guard, the hero bullet). The Messaging Kit, outside the repo, is yours to reconcile.
