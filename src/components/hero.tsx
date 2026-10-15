@@ -1,8 +1,8 @@
 import { Fragment } from "react";
 import { BrandWordmark } from "@/components/brand-wordmark";
 import { CapabilityStrip } from "@/components/capability-strip";
-import { HeroCta } from "@/components/hero-cta";
 import { HeroLoop } from "@/components/hero-loop";
+import { ModalTrigger } from "@/components/modal-trigger";
 import { LANDING } from "@/content/copy";
 
 /**
@@ -33,8 +33,10 @@ import { LANDING } from "@/content/copy";
  * coral. Over the footage, and only here, text and the logo carry the
  * over-video shadow tokens.
  *
- * Server component; the interactive pieces are <HeroCta>, which opens
- * the qualification modal, and the decorative <HeroLoop> footage.
+ * Server component; the interactive pieces are the CTA, the shared
+ * <ModalTrigger> at Button's `large` size (it replaced the hand-rolled
+ * HeroCta, which drew the same button; build-note 34), which opens the
+ * qualification modal, and the decorative <HeroLoop> footage.
  */
 
 /** Match against accentWords ignoring case and trailing punctuation. */
@@ -104,7 +106,9 @@ export function Hero() {
                 className="motion-safe:animate-rise-in"
                 style={{ animationDelay: "120ms" }}
               >
-                <HeroCta label={LANDING.cta} />
+                <ModalTrigger arrow size="large">
+                  {LANDING.cta}
+                </ModalTrigger>
               </div>
             </div>
             <div className="w-full sm:w-1/2">

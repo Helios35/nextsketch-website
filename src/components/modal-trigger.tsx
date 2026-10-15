@@ -11,6 +11,8 @@ interface ModalTriggerProps {
   variant?: ButtonProps["variant"];
   /** Divided-arrow advance treatment — see Button. */
   arrow?: ButtonProps["arrow"];
+  /** Button scale — see Button (the home hero passes "large"). */
+  size?: ButtonProps["size"];
   className?: string;
   /** Runs before the modal opens (e.g. close the menu). */
   onBeforeOpen?: () => void;
@@ -43,6 +45,7 @@ export function ModalTrigger({
   children,
   variant,
   arrow,
+  size,
   className,
   onBeforeOpen,
   need,
@@ -53,6 +56,7 @@ export function ModalTrigger({
     <Button
       variant={variant}
       arrow={arrow}
+      size={size}
       className={className}
       href={`mailto:${MODAL_ESCAPE_HATCH.email}`}
       onClick={(event: MouseEvent<HTMLAnchorElement>) => {
