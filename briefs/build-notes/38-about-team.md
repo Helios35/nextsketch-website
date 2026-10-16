@@ -1,7 +1,7 @@
 # Build Note 38: About becomes the team (adhoc)
 
 **Date:** 2026-10-15 · **Branch:** `adhoc/about-team` · **Base:** `main` @ `4ed9db0` (Brief 2 merged as PR #45)
-**Status:** COMPLETE, pushed, no PR (Nate opens it). About shows Nate and Julie as avatars that turn on click, Enter or Space and show each person's name and title beneath; the copy is Part B verbatim; the team is a list in content; the portrait is retired; nothing else on the page moved. All four gates green.
+**Status:** COMPLETE, committed on the branch, no PR (Nate opens it). About shows Nate and Julie as avatars that turn on click, Enter or Space and show each person's name and title beneath; the copy is Part B verbatim; the team is a list in content; the portrait is retired; nothing else on the page moved. All four gates green.
 **Follows:** build-note 37. **Decisions:** **#63** and **#64** appended. Next free row **#65**, next build note **39**.
 **Brief:** "Adhoc Unit: About becomes the team" (Nate, 2026-10-15; Brief 3 of 3), with two avatar clips from Nate's marketing assets folder. Interaction reference: the owner's digital card (natedigitalcard.vercel.app).
 
