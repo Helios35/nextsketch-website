@@ -1,6 +1,11 @@
 import { SERVICES } from "@/content/services";
 import { ROUTES, sectionHref } from "@/lib/types";
-import type { AccentName, ProcessPhase, ProcessPhaseSlug } from "@/lib/types";
+import type {
+  AccentName,
+  ProcessPhase,
+  ProcessPhaseSlug,
+  TeamMember,
+} from "@/lib/types";
 
 /**
  * Canonical site copy — Messaging Kit §05 (Rule 4.1: edits are owner
@@ -325,14 +330,23 @@ export const PROOF = [
  */
 
 /**
- * About (#about) copy — the solo "about me" (architecture row 7:
- * "New copy, voice per Brand Philosophy §8"). Not in Messaging Kit §05.
+ * About (#about) copy: the team you work with (decision-log #63, owner
+ * copy 2026-10-15, the about-team brief's Part B verbatim). Not in
+ * Messaging Kit §05. It was the solo "about me" until #63: NextSketch
+ * is a small team now, so no line here says or implies one person.
  *
- * `body` is owner-authored verbatim (2026-08-24), replacing the DRAFT
- * that had been written from documented positioning alone. It is now
- * real biography rather than restated brand copy, which is the point:
- * the section's job is authority, and the earlier text could only
- * assert the same claims the rest of the page already made.
+ * `team` is the list the section maps (Nate and Julie for now). Adding
+ * a person is a row here plus their clip and poster under
+ * `/public/team/` (`TeamMember`, src/lib/types.ts); the component does
+ * not change. `video` and `poster` are asset paths (config, not copy),
+ * kept beside the person they show, as `LANDING.backgroundVideo` is.
+ *
+ * `body` paragraphs 1 and 2 are owner-authored verbatim (2026-08-24)
+ * and unchanged by #63: Nathan's own story, in his voice, which is why
+ * they stay in the first person. Paragraphs 3 and 4 moved to "we" with
+ * #63. The 2026-08-24 text replaced a DRAFT written from documented
+ * positioning alone; it is real biography rather than restated brand
+ * copy, which is the point: the section's job is authority.
  *
  * Rule 3.4 exemption — decision-log #20 (2026-08-24). The first
  * paragraph names the retired physical-design discipline that the
@@ -356,24 +370,43 @@ export const PROOF = [
 export const ABOUT = {
   /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
   eyebrow: "Who you work with",
-  /**
-   * Accessible description of the owner-supplied portrait
-   * (public/placeholders/placeholder-about-01.jpg, delivered
-   * 2026-07-06). DRAFT pending owner approval.
-   */
-  portraitAlt: "Nathan, the person behind NextSketch",
-  headline: "NextSketch is one person. On purpose.",
+  headline: "A small, senior-led team. On purpose.",
   /**
    * The headline's coral payoff phrase, matched against `headline`
    * verbatim and without the trailing period, so the full stop stays
    * linen. Moved here from about-section.tsx (build-note 34).
    */
   accentPhrase: "On purpose",
+  intro:
+    "NextSketch is a small, senior-led team based in Downers Grove, IL. You work with the same people from the first call to launch, and after.",
+  /**
+   * The team, in the order the row shows them. `alt` is each avatar's
+   * accessible name, owner copy like the rest; `name` and `title` show
+   * beneath the avatar once it turns (decision-log #63).
+   */
+  team: [
+    {
+      id: "nate",
+      name: "Nate",
+      title: "Founder",
+      alt: "Nate, Founder of NextSketch",
+      video: "/team/nate.mp4",
+      poster: "/team/nate-poster.jpg",
+    },
+    {
+      id: "julie",
+      name: "Julie",
+      title: "Client Partner",
+      alt: "Julie, Client Partner at NextSketch",
+      video: "/team/julie.mp4",
+      poster: "/team/julie-poster.jpg",
+    },
+  ] satisfies readonly TeamMember[],
   body: [
     "I'm Nathan. I started in industrial design, drawing and prototyping physical products that had to survive tooling, cost, and a real person's hands. That training stuck. It taught me to design inside constraints instead of pretending they aren't there, and that nothing counts until it ships and someone uses it.",
     "Digital was the same job with faster feedback. Agents were the next step: systems that do the work, not just display it. Different material, same discipline.",
-    "When you work with NextSketch, you work with me. The person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",
-    "NextSketch runs agent-native. The same embedded agents and AI-accelerated workflow I build for clients run this business every day. It's how one person ships what used to take a team. I eat my own cooking.",
+    "When you work with NextSketch, you work with the people who learn your business, make the build decisions, and answer for the result. No account layer, no handoff between departments, nothing lost in translation.",
+    "NextSketch runs agent-native. The same agents and AI-accelerated workflow we build for clients run this business every day. We use what we sell.",
   ],
 } as const;
 

@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { Parallax } from "@/components/parallax";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
+import { TeamAvatar } from "@/components/team-avatar";
 import { ABOUT } from "@/content/copy";
 
 /**
@@ -16,27 +16,27 @@ import { ABOUT } from "@/content/copy";
 const ACCENT_PHRASE = ABOUT.accentPhrase;
 
 /**
- * About (#about) — the person behind it, solo
- * (docs/03-site-architecture.md row 7). Rebuilt in place to the
- * hero-derived design system (Redesign Unit 02): the old contained
- * rounded ink panel was redundant on an all-ink page, so the section
- * now sits flat on the full-width band with the shared gutter rhythm,
- * the mono "(05)" eyebrow, and the coral payoff phrase. Entrances are
- * the shared ScrollReveal at the hero stagger (0 / 120+i·80 / 200ms);
- * the portrait carries the section's single whisper parallax. The
- * photo is the owner-supplied portrait (delivered 2026-07-06),
- * shipped under the taxonomy asset name it replaced
- * (docs/06-taxonomy.md §7) in the layout-final 3/4 crop — the square
- * source center-crops via object-cover. The portrait sits in a
- * hairline frame on a placeholder tile (`border` hairline, `muted`
- * fill, fin's card radius `rounded-xl`; decision-log #47, #48) under
- * the image-band bottom scrim in `background` (docs/04-ux-spec.md
- * §Surfaces) so it carries the same grade as the page's footage:
- * untreated, it read as an outlier (owner feedback, 2026-07-07). The
- * flat `background/40` layer is deliberately omitted: it exists for
- * text legibility over full-bleed backdrops, and no text rides this
- * image (a judgment call generalized from the hero recipe per
- * 04-ux-spec §How to build a new section).
+ * About (#about): the team you work with (decision-log #63; it was the
+ * person behind it, solo, until then; docs/03-site-architecture.md row
+ * 7). Same slot, id, nav label and eyebrow. It sits flat on the
+ * full-width band with the shared gutter rhythm, the mono "(05)"
+ * eyebrow and the coral payoff phrase; entrances are the shared
+ * ScrollReveal at the hero stagger (0 / 120+i·80 / 200ms), and the team
+ * row carries the section's single whisper parallax, as the portrait it
+ * replaces did.
+ *
+ * **The team row maps `ABOUT.team`**, so a new person is a content edit
+ * (a row there plus their two files under /public/team/), never a code
+ * change. Each person is a `TeamAvatar`: an avatar that turns when
+ * clicked and shows their name and title beneath it (#63, #64). Two to a
+ * row at every width; a third person wraps to a second row.
+ *
+ * **Order follows the copy:** headline and intro, then the team, then
+ * the story. Below `lg` that is the reading order, one column. From
+ * `lg` the story stays under the intro in the left column and the team
+ * takes the right one, spanning both rows and centred against them,
+ * where the portrait sat. (The split moved from `md` to `lg`: at 768px
+ * the right column is 256px, which leaves two avatars about 116px wide.)
  */
 export function AboutSection() {
   const headline = ABOUT.headline;
@@ -48,7 +48,7 @@ export function AboutSection() {
       aria-labelledby="about-headline"
       className="w-full px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
     >
-      <div className="grid gap-10 md:grid-cols-[3fr_2fr] md:gap-16">
+      <div className="grid gap-10 lg:grid-cols-[3fr_2fr] lg:gap-x-16 lg:gap-y-6">
         <div>
           <ScrollReveal>
             <SectionHeading index="05" eyebrow={ABOUT.eyebrow}>
@@ -65,42 +65,39 @@ export function AboutSection() {
               </span>
             </SectionHeading>
           </ScrollReveal>
-          <div className="mt-8 space-y-6">
-            {ABOUT.body.map((paragraph, i) => (
-              <ScrollReveal key={paragraph} delay={120 + i * 80}>
-                <p className="max-w-prose text-base leading-relaxed text-foreground md:text-lg">
-                  {paragraph}
-                </p>
-              </ScrollReveal>
-            ))}
-          </div>
+          <ScrollReveal delay={120} className="mt-8">
+            <p className="max-w-prose text-base leading-relaxed text-foreground md:text-lg">
+              {ABOUT.intro}
+            </p>
+          </ScrollReveal>
         </div>
         {/*
           Grid-item placement lives on the ScrollReveal because it is
-          the element the grid actually positions; the framed portrait
-          fills it.
+          the element the grid actually positions; the list fills it.
         */}
         <ScrollReveal
           delay={200}
-          className="w-full self-center md:max-w-sm md:justify-self-end"
+          className="w-full max-w-lg self-center lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:justify-self-end"
         >
           <Parallax speed={0.06}>
-            <div className="relative overflow-hidden rounded-xl border border-border bg-muted">
-              <Image
-                src="/placeholders/placeholder-about-01.jpg"
-                alt={ABOUT.portraitAlt}
-                width={1600}
-                height={1600}
-                sizes="(min-width: 768px) 24rem, 100vw"
-                className="aspect-3/4 w-full object-cover"
-              />
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/20 to-transparent"
-              />
-            </div>
+            <ul className="grid grid-cols-2 gap-4 sm:gap-6">
+              {ABOUT.team.map((member) => (
+                <li key={member.id}>
+                  <TeamAvatar member={member} />
+                </li>
+              ))}
+            </ul>
           </Parallax>
         </ScrollReveal>
+        <div className="space-y-6">
+          {ABOUT.body.map((paragraph, i) => (
+            <ScrollReveal key={paragraph} delay={200 + i * 80}>
+              <p className="max-w-prose text-base leading-relaxed text-foreground md:text-lg">
+                {paragraph}
+              </p>
+            </ScrollReveal>
+          ))}
+        </div>
       </div>
     </section>
   );

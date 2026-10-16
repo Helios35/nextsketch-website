@@ -148,6 +148,30 @@ export type WorkItem = {
 );
 
 /**
+ * One person in About's team list (decision-log #63). The list lives in
+ * `ABOUT.team` (src/content/copy.ts), and the section maps it, so adding
+ * a person is a row there plus their two files under `/public/team/`:
+ * no component changes (closes build-note 34's F13 for About).
+ *
+ * Every field is required, so a person can never render without a name,
+ * a title, the avatar's accessible name or the still that reduced-motion
+ * and no-JS visitors see.
+ */
+export type TeamMember = {
+  /** Stable key; also the base of the person's file names under /public/team/. */
+  readonly id: string;
+  /** Shown beneath the avatar once it has turned. */
+  readonly name: string;
+  readonly title: string;
+  /** The avatar's accessible name: who the person is, said in one line. */
+  readonly alt: string;
+  /** Muted clip that loops natively: `/team/{id}.mp4`, shipped as delivered. */
+  readonly video: string;
+  /** The clip's first frame: `/team/{id}-poster.jpg`, the reduced-motion and no-JS view. */
+  readonly poster: string;
+};
+
+/**
  * The routes the site serves (docs/03-site-architecture.md §Sitemap).
  * `/` is the scrolling home page; `/pricing` is the first standalone
  * route (decision-log #23) and the **two service routes** under
