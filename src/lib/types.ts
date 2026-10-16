@@ -167,15 +167,10 @@ export type TeamMember = {
   readonly alt: string;
   /**
    * The back of the card: who the person is, written to fill it, about
-   * 250 characters. Shown on every card 276px or wider (from `sm:`), and
-   * the card's accessible description at every width.
+   * 250 characters (it must still fit the smallest card, 272px on a 320px
+   * phone). Also the card's accessible description.
    */
   readonly bio: string;
-  /**
-   * The same in about 100 characters, for the back of a phone's card
-   * (148px at a 360px screen, below `sm:`), which cannot hold `bio`.
-   */
-  readonly bioShort: string;
   /** Muted clip that loops natively: `/team/{id}.mp4`, shipped as delivered. */
   readonly video: string;
   /** The clip's first frame: `/team/{id}-poster.jpg`, the reduced-motion and no-JS view. */

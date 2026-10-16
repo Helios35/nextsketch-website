@@ -57,15 +57,13 @@ function TurnIcon({ className }: { className: string }) {
  * is `motion-safe` besides), so the same press shows the back at once. The 700ms runs past the 200ms ceiling and the flip is
  * a transform on a control; #64 records both exemptions.
  *
- * **The back** is a `card` face, filled with the `bio` in Inter, sized
- * for the card: `text-sm` from `sm:` (276px at 640), `text-lg` from
- * `md:` (340px at 768), `text-2xl` at 1.5 leading from `lg:` (436px),
- * clear of the flip mark in the corner. A phone's card (148px at 360)
- * cannot hold it, so
- * below `sm:` the back shows `bioShort` at `text-xs` instead, and that
- * copy is `aria-hidden`: the accessible description is always `bio`
- * (`aria-describedby` reads a referenced element even while it is
- * `display: none`).
+ * **The back** is a `card` face filled with the `bio` in Inter, clear
+ * of the flip mark in the corner. Its size follows **the card's own
+ * width**, not the screen's (the root is an `@container`, as the
+ * diagrams' stages are), because the card is 272px on a 320px phone,
+ * 448px on a tablet and 436px on a desktop: `text-sm` under 18rem,
+ * `text-base` from `@2xs`, `text-lg` from `@xs`, and `text-2xl` at 1.5
+ * leading from `@sm` (384px), where the padding also opens out.
  *
  * **The caption** (name, then title) is plain text under the card,
  * always visible, server-rendered, and outside the button, so it is
@@ -93,7 +91,7 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
     "absolute right-3 bottom-3 size-4 text-muted-foreground transition-colors duration-150 group-hover:text-foreground";
 
   return (
-    <div>
+    <div className="@container">
       <button
         type="button"
         aria-label={member.alt}
@@ -126,19 +124,13 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
             <TurnIcon className={mark} />
           </span>
           <span
-            className={`${face} flex rotate-y-180 items-center bg-card px-3 pt-3 pb-8 text-left sm:px-5 sm:pt-5 sm:pb-10 lg:px-8 lg:pt-8 lg:pb-12`}
+            className={`${face} flex rotate-y-180 items-center bg-card px-5 pt-5 pb-10 text-left @sm:px-8 @sm:pt-8 @sm:pb-12`}
           >
             <span
               id={bioId}
-              className="hidden text-sm leading-relaxed text-foreground sm:block md:text-lg lg:text-2xl lg:leading-normal"
+              className="text-sm leading-relaxed text-foreground @2xs:text-base @xs:text-lg @sm:text-2xl @sm:leading-normal"
             >
               {member.bio}
-            </span>
-            <span
-              aria-hidden="true"
-              className="text-xs leading-snug text-foreground sm:hidden"
-            >
-              {member.bioShort}
             </span>
             <TurnIcon className={mark} />
           </span>

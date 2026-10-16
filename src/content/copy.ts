@@ -336,8 +336,7 @@ export const PROOF = [
  * "about me" until #63: NextSketch is a small team now, so no line here
  * says or implies one person, and **the section does not introduce or
  * speak about any one person** (owner, 2026-10-15). Who each person is
- * lives on the back of their card (`bio`, and `bioShort` on a phone),
- * not in the section's text.
+ * lives on the back of their card (`bio`), not in the section's text.
  *
  * `team` is the list the section maps (Nate and Julie for now). Adding
  * a person is a row here plus their clip and poster under
@@ -375,16 +374,15 @@ export const ABOUT = {
    * The team, in the order the row shows them. `name` and `title` are
    * always shown beneath the card. The back of the card carries `bio`,
    * written to fill it (owner, 2026-10-15: "descriptions can be longer
-   * now to fill the back of the card"), on every card 276px or wider
-   * (from `sm:`); a phone's card is 148px, which holds about 100
-   * characters, so below `sm:` it shows `bioShort` instead. `bio` is
-   * also the card's accessible description at every width. Keep `bio`
-   * near 250 characters and `bioShort` near 100. `alt` is the avatar's
-   * accessible name.
+   * now to fill the back of the card"), and its accessible description.
+   * Keep it near 250 characters: the cards stack below `lg:`, so the
+   * smallest is 272px (a 320px phone), and that holds it. `alt` is the
+   * avatar's accessible name.
    *
    * Titles are owner copy (Nate's set 2026-10-15, Julie's from Part B).
-   * **Every `bio` and `bioShort` is a builder DRAFT awaiting owner
-   * review:** Nate's from his own 2026-08-24 biography (trained in
+   * **Both `bio` lines are owner-approved copy** (builder-written,
+   * approved as drafted by Nate on 2026-10-15): Nate's from his own
+   * 2026-08-24 biography (trained in
    * physical product design, where work had to survive tooling, cost and
    * a real person's hands; then digital, then agents; nothing counts until
    * it ships and someone uses it), Julie's from her LinkedIn experience
@@ -400,8 +398,6 @@ export const ABOUT = {
       title: "Founder / Lead Architect",
       alt: "Nate, Founder and Lead Architect of NextSketch",
       bio: "Trained in physical product design, where everything had to survive tooling, cost and a real person's hands. Then digital, then agents. Now architects the agentic systems and products we build, held to the same bar: it ships and someone uses it.",
-      bioShort:
-        "Trained in physical product design. Now architects the agentic systems and products we build.",
       video: "/team/nate.mp4",
       poster: "/team/nate-poster.jpg",
     },
@@ -411,8 +407,6 @@ export const ABOUT = {
       title: "Client Partner",
       alt: "Julie, Client Partner at NextSketch",
       bio: "Comes from digital product management, customer innovation and experience design, shaping roadmaps and the experiences people actually use. A co-founder herself, she is your partner from the first call to launch, keeping the work clear and moving.",
-      bioShort:
-        "Comes from digital product management and experience design. Your partner from first call to launch.",
       video: "/team/julie.mp4",
       poster: "/team/julie-poster.jpg",
     },
