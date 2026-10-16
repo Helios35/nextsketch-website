@@ -33,6 +33,7 @@ The first cut put the team in the right-hand column from `lg`, kept Nathan's bio
 8. **Then, before the push: stack on tablets and phones** ("the avatars just get small... that needs to be corrected"). Below 1024px the cards stack, one per row, up to 448px; from 1024px they sit side by side as before. With no card under 272px any more, the phone-only `bioShort` retired the same session, and the back's type now follows the card's own width (a container query) rather than the screen's.
 9. **Descriptions approved.** Nate approved both `bio` lines as drafted, before the push.
 10. **Julie's clip replaced** with her higher-resolution `Julie-team-preview_v2.mp4` (1440×1440, matching Nate's), installed byte-identical at the same path, her poster re-cut from its first frame.
+11. **"It still looks low res."** It did, and not because of the file: Nate's pane had the new 1440px clip, but the flip's 3D context (perspective, `preserve-3d`, `backface-visibility`) made Chrome draw the video at about half its sharpness even at rest. Measured on Julie's clip in a 446px card at 1.5x with a Laplacian sharpness measure: 5.3 as built, 9.5 with the 3D context removed, 10.1 for a bare `<video>`, against 8.9 for a clean Lanczos downscale of the same frame. **Fix: the card is flat at rest** and only takes the 3D context while it flips or shows its back (on with the press, off at `transitionend` of the flip back, at once under reduced motion); measured 9.5 at rest and again after a flip and back, Nate's 8.5. The posters were also re-cut at 960px (they were 720, soft at 2x), and the pane had been holding the first-cut poster from cache; the server was restarted and the pane reloaded.
 
 Consequences recorded as same-day amendments on #63 and #64 (the two-offerings unit's precedent for pre-merge follow-ups), plus a retirement note on #20:
 
@@ -96,14 +97,15 @@ Julie's employer and her venture are deliberately not named on the site: she wor
 |---|---|---|---|---|
 | `public/team/nate.mp4` | `Nate-team-preview.mp4`, byte-identical | 8,603,504 | 1440×1440, 5.04s, H.264, video only, faststart, about 13.6 Mbps | `7e641cc45627` |
 | `public/team/julie.mp4` | `Julie-team-preview_v2.mp4`, byte-identical (replaced the first delivery, `Julie-team-preview.mp4`: 720×720, 10s, 311,834 bytes) | 6,840,792 | 1440×1440, 5.04s, H.264, video only, faststart, about 10.9 Mbps | `0e495f47a64d` |
-| `public/team/nate-poster.jpg` | frame 0 of the clip, builder-cut | 55,733 | 720×720 JPEG (mozjpeg q82) | |
-| `public/team/julie-poster.jpg` | frame 0 of the v2 clip, builder-cut | 27,368 | 720×720 JPEG (mozjpeg q82) | |
+| `public/team/nate-poster.jpg` | frame 0 of the clip, builder-cut | 95,977 | 960×960 JPEG (mozjpeg q84) | |
+| `public/team/julie-poster.jpg` | frame 0 of the v2 clip, builder-cut | 51,274 | 960×960 JPEG (mozjpeg q84) | |
 
 Both clips are built to loop: the last frame differs from the first by a mean of 1.38 (Nate) and 1.0 (Julie's v2) of 255, no more than any two adjacent frames, so the native `loop` attribute is the whole mechanism (the #46 precedent). Frame 0 was drawn to a canvas in headless Chrome and resized with `sharp`, so each poster is exactly where its loop starts. Names follow Taxonomy §7 and §8 (`/public/team/{id}.*`, kebab-case); the delivered names are source names only.
 
 ## How the flip works
 
 - **Structure.** The `<button>` is the perspective box (`perspective-distant`, 1200px). Inside it, a square `transform-3d` rotor holds two `backface-hidden` faces: the front (the clip, the bottom scrim, the flip mark) and the back (`rotate-y-180`, a `card` face with the `bio` and the same flip mark).
+- **Flat at rest.** The 3D context (the button's `perspective-distant`, the rotor's `transform-3d` and transform, the front's `backface-hidden`) exists only while the card flips or shows its back; at rest the card is flat and its back `invisible`, because Chrome draws a video inside a 3D context at about half its sharpness (follow-up 11). A `flat` state turns it on with the press and off at the flip back's `transitionend`, or at once under reduced motion, where no transition runs.
 - **Motion.** Open sets the rotor to `rotate-y-180`, close back to `rotate-y-0`, and a `transform` transition carries it: **700ms** on `--ease-out`, `motion-safe` only. Measured: computed `transition` is `transform … 0.7s cubic-bezier(0.16, 1, 0.3, 1)`; settled open, the rotor reads `matrix3d(-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, …)`; paused at fixed points of the transition, the frames run face → edge → back, readable once settled.
 - **The back.** The `bio` in Inter `foreground`, written to fill it, vertically centred, padded clear of the flip mark. **Its type follows the card's own width** through a container query (the card's root is an `@container`, the diagrams' pattern): `text-sm leading-relaxed` under 18rem, `text-base` from `@2xs`, `text-lg` from `@xs`, `text-2xl` at `leading-normal` from `@sm` (24rem), where the padding opens from `px-5 pt-5 pb-10` to `px-8 pt-8 pb-12`. **Measured fit** (12 widths, 320 to 1920): 8 lines at 14px on the 272px card (86% of the room), 8 at 16px on 312px (83%), 8 at 18px on 342px (83%), 7 at 18px on 382px (64%), 8 and 9 at 24px on the 448px stacked card (78% and 88%) and on the 436px desktop card (81% and 91%). Nothing overflows or touches the mark at any width.
 - **The caption** (name, then the mono title) is plain server-rendered text under the card, always visible and outside the button, so flipping moves nothing (About's height measured identical before and after flipping at all four widths).
@@ -119,7 +121,7 @@ Only the headline's payoff phrase "On purpose", as before. The cards, the captio
 ## Builder calls (each comes back to Nate)
 
 1. **The avatars are video, which narrows #46's one-video rule** (recorded in #63): the hero loop stays the only video that plays from load and the only footage behind text; the avatars are the only other clips. The alternative, a still per person, would mean asking for stills.
-2. **The two posters are builder-cut** from frame 0 of each clip at 720×720. Keep them, or send stills to replace them under the same names.
+2. **The two posters are builder-cut** from frame 0 of each clip at 960×960 (first cut at 720, which was soft on a 448px card at 2x). Keep them, or send stills to replace them under the same names.
 3. **Clip weight.** Both clips are now 1440×1440: Nate's 8.6 MB (about 13.6 Mbps) and Julie's v2 6.8 MB (about 10.9 Mbps), about 15.4 MB together, for cards that render at most 448px wide (896 device pixels on a 2x screen). They ship as delivered and download only once About is on screen (measured on the first cut: at load only the two posters are fetched). **Recommendation, if page weight matters:** owner exports near 960×960 at a few Mbps, dropped in at the same paths; nothing in code changes.
 4. **Nate's `alt`** is a DRAFT (table above): "and" in place of the title's "/" so it reads aloud cleanly. The four descriptions were approved by Nate as drafted on 2026-10-15.
 5. **Toggle, not one-way.** A second press flips the card back, as the digital card flips back.
@@ -145,6 +147,7 @@ Only the headline's payoff phrase "On purpose", as before. The cards, the captio
 | `npm run banned-terms` | clean (57 files) with `ALLOWED` empty; the retired phrase fails when planted |
 | About at 320 to 1920 | text first; the cards stacked below 1024 and side by side from it, centred at every width; cards 272 / 312 / 342 / 382 / 448 / 436px; names and titles visible at rest and flipped; screenshots at rest and flipped, with motion and reduced |
 | Card backs | at 12 widths from 320 to 1920 the `bio` fits inside its padding, clear of the flip mark, filling 64 to 91% of the room |
+| Video sharpness | Julie's frame 0 in a 446px card at 1.5x, Laplacian measure: 9.5 at rest (5.3 before the card went flat), 9.5 after a flip and back; Nate 8.5; a clean downscale of the source 8.9 |
 | Click, Enter, Space | click flips; Enter and Space each toggle; Tab moves to the next card (dispatched key events, headless Chrome) |
 | Screen reader | accessibility tree: two buttons named by the `alt` lines, described by the `bio` lines, with `pressed` state; the names and titles are plain text beside them |
 | Reduced motion | no flip, the back instant, zero `play()` calls, posters only |
