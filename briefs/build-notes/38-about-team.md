@@ -29,6 +29,7 @@ The first cut put the team in the right-hand column from `lg`, kept Nathan's bio
 4. **Nate's title is "Founder / Lead Architect".** Julie's stays "Client Partner".
 5. **Then: the titles always there.** The name and title under each card are always visible, no longer revealed by the click; the click only flips the card.
 6. **The avatars larger and centred.** The row is centred in the section and capped at `max-w-4xl`, so the cards grow from 276px to 436px at desktop widths (340px at 768); on a phone they already fill the column, two side by side, at 148px. The text keeps its left alignment.
+7. **Then: longer descriptions** "to fill the back of the card when flipped". Built as two lengths per person, because the phone card (148px) holds about 100 characters at a readable size: `bio` (about 250 characters) fills every card 276px or wider, and the original line stays as `bioShort` on phones.
 
 Consequences recorded as same-day amendments on #63 and #64 (the two-offerings unit's precedent for pre-merge follow-ups), plus a retirement note on #20:
 
@@ -53,22 +54,23 @@ Consequences recorded as same-day amendments on #63 and #64 (the two-offerings u
   name: "Julie",                    // always shown beneath the card, with the title
   title: "Client Partner",
   alt: "Julie, Client Partner at NextSketch", // the card's accessible name
-  bio: "Comes from digital product management and experience design. Your partner from first call to launch.",
+  bio: "Comes from digital product management, customer innovation and experience design, shaping roadmaps and the experiences people actually use. A co-founder herself, she is your partner from the first call to launch, keeping the work clear and moving.",
+  bioShort: "Comes from digital product management and experience design. Your partner from first call to launch.", // the phone card's back
   video: "/team/julie.mp4",         // the delivered clip, byte-identical
   poster: "/team/julie-poster.jpg", // its first frame
 }
 ```
 
-**To add a person:** append a row in the order the row should show them, keep the `bio` near 100 characters, and add `/public/team/{id}.mp4` and `/public/team/{id}-poster.jpg`. `AboutSection` maps the list into a two-column grid, so a third person wraps to a second row. No component changes.
+**To add a person:** append a row in the order the row should show them, keep the `bio` near 250 characters and the `bioShort` near 100, and add `/public/team/{id}.mp4` and `/public/team/{id}-poster.jpg`. `AboutSection` maps the list into a two-column grid, so a third person wraps to a second row. No component changes.
 
-**The copy now in the section** (`ABOUT`): `headline`, `intro`, and `body` = Part B's third and fourth paragraphs, verbatim. **Builder DRAFTs awaiting Nate:** both `bio` lines and Nate's `alt` (below).
+**The copy now in the section** (`ABOUT`): `headline`, `intro`, and `body` = Part B's third and fourth paragraphs, verbatim. **Builder DRAFTs awaiting Nate:** every `bio` and `bioShort`, and Nate's `alt` (below).
 
-| Person | Title (owner) | `alt` | `bio` |
-|---|---|---|---|
-| Nate | Founder / Lead Architect | Nate, Founder and Lead Architect of NextSketch (DRAFT: "and" reads aloud cleanly where "/" does not) | Trained in physical product design. Now architects the agentic systems and products we build. (DRAFT, from his 2026-08-24 biography) |
-| Julie | Client Partner | Julie, Client Partner at NextSketch (Part B) | Comes from digital product management and experience design. Your partner from first call to launch. (DRAFT, from her LinkedIn experience: Digital Product Manager, Customer Innovation Manager, Experience Design Manager) |
+| Person | Title (owner) | `alt` | `bio` (from 640px) | `bioShort` (phones) |
+|---|---|---|---|---|
+| Nate | Founder / Lead Architect | Nate, Founder and Lead Architect of NextSketch (DRAFT: "and" reads aloud cleanly where "/" does not) | Trained in physical product design, where everything had to survive tooling, cost and a real person's hands. Then digital, then agents. Now architects the agentic systems and products we build, held to the same bar: it ships and someone uses it. (DRAFT, 245 characters, from his 2026-08-24 biography) | Trained in physical product design. Now architects the agentic systems and products we build. (DRAFT, 93) |
+| Julie | Client Partner | Julie, Client Partner at NextSketch (Part B) | Comes from digital product management, customer innovation and experience design, shaping roadmaps and the experiences people actually use. A co-founder herself, she is your partner from the first call to launch, keeping the work clear and moving. (DRAFT, 247, from her LinkedIn experience: Digital Product Manager, Customer Innovation Manager with product roadmapping, Experience Design Manager, and a co-founder of her own venture) | Comes from digital product management and experience design. Your partner from first call to launch. (DRAFT, 100) |
 
-Julie's employer is deliberately not named on the site: she works there now, and naming it on NextSketch's page could read as an affiliation. Nate's line avoids the retired-brand terms §3.4 bans by name, and says where he trained, not what NextSketch sells.
+Julie's employer and her venture are deliberately not named on the site: she works there now, and naming it on NextSketch's page could read as an affiliation. Nate's line avoids the retired-brand terms §3.4 bans by name, and says where he trained, not what NextSketch sells.
 
 ## Components added, changed and removed
 
@@ -101,9 +103,9 @@ Both clips are built to loop: the last frame differs from the first by a mean of
 
 - **Structure.** The `<button>` is the perspective box (`perspective-distant`, 1200px). Inside it, a square `transform-3d` rotor holds two `backface-hidden` faces: the front (the clip, the bottom scrim, the flip mark) and the back (`rotate-y-180`, a `card` face with the `bio` and the same flip mark).
 - **Motion.** Open sets the rotor to `rotate-y-180`, close back to `rotate-y-0`, and a `transform` transition carries it: **700ms** on `--ease-out`, `motion-safe` only. Measured: computed `transition` is `transform … 0.7s cubic-bezier(0.16, 1, 0.3, 1)`; settled open, the rotor reads `matrix3d(-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, …)`; paused at fixed points of the transition, the frames run face → edge → back, readable once settled.
-- **The back.** The `bio` in Inter `foreground`: `text-xs leading-snug` on the 148px phone card, `text-sm leading-relaxed` from `sm:`, `text-lg` from `md:`, `text-xl` from `lg:`, vertically centred, padded clear of the flip mark. **Measured fit:** at 148px Nate's takes 5 lines (83px) and Julie's 6 (99px) of 104px of room; at 340px, 3 lines (88px) and 4 (117px) of 280px; at 436px, 3 lines each (98px) of 356px. Neither overlaps the mark at any width.
+- **The back.** From `sm:` the `bio` in Inter `foreground`, written to fill it: `text-sm leading-relaxed` at 276px (640), `text-lg` from `md:` (340px at 768), `text-2xl` at `leading-normal` from `lg:` (436px), vertically centred, padded clear of the flip mark. Below `sm:` the phone card shows `bioShort` at `text-xs leading-snug` instead (`aria-hidden`). **Measured fit** (14 widths): at 148px the `bioShort` takes 5 lines (83px) and 6 (99px) of 104px of room; at 640, Nate's `bio` and Julie's take 8 lines each (182 of 216px, 84%); at 768, 8 lines each (234 of 280px, 84%); from 1024, 8 lines (288 of 356px, 81%) and 9 (324, 91%). Between breakpoints the fill thins as the card grows, to about half at 767 and 1023, and to a fifth at 600 to 639 (phones in landscape), where the short line sits in a 268 to 288px card. Nothing overflows or touches the mark at any width.
 - **The caption** (name, then the mono title) is plain server-rendered text under the card, always visible and outside the button, so flipping moves nothing (About's height measured identical before and after flipping at all four widths).
-- **Keyboard and screen readers.** A native toggle `<button type="button">`, as the digital card's flip is, with `aria-label` (the `alt`), `aria-describedby` (the `bio` on the back) and `aria-pressed` (which way it faces). The accessibility tree reads `button "Nate, Founder and Lead Architect of NextSketch"`, description "Trained in physical product design. Now architects the agentic systems and products we build.", with its pressed state; Julie's likewise. A button's contents are presentational, so nothing inside it is read twice. The focus ring is the site's (`outline-2 outline-offset-2 outline-ring`) on the card's `rounded-xl`.
+- **Keyboard and screen readers.** A native toggle `<button type="button">`, as the digital card's flip is, with `aria-label` (the `alt`), `aria-describedby` (the `bio` on the back) and `aria-pressed` (which way it faces). The accessibility tree reads `button "Nate, Founder and Lead Architect of NextSketch"`, described by the full `bio` ("Trained in physical product design, where everything had to survive tooling…") at every width, a phone's included, where that copy is `display: none` and the visible `bioShort` is `aria-hidden`; with its pressed state; Julie's likewise. A button's contents are presentational, so nothing inside it is read twice. The focus ring is the site's (`outline-2 outline-offset-2 outline-ring`) on the card's `rounded-xl`.
 - **Reduced motion.** The base-layer block zeroes every transition, and the flip is `motion-safe` besides, so a press shows the back at once (measured 16ms after a click: `transitionDuration: 0s`, rotor at 180°, no running animation in About). `useLoopVideo` never calls `play()` (zero calls, hero included); the posters stay, and with `preload="none"` nothing of the clips downloads.
 - **No JS.** The server HTML shows every name and title, renders no `aria-pressed` (set only after hydration, `useMounted`), and leaves the button inert. The posters show. A no-JS visitor cannot flip a card, so sees no `bio` (it is in the HTML, on the hidden back face).
 - **Playback.** `useLoopVideo(videoRef, { whileVisible: true })`: an IntersectionObserver plays each clip as it comes on screen and pauses it as it leaves (measured: both paused after scrolling back to the top). Everything else is the hero's contract: `play()` from an effect, never `autoPlay`; a refused `play()` is caught, so the poster stays; a clip the browser paused while the page was hidden restarts when it is visible again; a mid-session flip to reduced motion pauses and re-arms the poster. The clip keeps playing while its card shows the back (the digital card pauses it; here the front is simply out of view).
@@ -117,7 +119,7 @@ Only the headline's payoff phrase "On purpose", as before. The cards, the captio
 1. **The avatars are video, which narrows #46's one-video rule** (recorded in #63): the hero loop stays the only video that plays from load and the only footage behind text; the avatars are the only other clips. The alternative, a still per person, would mean asking for stills.
 2. **The two posters are builder-cut** from frame 0 of each clip at 720×720. Keep them, or send stills to replace them under the same names.
 3. **Nate's clip weight.** At about 13.6 Mbps it is roughly 55 times Julie's bitrate for the same on-screen size. It ships as delivered, and downloads only once About is on screen (measured: at load only the two posters are fetched, 56 KB and 26 KB; once the row is on screen, 312 KB for Julie and 8.6 MB for Nate). **Recommendation:** a re-export at 720×720 near Julie's bitrate, dropped in at the same path. Nothing in code changes.
-4. **The two `bio` lines and Nate's `alt`** are DRAFTs (table above). Nate's names his physical-design training without the banned terms; if any mention of it should leave the site with the biography, it becomes "Architects the agentic systems and products we build."
+4. **The four descriptions and Nate's `alt`** are DRAFTs (table above). "Keeping the work clear and moving" describes Julie's role at NextSketch, not her record; it is the line to check. Nate's names his physical-design training without the banned terms; if any mention of it should leave the site with the biography, it becomes "Architects the agentic systems and products we build."
 5. **Toggle, not one-way.** A second press flips the card back, as the digital card flips back.
 6. **The flip hint is an icon only:** two chasing arcs in each face's corner, the card's "↻" without its "Tap" label, because the label would be copy no one has written. Measured on the front against the tile behind it: 4.49:1 and 5.43:1, above the 3:1 floor for marks.
 7. **Tempo:** 700ms (the card's flip) on the site's one easing, `--ease-out`, rather than the card's own curve (the one-easing rule). In #64.
@@ -140,7 +142,7 @@ Only the headline's payoff phrase "On purpose", as before. The cards, the captio
 | `npm run build` | clean, six routes, `/` static |
 | `npm run banned-terms` | clean (57 files) with `ALLOWED` empty; the retired phrase fails when planted |
 | About at 360, 768, 1280, 1920 | text first, both cards side by side beneath it, centred; cards 148 / 340 / 436 / 436px; names and titles visible at rest and flipped; screenshots at rest and flipped, with motion and reduced |
-| Card backs | every `bio` fits inside its padding, clear of the flip mark, at all four widths |
+| Card backs | at 14 widths from 360 to 1920, the description shown (`bioShort` below 640, `bio` from 640) fits inside its padding, clear of the flip mark; `bio` fills 84% at 640 and 768 and 81 to 91% from 1024 |
 | Click, Enter, Space | click flips; Enter and Space each toggle; Tab moves to the next card (dispatched key events, headless Chrome) |
 | Screen reader | accessibility tree: two buttons named by the `alt` lines, described by the `bio` lines, with `pressed` state; the names and titles are plain text beside them |
 | Reduced motion | no flip, the back instant, zero `play()` calls, posters only |
