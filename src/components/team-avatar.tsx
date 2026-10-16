@@ -54,8 +54,20 @@ function TurnIcon({ className }: { className: string }) {
  * the back is pre-turned 180°, so it reads the right way round when the
  * card has flipped. **Reduced motion** sees no flip: the base-layer
  * block in globals.css sets every transition to 0s (and the transition
- * is `motion-safe` besides), so the same press shows the back at once. The 700ms runs past the 200ms ceiling and the flip is
- * a transform on a control; #64 records both exemptions.
+ * is `motion-safe` besides), so the same press shows the back at once.
+ * The 700ms runs past the 200ms ceiling and the flip is a transform on
+ * a control; #64 records both exemptions.
+ *
+ * **At rest the card is flat** (`flat`): no perspective, no 3D context,
+ * no transform, the back face `invisible`. Chrome draws a video inside
+ * a 3D context at about half its sharpness even when nothing is turned
+ * (measured on Julie's 1440px clip in a 446px card at 1.5x: a Laplacian
+ * sharpness of 5.3 inside the 3D context, 9.5 without it, 8.9 for a
+ * clean Lanczos downscale of the same frame), so the clip read as low
+ * resolution. The 3D context switches on with the press that flips the
+ * card (the transition then runs from `none` to `rotateY(180deg)`) and
+ * off again when the flip back has finished (`transitionend`), or at
+ * once under reduced motion, where no transition runs.
  *
  * **The back** is a `card` face filled with the `bio` in Inter, clear
  * of the flip mark in the corner. Its size follows **the card's own
@@ -81,12 +93,27 @@ function TurnIcon({ className }: { className: string }) {
 export function TeamAvatar({ member }: { member: TeamMember }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [open, setOpen] = useState(false);
+  // No 3D context while the card rests on its front (see above).
+  const [flat, setFlat] = useState(true);
   const mounted = useMounted();
   const bioId = useId();
   useLoopVideo(videoRef, { whileVisible: true });
 
   const face =
-    "absolute inset-0 overflow-hidden rounded-xl border border-border backface-hidden transition-colors duration-150 group-hover:border-muted-foreground/50";
+    "absolute inset-0 overflow-hidden rounded-xl border border-border transition-colors duration-150 group-hover:border-muted-foreground/50";
+
+  const toggle = () => {
+    if (!open) {
+      setFlat(false);
+      setOpen(true);
+      return;
+    }
+    setOpen(false);
+    // Reduced motion runs no transition, so no transitionend will come.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setFlat(true);
+    }
+  };
   const mark =
     "absolute right-3 bottom-3 size-4 text-muted-foreground transition-colors duration-150 group-hover:text-foreground";
 
@@ -97,15 +124,28 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
         aria-label={member.alt}
         aria-describedby={bioId}
         aria-pressed={mounted ? open : undefined}
-        onClick={() => setOpen((value) => !value)}
-        className="group block w-full cursor-pointer rounded-xl perspective-distant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        onClick={toggle}
+        className={`group block w-full cursor-pointer rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
+          flat ? "" : "perspective-distant"
+        }`}
       >
         <span
-          className={`relative block aspect-square transform-3d ease-out motion-safe:transition-transform motion-safe:duration-700 ${
-            open ? "rotate-y-180" : "rotate-y-0"
-          }`}
+          onTransitionEnd={(event) => {
+            if (
+              event.target === event.currentTarget &&
+              event.propertyName === "transform" &&
+              !open
+            ) {
+              setFlat(true);
+            }
+          }}
+          className={`relative block aspect-square ease-out motion-safe:transition-transform motion-safe:duration-700 ${
+            flat ? "" : "transform-3d"
+          } ${open ? "rotate-y-180" : flat ? "" : "rotate-y-0"}`}
         >
-          <span className={`${face} bg-muted`}>
+          <span
+            className={`${face} bg-muted ${flat ? "" : "backface-hidden"}`}
+          >
             <video
               ref={videoRef}
               src={member.video}
@@ -124,7 +164,9 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
             <TurnIcon className={mark} />
           </span>
           <span
-            className={`${face} flex rotate-y-180 items-center bg-card px-5 pt-5 pb-10 text-left @sm:px-8 @sm:pt-8 @sm:pb-12`}
+            className={`${face} flex rotate-y-180 items-center bg-card px-5 pt-5 pb-10 text-left backface-hidden @sm:px-8 @sm:pt-8 @sm:pb-12 ${
+              flat ? "invisible" : ""
+            }`}
           >
             <span
               id={bioId}
