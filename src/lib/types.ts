@@ -160,11 +160,16 @@ export type WorkItem = {
 export type TeamMember = {
   /** Stable key; also the base of the person's file names under /public/team/. */
   readonly id: string;
-  /** Shown beneath the avatar once it has turned. */
+  /** Shown beneath the avatar once it has flipped. */
   readonly name: string;
   readonly title: string;
   /** The avatar's accessible name: who the person is, said in one line. */
   readonly alt: string;
+  /**
+   * The back of the card: who the person is, in a sentence or two. It
+   * must fit the smallest tile (148px), so about 100 characters.
+   */
+  readonly bio: string;
   /** Muted clip that loops natively: `/team/{id}.mp4`, shipped as delivered. */
   readonly video: string;
   /** The clip's first frame: `/team/{id}-poster.jpg`, the reduced-motion and no-JS view. */

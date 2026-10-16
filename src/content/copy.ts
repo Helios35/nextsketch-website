@@ -331,9 +331,12 @@ export const PROOF = [
 
 /**
  * About (#about) copy: the team you work with (decision-log #63, owner
- * copy 2026-10-15, the about-team brief's Part B verbatim). Not in
- * Messaging Kit §05. It was the solo "about me" until #63: NextSketch
- * is a small team now, so no line here says or implies one person.
+ * copy 2026-10-15, the about-team brief's Part B, amended by the owner
+ * the same day before merge). Not in Messaging Kit §05. It was the solo
+ * "about me" until #63: NextSketch is a small team now, so no line here
+ * says or implies one person, and **the section does not introduce or
+ * speak about any one person** (owner, 2026-10-15). Who each person is
+ * lives on the back of their card (`bio`), not in the section's text.
  *
  * `team` is the list the section maps (Nate and Julie for now). Adding
  * a person is a row here plus their clip and poster under
@@ -341,31 +344,15 @@ export const PROOF = [
  * not change. `video` and `poster` are asset paths (config, not copy),
  * kept beside the person they show, as `LANDING.backgroundVideo` is.
  *
- * `body` paragraphs 1 and 2 are owner-authored verbatim (2026-08-24)
- * and unchanged by #63: Nathan's own story, in his voice, which is why
- * they stay in the first person. Paragraphs 3 and 4 moved to "we" with
- * #63. The 2026-08-24 text replaced a DRAFT written from documented
- * positioning alone; it is real biography rather than restated brand
- * copy, which is the point: the section's job is authority.
+ * `body` is Part B's third and fourth paragraphs, in "we". Nathan's own
+ * story (the 2026-08-24 biography, Part B's first two paragraphs) left
+ * the section at the owner's direction on 2026-10-15, and with it the
+ * Rule 3.4 exemption decision-log #20 had granted that paragraph: the
+ * gate's `ALLOWED` list is empty now (scripts/check-banned-terms.mjs),
+ * so the retired physical-design terms fail here like anywhere else.
  *
- * Rule 3.4 exemption — decision-log #20 (2026-08-24). The first
- * paragraph names the retired physical-design discipline that the
- * retired-brand sweep bans by name (docs/05-business-rules.md §3.4,
- * enforced by scripts/check-banned-terms.mjs). That ban stops the
- * retired *service line* reappearing as a current offer; here the
- * phrase is biography — where Nathan trained, not what NextSketch
- * sells. §3.4 now records that distinction, and the gate carries one
- * exemption scoped to this file and asserted to appear exactly once:
- * the same clause in a service card still fails, and rewording this
- * paragraph fails too rather than leaving a bypass open. See the
- * ALLOWED list in scripts/check-banned-terms.mjs.
- *
- * The closing paragraph was removed at the owner's direction; where
- * its "we stay" promise lands is an open owner call (#20).
- *
- * (This comment deliberately does not spell the term out: the gate
- * scans this file, and a bare occurrence here would fail the build —
- * which is the exemption's narrowness demonstrating itself.)
+ * Whether the intro's "and after" settles the "we stay" promise the
+ * 2026-08-24 closing paragraph carried is an open owner call (#20).
  */
 export const ABOUT = {
   /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
@@ -379,17 +366,31 @@ export const ABOUT = {
   accentPhrase: "On purpose",
   intro:
     "NextSketch is a small, senior-led team based in Downers Grove, IL. You work with the same people from the first call to launch, and after.",
+  body: [
+    "When you work with NextSketch, you work with the people who learn your business, make the build decisions, and answer for the result. No account layer, no handoff between departments, nothing lost in translation.",
+    "NextSketch runs agent-native. The same agents and AI-accelerated workflow we build for clients run this business every day. We use what we sell.",
+  ],
   /**
-   * The team, in the order the row shows them. `alt` is each avatar's
-   * accessible name, owner copy like the rest; `name` and `title` show
-   * beneath the avatar once it turns (decision-log #63).
+   * The team, in the order the row shows them. `name` and `title` show
+   * beneath the avatar once it flips; `bio` is the back of the card, kept
+   * short enough to fit the smallest tile (148px at a 360px screen).
+   * `alt` is the avatar's accessible name.
+   *
+   * Titles are owner copy (Nate's set 2026-10-15, Julie's from Part B).
+   * **Both `bio` lines are builder DRAFTs awaiting owner review:** Nate's
+   * from his own 2026-08-24 biography (trained in physical product design,
+   * then digital, then agents), Julie's from her LinkedIn experience
+   * (digital product management, customer innovation, experience design;
+   * her employer is deliberately not named). Nate's `alt` writes his title
+   * with "and" so it reads aloud cleanly; also DRAFT.
    */
   team: [
     {
       id: "nate",
       name: "Nate",
-      title: "Founder",
-      alt: "Nate, Founder of NextSketch",
+      title: "Founder / Lead Architect",
+      alt: "Nate, Founder and Lead Architect of NextSketch",
+      bio: "Trained in physical product design. Now architects the agentic systems and products we build.",
       video: "/team/nate.mp4",
       poster: "/team/nate-poster.jpg",
     },
@@ -398,16 +399,11 @@ export const ABOUT = {
       name: "Julie",
       title: "Client Partner",
       alt: "Julie, Client Partner at NextSketch",
+      bio: "Comes from digital product management and experience design. Your partner from first call to launch.",
       video: "/team/julie.mp4",
       poster: "/team/julie-poster.jpg",
     },
   ] satisfies readonly TeamMember[],
-  body: [
-    "I'm Nathan. I started in industrial design, drawing and prototyping physical products that had to survive tooling, cost, and a real person's hands. That training stuck. It taught me to design inside constraints instead of pretending they aren't there, and that nothing counts until it ships and someone uses it.",
-    "Digital was the same job with faster feedback. Agents were the next step: systems that do the work, not just display it. Different material, same discipline.",
-    "When you work with NextSketch, you work with the people who learn your business, make the build decisions, and answer for the result. No account layer, no handoff between departments, nothing lost in translation.",
-    "NextSketch runs agent-native. The same agents and AI-accelerated workflow we build for clients run this business every day. We use what we sell.",
-  ],
 } as const;
 
 /**

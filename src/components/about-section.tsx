@@ -25,18 +25,17 @@ const ACCENT_PHRASE = ABOUT.accentPhrase;
  * row carries the section's single whisper parallax, as the portrait it
  * replaces did.
  *
+ * **One column, text first** (owner direction, 2026-10-15): the
+ * headline, the intro and the two body paragraphs, then the team row
+ * beneath them at every width. The text never introduces a person; who
+ * each one is lives on the back of their card.
+ *
  * **The team row maps `ABOUT.team`**, so a new person is a content edit
  * (a row there plus their two files under /public/team/), never a code
- * change. Each person is a `TeamAvatar`: an avatar that turns when
- * clicked and shows their name and title beneath it (#63, #64). Two to a
- * row at every width; a third person wraps to a second row.
- *
- * **Order follows the copy:** headline and intro, then the team, then
- * the story. Below `lg` that is the reading order, one column. From
- * `lg` the story stays under the intro in the left column and the team
- * takes the right one, spanning both rows and centred against them,
- * where the portrait sat. (The split moved from `md` to `lg`: at 768px
- * the right column is 256px, which leaves two avatars about 116px wide.)
+ * change. The cards sit side by side at every width, two to a row
+ * (capped at `max-w-xl`); a third person wraps to a second row. Each is
+ * a `TeamAvatar`, which flips when clicked to say who the person is, and
+ * shows their name and title beneath it (#63, #64).
  */
 export function AboutSection() {
   const headline = ABOUT.headline;
@@ -48,57 +47,41 @@ export function AboutSection() {
       aria-labelledby="about-headline"
       className="w-full px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
     >
-      <div className="grid gap-10 lg:grid-cols-[3fr_2fr] lg:gap-x-16 lg:gap-y-6">
-        <div>
-          <ScrollReveal>
-            <SectionHeading index="05" eyebrow={ABOUT.eyebrow}>
-              <span id="about-headline">
-                {phraseStart === -1 ? (
-                  headline
-                ) : (
-                  <>
-                    {headline.slice(0, phraseStart)}
-                    <span className="text-brand">{ACCENT_PHRASE}</span>
-                    {headline.slice(phraseStart + ACCENT_PHRASE.length)}
-                  </>
-                )}
-              </span>
-            </SectionHeading>
-          </ScrollReveal>
-          <ScrollReveal delay={120} className="mt-8">
+      <ScrollReveal>
+        <SectionHeading index="05" eyebrow={ABOUT.eyebrow}>
+          <span id="about-headline">
+            {phraseStart === -1 ? (
+              headline
+            ) : (
+              <>
+                {headline.slice(0, phraseStart)}
+                <span className="text-brand">{ACCENT_PHRASE}</span>
+                {headline.slice(phraseStart + ACCENT_PHRASE.length)}
+              </>
+            )}
+          </span>
+        </SectionHeading>
+      </ScrollReveal>
+      <div className="mt-8 space-y-6">
+        {[ABOUT.intro, ...ABOUT.body].map((paragraph, i) => (
+          <ScrollReveal key={paragraph} delay={120 + i * 80}>
             <p className="max-w-prose text-base leading-relaxed text-foreground md:text-lg">
-              {ABOUT.intro}
+              {paragraph}
             </p>
           </ScrollReveal>
-        </div>
-        {/*
-          Grid-item placement lives on the ScrollReveal because it is
-          the element the grid actually positions; the list fills it.
-        */}
-        <ScrollReveal
-          delay={200}
-          className="w-full max-w-lg self-center lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:justify-self-end"
-        >
-          <Parallax speed={0.06}>
-            <ul className="grid grid-cols-2 gap-4 sm:gap-6">
-              {ABOUT.team.map((member) => (
-                <li key={member.id}>
-                  <TeamAvatar member={member} />
-                </li>
-              ))}
-            </ul>
-          </Parallax>
-        </ScrollReveal>
-        <div className="space-y-6">
-          {ABOUT.body.map((paragraph, i) => (
-            <ScrollReveal key={paragraph} delay={200 + i * 80}>
-              <p className="max-w-prose text-base leading-relaxed text-foreground md:text-lg">
-                {paragraph}
-              </p>
-            </ScrollReveal>
-          ))}
-        </div>
+        ))}
       </div>
+      <ScrollReveal delay={200} className="mt-12 w-full max-w-xl md:mt-16">
+        <Parallax speed={0.06}>
+          <ul className="grid grid-cols-2 gap-4 sm:gap-6">
+            {ABOUT.team.map((member) => (
+              <li key={member.id}>
+                <TeamAvatar member={member} />
+              </li>
+            ))}
+          </ul>
+        </Parallax>
+      </ScrollReveal>
     </section>
   );
 }
