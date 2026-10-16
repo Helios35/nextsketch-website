@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.5 · **Date:** 2026-10-15 · **Status:** Active (2.5: the waitlist band's third payload kind, `waitlist`, decision-log #58, and the two offerings' tree, #53; 2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
+**Version:** 2.6 · **Date:** 2026-10-15 · **Status:** Active (2.6: the About team, decision-log #63 and #64: `team-avatar.tsx`, `use-loop-video.ts`, `public/team/`, the portrait placeholder deleted; 2.5: the waitlist band's third payload kind, `waitlist`, decision-log #58, and the two offerings' tree, #53; 2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -133,6 +133,7 @@ src/
                   api/qualify/route.ts (the only server surface)
   components/     hero.tsx + hero-loop.tsx, site-nav.tsx,
                   site-footer.tsx, the six section components,
+                  team-avatar.tsx (About's turning avatars, #63),
                   pricing-tiers.tsx (the /pricing grid, #25),
                   service-page.tsx + service-process.tsx (the two
                   service routes, one offering each since #53),
@@ -156,7 +157,9 @@ src/
                   offerings and `PRICES`, the one place a figure lives
   lib/            types.ts (SectionId, ROUTES, sectionHref,
                   PricingTier + PricingTierSlug, ServicePageSlug +
-                  ServiceBlockId + serviceRoute/serviceBlockHref, #30),
+                  ServiceBlockId + serviceRoute/serviceBlockHref, #30;
+                  TeamMember, #63), use-loop-video.ts (the looping-
+                  clip playback contract, hero and avatars, #64),
                   schema.ts
                   (Zod union), qualify.ts (submit seam),
                   lead-delivery.ts, lead-format.ts, lead-notify.ts
@@ -164,7 +167,10 @@ public/           hero-loop.mp4 + hero-loop-poster.jpg (the hero loop,
                   #46; since #50 the delivered hero-loop-sketch footage
                   and its first-frame poster, byte-identical, installed
                   at these paths), work/ (the #work screenshots),
-                  placeholders/ (the About portrait placeholder)
+                  team/ (the About avatars: {id}.mp4 as delivered +
+                  {id}-poster.jpg, #63), placeholders/ (empty since
+                  #63 retired the About portrait; the naming
+                  convention's home)
 scripts/          inbound-leads.gs (the Apps Script reference copy; build-note 14)
                   check-banned-terms.mjs (the Rule 3.2/3.4 gate)
 ```

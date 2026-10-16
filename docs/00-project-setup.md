@@ -1,6 +1,6 @@
 # Project Setup Reference — NextSketch Website Rebuild
 
-**Version:** 1.3 · **Date:** 2026-10-15 · **Status:** Active: conventions current; one-time setup reconciled (Sprint 03 doc audit); fin's motion rule and accessibility floor added to the conventions (decision-log #47); the diagrams' ambient motion joins the exemptions (#62)
+**Version:** 1.3 · **Date:** 2026-10-15 · **Status:** Active: conventions current; one-time setup reconciled (Sprint 03 doc audit); fin's motion rule and accessibility floor added to the conventions (decision-log #47); the diagrams' ambient motion joins the exemptions (#62); the About avatars' turn and loops join them (#64)
 **Purpose:** Hand-to-agent standards for standing up and working in the repo. Every brief inherits this document.
 **References:** `07-technical-spec.md` (stack decisions — binding)
 
@@ -30,7 +30,7 @@
 - **Copy is code:** all user-facing strings live in `src/content/*.ts`. No string literals for copy inside components. This is what makes the banned-terms gate and future copy edits tractable.
 - **Quality bar:** TypeScript strict mode stays on; zero `any`; zero ESLint suppressions without an inline reason comment; every interactive element keyboard-accessible at the time it's built, not retrofitted.
 - **Accessibility & motion:** every animation behind the shared reduced-motion utility — no raw `animate` calls in section components.
-- **Motion and contrast floor (decision-log #47, 2026-10-14):** fin's rules bind every unit. Everything animates in 200ms or less (ambient motion, the capability strip's marquee, the hero footage and the diagrams' ambient motion of decision-log #62, is exempt); reduced motion removes every transition (one base-layer block in `src/app/globals.css` enforces it site-wide); text holds 4.5:1 and marks 3:1 in every state, focus included, text over the hero video too. Measure contrast with a tool, not by eye.
+- **Motion and contrast floor (decision-log #47, 2026-10-14):** fin's rules bind every unit. Everything animates in 200ms or less (ambient motion, the capability strip's marquee, the hero footage, the diagrams' ambient motion of decision-log #62 and the About avatars' loops of #64, is exempt, and so is one interaction, the About avatar turn, #64); reduced motion removes every transition (one base-layer block in `src/app/globals.css` enforces it site-wide); text holds 4.5:1 and marks 3:1 in every state, focus included, text over the hero video too. Measure contrast with a tool, not by eye.
 
 ## Definition of done (every unit)
 
