@@ -32,6 +32,7 @@ The first cut put the team in the right-hand column from `lg`, kept Nathan's bio
 7. **Then: longer descriptions** "to fill the back of the card when flipped". Built as two lengths per person, because the phone card (148px) holds about 100 characters at a readable size: `bio` (about 250 characters) fills every card 276px or wider, and the original line stays as `bioShort` on phones. (Retired by 8.)
 8. **Then, before the push: stack on tablets and phones** ("the avatars just get small... that needs to be corrected"). Below 1024px the cards stack, one per row, up to 448px; from 1024px they sit side by side as before. With no card under 272px any more, the phone-only `bioShort` retired the same session, and the back's type now follows the card's own width (a container query) rather than the screen's.
 9. **Descriptions approved.** Nate approved both `bio` lines as drafted, before the push.
+10. **Julie's clip replaced** with her higher-resolution `Julie-team-preview_v2.mp4` (1440×1440, matching Nate's), installed byte-identical at the same path, her poster re-cut from its first frame.
 
 Consequences recorded as same-day amendments on #63 and #64 (the two-offerings unit's precedent for pre-merge follow-ups), plus a retirement note on #20:
 
@@ -94,11 +95,11 @@ Julie's employer and her venture are deliberately not named on the site: she wor
 | Path | Source | Bytes | Format | SHA-256 (first 12) |
 |---|---|---|---|---|
 | `public/team/nate.mp4` | `Nate-team-preview.mp4`, byte-identical | 8,603,504 | 1440×1440, 5.04s, H.264, video only, faststart, about 13.6 Mbps | `7e641cc45627` |
-| `public/team/julie.mp4` | `Julie-team-preview.mp4`, byte-identical | 311,834 | 720×720, 10s, H.264, video only, faststart, about 0.25 Mbps | `c236e71e648b` |
+| `public/team/julie.mp4` | `Julie-team-preview_v2.mp4`, byte-identical (replaced the first delivery, `Julie-team-preview.mp4`: 720×720, 10s, 311,834 bytes) | 6,840,792 | 1440×1440, 5.04s, H.264, video only, faststart, about 10.9 Mbps | `0e495f47a64d` |
 | `public/team/nate-poster.jpg` | frame 0 of the clip, builder-cut | 55,733 | 720×720 JPEG (mozjpeg q82) | |
-| `public/team/julie-poster.jpg` | frame 0 of the clip, builder-cut | 25,472 | 720×720 JPEG (mozjpeg q82) | |
+| `public/team/julie-poster.jpg` | frame 0 of the v2 clip, builder-cut | 27,368 | 720×720 JPEG (mozjpeg q82) | |
 
-Both clips are built to loop: the last frame differs from the first by a mean of 1.38 and 1.34 (of 255), the same as any two adjacent frames, so the native `loop` attribute is the whole mechanism (the #46 precedent). Frame 0 was drawn to a canvas in headless Chrome and resized with `sharp`, so each poster is exactly where its loop starts. Names follow Taxonomy §7 and §8 (`/public/team/{id}.*`, kebab-case); the delivered names are source names only.
+Both clips are built to loop: the last frame differs from the first by a mean of 1.38 (Nate) and 1.0 (Julie's v2) of 255, no more than any two adjacent frames, so the native `loop` attribute is the whole mechanism (the #46 precedent). Frame 0 was drawn to a canvas in headless Chrome and resized with `sharp`, so each poster is exactly where its loop starts. Names follow Taxonomy §7 and §8 (`/public/team/{id}.*`, kebab-case); the delivered names are source names only.
 
 ## How the flip works
 
@@ -119,7 +120,7 @@ Only the headline's payoff phrase "On purpose", as before. The cards, the captio
 
 1. **The avatars are video, which narrows #46's one-video rule** (recorded in #63): the hero loop stays the only video that plays from load and the only footage behind text; the avatars are the only other clips. The alternative, a still per person, would mean asking for stills.
 2. **The two posters are builder-cut** from frame 0 of each clip at 720×720. Keep them, or send stills to replace them under the same names.
-3. **Clip weight and size.** Julie's clip is 720px square, so on a 2x screen the 448px tablet card and the 436px desktop card show it slightly upscaled; a 1080px export would be sharp there. **Nate's clip weight:** At about 13.6 Mbps it is roughly 55 times Julie's bitrate for the same on-screen size. It ships as delivered, and downloads only once About is on screen (measured: at load only the two posters are fetched, 56 KB and 26 KB; once the row is on screen, 312 KB for Julie and 8.6 MB for Nate). **Recommendation:** a re-export at 720×720 near Julie's bitrate, dropped in at the same path. Nothing in code changes.
+3. **Clip weight.** Both clips are now 1440×1440: Nate's 8.6 MB (about 13.6 Mbps) and Julie's v2 6.8 MB (about 10.9 Mbps), about 15.4 MB together, for cards that render at most 448px wide (896 device pixels on a 2x screen). They ship as delivered and download only once About is on screen (measured on the first cut: at load only the two posters are fetched). **Recommendation, if page weight matters:** owner exports near 960×960 at a few Mbps, dropped in at the same paths; nothing in code changes.
 4. **Nate's `alt`** is a DRAFT (table above): "and" in place of the title's "/" so it reads aloud cleanly. The four descriptions were approved by Nate as drafted on 2026-10-15.
 5. **Toggle, not one-way.** A second press flips the card back, as the digital card flips back.
 6. **The flip hint is an icon only:** two chasing arcs in each face's corner, the card's "↻" without its "Tap" label, because the label would be copy no one has written. Measured on the front against the tile behind it: 4.49:1 and 5.43:1, above the 3:1 floor for marks.
