@@ -33,14 +33,15 @@ function TurnIcon({ className }: { className: string }) {
 
 /**
  * One person in About's team row (decision-log #63): a two-sided card
- * after the owner's digital card. The front is their avatar clip; a
- * click flips it to the back, which says who they are in a sentence
- * (`bio`), and shows their name and title beneath it (#64 records the
- * motion).
+ * after the owner's digital card, with the person's name and title
+ * always shown beneath it (owner, 2026-10-15). The front is their avatar
+ * clip; a click flips it to the back, which says who they are in a
+ * sentence (`bio`) (#64 records the motion).
  *
- * **The card is a disclosure button.** Click, Enter and Space are the
- * native button's, so all three flip it; a second press flips it back.
- * `aria-expanded` and `aria-controls` tie it to the caption beneath. Its
+ * **The card is a toggle button**, as the digital card's flip is. Click,
+ * Enter and Space are the native button's, so all three flip it; a
+ * second press flips it back; `aria-pressed` carries which way it faces
+ * (only after hydration, since a no-JS button cannot flip). Its
  * accessible name is the person's `alt` line ("Julie, Client Partner at
  * NextSketch") and its description is the `bio` on the back
  * (`aria-describedby`), so a screen reader hears who each person is
@@ -53,20 +54,17 @@ function TurnIcon({ className }: { className: string }) {
  * the back is pre-turned 180°, so it reads the right way round when the
  * card has flipped. **Reduced motion** sees no flip: the base-layer
  * block in globals.css sets every transition to 0s (and the transition
- * is `motion-safe` besides), so the same press shows the back and the
- * caption at once. The 700ms runs past the 200ms ceiling and the flip is
+ * is `motion-safe` besides), so the same press shows the back at once. The 700ms runs past the 200ms ceiling and the flip is
  * a transform on a control; #64 records both exemptions.
  *
- * **The back** is a `card` face: the `bio` in Inter, sized for the tile
- * (`text-xs` on the 148px phone tile, `text-sm` from `sm:`, `text-lg`
- * from `md:`), clear of the flip mark in the corner.
+ * **The back** is a `card` face: the `bio` in Inter, sized for the card
+ * (`text-xs` on the 148px phone card, `text-sm` from `sm:`, `text-lg`
+ * from `md:`, `text-xl` from `lg:` where the card is 436px), clear of
+ * the flip mark in the corner.
  *
- * **The caption keeps its space while hidden** (`invisible`, not
- * removed), so opening it moves nothing on the page. It is hidden only
- * after hydration: the server HTML, and so a no-JS visitor, shows every
- * name and title, with an inert button (the `ScrollReveal` contract).
- * On open it rises in with the shared 200ms `rise-in`, held 250ms so it
- * lands as the card settles.
+ * **The caption** (name, then title) is plain text under the card,
+ * always visible, server-rendered, and outside the button, so it is
+ * read in place as well as through the button's name.
  *
  * **The clip** loops natively and plays only while on screen, through
  * the shared `useLoopVideo` contract (the hero's, extracted by #64):
@@ -81,11 +79,9 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [open, setOpen] = useState(false);
   const mounted = useMounted();
-  const captionId = useId();
   const bioId = useId();
   useLoopVideo(videoRef, { whileVisible: true });
 
-  const hidden = mounted && !open;
   const face =
     "absolute inset-0 overflow-hidden rounded-xl border border-border backface-hidden transition-colors duration-150 group-hover:border-muted-foreground/50";
   const mark =
@@ -97,8 +93,7 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
         type="button"
         aria-label={member.alt}
         aria-describedby={bioId}
-        aria-expanded={mounted ? open : undefined}
-        aria-controls={captionId}
+        aria-pressed={mounted ? open : undefined}
         onClick={() => setOpen((value) => !value)}
         className="group block w-full cursor-pointer rounded-xl perspective-distant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
       >
@@ -126,11 +121,11 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
             <TurnIcon className={mark} />
           </span>
           <span
-            className={`${face} flex rotate-y-180 items-center bg-card px-3 pt-3 pb-8 text-left sm:px-5 sm:pt-5 sm:pb-10`}
+            className={`${face} flex rotate-y-180 items-center bg-card px-3 pt-3 pb-8 text-left sm:px-5 sm:pt-5 sm:pb-10 lg:px-8 lg:pt-8 lg:pb-12`}
           >
             <span
               id={bioId}
-              className="text-xs leading-snug text-foreground sm:text-sm sm:leading-relaxed md:text-lg"
+              className="text-xs leading-snug text-foreground sm:text-sm sm:leading-relaxed md:text-lg lg:text-xl"
             >
               {member.bio}
             </span>
@@ -138,13 +133,7 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
           </span>
         </span>
       </button>
-      <div
-        id={captionId}
-        className={`mt-4 ${
-          hidden ? "invisible" : open ? "motion-safe:animate-rise-in" : ""
-        }`}
-        style={open ? { animationDelay: "250ms" } : undefined}
-      >
+      <div className="mt-4">
         <p className="text-lg font-semibold tracking-tight text-foreground md:text-xl">
           {member.name}
         </p>

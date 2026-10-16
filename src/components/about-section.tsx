@@ -32,10 +32,12 @@ const ACCENT_PHRASE = ABOUT.accentPhrase;
  *
  * **The team row maps `ABOUT.team`**, so a new person is a content edit
  * (a row there plus their two files under /public/team/), never a code
- * change. The cards sit side by side at every width, two to a row
- * (capped at `max-w-xl`); a third person wraps to a second row. Each is
- * a `TeamAvatar`, which flips when clicked to say who the person is, and
- * shows their name and title beneath it (#63, #64).
+ * change. The cards sit side by side at every width, two to a row, and
+ * the row is centred in the section and capped at `max-w-4xl`, so each
+ * card is as large as 436px (owner, 2026-10-15: larger, centred); a
+ * third person wraps to a second row. Each is a `TeamAvatar`: its name
+ * and title always beneath it, and a flip on click to say who the person
+ * is (#63, #64).
  */
 export function AboutSection() {
   const headline = ABOUT.headline;
@@ -71,7 +73,7 @@ export function AboutSection() {
           </ScrollReveal>
         ))}
       </div>
-      <ScrollReveal delay={200} className="mt-12 w-full max-w-xl md:mt-16">
+      <ScrollReveal delay={200} className="mx-auto mt-12 w-full max-w-4xl md:mt-16">
         <Parallax speed={0.06}>
           <ul className="grid grid-cols-2 gap-4 sm:gap-6">
             {ABOUT.team.map((member) => (

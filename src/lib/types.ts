@@ -160,7 +160,7 @@ export type WorkItem = {
 export type TeamMember = {
   /** Stable key; also the base of the person's file names under /public/team/. */
   readonly id: string;
-  /** Shown beneath the avatar once it has flipped. */
+  /** Always shown beneath the card, with the title. */
   readonly name: string;
   readonly title: string;
   /** The avatar's accessible name: who the person is, said in one line. */

@@ -371,9 +371,9 @@ export const ABOUT = {
     "NextSketch runs agent-native. The same agents and AI-accelerated workflow we build for clients run this business every day. We use what we sell.",
   ],
   /**
-   * The team, in the order the row shows them. `name` and `title` show
-   * beneath the avatar once it flips; `bio` is the back of the card, kept
-   * short enough to fit the smallest tile (148px at a 360px screen).
+   * The team, in the order the row shows them. `name` and `title` are
+   * always shown beneath the card; `bio` is the back of the card, kept
+   * short enough to fit the smallest card (148px at a 360px screen).
    * `alt` is the avatar's accessible name.
    *
    * Titles are owner copy (Nate's set 2026-10-15, Julie's from Part B).
