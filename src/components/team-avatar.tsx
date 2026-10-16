@@ -36,7 +36,7 @@ function TurnIcon({ className }: { className: string }) {
  * after the owner's digital card, with the person's name and title
  * always shown beneath it (owner, 2026-10-15). The front is their avatar
  * clip; a click flips it to the back, which says who they are in a
- * sentence (`bio`) (#64 records the motion).
+ * few sentences (`bio`) (#64 records the motion).
  *
  * **The card is a toggle button**, as the digital card's flip is. Click,
  * Enter and Space are the native button's, so all three flip it; a
@@ -57,10 +57,15 @@ function TurnIcon({ className }: { className: string }) {
  * is `motion-safe` besides), so the same press shows the back at once. The 700ms runs past the 200ms ceiling and the flip is
  * a transform on a control; #64 records both exemptions.
  *
- * **The back** is a `card` face: the `bio` in Inter, sized for the card
- * (`text-xs` on the 148px phone card, `text-sm` from `sm:`, `text-lg`
- * from `md:`, `text-xl` from `lg:` where the card is 436px), clear of
- * the flip mark in the corner.
+ * **The back** is a `card` face, filled with the `bio` in Inter, sized
+ * for the card: `text-sm` from `sm:` (276px at 640), `text-lg` from
+ * `md:` (340px at 768), `text-2xl` at 1.5 leading from `lg:` (436px),
+ * clear of the flip mark in the corner. A phone's card (148px at 360)
+ * cannot hold it, so
+ * below `sm:` the back shows `bioShort` at `text-xs` instead, and that
+ * copy is `aria-hidden`: the accessible description is always `bio`
+ * (`aria-describedby` reads a referenced element even while it is
+ * `display: none`).
  *
  * **The caption** (name, then title) is plain text under the card,
  * always visible, server-rendered, and outside the button, so it is
@@ -125,9 +130,15 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
           >
             <span
               id={bioId}
-              className="text-xs leading-snug text-foreground sm:text-sm sm:leading-relaxed md:text-lg lg:text-xl"
+              className="hidden text-sm leading-relaxed text-foreground sm:block md:text-lg lg:text-2xl lg:leading-normal"
             >
               {member.bio}
+            </span>
+            <span
+              aria-hidden="true"
+              className="text-xs leading-snug text-foreground sm:hidden"
+            >
+              {member.bioShort}
             </span>
             <TurnIcon className={mark} />
           </span>
