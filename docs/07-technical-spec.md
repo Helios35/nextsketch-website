@@ -133,7 +133,7 @@ src/
                   api/qualify/route.ts (the only server surface)
   components/     hero.tsx + hero-loop.tsx, site-nav.tsx,
                   site-footer.tsx, the six section components,
-                  team-avatar.tsx (About's turning avatars, #63),
+                  team-avatar.tsx (About's flip cards, #63),
                   pricing-tiers.tsx (the /pricing grid, #25),
                   service-page.tsx + service-process.tsx (the two
                   service routes, one offering each since #53),
