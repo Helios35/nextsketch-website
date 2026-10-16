@@ -1,6 +1,11 @@
 import { SERVICES } from "@/content/services";
 import { ROUTES, sectionHref } from "@/lib/types";
-import type { AccentName, ProcessPhase, ProcessPhaseSlug } from "@/lib/types";
+import type {
+  AccentName,
+  ProcessPhase,
+  ProcessPhaseSlug,
+  TeamMember,
+} from "@/lib/types";
 
 /**
  * Canonical site copy — Messaging Kit §05 (Rule 4.1: edits are owner
@@ -325,56 +330,87 @@ export const PROOF = [
  */
 
 /**
- * About (#about) copy — the solo "about me" (architecture row 7:
- * "New copy, voice per Brand Philosophy §8"). Not in Messaging Kit §05.
+ * About (#about) copy: the team you work with (decision-log #63, owner
+ * copy 2026-10-15, the about-team brief's Part B, amended by the owner
+ * the same day before merge). Not in Messaging Kit §05. It was the solo
+ * "about me" until #63: NextSketch is a small team now, so no line here
+ * says or implies one person, and **the section does not introduce or
+ * speak about any one person** (owner, 2026-10-15). Who each person is
+ * lives on the back of their card (`bio`), not in the section's text.
  *
- * `body` is owner-authored verbatim (2026-08-24), replacing the DRAFT
- * that had been written from documented positioning alone. It is now
- * real biography rather than restated brand copy, which is the point:
- * the section's job is authority, and the earlier text could only
- * assert the same claims the rest of the page already made.
+ * `team` is the list the section maps (Nate and Julie for now). Adding
+ * a person is a row here plus their clip and poster under
+ * `/public/team/` (`TeamMember`, src/lib/types.ts); the component does
+ * not change. `video` and `poster` are asset paths (config, not copy),
+ * kept beside the person they show, as `LANDING.backgroundVideo` is.
  *
- * Rule 3.4 exemption — decision-log #20 (2026-08-24). The first
- * paragraph names the retired physical-design discipline that the
- * retired-brand sweep bans by name (docs/05-business-rules.md §3.4,
- * enforced by scripts/check-banned-terms.mjs). That ban stops the
- * retired *service line* reappearing as a current offer; here the
- * phrase is biography — where Nathan trained, not what NextSketch
- * sells. §3.4 now records that distinction, and the gate carries one
- * exemption scoped to this file and asserted to appear exactly once:
- * the same clause in a service card still fails, and rewording this
- * paragraph fails too rather than leaving a bypass open. See the
- * ALLOWED list in scripts/check-banned-terms.mjs.
+ * `body` is Part B's third and fourth paragraphs, in "we". Nathan's own
+ * story (the 2026-08-24 biography, Part B's first two paragraphs) left
+ * the section at the owner's direction on 2026-10-15, and with it the
+ * Rule 3.4 exemption decision-log #20 had granted that paragraph: the
+ * gate's `ALLOWED` list is empty now (scripts/check-banned-terms.mjs),
+ * so the retired physical-design terms fail here like anywhere else.
  *
- * The closing paragraph was removed at the owner's direction; where
- * its "we stay" promise lands is an open owner call (#20).
- *
- * (This comment deliberately does not spell the term out: the gate
- * scans this file, and a bare occurrence here would fail the build —
- * which is the exemption's narrowness demonstrating itself.)
+ * Whether the intro's "and after" settles the "we stay" promise the
+ * 2026-08-24 closing paragraph carried is an open owner call (#20).
  */
 export const ABOUT = {
   /** Section eyebrow — DRAFT pending owner approval (Redesign Unit 02). */
   eyebrow: "Who you work with",
-  /**
-   * Accessible description of the owner-supplied portrait
-   * (public/placeholders/placeholder-about-01.jpg, delivered
-   * 2026-07-06). DRAFT pending owner approval.
-   */
-  portraitAlt: "Nathan, the person behind NextSketch",
-  headline: "NextSketch is one person. On purpose.",
+  headline: "A small, senior-led team. On purpose.",
   /**
    * The headline's coral payoff phrase, matched against `headline`
    * verbatim and without the trailing period, so the full stop stays
    * linen. Moved here from about-section.tsx (build-note 34).
    */
   accentPhrase: "On purpose",
+  intro:
+    "NextSketch is a small, senior-led team based in Downers Grove, IL. You work with the same people from the first call to launch, and after.",
   body: [
-    "I'm Nathan. I started in industrial design, drawing and prototyping physical products that had to survive tooling, cost, and a real person's hands. That training stuck. It taught me to design inside constraints instead of pretending they aren't there, and that nothing counts until it ships and someone uses it.",
-    "Digital was the same job with faster feedback. Agents were the next step: systems that do the work, not just display it. Different material, same discipline.",
-    "When you work with NextSketch, you work with me. The person who learns your business, makes the build decisions, and answers for the result. No account layer, no handoff between departments, nothing lost in translation.",
-    "NextSketch runs agent-native. The same embedded agents and AI-accelerated workflow I build for clients run this business every day. It's how one person ships what used to take a team. I eat my own cooking.",
+    "When you work with NextSketch, you work with the people who learn your business, make the build decisions, and answer for the result. No account layer, no handoff between departments, nothing lost in translation.",
+    "NextSketch runs agent-native. The same agents and AI-accelerated workflow we build for clients run this business every day. We use what we sell.",
   ],
+  /**
+   * The team, in the order the row shows them. `name` and `title` are
+   * always shown beneath the card. The back of the card carries `bio`,
+   * written to fill it (owner, 2026-10-15: "descriptions can be longer
+   * now to fill the back of the card"), and its accessible description.
+   * Keep it near 250 characters: the cards stack below `lg:`, so the
+   * smallest is 272px (a 320px phone), and that holds it. `alt` is the
+   * avatar's accessible name.
+   *
+   * Titles are owner copy (Nate's set 2026-10-15, Julie's from Part B).
+   * **Both `bio` lines are owner-approved copy** (builder-written,
+   * approved as drafted by Nate on 2026-10-15): Nate's from his own
+   * 2026-08-24 biography (trained in
+   * physical product design, where work had to survive tooling, cost and
+   * a real person's hands; then digital, then agents; nothing counts until
+   * it ships and someone uses it), Julie's from her LinkedIn experience
+   * (digital product management, customer innovation and experience
+   * design, product roadmapping, a co-founder of her own venture; her
+   * employer and venture are deliberately not named). Nate's `alt` writes
+   * his title with "and" so it reads aloud cleanly; also DRAFT.
+   */
+  team: [
+    {
+      id: "nate",
+      name: "Nate",
+      title: "Founder / Lead Architect",
+      alt: "Nate, Founder and Lead Architect of NextSketch",
+      bio: "Trained in physical product design, where everything had to survive tooling, cost and a real person's hands. Then digital, then agents. Now architects the agentic systems and products we build, held to the same bar: it ships and someone uses it.",
+      video: "/team/nate.mp4",
+      poster: "/team/nate-poster.jpg",
+    },
+    {
+      id: "julie",
+      name: "Julie",
+      title: "Client Partner",
+      alt: "Julie, Client Partner at NextSketch",
+      bio: "Comes from digital product management, customer innovation and experience design, shaping roadmaps and the experiences people actually use. A co-founder herself, she is your partner from the first call to launch, keeping the work clear and moving.",
+      video: "/team/julie.mp4",
+      poster: "/team/julie-poster.jpg",
+    },
+  ] satisfies readonly TeamMember[],
 } as const;
 
 /**

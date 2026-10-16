@@ -1,6 +1,6 @@
 # Site Architecture — NextSketch Website Rebuild
 
-**Version:** 2.7 · **Date:** 2026-10-15 · **Status:** Active: every diagram drawn in one language, a diagram on each service block and under the Why section's body (decision-log **#60** to **#62**); two offerings, one per service route (decision-log **#53**), the Why section and the process rewritten (**#55**), and three bands added to the home page (**#58**); the site is **four routes**: the home page, `/pricing`, and **two service routes** under `/services/` (decision-log #22–#26, **#30**); every route, the 404 included, renders on fin's dark `background` (**#47**)
+**Version:** 2.8 · **Date:** 2026-10-15 · **Status:** Active: About is the team, a small, senior-led team shown as cards that flip to say who each person is (decision-log **#63**, **#64**); every diagram drawn in one language, a diagram on each service block and under the Why section's body (decision-log **#60** to **#62**); two offerings, one per service route (decision-log **#53**), the Why section and the process rewritten (**#55**), and three bands added to the home page (**#58**); the site is **four routes**: the home page, `/pricing`, and **two service routes** under `/services/` (decision-log #22–#26, **#30**); every route, the 404 included, renders on fin's dark `background` (**#47**)
 **Answers:** How is it structured?
 **References:** `02-prd.md` (what) · `04-ux-spec.md` (how each section looks) · `05-business-rules.md` (modal logic)
 
@@ -57,7 +57,7 @@ Old Webflow routes (`/projects`, `/about-us`, `/contact-us`, `/projects/*`) get 
 | Why (`#why`, the Manifesto component) — **CHANGED (#55, #60)** | Process mapping: what sets NextSketch apart; **a process map under the body** shows it (a request moving through six steps, the ones done by hand marked as where an agent goes; `ProcessMapDiagram`, #60) | "Most firms drop agents in and hope. We map first." (`MANIFESTO`, owner copy 2026-10-15; no longer Messaging Kit §05). The diagram's own labels: `src/content/diagrams.ts` (#61) |
 | Services — **CHANGED (#53, #58)** | Name the two offerings (Taxonomy §1): name, subtitle, line, price and, on the agentic card, the four example jobs; then the **waitlist band** (an email for the installable product, #58) | `src/content/services.ts`, owner copy 2026-10-15 (no longer Messaging Kit §05) |
 | Process — **CHANGED (#55)** | Show the workflow + differentiator (Taxonomy §2) | "Map. Build. Validate. Optimize." four-phase, the "most firms skip" aside on Map |
-| About | The person behind it (solo) | New copy, Brand Philosophy §8 |
+| About | The team you work with: a small, senior-led team (Nate and Julie for now). The text comes first and introduces no one; each person is a card that flips on click to a line on who they are, with their name and title beneath (**#63**; the person behind it, solo, until then) | Owner copy (#63); Nathan's biography left the section on 2026-10-15 (#63, amended), and the #20 exemption with it |
 | Final CTA | Convert → modal | "Ready to build?…" |
 
 **The service routes — CHANGED, live (decision-log #30, 2026-08-28; one offering per route since #53).** Two pages, both rendered by the same `<ServicePage>` component:

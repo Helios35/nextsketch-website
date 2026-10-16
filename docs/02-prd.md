@@ -1,6 +1,6 @@
 # PRD — NextSketch Website Rebuild
 
-**Version:** 2.3 · **Date:** 2026-10-15 · **Status:** Active: aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the look reconciled to the fin Zen Linen dark rebrand (decision-log #47 to #50); the offer set is the two offerings of #53 (F6 and the user stories)
+**Version:** 2.4 · **Date:** 2026-10-15 · **Status:** Active: F7 is the team section (decision-log #63); aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the look reconciled to the fin Zen Linen dark rebrand (decision-log #47 to #50); the offer set is the two offerings of #53 (F6 and the user stories)
 **Answers:** What are we building?
 **References:** `01-vision.md` (why) · `03-site-architecture.md` (structure) · `04-ux-spec.md` (look/behavior) · `05-business-rules.md` (logic) · `06-taxonomy.md` (naming) · `07-technical-spec.md` (how) · `08-runbook.md` (ops)
 
@@ -52,7 +52,7 @@ See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-piv
 | F4 | Process section (four canonical phases — Taxonomy §2). Design decided at its section unit against `04-ux-spec.md`; the old expandable-rows/circled-numbers spec is **RETIRED**. | **PLANNED** (#13) |
 | F5 | Selected-work grid (4 placeholder tiles). Not in the #13 set; returning it requires a new decision. | **RETIRED** |
 | F6 | Services section: **the two offerings** (Taxonomy §1, decision-log #53), each card naming the offering, what it does and its price, with the waitlist band under them (#58). One accent only (#14, coral since #47); the old four-accent cards are **RETIRED**. | **CURRENT** (live since Redesign Unit 02; two offerings since #53) |
-| F7 | About section ("about me", solo). | **PLANNED** (#13) |
+| F7 | About section: the team (Nate and Julie for now), cards that flip to a line on who each person is, name and title beneath; "about me", solo, until #63. | **CURRENT** (#63) |
 | F8 | Testimonials (2–3 placeholder quote blocks). Not in the #13 set. | **RETIRED** |
 | F9 | FAQ accordion (six Q&As verbatim). Not in the #13 set; the Q&A copy stays canonical in the Messaging Kit if it returns. | **RETIRED** |
 | F10 | Animation: live hero capability marquee + rise-in (`motion-safe`), **CURRENT**. New-section entrances draw on the shipped motion vocabulary under the binding contract (`04-ux-spec.md` §Motion), which since #47 is fin's motion rule: everything animates in 200ms or less (the marquee and the hero footage are ambient and exempt), and reduced motion removes every transition. Handwritten sketch accents are **RETIRED**. The scroll-driven background video is **RETIRED** (#46): the home hero plays one muted, autoplaying loop instead (poster only under reduced motion), since #50 the fin-palette sketch footage, faded out on every edge with no hard stop. | **CHANGED** |

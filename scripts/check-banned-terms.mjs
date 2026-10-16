@@ -43,9 +43,17 @@ const TERMS = [
  * a banned term in a use the rule was not written against.
  *
  * Rule 3.4's retired-brand sweep exists to stop the retired *service
- * lines* reappearing as current offers. The About section's biography
- * (owner-authored 2026-08-24) says where Nathan trained, not what
- * NextSketch sells, so the term is doing the opposite job there.
+ * lines* reappearing as current offers. The one entry this list has
+ * carried was the About section's biography (owner-authored
+ * 2026-08-24), which said where Nathan trained, not what NextSketch
+ * sells, so the term was doing the opposite job there.
+ *
+ * **The list is empty since 2026-10-15** (decision-log #63, amended by
+ * the owner before merge): that biography left the site, so its entry
+ * would have failed the ratification pass below as stale, which is the
+ * mechanism working as designed. With no entry, every banned term fails
+ * everywhere, About included. The mechanism stays for the next phrase
+ * the owner ratifies.
  *
  * An entry is `{ phrase, source, count }` and is enforced two ways.
  *
@@ -69,16 +77,13 @@ const TERMS = [
  * service line Rule 3.4 exists to stop. Keep entries long, specific,
  * and scoped.
  *
- * The carve-out is recorded as decision-log #20 and in the §3.4
- * amendment of docs/05-business-rules.md.
+ * The carve-out was recorded as decision-log #20 and in the §3.4
+ * amendment of docs/05-business-rules.md; both now record its retirement.
+ *
+ * Shape, for the next entry:
+ *   { phrase: "<the ratified clause>", source: join("src", "content", "<file>.ts"), count: 1 }
  */
-const ALLOWED = [
-  {
-    phrase: "I started in industrial design",
-    source: join("src", "content", "copy.ts"),
-    count: 1,
-  },
-];
+const ALLOWED = [];
 
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 

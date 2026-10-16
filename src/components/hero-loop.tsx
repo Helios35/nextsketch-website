@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
+import { useRef } from "react";
+import { useLoopVideo } from "@/lib/use-loop-video";
 
 interface HeroLoopProps {
   /** Self-hosted asset under /public (never a remote URL). */
@@ -16,28 +16,21 @@ interface HeroLoopProps {
  * motion-graphics shots in the fin dark palette: a process map draws
  * itself and becomes a finished map, an app screen draws itself and
  * becomes the finished app, and the camera pulls back to a small team
- * using it. Nothing on the site is scroll-linked to video, and this is
- * the only video the site mounts.
+ * using it. Nothing on the site is scroll-linked to video. It was the
+ * only video the site mounted until the About avatars joined it
+ * (decision-log #64); it is still the only one that plays from load.
  *
  * **The seam is in the file, not here.** The clip is built so its last
  * frame flows into its first, so the native `loop` attribute is the
  * whole mechanism: no fade, no crossfade, no restart handling in code.
  * The asset ships exactly as delivered (no re-encode, trim or resize).
  *
- * **Playback starts from the effect, not the `autoPlay` attribute**, so
- * the motion gate holds before anything moves: server HTML is the
- * poster, reduced-motion visitors never call `play()`, and no-JS
- * visitors keep the poster — the same static fallback the scrubbed
- * orbit gave both. `muted` is what lets a browser start it without a
- * gesture (and `playsInline` keeps iOS from going full-screen). A
- * refused `play()` — iOS Low Power Mode, a data saver — rejects its
- * promise; it is caught deliberately, so the poster simply stays and
- * the console stays clean. A mid-session reduced-motion flip pauses and
- * calls `load()`, which re-arms the poster rather than freezing on
- * whatever frame was showing; that also aborts a pending `play()`,
- * whose rejection the same catch absorbs. If the browser pauses the
- * loop while the page is hidden, it restarts when the page is visible
- * again (see the effect).
+ * **Playback is the shared contract in `useLoopVideo`** (moved there
+ * unchanged by #64, so the About avatars reuse it rather than fork it):
+ * `play()` from an effect, never the `autoPlay` attribute, so the
+ * server HTML is the poster, reduced-motion and no-JS visitors keep the
+ * poster, a refused `play()` keeps it quietly, and a loop the browser
+ * paused while the page was hidden restarts when it is visible again.
  *
  * Loading: `preload="metadata"` + poster in the server HTML, so the
  * still paints with the page and reduced-motion visitors fetch only
@@ -61,44 +54,7 @@ interface HeroLoopProps {
  */
 export function HeroLoop({ src, poster }: HeroLoopProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const reduceMotion = usePrefersReducedMotion();
-
-  useEffect(() => {
-    const video = videoRef.current;
-    // The hook returns its server snapshot (false) on the hydration
-    // pass and corrects a render later, so on its own it let a
-    // reduced-motion visitor's first pass call play() before the
-    // cleanup cancelled it (measured: play, then pause + load 7ms
-    // later). Reading the query here too means play() is never called
-    // for them at all.
-    const reduced =
-      reduceMotion ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (video === null || reduced) return;
-    const start = () => {
-      video.play().catch(() => {
-        // Autoplay refused or aborted: the poster stays. Not an error.
-      });
-    };
-    // Browsers pause video-only playback while the page is hidden (this
-    // clip has no audio track). Chrome resumes it when the tab returns;
-    // the Claude desktop preview pane was measured not to, leaving the
-    // hero frozen mid-clip, and nothing obliges every engine to. So the
-    // loop restarts itself whenever the page is visible again, including
-    // a back/forward-cache restore. play() on a playing video is a no-op.
-    const resume = () => {
-      if (document.visibilityState === "visible" && video.paused) start();
-    };
-    start();
-    document.addEventListener("visibilitychange", resume);
-    window.addEventListener("pageshow", resume);
-    return () => {
-      document.removeEventListener("visibilitychange", resume);
-      window.removeEventListener("pageshow", resume);
-      video.pause();
-      video.load();
-    };
-  }, [reduceMotion]);
+  useLoopVideo(videoRef);
 
   return (
     <div aria-hidden="true" className="hero-fade absolute inset-0">
