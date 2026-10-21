@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.7 · **Date:** 2026-10-21 · **Status:** Active (2.7: the email-first modal, decision-log #65: the `quick` and `followup` kinds, the lead ID, the Sheet update and the follow-up alert; 2.6: the About team, decision-log #63 and #64: `team-avatar.tsx`, `use-loop-video.ts`, `public/team/`, the portrait placeholder deleted; 2.5: the waitlist band's third payload kind, `waitlist`, decision-log #58, and the two offerings' tree, #53; 2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
+**Version:** 2.7 · **Date:** 2026-10-21 · **Status:** Active (2.7: the email-first modal, decision-log #65 as amended the same day: the `quick` and `followup` kinds, step 1's two names, the lead ID, the Sheet update and the follow-up alert; 2.6: the About team, decision-log #63 and #64: `team-avatar.tsx`, `use-loop-video.ts`, `public/team/`, the portrait placeholder deleted; 2.5: the waitlist band's third payload kind, `waitlist`, decision-log #58, and the two offerings' tree, #53; 2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -40,24 +40,25 @@ LeadPayload = QuickLeadPayload | FollowupPayload | WaitlistPayload   // discrimi
 QuickLeadPayload {                           FollowupPayload {            // #65; every answer optional,
   kind: "quick"                                kind: "followup"           // at least one present
   source: "quick_door"                         lead_id: uuid (step 1's)
-  email: valid email                           email: valid email (step 1's; must match the row)
-  project_types: (canonical types)[] ≥ 1       project_types: (canonical types)[] ≥ 1 (step 1's)
-  _hp?:  "" (honeypot — Rule 2.8)              project_type?: new_product|rescue|agentic|partnership|exploring
-  _t:    number ≥ 3000 (Rule 2.8)              readiness?:    now|soon|exploring
-}                                              authority?:    full|shared|none
-                                               validation?:   validated|willing|build_first
-WaitlistPayload {                              name?: string (1..100)
-  kind: "waitlist"                             company?: string (1..100)
-  email: valid email                           details?: string (1..1000)
-  _hp?: ""; _t: number ≥ 3000   // #58         _hp?: ""; _t: number ≥ 3000
-}                                            }
+  first_name: string (1..50)                   first_name, last_name: (step 1's, for the alert)
+  last_name:  string (1..50)                   email: valid email (step 1's; must match the row)
+  email: valid email                           project_types: (canonical types)[] ≥ 1 (step 1's)
+  project_types: (canonical types)[] ≥ 1       project_type?: new_product|rescue|agentic|partnership|exploring
+  _hp?:  "" (honeypot — Rule 2.8)              readiness?:    now|soon|exploring
+  _t:    number ≥ 3000 (Rule 2.8)              authority?:    full|shared|none
+}                                              validation?:   validated|willing|build_first
+                                               company?: string (1..100)
+WaitlistPayload {                              details?: string (1..1000)
+  kind: "waitlist"; email: valid email         _hp?: ""; _t: number ≥ 3000
+  _hp?: ""; _t: number ≥ 3000   // #58       }
+}
 ```
 
 **Sheet record (the durable row).** `toSheetRecord` (`src/lib/lead-format.ts`) flattens a step 1 lead or a waitlist entry into the **same 12 columns, in this order** — so the Apps Script column mapping never branches (`scripts/inbound-leads.gs`; build-note 14):
 
 `timestamp · lead_type · signal · name · email · company · project_type · readiness · authority · validation · details · lead_id`
 
-Stored values are the **display labels** the visitor saw (resolved from the canonical `MODAL_QUESTIONS` map, `06-taxonomy.md` §3 — never re-typed). Step 1 leaves `name`, `company` and the qualifier columns empty, writes its offerings as a `"; "`-joined list into `project_type`, and writes the server's `lead_id`. A waitlist entry fills `email`, `lead_type: waitlist` and `signal: [Waitlist]` and leaves every other column empty (#58). `lead_type` ∈ `quick`/`partial`/`qualified`/`flagged`/`exploring`/`waitlist`; `signal` is the Rule 2.5 label.
+Stored values are the **display labels** the visitor saw (resolved from the canonical `MODAL_QUESTIONS` map, `06-taxonomy.md` §3 — never re-typed). Step 1 writes its two names joined into `name` ("Jane Doe"; the Sheet keeps one Name column), leaves `company` and the qualifier columns empty, writes its offerings as a `"; "`-joined list into `project_type`, and writes the server's `lead_id`. A waitlist entry fills `email`, `lead_type: waitlist` and `signal: [Waitlist]` and leaves every other column empty (#58). `lead_type` ∈ `quick`/`partial`/`qualified`/`flagged`/`exploring`/`waitlist`; `signal` is the Rule 2.5 label.
 
 **Sheet update (step 2, #65).** `toSheetUpdate` sends `{ action: "update", lead_id, email, fields }`: `fields` holds only what step 2 collected (labels again; a Q1 answer goes after the step 1 offerings in `project_type`) plus the recomputed `lead_type` and `signal`. The script finds the row whose **Lead ID** and **Email** both match, writes each field into its column, never touches `timestamp`, `email` or `lead_id`, and answers `{ ok: true, updated: true }`. No row is added. The **Lead ID** column is found by its header and, on a Sheet made before #65, added after the last used column on the first append, so no existing row or column moves.
 
@@ -80,9 +81,9 @@ Stored values are the **display labels** the visitor saw (resolved from the cano
 ## Notification — **CHANGED** (`src/lib/lead-notify.ts`)
 
 `notifyLead(payload, leadId)` fires **two emails via Resend** on step 1, concurrently and best-effort (`Promise.allSettled`), only after a durable capture. A waitlist entry gets the alert only, under its `[Waitlist]` subject, with no auto-reply (#58):
-- **Auto-reply to the lead** — instant acknowledgment honoring the success-screen promise. Reply-to is `hello@nextsketch.com`. One variant since #65 (`LEAD_AUTOREPLY_QUICK`), greeting "Hi there," since step 1 asks no name; the qualifier and exploring variants retired, since the auto-reply goes out before any answer exists.
-- **Alert to Nathan** (`NOTIFY_EMAIL`) — subject: the signal label, the email and the offerings; body: the email, the lead ID and the offerings. Reply-to is the lead's address.
-- **Follow-up alert to Nathan** (`notifyFollowup`, #65) — only after a confirmed step 2 update: subject `<recomputed label> <email> (follow-up)`, body the email, the lead ID and only what step 2 added. The visitor gets no second email.
+- **Auto-reply to the lead** — instant acknowledgment honoring the success-screen promise. Reply-to is `hello@nextsketch.com`. One variant since #65 (`LEAD_AUTOREPLY_QUICK`), greeting step 1's first name; the qualifier and exploring variants retired, since the auto-reply goes out before any answer exists.
+- **Alert to Nathan** (`NOTIFY_EMAIL`) — subject: the signal label, the name and the offerings; body: the name, the email, the lead ID and the offerings. Reply-to is the lead's address.
+- **Follow-up alert to Nathan** (`notifyFollowup`, #65) — only after a confirmed step 2 update: subject `<recomputed label> <name> (follow-up)`, body the name, the email, the lead ID and only what step 2 added. The visitor gets no second email.
 - **Sender:** `LEAD_FROM_EMAIL` (verified branded sender) if set, else Resend's interim `onboarding@resend.dev` (decision-log #9 / Decision 3) so email works pre-DNS. HTML user fields are escaped; send errors are logged sanitized (code + status + message, never a raw object).
 
 ## Business logic implementation — **CURRENT**
