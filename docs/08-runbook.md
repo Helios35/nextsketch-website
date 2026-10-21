@@ -1,6 +1,6 @@
 # Runbook — NextSketch Website Rebuild
 
-**Version:** 2.1 · **Date:** 2026-10-15 · **Status:** Active (pre-launch) — reconciled to the as-built pipeline (Sprint 03 doc audit); the smoke test covers the waitlist band (decision-log #58)
+**Version:** 2.2 · **Date:** 2026-10-21 · **Status:** Active (pre-launch) — reconciled to the as-built pipeline (Sprint 03 doc audit); the smoke test covers the waitlist band (decision-log #58) and the email-first modal's two steps (#65), and the Apps Script redeploy #65 needs
 **Answers:** How do we run it?
 **References:** `07-technical-spec.md` (what's deployed)
 
@@ -17,11 +17,11 @@
 
 ## Production smoke test (lead capture) — **CURRENT**
 
-Run on the deployed site **after** the env vars below are set. Proves both doors and honest failure handling end-to-end.
+Run on the deployed site **after** the env vars below are set **and the #65 Apps Script is deployed** (below). Proves both modal steps and honest failure handling end-to-end.
 
-1. **Quick path:** open the modal (it opens to the quick door) → name + email + pick a need → "Talk to Us" → success ("…within two business days"). Confirm all four artifacts: a Sheet row (`lead_type: quick`, signal `[Lead — quick]`), an Asana task, the lead auto-reply, and Nate's `[Lead …]` alert.
-2. **Full qualifier:** "Rather walk us through it?" → answer the four questions on a qualified (non-exploring) path → contact step → submit. Confirm the same four artifacts (`lead_type: qualified` or `flagged`).
-3. **Off-ramp capture:** pick "I'm still exploring" → off-ramp → "Stay in Touch" with name + email. Confirm the gentle success, a Sheet row (`lead_type: exploring`, signal `[Lead — exploring]`), and the gentler auto-reply (no two-day promise).
+1. **Step 1 only:** open the modal → email + check one box → "Talk to Us" → step 2 opens ("Got it. Want to tell us more?") → close it. Confirm all four artifacts: one Sheet row (`lead_type: quick`, signal `[Lead — quick]`, name empty, a Lead ID in the last column), an Asana task, the lead auto-reply ("Hi there,"), and Nate's `[Lead — quick]` alert.
+2. **Step 1 + all of step 2:** email + both boxes → answer the four questions on a non-exploring path → name, company, "tell us about it" → "Let's See if We're a Fit" → success. Confirm it is **still one Sheet row**, now with every answer (`lead_type: qualified` or `flagged`), **one** extra email to Nate (subject ending "(follow-up)", same Lead ID), and no second auto-reply or Asana task.
+3. **Skip, and still exploring:** step 1, then "Skip for now" → success, and no follow-up alert. Again with "I'm still exploring" on Q1 → Next → the off-ramp message; the row reads `[Lead — exploring]`.
 3a. **Waitlist band (#58):** on `/`, in Services under the two cards, enter an email → "Join the Waitlist" (wait three seconds after load; the minimum-time guard applies). Confirm the on-page "You're on the list…" line, a Sheet row (`lead_type: waitlist`, signal `[Waitlist]`, email only), Nate's `[Waitlist]` alert, and **no** Asana task and **no** auto-reply.
 4. **Honest failure (no fake success):** temporarily point `LEADS_SHEET_WEBHOOK_URL` at a failing/empty value and submit → the modal shows "That didn't go through — your answers are safe." with answers preserved + the escape hatch (Rule 2.7); restore the webhook after.
 5. **As-built checks:** modal renders full-height on mobile (≤375px); reduced-motion users get no animation; banned-terms gate green (CI).
@@ -32,13 +32,15 @@ Set in Vercel project settings for **Production and Preview**; never committed. 
 
 | Var | Purpose | Gating |
 |---|---|---|
-| `LEADS_SHEET_WEBHOOK_URL` | Apps Script web-app URL for the "Inbound Leads" Sheet; appends a row, returns 2xx on success | **Durable record — gates capture success.** Unset ⇒ every capture honestly reports not-ok (no fake success). **Set this first.** |
+| `LEADS_SHEET_WEBHOOK_URL` | Apps Script web-app URL for the "Inbound Leads" Sheet; appends a row (step 1, waitlist) or updates one (step 2, #65), returns 2xx on success | **Durable record — gates capture success.** Unset ⇒ every capture honestly reports not-ok (no fake success). **Set this first.** |
 | `ASANA_ACCESS_TOKEN` + `ASANA_PROJECT_ID` | Open a task in the Asana "Inbound Leads" project | Best-effort. Unset ⇒ task skipped, capture still succeeds. |
 | `RESEND_API_KEY` | Resend key for the lead auto-reply + Nate's alert | Notification only (best-effort, via `after()`). Unset ⇒ emails skipped, lead still captured. |
 | `NOTIFY_EMAIL` | Recipient of the `[Lead …]` alert (Nate's inbox) | Unset ⇒ alert skipped (auto-reply unaffected). |
 | `LEAD_FROM_EMAIL` *(optional)* | Verified branded sender (e.g. `"NextSketch <hello@nextsketch.com>"`) | Unset ⇒ sends from Resend's interim onboarding domain (decision-log #9); set once DNS verifies. |
 
 The "Inbound Leads" Apps Script ships as `scripts/inbound-leads.gs` (build-note 14) — paste it into the bound Sheet, deploy as a Web app (*Execute as: Me*, *Who has access: Anyone*), and use the `/exec` URL as `LEADS_SHEET_WEBHOOK_URL`. The script neutralizes spreadsheet formula injection on write (apostrophe-prefix on `= + - @`).
+
+**Updating the script (decision-log #65 and any later change):** paste the whole new file over the old one in the bound script, save, then **Deploy → Manage deployments → the existing Web app → Edit (pencil) → Version: New version → Deploy**. Editing the existing deployment keeps the `/exec` URL, so `LEADS_SHEET_WEBHOOK_URL` does not change. (A *new* deployment gets a new URL, which would then have to be set in Vercel.) **Deploy the #65 script before the #65 site goes live:** the new script still takes the old site's appends, but the old script would append a step 2 update as a stray half-empty row (the site reports that step 2 as failed). The first append after the update adds the **Lead ID** header after the last used column; no existing row or column moves.
 
 ## Domain migration — Webflow → Vercel (one-time cutover) — **DEFERRED** (parked, decision-log #5)
 
@@ -59,7 +61,7 @@ Documented plan; **not executed**. Today's production bar is the Vercel `*.verce
 
 - **Vercel Analytics:** traffic + Web Vitals (review weekly post-launch).
 - **Lead pipeline:** any week with zero captures AND nonzero traffic → manually run the smoke test (silent pipeline failure is failure mode #1). The **Sheet is the source of truth** — check it, not just the inbox.
-- **Email (Resend):** Resend sends **two** emails per capture — the lead **auto-reply** and Nate's **alert** — fired via `after()` **only after** the durable Sheet write, so a Resend outage degrades notification but never the captured lead. Sends are logged in Vercel under `lead-notify:`; delivery failures/bounces show in the Resend dashboard. Interim sender (decision-log #9): until `LEAD_FROM_EMAIL` is set, email sends from Resend's onboarding domain — Nate's alert works immediately; the lead auto-reply may be limited to the account's own verified address until DNS verifies.
+- **Email (Resend):** Resend sends **two** emails per step 1 capture — the lead **auto-reply** and Nate's **alert** — plus Nate's **follow-up alert** when step 2 adds anything (#65), all fired via `after()` **only after** the durable Sheet write, so a Resend outage degrades notification but never the captured lead. Sends are logged in Vercel under `lead-notify:`; delivery failures/bounces show in the Resend dashboard. Interim sender (decision-log #9): until `LEAD_FROM_EMAIL` is set, email sends from Resend's onboarding domain — Nate's alert works immediately; the lead auto-reply may be limited to the account's own verified address until DNS verifies.
 - **Delivery logs:** Sheet/Asana outcomes log in Vercel under `lead-delivery:` (incl. "Asana task NOT created — lead is safe").
 
 ## Common failure modes — **CURRENT**
@@ -67,6 +69,7 @@ Documented plan; **not executed**. Today's production bar is the Vercel `*.verce
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Modal always "didn't go through" (no capture) | `LEADS_SHEET_WEBHOOK_URL` unset/wrong, or the Apps Script not returning 2xx | Set/fix the webhook in Vercel env, redeploy; check Vercel logs under `lead-delivery:` |
+| Step 1 works, but every step 2 shows "didn't go through" (and stray half-empty rows appear) | The Sheet still runs the pre-#65 Apps Script, which appends instead of updating | Deploy the current `scripts/inbound-leads.gs` as a new version of the existing deployment (above); Vercel logs read "did not confirm the follow-up update" under `lead-delivery:`. Delete the stray rows by hand |
 | Sheet row appears but no Asana task | `ASANA_ACCESS_TOKEN` / `ASANA_PROJECT_ID` unset/invalid (best-effort) | Set/fix in Vercel env; the lead is safe in the Sheet meanwhile (log: "Asana task NOT created") |
 | Capture works but no emails | `RESEND_API_KEY` unset/revoked/quota, or `NOTIFY_EMAIL` unset | Set/rotate in Vercel env; check Resend logs + Vercel `lead-notify:` logs (the lead is already captured) |
 | Lead emails in spam / auto-reply not reaching arbitrary recipients | Branded domain not verified in Resend (still on interim sender) | Verify `nextsketch.com` SPF/DKIM in Resend, set `LEAD_FROM_EMAIL` |

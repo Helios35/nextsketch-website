@@ -1,6 +1,6 @@
 # PRD — NextSketch Website Rebuild
 
-**Version:** 2.4 · **Date:** 2026-10-15 · **Status:** Active: F7 is the team section (decision-log #63); aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the look reconciled to the fin Zen Linen dark rebrand (decision-log #47 to #50); the offer set is the two offerings of #53 (F6 and the user stories)
+**Version:** 2.5 · **Date:** 2026-10-21 · **Status:** Active: F2 is the email-first modal (decision-log #65); F7 is the team section (decision-log #63); aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the look reconciled to the fin Zen Linen dark rebrand (decision-log #47 to #50); the offer set is the two offerings of #53 (F6 and the user stories)
 **Answers:** What are we building?
 **References:** `01-vision.md` (why) · `03-site-architecture.md` (structure) · `04-ux-spec.md` (look/behavior) · `05-business-rules.md` (logic) · `06-taxonomy.md` (naming) · `07-technical-spec.md` (how) · `08-runbook.md` (ops)
 
@@ -26,7 +26,7 @@ Brand repositioning completed June 2026 (Brand Philosophy v1.0, Messaging Kit v1
 ## Goals
 
 1. Communicate the new positioning using Messaging Kit §05 copy as the canonical source. **CURRENT** (the live hero uses locked Hero copy; the planned sections re-confirm their §05 copy at their units — #13).
-2. Qualify leads via the modal; soft-filter "still exploring" visitors (logic in `05-business-rules.md` §2). **CURRENT** (now a two-door modal; off-ramp captures).
+2. Capture every lead's email first, then qualify through the modal's optional questions; soft-filter "still exploring" visitors (logic in `05-business-rules.md` §2). **CHANGED** (email-first, decision-log #65).
 3. Feel like a product: purposeful animation, fast loads. **CURRENT** (the dark hero — marquee + rise-in, `motion-safe`). A Process section is **PLANNED** (#13); its interaction model is decided at its section unit.
 4. Deploy on Vercel; survive domain cutover from Webflow. **CHANGED** — deploys on Vercel (**CURRENT**); the `nextsketch.com` cutover is **parked** (decision-log #5, a separate milestone — not retired).
 
@@ -39,7 +39,7 @@ See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-piv
 - As a **founder with an idea**, I want to understand **from the hero** that NextSketch takes ideas to production and stays, so that I trust them enough to start the modal. **CHANGED** (was "in one scroll").
 - As a **burned business owner**, I want to see the partner-not-vendor positioning, so that I feel safe raising my hand again. **CURRENT** (finishing a product someone else started is one of AI Product Development's ways in, on the Services card and `/services/product`; decision-log #53).
 - As an **SMB owner exploring AI**, I want plain-language signal that agentic systems apply to me. **CURRENT** (the capability strip and the Agentic System Integration card, page and example jobs, in buyer words: "AI automation for the work you already do"; #53, #54, #57).
-- As a **visitor who is still exploring**, I want an honest signal that I'm not ready yet — and an optional way to stay in touch. **CHANGED** (off-ramp now captures).
+- As a **visitor who is still exploring**, I want an honest signal that I'm not ready yet. **CHANGED** (#65: the off-ramp is step 2's ending; the email is already in from step 1, so the off-ramp's own capture retired).
 - As **Nathan (owner)**, I want every lead durably recorded **and** an alert with all answers, so I can qualify and respond personally. **CHANGED** (Sheet system of record + Asana + a `[Lead …]` alert email; not a single email).
 
 ## Functional requirements
@@ -47,7 +47,7 @@ See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-piv
 | # | Requirement | Status |
 |---|-------------|--------|
 | F1 | Single **dark hero** screen with a wordmark header and a "Start a Conversation" CTA that opens the modal. (The pre-pivot sticky-nav scrolling page is **RETIRED**; whether the redesigned page gets a nav is decided during the section units.) | **CHANGED** |
-| F2 | Qualification modal: **two doors** — a low-friction quick path (name + email + optional needs) as the primary entry, and the four-question qualifier reachable from it; branching per Business Rules §2; accessible from the hero CTA. Email escape hatch (`hello@nextsketch.com`) visible in the modal and as the no-JS fallback. | **CHANGED** |
+| F2 | Qualification modal, **email first** (decision-log #65): step 1 asks an email and at least one of the two offerings and saves the lead; step 2 asks the four qualifier questions, name, company and "tell us about it", every one optional with "Skip for now" always visible, and attaches to the same lead; branching per Business Rules §2; opened from every CTA, each preselecting its offering. Email escape hatch (`hello@nextsketch.com`) visible in the modal and as the no-JS fallback. | **CHANGED** |
 | F3 | A completed lead (either door) is durably recorded to the **Google Sheet "Inbound Leads"** (system of record, gates capture success) + a **best-effort Asana task**, then triggers a lead **auto-reply** and Nathan's **alert** via Resend (`after()`, best-effort). No database (decision-log #8). | **CHANGED** |
 | F4 | Process section (four canonical phases — Taxonomy §2). Design decided at its section unit against `04-ux-spec.md`; the old expandable-rows/circled-numbers spec is **RETIRED**. | **PLANNED** (#13) |
 | F5 | Selected-work grid (4 placeholder tiles). Not in the #13 set; returning it requires a new decision. | **RETIRED** |
@@ -67,12 +67,12 @@ See `01-vision.md`. Additionally: no A/B testing framework, no i18n. The pre-piv
 | N2 | Fully responsive 360px–1920px. | **CURRENT** |
 | N3 | Accessibility: WCAG 2.1 AA; modal keyboard-navigable and focus-trapped. | **CURRENT** |
 | N4 | SEO: full meta rewrite targeting software product development (live in `SITE.title`/`description`). OG image placeholder. | **CURRENT** (OG image still owed) |
-| N5 | Spam protection on submission without CAPTCHA: **honeypot + minimum-time check** on both doors (Rule 2.8). | **CHANGED** — honeypot + min-time **CURRENT**; **rate limiting was never implemented** (deferred; in-memory per-IP is unreliable on Vercel serverless — build-note 09 §3). |
+| N5 | Spam protection on submission without CAPTCHA: **honeypot + minimum-time check** on both modal steps (Rule 2.8; #65). | **CHANGED** — honeypot + min-time **CURRENT**; **rate limiting was never implemented** (deferred; in-memory per-IP is unreliable on Vercel serverless — build-note 09 §3). |
 
 ## Acceptance criteria
 
 - The live screen renders with approved Hero copy over the hero loop (#46), which since #50 plays the delivered `hero-loop-sketch.mp4` footage, installed at `public/hero-loop.mp4` (the interim background image this criterion once named was replaced by #15); no lorem ipsum, real Messaging Kit copy only. **CHANGED** (#46, #50). (The old multi-section placeholder-asset criteria are **RETIRED**; each redesign section defines its acceptance criteria in its own unit brief.)
-- Modal: the "still exploring" path never reaches the qualifier contact step (it routes to the off-ramp, which may capture an email); a completed lead (quick or qualified) is durably recorded before success is shown — **no fake success** (Rule 2.7). **CHANGED.**
+- Modal: step 1 alone durably records the lead before step 2 is shown, and step 2's answers land on that same lead (one visitor, one Sheet row); the "still exploring" path records its answer and ends on the off-ramp without reaching the contact step; nothing shows success unless it was durably recorded — **no fake success** (Rule 2.7). **CHANGED (#65).**
 - Grep sweep of build output finds zero banned terms (Business Rules §3.2). **CURRENT** (CI gate).
 - Site deploys from `main` to Vercel; preview deploys on branches. **CURRENT.**
 - Reduced-motion mode disables all non-essential animation. **CURRENT.**

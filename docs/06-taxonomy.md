@@ -1,6 +1,6 @@
 # Taxonomy — NextSketch Website Rebuild
 
-**Version:** 3.1 · **Date:** 2026-10-15 · **Status:** Active (3.1: About becomes the team, decision-log #63 and #64: §7 the team clips and posters and the narrowed one-video rule, §8 the team names, §9 the portrait retired; 3.0: the diagram language, decision-log #60 to #62: §5 the diagram animations and utilities, `bg-visual-fade` and the `chart-*` chrome retired, §8 the diagram names, §9; 2.9: two offerings, decision-log #53 to #58: §1 the two names, §2 Map / Build / Validate / Optimize, §3 the modal labels, §4 the waitlist kind, §6 the route anchors, §9; 2.8: `bg-page-glow` at 12%, #52; 2.7: §8's component example follows the code after the design-system audit, build-note 34). One vocabulary across every surface, now two offerings, each slug its route segment (decision-log #27, #30, #53); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
+**Version:** 3.2 · **Date:** 2026-10-21 · **Status:** Active (3.2: the email-first modal, decision-log #65: §3 the lead kinds `quick` (step 1) and `followup` (step 2), `exploring` stored on Q1 and Q2, the `qualified` kind and the `off_ramp` source retired; §4 the `partial` lead type and what each label now says about how far a lead got; §9; 3.1: About becomes the team, decision-log #63 and #64: §7 the team clips and posters and the narrowed one-video rule, §8 the team names, §9 the portrait retired; 3.0: the diagram language, decision-log #60 to #62: §5 the diagram animations and utilities, `bg-visual-fade` and the `chart-*` chrome retired, §8 the diagram names, §9; 2.9: two offerings, decision-log #53 to #58: §1 the two names, §2 Map / Build / Validate / Optimize, §3 the modal labels, §4 the waitlist kind, §6 the route anchors, §9; 2.8: `bg-page-glow` at 12%, #52; 2.7: §8's component example follows the code after the design-system audit, build-note 34). One vocabulary across every surface, now two offerings, each slug its route segment (decision-log #27, #30, #53); token names are fin's Zen Linen dark set, and the old ones are retired (#47–#48, §5); one hero video asset, now carrying the #50 sketch footage at the same filename (#46, #50, §7)
 **Answers:** How is everything classified and named?
 **References:** `05-business-rules.md` (logic that uses these values) · `04-ux-spec.md` (color roles) · `07-technical-spec.md` (the lead data contract) · `src/lib/schema.ts`, `src/lib/lead-format.ts`, `src/content/modal.ts` (canonical values in code) · `src/app/globals.css`, `src/app/layout.tsx` (canonical token and font names in code)
 
@@ -50,13 +50,15 @@ The four-phase model is canonical in code (`src/content/copy.ts` → `PROCESS`),
 | 03 | Validate | `validate` | CURRENT |
 | 04 | Optimize | `optimize` | **CHANGED** (#55; was Partner / `partner`) |
 
-## 3. Modal answers — label-to-payload mapping — **CURRENT** (qualifier) · **CHANGED** (quick door added)
+## 3. Modal answers — label-to-payload mapping — **CURRENT** (question values) · **CHANGED** (email-first kinds, decision-log #65)
 
 Payload values are what the lead record stores (the Sheet writes the display **labels**; the snake_case values are the schema/contract). Builders never invent alternates. Canonical in `src/content/modal.ts` + `src/lib/schema.ts`.
 
-**Lead `kind` discriminator (CHANGED — Sprint 02 Unit 04; #58):** every lead is `kind: "qualified"` (the full four-question qualifier) or `kind: "quick"` (the low-friction door). The quick kind also carries `source: "quick_door" | "off_ramp"`. A third kind, `kind: "waitlist"`, is the waitlist band's entry and not a lead (below).
+**Lead `kind` discriminator (CHANGED — Sprint 02 Unit 04; #58; #65):** a lead arrives in up to two parts. **`kind: "quick"`** is step 1, the lead itself (an email and the offerings, `source: "quick_door"`); **`kind: "followup"`** is step 2, the qualifier's answers and the contact fields, all optional, carrying the step 1 **`lead_id`** and email so it updates that lead's row. A third kind, `kind: "waitlist"`, is the waitlist band's entry and not a lead (below). **Retired by #65:** `kind: "qualified"` (the qualifier's answers ride the follow-up now) and `source: "off_ramp"` (the off-ramp's capture is gone).
 
-**Qualifier (`kind: "qualified"`) — CURRENT:**
+**`lead_id` (CHANGED, new, #65):** a random UUID the server mints for each step 1 lead, returned to the browser and written to the Sheet's **Lead ID** column. Step 2 is matched to its row by it (and the email). A waitlist entry has none.
+
+**Qualifier (step 2, `kind: "followup"`) — CURRENT values, every answer optional since #65:**
 
 **Q1 `project_type` — CHANGED (decision-log #53; labels and order only, values unchanged):** AI agents for the work my business already does → `agentic` · A new product built from scratch → `new_product` · Finishing a product someone else started → `rescue` · Ongoing help with a live product → `partnership` · I'm still exploring → `exploring`
 
@@ -66,11 +68,11 @@ Payload values are what the lead record stores (the Sheet writes the display **l
 
 **Q4 `validation`:** Already validated → `validated` · Yes — that's why I'm here → `willing` · I just want it built → `build_first`
 
-**Contact:** `name`, `email`, `company` (optional, qualifier only), `details` (optional).
+**Contact (step 2's last screen):** `name`, `company`, `details`, all optional (#65). The `email` is step 1's; the follow-up repeats it so the row can be matched, and repeats step 1's `project_types` so a Q1 answer can be written beside them.
 
-> `exploring` is a **UI-only** value (Q1/Q2): it routes to the off-ramp (Rule 2.1) and is deliberately absent from the submit schema's qualifier enums, so it can never be POSTed as a qualified lead (`src/lib/schema.ts`).
+> `exploring` (Q1/Q2) ends step 2 on the off-ramp (Rule 2.1). **CHANGED (#65):** it is now a **stored value**, recorded on the lead (the Sheet writes its label, "I'm still exploring" or "Just exploring"). It was UI-only and refused by the schema while the qualifier was a door of its own (`src/lib/schema.ts`, `EXPLORING`).
 
-**Quick door (`kind: "quick"`) — CHANGED (new):** collects `name`, `email`, an optional `details` line, and an optional **multi-select** `project_types`. **Since #53 the door offers the two offerings**, agentic first, which combine freely (the old new-product / completion exclusion retired with them). The schema still accepts all four canonical values in `project_types`; the door shows two (`src/content/modal.ts` → `MODAL_QUICK.needsOptions`, typed as `QuickNeed`, which is also the type of every CTA's preselect):
+**Quick door, step 1 (`kind: "quick"`) — CHANGED (#65):** collects `email` and the **multi-select** `project_types`, **at least one required**; nothing else (the `name` and `details` it carried before #65 moved to step 2). **Since #53 the door offers the two offerings**, agentic first, which combine freely (the old new-product / completion exclusion retired with them). The schema still accepts all four canonical values in `project_types`; the door shows two (`src/content/modal.ts` → `MODAL_QUICK.needsOptions`, typed as `QuickNeed`, which is also the type of every CTA's preselect):
 
 | Value | Qualifier label (Q1) | Quick-door label |
 |---|---|---|
@@ -79,23 +81,24 @@ Payload values are what the lead record stores (the Sheet writes the display **l
 | `rescue` | Finishing a product someone else started | (not offered; a way into AI Product Development) |
 | `partnership` | Ongoing help with a live product | (not offered; a way into AI Product Development) |
 
-The off-ramp capture (`source: "off_ramp"`) collects only `name` + `email` (no `project_types`).
+In the Sheet's one project column, a step 2 Q1 answer is written after the step 1 offerings, `"; "`-joined ("AI product development; Finishing a product someone else started"). The off-ramp capture (`source: "off_ramp"`) is **retired** (#65).
 
 **Waitlist (`kind: "waitlist"`) — CHANGED (new, decision-log #58):** the Services waitlist band's entry: `email` and the §2.8 guards, nothing else. Not a lead (§4).
 
 ## 4. Lead types & signals — **CHANGED**
 
-Computed in `src/lib/lead-format.ts` (`leadSignal`). The pre-pivot set (`qualified` / `flagged` / `off_ramp`, where off-ramp was "not a lead, not emailed") is superseded: the off-ramp now **captures**, so an exploring visitor becomes a real `exploring` lead.
+Computed in `src/lib/lead-format.ts` (`leadSignal`). The pre-pivot set (`qualified` / `flagged` / `off_ramp`, where off-ramp was "not a lead, not emailed") is superseded. **Since #65** step 1 writes `quick`, and step 2, if it adds anything, recomputes the type and label on the same row (first match in the order below, from `exploring` down to `partial`), so the label says how far a lead got: `[Lead — quick]` is step 1 only, anything else means step 2 added something.
 
 | `lead_type` | Meaning | Signal label (Rule 2.5) |
 |---|---|---|
-| `qualified` | Full qualifier completed, no flags | `[Lead]` |
-| `flagged` | Qualifier completed with Q3 = `none` and/or Q4 = `build_first` | `[Lead — needs buy-in]` · `[Lead — build-first mindset]` · `[Lead — review answers]` (both) |
-| `quick` | Quick-door lead (no qualifier answers) | `[Lead — quick]` |
-| `exploring` | Off-ramp capture (still-exploring visitor who opted to stay in touch) | `[Lead — exploring]` |
+| `exploring` | Step 2 answered Q1 or Q2 "still exploring" (#65; before, the off-ramp's own capture) | `[Lead — exploring]` |
+| `flagged` | Step 2 answered Q3 = `none` and/or Q4 = `build_first` | `[Lead — review answers]` (both) · `[Lead — needs buy-in]` · `[Lead — build-first mindset]` |
+| `qualified` | Step 2 answered all four questions, no flags | `[Lead]` |
+| `partial` | Step 2 added something but passed over at least one question (new, #65) | `[Lead — partial]` |
+| `quick` | Step 1 only: an email and the offerings (#65; before, the quick door's own completion) | `[Lead — quick]` |
 | `waitlist` | Waitlist band entry (#58): an email for the installable product, not a lead | `[Waitlist]` |
 
-**Lead `source` (quick kind only):** `quick_door` (primary quick path) · `off_ramp` (the still-exploring capture). The signal label encodes which one. A waitlist entry has no `source`: its `kind` is its own.
+**Lead `source` (quick kind only):** `quick_door`, the one door left. `off_ramp` (the still-exploring capture) is **retired** (#65); its old rows keep `lead_type: exploring`. A waitlist entry has no `source`: its `kind` is its own.
 
 ## 5. Design tokens · **CHANGED (decision-log #47–#48, 2026-10-14)**
 
@@ -270,6 +273,7 @@ The naming convention stands for any future section asset: `placeholder-{section
 | Hero footage of Nate (studio, strategist, builder, partner) in `hero-loop.mp4` | The fin-palette sketch footage, same filenames (§7) | Decision-log #50 supersedes the footage portion of #46 | Paths and `LANDING` config unchanged; git history keeps the old footage |
 | **Eleven-section light page plan** (dormant components + old anchors) | **Five-section dark redesign** — Manifesto, Services, Process, About, Final CTA against `04-ux-spec.md` v3.0 | Decision-log #13 (2026-07-06) | Component code/copy stays dormant on disk (delete vs. keep = separate owner call, build-note 08); must not be referenced for new sections |
 | Lead type **`off_ramp`** ("not a lead, not emailed, not counted") | **`exploring`** (a captured lead from the off-ramp) | Sprint 02 Unit 04 — off-ramp now captures an email | No data to migrate; honest "exploring" signal instead of a non-lead |
+| Payload **`kind: "qualified"`**; **`source: "off_ramp"`**; the side door "Rather walk us through it? Answer a few questions" (`MODAL_QUICK.toQualifier`); the off-ramp's "Stay in Touch" capture and its confirmation (`MODAL_OFF_RAMP.capture`, `MODAL_OFF_RAMP_SUCCESS`); the qualifier and exploring auto-replies (`LEAD_AUTOREPLY`, `LEAD_AUTOREPLY_EXPLORING`) | Step 1 (`kind: "quick"`, email + offerings) and step 2 (`kind: "followup"`, on the same `lead_id`) | Decision-log #65 (2026-10-21): email-first modal | **No lead data migrates.** Old rows keep their values (`qualified`, `flagged`, `quick`, `exploring`) and a blank Lead ID; the Sheet gains the Lead ID column on the right. Code and copy are deleted (git history keeps them) |
 | "Leads exist only as emails" / single email to `hello@nextsketch.com` | **Google Sheet system of record** (+ best-effort Asana) with Resend **notification** | Sprint 02 Units 02–03 | See `07-technical-spec.md` §Data model |
 | Services: Industrial Design, UI/UX Design, Mechanical Design | §1 services | Repositioning, June 2026 | None to migrate; must not appear (Rule 3.4) |
 | Service names: "New Products from Scratch", "Rescue & Completion", "Agentic Systems Integration", "Ongoing Product Partnership" (and the 2026-08-04 card short forms "Agentic Systems" / "Ongoing Partnership") | §1 names — New Product, Product Completion, Product Support, Agentic System | Decision-log #27–#28 (2026-08-28): one vocabulary, the quick door's | Display only. **Payload values are unchanged**, so no lead data migrates and no `/api/qualify` contract moves |
