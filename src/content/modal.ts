@@ -71,14 +71,18 @@ export const MODAL_QUESTIONS = {
 } as const;
 
 /**
- * Contact step (Business Rules 1.5), the last screen of step 2. Since
- * #65 the email is step 1's, so this screen asks name, company and
- * "tell us about it", all optional; `email` keeps its label for the
- * failure fallback's summary and Nate's alert.
+ * The visitor's fields and their labels. Step 1 asks `firstName`,
+ * `lastName` and `email` (#65, amended 2026-10-21: all required); the
+ * contact step (Business Rules 1.5), the last screen of step 2, asks
+ * `company` and `details`, both optional. `name` labels the two names
+ * joined, as the Sheet, Nate's alerts and the Asana task show them.
+ * First and last name are builder DRAFT labels (2026-10-21).
  */
 export const MODAL_CONTACT = {
   fields: {
-    name: { label: "Name", required: false },
+    firstName: { label: "First name", required: true, maxLength: 50 },
+    lastName: { label: "Last name", required: true, maxLength: 50 },
+    name: { label: "Name" },
     email: { label: "Email", required: true },
     company: { label: "Company", required: false },
     details: { label: "Tell us about it", required: false, maxLength: 1000 },
@@ -87,14 +91,16 @@ export const MODAL_CONTACT = {
 } as const;
 
 /**
- * Step 1, the quick door (Rule 1.7; email-first since decision-log #65):
- * an email and at least one of the two offerings, nothing else.
- * Submitting it saves the lead; everything else is step 2. Heading,
- * label, options and submit are unchanged; `body` is owner copy (#65).
+ * Step 1, the quick door (Rule 1.7; email-first since decision-log #65,
+ * amended 2026-10-21): first name, last name, email and at least one of
+ * the two offerings, nothing else. Submitting it saves the lead;
+ * everything else is step 2. Heading, label, options and submit are
+ * unchanged. `body` was owner copy ("Your email and what you need"); it
+ * now names the name too, a builder DRAFT pending owner approval.
  */
 export const MODAL_QUICK = {
   heading: "Tell us what you need.",
-  body: "The short version. Your email and what you need. We'll take it from there.",
+  body: "The short version. Your name, your email and what you need. We'll take it from there.",
   /** Label for the needs selector: at least one box, both is fine (#65). */
   messageLabel: "What do you need?",
   /**

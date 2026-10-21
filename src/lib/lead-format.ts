@@ -16,8 +16,8 @@ import {
  * notify module reuses `leadSignal` and the labels without forking the
  * destination code.
  *
- * A lead arrives in up to two parts (#65). Step 1 (`kind: "quick"`, an
- * email and the offerings) appends the row, carrying the `lead_id` the
+ * A lead arrives in up to two parts (#65). Step 1 (`kind: "quick"`, the
+ * name, email and offerings) appends the row, carrying the `lead_id` the
  * server minted, with the qualifier columns empty. Step 2 (`kind:
  * "followup"`) never appends: `toSheetUpdate` fills that same row's
  * answer columns and recomputes its signal. The waitlist band (#58) is
@@ -56,6 +56,17 @@ export function quickNeeds(values: readonly string[]): string {
   return values
     .map((value) => labelFor(MODAL_QUICK.needsOptions, value))
     .join("; ");
+}
+
+/**
+ * The visitor's two names joined, as the Sheet's one Name column, the
+ * alerts and the Asana task show them (#65, amended 2026-10-21).
+ */
+export function fullName(payload: {
+  first_name: string;
+  last_name: string;
+}): string {
+  return `${payload.first_name} ${payload.last_name}`.trim();
 }
 
 /** The four qualifier questions, in modal order (Business Rules §1). */
@@ -178,13 +189,13 @@ export function toSheetRecord(
 ): Record<string, string> {
   const signal = leadSignal(payload);
   // Same twelve columns for every kind, so the Apps Script mapping never
-  // branches: step 1 leaves the name and the qualifier columns empty
+  // branches: step 1 leaves the company and the qualifier columns empty
   // for step 2 to fill; a waitlist entry is an email and its label.
   return {
     timestamp: capturedAt,
     lead_type: signal.type,
     signal: signal.label,
-    name: "",
+    name: payload.kind === "quick" ? fullName(payload) : "",
     email: payload.email,
     company: "",
     project_type:
@@ -203,8 +214,9 @@ export function toSheetRecord(
  * what the visitor gave is in `fields`, plus the recomputed signal, so a
  * skipped question leaves its cell as step 1 wrote it (empty). A Q1
  * answer goes in the one project column after the step 1 offerings,
- * since the column holds both. The script never lets an update touch
- * the row's timestamp, email or lead ID.
+ * since the column holds both. The name is step 1's and is never sent
+ * here. The script never lets an update touch the row's timestamp,
+ * email or lead ID.
  */
 export function toSheetUpdate(payload: FollowupPayload): {
   action: "update";
@@ -229,7 +241,7 @@ export function toSheetUpdate(payload: FollowupPayload): {
       fields[key] = labelFor(MODAL_QUESTIONS[key].options, value);
     }
   }
-  for (const key of ["name", "company", "details"] as const) {
+  for (const key of ["company", "details"] as const) {
     const value = payload[key];
     if (value !== undefined) fields[key] = value;
   }
@@ -243,8 +255,8 @@ export function toSheetUpdate(payload: FollowupPayload): {
 
 /**
  * The Asana task for one step 1 lead: a scannable title carrying the
- * signal and the email (no name is asked on step 1, #65), and notes
- * with the offerings, the lead ID and the capture timestamp. Step 2
+ * signal and the name, and notes with the contact details, the
+ * offerings, the lead ID and the capture timestamp. Step 2
  * does not touch the task; its answers land on the Sheet row with the
  * same lead ID and in Nate's follow-up alert, and the notes say so.
  */
@@ -258,6 +270,7 @@ export function toAsanaTask(
   const notes = [
     `Captured: ${capturedAt}`,
     "",
+    `Name:    ${fullName(payload)}`,
     `Email:   ${payload.email}`,
     `Lead ID: ${leadId}`,
     "",
@@ -265,5 +278,5 @@ export function toAsanaTask(
     "",
     "Any more answers land on the Sheet row with this Lead ID, and in a follow-up alert.",
   ].join("\n");
-  return { name: `${signal.label} ${payload.email} — ${needs}`, notes };
+  return { name: `${signal.label} ${fullName(payload)} — ${needs}`, notes };
 }

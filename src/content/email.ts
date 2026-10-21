@@ -17,10 +17,10 @@
  * signal prefix is composed at send time, not stored here.
  *
  * Since decision-log #65 the modal is email-first: the auto-reply goes
- * out once, on step 1, which never asks for a name; step 2 sends Nate a
- * follow-up alert and the visitor nothing. The qualifier and off-ramp
- * auto-replies retired with that (one auto-reply, sent before any answer
- * exists), and so did the name in the greeting.
+ * out once, on step 1 (which asks first name, last name and email);
+ * step 2 sends Nate a follow-up alert and the visitor nothing. The
+ * qualifier and off-ramp auto-replies retired with that (one auto-reply,
+ * sent before any answer exists).
  */
 
 /**
@@ -28,12 +28,12 @@
  * since #65). A ready-to-talk lead, so it keeps the honest
  * two-business-day promise; its wording does not claim "your answers"
  * or "your project details", which step 1 does not collect. DRAFT
- * pending owner approval; the greeting is a builder DRAFT (#65).
+ * pending owner approval.
  */
 export const LEAD_AUTOREPLY_QUICK = {
   subject: "We've got your message — NextSketch",
-  /** No name is asked on step 1 (#65), so the greeting never uses one. */
-  greeting: "Hi there,",
+  /** Greeting; step 1's first name, resolved at send time. */
+  greeting: (firstName: string): string => `Hi ${firstName},`,
   heading: "Thanks — we've got it.",
   body: [
     "Your message is in front of Nathan now. You'll hear back within two business days — a real reply from the person who'd actually do the work, not an auto-sequence.",
@@ -63,8 +63,8 @@ export const LEAD_ALERT = {
 
 /**
  * Nate's follow-up alert when step 2 adds answers to a lead (#65): one
- * short email pointing at the lead step 1 already alerted, by its email
- * and lead ID. The subject is the recomputed signal, the email and
+ * short email pointing at the lead step 1 already alerted, by its name,
+ * email and lead ID. The subject is the recomputed signal, the name and
  * `subjectTag`. Builder DRAFT pending owner approval.
  */
 export const LEAD_FOLLOWUP_ALERT = {

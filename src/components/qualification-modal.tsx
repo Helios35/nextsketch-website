@@ -45,7 +45,8 @@ type Answers = {
 
 /**
  * Flow screens (decision-log #65, email-first): step 1 is the quick door
- * (Rule 1.7: an email and at least one offering), which saves the lead;
+ * (Rule 1.7: first name, last name, email and at least one offering),
+ * which saves the lead;
  * step 2 is the four question steps and the contact step (Business
  * Rules §1), every one optional, attaching to that lead; then the
  * terminal screens: success, the off-ramp as step 2's ending for a
@@ -105,8 +106,9 @@ function submittedAnswers(answers: Answers): Answers {
 }
 
 interface ContactFields {
+  firstName: string;
+  lastName: string;
   email: string;
-  name: string;
   company: string;
   details: string;
   /** Step 1's offerings: at least one before it sends (#65). */
@@ -116,8 +118,9 @@ interface ContactFields {
 }
 
 const EMPTY_CONTACT: ContactFields = {
+  firstName: "",
+  lastName: "",
   email: "",
-  name: "",
   company: "",
   details: "",
   projectTypes: [],
@@ -156,8 +159,8 @@ export interface ComposedAnswer {
  * The visitor's answers as label/value pairs — rendered on the
  * failure screen and carried in the fallback mailto body so nothing
  * is lost (Rule 2.7). Labels are the canonical question/field copy.
- * Step 1's email and offerings come first; step 2's answers follow
- * when there are any.
+ * Step 1's name, email and offerings come first; step 2's answers
+ * follow when there are any.
  */
 function composeAnswers(
   answers: Answers,
@@ -165,6 +168,8 @@ function composeAnswers(
 ): ComposedAnswer[] {
   const { fields } = MODAL_CONTACT;
   const composed: ComposedAnswer[] = [
+    { label: fields.firstName.label, value: contact.firstName },
+    { label: fields.lastName.label, value: contact.lastName },
     { label: fields.email.label, value: contact.email },
   ];
   if (contact.projectTypes.length > 0) {
@@ -180,7 +185,7 @@ function composeAnswers(
       composed.push({ label: question, value: selected.label });
     }
   }
-  for (const key of ["name", "company", "details"] as const) {
+  for (const key of ["company", "details"] as const) {
     if (optional(contact[key]) !== undefined) {
       composed.push({ label: fields[key].label, value: contact[key] });
     }
@@ -391,9 +396,10 @@ interface QualificationModalProps {
  * no route: the builder's call docs/03-site-architecture.md
  * delegates, recorded in briefs/build-notes/06-qualification-modal.md.
  *
- * Email-first (decision-log #65): step 1 asks an email and at least one
- * offering and saves the lead; the server answers with a lead ID. Step 2
- * asks today's questions, every one optional, with "Skip for now" in the
+ * Email-first (decision-log #65): step 1 asks first name, last name,
+ * email and at least one offering, all required, and saves the lead; the
+ * server answers with a lead ID. Step 2 asks the qualifier questions,
+ * company and "tell us about it", every one optional, with "Skip for now" in the
  * header on every screen, and sends what was given as a follow-up on
  * that lead ID, so it lands on the same lead. A still-exploring answer
  * is sent at once and ends on the off-ramp's message.
@@ -546,9 +552,10 @@ export function QualificationModal({
   };
 
   /**
-   * Step 1 (Rule 1.7, #65): an email and at least one offering. The
-   * browser's own validation holds back a missing or malformed email;
-   * no box checked holds back here with a message under the boxes and
+   * Step 1 (Rule 1.7, #65): first name, last name, email and at least
+   * one offering. The browser's own validation holds back a missing name
+   * or a missing or malformed email; no box checked holds back here with
+   * a message under the boxes and
    * focus on the first one. A durable save moves on to step 2 with the
    * lead ID the server returned (with none, there is nothing to attach
    * to, so it ends on success).
@@ -563,6 +570,8 @@ export function QualificationModal({
     const parsed = leadPayloadSchema.safeParse({
       kind: "quick",
       source: "quick_door",
+      first_name: contact.firstName,
+      last_name: contact.lastName,
       email: contact.email,
       project_types: contact.projectTypes,
       _hp: contact.hp,
@@ -589,7 +598,6 @@ export function QualificationModal({
     const ending: Screen = exploring ? "off_ramp" : "success";
     const payload = {
       ...given,
-      name: optional(contact.name),
       company: optional(contact.company),
       details: optional(contact.details),
     };
@@ -600,6 +608,8 @@ export function QualificationModal({
     const parsed = leadPayloadSchema.safeParse({
       kind: "followup",
       lead_id: leadId,
+      first_name: contact.firstName,
+      last_name: contact.lastName,
       email: contact.email,
       project_types: contact.projectTypes,
       ...payload,
@@ -707,6 +717,46 @@ export function QualificationModal({
             </p>
             <form onSubmit={handleQuickSubmit} className="mt-6">
               <div className="flex flex-col gap-5">
+                {/* First and last name, required (#65, amended
+                    2026-10-21): side by side at every width, so step 1
+                    keeps the two field rows it had (name, email) and
+                    "Talk to Us" stays in view on a 360px phone. */}
+                <div className="grid grid-cols-2 gap-3 sm:gap-5">
+                  <label className="block">
+                    <span className={CAPTION_CLASS}>
+                      {MODAL_CONTACT.fields.firstName.label}
+                    </span>
+                    <input
+                      type="text"
+                      name="first_name"
+                      required
+                      maxLength={MODAL_CONTACT.fields.firstName.maxLength}
+                      autoComplete="given-name"
+                      value={contact.firstName}
+                      onChange={(e) =>
+                        setContact({ ...contact, firstName: e.target.value })
+                      }
+                      className={INPUT_CLASS}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className={CAPTION_CLASS}>
+                      {MODAL_CONTACT.fields.lastName.label}
+                    </span>
+                    <input
+                      type="text"
+                      name="last_name"
+                      required
+                      maxLength={MODAL_CONTACT.fields.lastName.maxLength}
+                      autoComplete="family-name"
+                      value={contact.lastName}
+                      onChange={(e) =>
+                        setContact({ ...contact, lastName: e.target.value })
+                      }
+                      className={INPUT_CLASS}
+                    />
+                  </label>
+                </div>
                 <label className="block">
                   <span className={CAPTION_CLASS}>
                     {MODAL_CONTACT.fields.email.label}
@@ -871,22 +921,6 @@ export function QualificationModal({
             </h2>
             <form onSubmit={handleContactSubmit} className="mt-6">
               <div className="flex flex-col gap-5">
-                <label className="block">
-                  <span className={CAPTION_CLASS}>
-                    {MODAL_CONTACT.fields.name.label}
-                  </span>
-                  <input
-                    type="text"
-                    name="name"
-                    maxLength={100}
-                    autoComplete="name"
-                    value={contact.name}
-                    onChange={(e) =>
-                      setContact({ ...contact, name: e.target.value })
-                    }
-                    className={INPUT_CLASS}
-                  />
-                </label>
                 <label className="block">
                   <span className={CAPTION_CLASS}>
                     {MODAL_CONTACT.fields.company.label}

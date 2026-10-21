@@ -7,7 +7,12 @@ import {
   LEAD_FOLLOWUP_ALERT,
 } from "@/content/email";
 import { MODAL_CONTACT, MODAL_QUICK } from "@/content/modal";
-import { followupAnswers, leadSignal, quickNeeds } from "@/lib/lead-format";
+import {
+  followupAnswers,
+  fullName,
+  leadSignal,
+  quickNeeds,
+} from "@/lib/lead-format";
 import type {
   FollowupPayload,
   NewEntryPayload,
@@ -32,7 +37,7 @@ import type {
  * acknowledgement.
  *
  * Email-first (decision-log #65): both emails go out on step 1, which
- * is the lead (an email and the offerings, no name). Step 2's answers
+ * is the lead (name, email and the offerings). Step 2's answers
  * arrive later as a `followup`: `notifyFollowup` sends Nate one short
  * follow-up alert pointing at the same lead, and the visitor gets no
  * second auto-reply.
@@ -153,8 +158,8 @@ export async function notifyLead(
 /**
  * Instant acknowledgment to the lead, sent on step 1 (#65). Plain,
  * on-brand, and consistent with the success screen. Reply-to is the
- * brand inbox (`SITE.email`) so any reply reaches Nate. Step 1 asks no
- * name, so the greeting never uses one (Outcome 8).
+ * brand inbox (`SITE.email`) so any reply reaches Nate. Greets the
+ * first name step 1 requires.
  */
 async function sendAutoReply(
   resend: Resend,
@@ -162,7 +167,7 @@ async function sendAutoReply(
   payload: QuickLeadPayload,
 ): Promise<boolean> {
   const copy = LEAD_AUTOREPLY_QUICK;
-  const greeting = copy.greeting;
+  const greeting = copy.greeting(payload.first_name);
 
   const text = [
     greeting,
@@ -201,9 +206,9 @@ async function sendAutoReply(
 
 /**
  * Real-time alert to Nate for a step 1 lead. Subject carries the signal
- * label, the email (step 1 asks no name, #65) and the offerings; the
- * body carries the email, the lead ID step 2 attaches by and the
- * offerings, so he can respond without digging. Reply-to is the lead's
+ * label, the name and the offerings; the body carries the name, the
+ * email, the lead ID step 2 attaches by and the offerings, so he can
+ * respond without digging. Reply-to is the lead's
  * address so one reply reaches them directly.
  */
 async function sendAlert(
@@ -220,9 +225,10 @@ async function sendAlert(
   return sendToNate(resend, from, {
     to,
     replyTo: payload.email,
-    subject: `${leadSignal(payload).label} ${payload.email} — ${needs}`,
+    subject: `${leadSignal(payload).label} ${fullName(payload)} — ${needs}`,
     lines: [
       { text: LEAD_ALERT.intro },
+      { label: MODAL_CONTACT.fields.name.label, text: fullName(payload) },
       { label: MODAL_CONTACT.fields.email.label, text: payload.email },
       { label: LEAD_ALERT.leadIdLabel, text: leadId },
       { label: MODAL_QUICK.messageLabel, text: needs },
@@ -235,7 +241,7 @@ async function sendAlert(
 
 /**
  * Nate's follow-up alert when step 2 adds answers (#65): one short email
- * pointing at the lead step 1 alerted, by its email and lead ID, under
+ * pointing at the lead step 1 alerted, by its name, email and lead ID, under
  * the recomputed signal (so `[Lead — exploring]`, a Rule 2.5 flag,
  * `[Lead]` or `[Lead — partial]` tells him how far it got). The body is
  * only what step 2 added. No auto-reply goes with it.
@@ -250,10 +256,10 @@ export async function notifyFollowup(payload: FollowupPayload): Promise<void> {
   const answers = followupAnswers(payload);
   const lines: AlertLine[] = [
     { text: LEAD_FOLLOWUP_ALERT.intro },
+    { label: fields.name.label, text: fullName(payload) },
     { label: fields.email.label, text: payload.email },
     { label: LEAD_ALERT.leadIdLabel, text: payload.lead_id },
   ];
-  if (payload.name) lines.push({ label: fields.name.label, text: payload.name });
   if (payload.company) {
     lines.push({ label: fields.company.label, text: payload.company });
   }
@@ -272,7 +278,7 @@ export async function notifyFollowup(payload: FollowupPayload): Promise<void> {
     const sent = await sendToNate(mailer.resend, mailer.from, {
       to,
       replyTo: payload.email,
-      subject: `${leadSignal(payload).label} ${payload.email} ${LEAD_FOLLOWUP_ALERT.subjectTag}`,
+      subject: `${leadSignal(payload).label} ${fullName(payload)} ${LEAD_FOLLOWUP_ALERT.subjectTag}`,
       lines,
       what: "follow-up alert",
     });

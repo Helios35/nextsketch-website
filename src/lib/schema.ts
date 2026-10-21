@@ -6,12 +6,12 @@ import { z } from "zod";
  *
  * The modal is email-first (decision-log #65), so a lead arrives in up
  * to two parts, and a payload is a discriminated union on `kind`:
- *   • "quick"    — step 1: an email and at least one of the two
- *     offerings, nothing else. This alone is the lead: it is recorded,
- *     alerted and auto-replied, and the server answers with the
- *     `lead_id` it minted for the row.
- *   • "followup" — step 2: the four qualifier questions, name, company
- *     and "tell us about it", every one optional, attached to the step 1
+ *   • "quick"    — step 1: first name, last name, email and at least one
+ *     of the two offerings, all required (owner amendment, 2026-10-21).
+ *     This alone is the lead: it is recorded, alerted and auto-replied,
+ *     and the server answers with the `lead_id` it minted for the row.
+ *   • "followup" — step 2: the four qualifier questions, company and
+ *     "tell us about it", every one optional, attached to the step 1
  *     lead by its `lead_id` (and its email). It updates that lead's Sheet
  *     row rather than adding one, and alerts Nate once more.
  *   • "waitlist" — the Services waitlist band (decision-log #58): an
@@ -24,7 +24,7 @@ import { z } from "zod";
  * every kind.
  *
  * Before #65 the qualifier was its own kind (`"qualified"`, with a
- * required name and every answer required) and "exploring" was a UI-only
+ * required single name and every answer required) and "exploring" was a UI-only
  * value the schema refused. Step 2 now carries the qualifier's answers,
  * and "I'm still exploring" / "Just exploring" are recorded on the lead
  * (Rule 2.1), so `exploring` is a stored value of Q1 and Q2.
@@ -75,7 +75,19 @@ const botGuards = {
  */
 const projectTypes = z.array(z.enum(PROJECT_TYPE_VALUES)).min(1);
 
-/** Step 1, the quick door (Rule 1.7): an email and at least one offering. */
+/**
+ * Step 1's name, as two required fields (#65, amended 2026-10-21). The
+ * Sheet keeps its one Name column: the record joins them ("Jane Doe").
+ */
+const visitorName = {
+  first_name: z.string().trim().min(1).max(50),
+  last_name: z.string().trim().min(1).max(50),
+};
+
+/**
+ * Step 1, the quick door (Rule 1.7): first name, last name, email and at
+ * least one offering, all required.
+ */
 export const quickLeadPayloadSchema = z.object({
   kind: z.literal("quick"),
   /**
@@ -84,6 +96,7 @@ export const quickLeadPayloadSchema = z.object({
    * email.
    */
   source: z.literal("quick_door"),
+  ...visitorName,
   email: z.email(),
   project_types: projectTypes,
   ...botGuards,
@@ -95,20 +108,22 @@ export const quickLeadPayloadSchema = z.object({
  * email must match the row's too, so a follow-up can only ever land on
  * the visitor's own lead. `project_types` repeats the step 1 picks so a
  * Q1 answer can be written beside them in the Sheet's one project
- * column. A follow-up with nothing in it is refused: the modal sends
- * none, so a direct POST of one is a probe.
+ * column, and the name repeats step 1's so Nate's follow-up alert can
+ * say whose it is (the row's Name is never rewritten). A follow-up with
+ * no answer in it is refused: the modal sends none, so a direct POST of
+ * one is a probe.
  */
 export const followupPayloadSchema = z
   .object({
     kind: z.literal("followup"),
     lead_id: z.uuid(),
+    ...visitorName,
     email: z.email(),
     project_types: projectTypes,
     project_type: z.enum([...PROJECT_TYPE_VALUES, EXPLORING]).optional(),
     readiness: z.enum([...READINESS_VALUES, EXPLORING]).optional(),
     authority: z.enum(AUTHORITY_VALUES).optional(),
     validation: z.enum(VALIDATION_VALUES).optional(),
-    name: z.string().trim().min(1).max(100).optional(),
     company: z.string().trim().min(1).max(100).optional(),
     details: z.string().trim().min(1).max(1000).optional(),
     ...botGuards,
@@ -120,7 +135,6 @@ export const followupPayloadSchema = z
         payload.readiness,
         payload.authority,
         payload.validation,
-        payload.name,
         payload.company,
         payload.details,
       ].some((value) => value !== undefined),
