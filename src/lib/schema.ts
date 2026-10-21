@@ -4,24 +4,30 @@ import { z } from "zod";
  * Lead payloads — the de-facto data contract (docs/07-technical-spec.md
  * §Data model). Shared client/server.
  *
- * Sprint 02 Unit 04 added a second door, so a lead is now a discriminated
- * union on `kind`:
- *   • "qualified" — the full four-question qualifier (Business Rules §1).
- *   • "quick"     — the low-friction door: name + email + an optional
- *     one-line message, no qualifier answers. `source` records which
- *     low-friction entry it came from (the primary quick path or the
- *     off-ramp capture offered to an "exploring" visitor).
- *   • "waitlist"  — the Services waitlist band (decision-log #58): an
+ * The modal is email-first (decision-log #65), so a lead arrives in up
+ * to two parts, and a payload is a discriminated union on `kind`:
+ *   • "quick"    — step 1: an email and at least one of the two
+ *     offerings, nothing else. This alone is the lead: it is recorded,
+ *     alerted and auto-replied, and the server answers with the
+ *     `lead_id` it minted for the row.
+ *   • "followup" — step 2: the four qualifier questions, name, company
+ *     and "tell us about it", every one optional, attached to the step 1
+ *     lead by its `lead_id` (and its email). It updates that lead's Sheet
+ *     row rather than adding one, and alerts Nate once more.
+ *   • "waitlist" — the Services waitlist band (decision-log #58): an
  *     email and nothing else. Not a lead; it rides the same seam so it
  *     gets the same durable record, guards and failure fallback.
  *
  * The server re-validating with these schemas (POST /api/qualify) is what
- * keeps the guards un-bypassable by a direct POST:
- *   - "exploring" answers for project_type/readiness are UI-only — they
- *     route to the off-ramp (Business Rules 2.1) and are deliberately
- *     absent from the qualified enums, so they never submit.
- *   - the honeypot (`_hp`) and minimum-time (`_t`) anti-bot guards
- *     (Business Rules 2.8) sit on BOTH doors.
+ * keeps the guards un-bypassable by a direct POST: the honeypot (`_hp`)
+ * and minimum-time (`_t`) anti-bot guards (Business Rules 2.8) sit on
+ * every kind.
+ *
+ * Before #65 the qualifier was its own kind (`"qualified"`, with a
+ * required name and every answer required) and "exploring" was a UI-only
+ * value the schema refused. Step 2 now carries the qualifier's answers,
+ * and "I'm still exploring" / "Just exploring" are recorded on the lead
+ * (Rule 2.1), so `exploring` is a stored value of Q1 and Q2.
  */
 
 /**
@@ -42,6 +48,14 @@ export const PROJECT_TYPE_VALUES = [
  */
 export type ProjectType = (typeof PROJECT_TYPE_VALUES)[number];
 
+/** Q1 and Q2's off-ramp answer (Rule 2.1), stored on a step 2 lead (#65). */
+export const EXPLORING = "exploring";
+
+/** Q2–Q4 answer values (docs/06-taxonomy.md §3). */
+export const READINESS_VALUES = ["now", "soon"] as const;
+export const AUTHORITY_VALUES = ["full", "shared", "none"] as const;
+export const VALIDATION_VALUES = ["validated", "willing", "build_first"] as const;
+
 /** Anti-bot guards every entry carries (Business Rules 2.8). */
 const botGuards = {
   /** Honeypot (Business Rules 2.8): absent or empty, anything else rejects. */
@@ -54,45 +68,64 @@ const botGuards = {
   _t: z.number().int().min(3000),
 };
 
-/** Contact + anti-bot guards every door shares (Business Rules 1.5, 2.8). */
-const leadContact = {
-  name: z.string().trim().min(1).max(100),
-  email: z.email(),
-  ...botGuards,
-};
+/**
+ * The offerings a visitor checked on step 1 (Rule 1.7): at least one,
+ * and both is fine. The schema accepts all four canonical values; the
+ * door shows two.
+ */
+const projectTypes = z.array(z.enum(PROJECT_TYPE_VALUES)).min(1);
 
-/** The full four-question qualifier (Business Rules §1). */
-export const qualificationPayloadSchema = z.object({
-  kind: z.literal("qualified"),
-  project_type: z.enum(PROJECT_TYPE_VALUES),
-  readiness: z.enum(["now", "soon"]),
-  authority: z.enum(["full", "shared", "none"]),
-  validation: z.enum(["validated", "willing", "build_first"]),
-  ...leadContact,
-  company: z.string().trim().max(100).optional(),
-  details: z.string().trim().max(1000).optional(),
+/** Step 1, the quick door (Rule 1.7): an email and at least one offering. */
+export const quickLeadPayloadSchema = z.object({
+  kind: z.literal("quick"),
+  /**
+   * The door the lead came through. One door is left: the off-ramp's own
+   * capture (`off_ramp`) retired with #65, since step 1 already has the
+   * email.
+   */
+  source: z.literal("quick_door"),
+  email: z.email(),
+  project_types: projectTypes,
+  ...botGuards,
 });
 
 /**
- * The quick door (Sprint 02 Unit 04). `source` separates the two
- * low-friction entries that share this shape: the primary quick path and
- * the off-ramp capture offered to an "exploring" visitor (Business Rules
- * 2.1–2.2). `details` is the optional free-text line; it reuses the
- * qualifier's `details` field so it lands in the same Sheet column.
+ * Step 2 (#65): every field optional, attached to the step 1 lead. The
+ * `lead_id` is the random ID the server returned for step 1, and the
+ * email must match the row's too, so a follow-up can only ever land on
+ * the visitor's own lead. `project_types` repeats the step 1 picks so a
+ * Q1 answer can be written beside them in the Sheet's one project
+ * column. A follow-up with nothing in it is refused: the modal sends
+ * none, so a direct POST of one is a probe.
  */
-export const quickLeadPayloadSchema = z.object({
-  kind: z.literal("quick"),
-  source: z.enum(["quick_door", "off_ramp"]),
-  ...leadContact,
-  /**
-   * Quick door's optional multi-select "what do you need" categories
-   * (adhoc Sprint 03): zero or more canonical project types. The visitor
-   * can combine them (e.g. a new product *with* an agentic system).
-   * Absent for the off-ramp capture, which collects only name + email.
-   */
-  project_types: z.array(z.enum(PROJECT_TYPE_VALUES)).optional(),
-  details: z.string().trim().max(1000).optional(),
-});
+export const followupPayloadSchema = z
+  .object({
+    kind: z.literal("followup"),
+    lead_id: z.uuid(),
+    email: z.email(),
+    project_types: projectTypes,
+    project_type: z.enum([...PROJECT_TYPE_VALUES, EXPLORING]).optional(),
+    readiness: z.enum([...READINESS_VALUES, EXPLORING]).optional(),
+    authority: z.enum(AUTHORITY_VALUES).optional(),
+    validation: z.enum(VALIDATION_VALUES).optional(),
+    name: z.string().trim().min(1).max(100).optional(),
+    company: z.string().trim().min(1).max(100).optional(),
+    details: z.string().trim().min(1).max(1000).optional(),
+    ...botGuards,
+  })
+  .refine(
+    (payload) =>
+      [
+        payload.project_type,
+        payload.readiness,
+        payload.authority,
+        payload.validation,
+        payload.name,
+        payload.company,
+        payload.details,
+      ].some((value) => value !== undefined),
+    { message: "a follow-up carries at least one answer" },
+  );
 
 /**
  * The waitlist band (decision-log #58): an email for the installable
@@ -108,17 +141,17 @@ export const waitlistPayloadSchema = z.object({
 /**
  * Every entry — the contract the endpoint and the delivery seam validate
  * against. Discriminated on `kind` so the right shape is enforced and a
- * direct POST can't smuggle qualifier answers past the quick guards (or
- * vice versa).
+ * direct POST can't smuggle one kind's fields past another's guards.
  */
 export const leadPayloadSchema = z.discriminatedUnion("kind", [
-  qualificationPayloadSchema,
   quickLeadPayloadSchema,
+  followupPayloadSchema,
   waitlistPayloadSchema,
 ]);
 
-export type QualificationPayload = z.infer<typeof qualificationPayloadSchema>;
 export type QuickLeadPayload = z.infer<typeof quickLeadPayloadSchema>;
+export type FollowupPayload = z.infer<typeof followupPayloadSchema>;
 export type WaitlistPayload = z.infer<typeof waitlistPayloadSchema>;
 export type LeadPayload = z.infer<typeof leadPayloadSchema>;
-export type LeadSource = QuickLeadPayload["source"];
+/** The two kinds that add a Sheet row (a follow-up updates one). */
+export type NewEntryPayload = QuickLeadPayload | WaitlistPayload;

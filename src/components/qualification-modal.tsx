@@ -19,15 +19,15 @@ import {
   MODAL_FAILURE_SUBJECT,
   MODAL_NAV,
   MODAL_OFF_RAMP,
-  MODAL_OFF_RAMP_SUCCESS,
   MODAL_PROGRESS,
   MODAL_QUESTIONS,
   MODAL_QUICK,
+  MODAL_STEP2,
   MODAL_SUCCESS,
   type QuickNeed,
 } from "@/content/modal";
-import { submitQualification } from "@/lib/qualify";
-import { leadPayloadSchema } from "@/lib/schema";
+import { submitQualification, type QualifyResult } from "@/lib/qualify";
+import { EXPLORING, leadPayloadSchema } from "@/lib/schema";
 
 /** Question order per Business Rules 1.1–1.4. */
 const QUESTION_ORDER = [
@@ -44,11 +44,13 @@ type Answers = {
 };
 
 /**
- * Flow screens: the quick door (Unit 04 — the low-friction primary
- * entry), the four question steps and the contact step (Business
- * Rules §1), the off-ramp (Rules 2.1–2.2, now with an email capture),
- * and the terminal submit screens (UX spec §Qualification modal;
- * failure per Rule 2.7).
+ * Flow screens (decision-log #65, email-first): step 1 is the quick door
+ * (Rule 1.7: an email and at least one offering), which saves the lead;
+ * step 2 is the four question steps and the contact step (Business
+ * Rules §1), every one optional, attaching to that lead; then the
+ * terminal screens: success, the off-ramp as step 2's ending for a
+ * still-exploring answer (Rules 2.1–2.2), and the failure fallback
+ * (Rule 2.7).
  */
 type Screen =
   | "quick"
@@ -58,7 +60,7 @@ type Screen =
   | "success"
   | "failure";
 
-/** Steps the progress meter covers — the qualified path. */
+/** Steps the progress meter covers: step 2's screens. */
 const PROGRESS_STEPS = [...QUESTION_ORDER, "contact"] as const;
 
 function isQuestionKey(screen: Screen): screen is QuestionKey {
@@ -69,14 +71,15 @@ function isQuestionKey(screen: Screen): screen is QuestionKey {
  * Branch evaluation, run on every Next press against the *current*
  * answers — which is what makes E1 hold: going back and changing Q1
  * to "I'm still exploring" re-evaluates Rule 2.1 and routes to the
- * off-ramp regardless of how far the visitor had advanced.
+ * off-ramp regardless of how far the visitor had advanced. An
+ * unanswered question is passed over (#65: every one is optional).
  */
 function screenAfter(key: QuestionKey, answers: Answers): Screen {
   switch (key) {
     case "project_type":
-      return answers.project_type === "exploring" ? "off_ramp" : "readiness";
+      return answers.project_type === EXPLORING ? "off_ramp" : "readiness";
     case "readiness":
-      return answers.readiness === "exploring" ? "off_ramp" : "authority";
+      return answers.readiness === EXPLORING ? "off_ramp" : "authority";
     case "authority":
       return "validation";
     case "validation":
@@ -84,25 +87,47 @@ function screenAfter(key: QuestionKey, answers: Answers): Screen {
   }
 }
 
+/**
+ * The answers a step 2 submit sends: every answer in order, up to and
+ * including the first "still exploring". Rule 2.1 ends the questions
+ * there, so answers left from an earlier pass (E1: the visitor went back
+ * and changed Q1) are not sent with it.
+ */
+function submittedAnswers(answers: Answers): Answers {
+  const sent: Answers = {};
+  for (const key of QUESTION_ORDER) {
+    const value = answers[key];
+    if (value === undefined) continue;
+    Object.assign(sent, { [key]: value });
+    if (value === EXPLORING) break;
+  }
+  return sent;
+}
+
 interface ContactFields {
-  name: string;
   email: string;
+  name: string;
   company: string;
   details: string;
-  /** Quick door's optional multi-select needs (Sprint 03 adhoc). */
+  /** Step 1's offerings: at least one before it sends (#65). */
   projectTypes: QuickNeed[];
   /** Honeypot (Rule 2.8) — anything non-empty rejects at the schema. */
   hp: string;
 }
 
 const EMPTY_CONTACT: ContactFields = {
-  name: "",
   email: "",
+  name: "",
   company: "",
   details: "",
   projectTypes: [],
   hp: "",
 };
+
+/** An optional text field as the payload carries it: blank is absent. */
+function optional(value: string): string | undefined {
+  return value.trim() === "" ? undefined : value;
+}
 
 /** Resolve a quick-door need value to the short label the visitor saw. */
 function needLabel(value: string): string {
@@ -131,12 +156,23 @@ export interface ComposedAnswer {
  * The visitor's answers as label/value pairs — rendered on the
  * failure screen and carried in the fallback mailto body so nothing
  * is lost (Rule 2.7). Labels are the canonical question/field copy.
+ * Step 1's email and offerings come first; step 2's answers follow
+ * when there are any.
  */
 function composeAnswers(
   answers: Answers,
   contact: ContactFields,
 ): ComposedAnswer[] {
-  const composed: ComposedAnswer[] = [];
+  const { fields } = MODAL_CONTACT;
+  const composed: ComposedAnswer[] = [
+    { label: fields.email.label, value: contact.email },
+  ];
+  if (contact.projectTypes.length > 0) {
+    composed.push({
+      label: MODAL_QUICK.messageLabel,
+      value: contact.projectTypes.map(needLabel).join("; "),
+    });
+  }
   for (const key of QUESTION_ORDER) {
     const { question, options } = MODAL_QUESTIONS[key];
     const selected = options.find((option) => option.value === answers[key]);
@@ -144,20 +180,10 @@ function composeAnswers(
       composed.push({ label: question, value: selected.label });
     }
   }
-  const { fields } = MODAL_CONTACT;
-  composed.push({ label: fields.name.label, value: contact.name });
-  composed.push({ label: fields.email.label, value: contact.email });
-  if (contact.company !== "") {
-    composed.push({ label: fields.company.label, value: contact.company });
-  }
-  if (contact.projectTypes.length > 0) {
-    composed.push({
-      label: MODAL_QUICK.messageLabel,
-      value: contact.projectTypes.map(needLabel).join("; "),
-    });
-  }
-  if (contact.details !== "") {
-    composed.push({ label: fields.details.label, value: contact.details });
+  for (const key of ["name", "company", "details"] as const) {
+    if (optional(contact[key]) !== undefined) {
+      composed.push({ label: fields[key].label, value: contact[key] });
+    }
   }
   return composed;
 }
@@ -171,6 +197,11 @@ function composeAnswers(
  * Exported for the waitlist band's failure fallback (#58). */
 export const HEADING_CLASS =
   "font-serif text-2xl leading-[1.08] font-bold tracking-tight text-balance text-foreground outline-none md:text-3xl";
+
+/* Step 2's first question sits under the step 2 heading (#65), so it
+ * steps down one size from HEADING_CLASS; same face and weight. */
+const QUESTION_CLASS =
+  "mt-8 font-serif text-xl leading-snug font-bold tracking-tight text-balance text-foreground md:text-2xl";
 
 /**
  * Uppercase mono caption, the marquee label treatment, in
@@ -237,6 +268,15 @@ const GHOST_CLASS =
   "text-base font-medium text-foreground transition-colors duration-150 " +
   "hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
+/* "Skip for now" (#65): a quiet text control in the header, beside the
+ * close button, so it is in the same place on every step 2 screen and
+ * never scrolls away. The muted-to-foreground hover is the retired
+ * side-door link's treatment. */
+const SKIP_CLASS =
+  "inline-flex min-h-11 items-center rounded-md px-2 text-sm font-medium text-muted-foreground " +
+  "underline underline-offset-4 transition-colors hover:text-foreground disabled:pointer-events-none disabled:opacity-50 " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+
 /** Inline checkmark — fills the tab's check box when a need is selected. */
 function CheckIcon() {
   return (
@@ -273,9 +313,8 @@ function AdvanceInner({ label, arrow = true }: { label: ReactNode; arrow?: boole
 
 /**
  * Honeypot (Rule 2.8): visually and AT-hidden; bots fill it, the schema
- * rejects anything non-empty. Shared by every door's form (Unit 04) so
- * the quick path and off-ramp capture carry the same anti-bot guard as
- * the qualifier's contact step, and by the waitlist band (#58).
+ * rejects anything non-empty. Shared by both steps' forms so each send
+ * carries the same anti-bot guard, and by the waitlist band (#58).
  */
 export function HoneypotField({
   value,
@@ -339,9 +378,9 @@ interface QualificationModalProps {
   /** Fired after the native dialog closes; the provider unmounts us. */
   onClose: () => void;
   /**
-   * Preselects one quick-door need — the service-card CTAs carry their
-   * card's offering in here. Seeds initial state only: the visitor can
-   * clear or change it like any other selection.
+   * Preselects one step 1 offering — the service cards, tiers and route
+   * CTAs carry their offering in here. Seeds initial state only: the
+   * visitor can clear or change it like any other selection.
    */
   initialNeed?: QuickNeed;
 }
@@ -352,14 +391,22 @@ interface QualificationModalProps {
  * no route: the builder's call docs/03-site-architecture.md
  * delegates, recorded in briefs/build-notes/06-qualification-modal.md.
  *
+ * Email-first (decision-log #65): step 1 asks an email and at least one
+ * offering and saves the lead; the server answers with a lead ID. Step 2
+ * asks today's questions, every one optional, with "Skip for now" in the
+ * header on every screen, and sends what was given as a follow-up on
+ * that lead ID, so it lands on the same lead. A still-exploring answer
+ * is sent at once and ends on the off-ramp's message.
+ *
  * Mounted fresh on every open (E2: no cooldown, always fresh) on a
  * native <dialog> via showModal() — focus trap, Esc-to-close, and
- * top-layer rendering are the platform's. Escape hatch and a back
- * control on every step (Rules 1.6, 2.6). Interim submit resolves to
- * the failure-fallback per docs/decision-log.md #6 — see
- * @/lib/qualify. Styling follows the fin Zen Linen system
- * (decision-log #47, #48): fin radius steps, hairline borders, the
- * card glass, Playfair headings, mono labels, flat coral accent.
+ * top-layer rendering are the platform's. Escape hatch on every screen
+ * (Rule 2.6) and a back control on every step but step 2's first, which
+ * follows a step already sent (Rule 1.6). No success is ever shown for
+ * a send that was not durably recorded (Rule 2.7) — see @/lib/qualify.
+ * Styling follows the fin Zen Linen system (decision-log #47, #48): fin
+ * radius steps, hairline borders, the card glass, Playfair headings,
+ * mono labels, flat coral accent.
  */
 export function QualificationModal({
   onClose,
@@ -367,10 +414,13 @@ export function QualificationModal({
 }: QualificationModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const firstNeedRef = useRef<HTMLInputElement>(null);
   /** Modal-open timestamp for the minimum-time check (Rule 2.8); set on mount. */
   const openedAt = useRef(0);
   const headingId = useId();
-  /** Open to the quick door (Unit 04 — the low-friction primary path). */
+  const questionId = useId();
+  const needsErrorId = useId();
+  /** Open on step 1 (#65). */
   const [screen, setScreen] = useState<Screen>("quick");
   const [answers, setAnswers] = useState<Answers>({});
   /* Lazy initial state, not an effect: the preselection is there on
@@ -382,12 +432,12 @@ export function QualificationModal({
       : { ...EMPTY_CONTACT, projectTypes: [initialNeed] },
   );
   const [submitting, setSubmitting] = useState(false);
-  /**
-   * The form a submit came from — so the failure-fallback's Back returns
-   * to the right door (Rule 2.7) and the success screen can show the
-   * gentler off-ramp confirmation when the lead was an "exploring" one.
-   */
-  const [returnScreen, setReturnScreen] = useState<Screen>("contact");
+  /** Step 1 sent with no box checked: show the message until one is. */
+  const [needsError, setNeedsError] = useState(false);
+  /** The ID step 1's lead was saved under; step 2 sends it back (#65). */
+  const [leadId, setLeadId] = useState<string | null>(null);
+  /** The screen a send came from, so the failure fallback's Back returns there (Rule 2.7). */
+  const [returnScreen, setReturnScreen] = useState<Screen>("quick");
 
   /*
    * Layout effect so the dialog opens before first paint — the
@@ -419,40 +469,31 @@ export function QualificationModal({
   const close = () => dialogRef.current?.close();
 
   const stepIndex = (PROGRESS_STEPS as readonly string[]).indexOf(screen);
+  const inStep2 = stepIndex !== -1;
 
   const setAnswer = <K extends QuestionKey>(key: K, value: Answers[K]) =>
     setAnswers((current) => ({ ...current, [key]: value }));
 
-  /** Toggle a quick-door need on/off (multi-select, Sprint 03 adhoc). */
-  const toggleNeed = (value: QuickNeed) =>
+  /** Toggle a step 1 offering on/off (multi-select, Sprint 03 adhoc). */
+  const toggleNeed = (value: QuickNeed) => {
+    const checking = !contact.projectTypes.includes(value);
+    if (checking) setNeedsError(false);
     setContact((current) => ({
       ...current,
-      projectTypes: current.projectTypes.includes(value)
-        ? current.projectTypes.filter((v) => v !== value)
-        : [...current.projectTypes, value],
+      projectTypes: checking
+        ? [...current.projectTypes, value]
+        : current.projectTypes.filter((v) => v !== value),
     }));
-
-  const goNext = () => {
-    if (isQuestionKey(screen) && answers[screen] !== undefined) {
-      setScreen(screenAfter(screen, answers));
-    }
   };
 
   /**
-   * Back per Rule 1.6 — every step has one. From the quick door (the
-   * entry) it closes; from Q1 it returns to the quick door it was
-   * reached from; from the off-ramp it returns to whichever question
-   * triggered Rule 2.1 so the answer can be changed (E1/E2); from the
-   * failure-fallback it returns to the door that submitted (Rule 2.7).
+   * Back per Rule 1.6. From step 1 (the entry) it closes; step 2's first
+   * screen has none, since step 1 is already sent (#65); every later
+   * step 2 screen goes back one; the failure fallback returns to the
+   * screen that sent (Rule 2.7).
    */
   const goBack = () => {
     switch (screen) {
-      case "quick":
-        close();
-        break;
-      case "project_type":
-        setScreen("quick");
-        break;
       case "readiness":
         setScreen("project_type");
         break;
@@ -465,33 +506,27 @@ export function QualificationModal({
       case "contact":
         setScreen("validation");
         break;
-      case "off_ramp":
-        setScreen(
-          answers.project_type === "exploring" ? "project_type" : "readiness",
-        );
-        break;
       case "failure":
         setScreen(returnScreen);
         break;
-      case "success":
+      default:
         close();
-        break;
     }
   };
 
   /**
-   * Shared submit core for every door. The payload is re-validated
-   * client-side against `leadPayloadSchema` first: "exploring" answers
-   * can't reach the qualifier path (Rule 2.1 routed them to the
-   * off-ramp) and can't pass the schema either, and a tripped honeypot
-   * or sub-3s timing (Rule 2.8) parse-fails here. Either way a failure
-   * goes to the fallback with answers preserved — the lead is never
-   * silently dropped (Rule 2.7). `from` is recorded so the fallback's
-   * Back and the success variant resolve to the right door.
+   * Shared send core for both steps. The payload is re-validated
+   * client-side against `leadPayloadSchema` first, so a tripped
+   * honeypot or sub-3s timing (Rule 2.8) parse-fails here. Either way a
+   * failure goes to the fallback with answers preserved — the lead is
+   * never silently dropped (Rule 2.7). `from` is recorded so the
+   * fallback's Back resolves to the right screen; `next` picks the
+   * screen a durable send moves to.
    */
   const runSubmit = async (
     parsed: ReturnType<typeof leadPayloadSchema.safeParse>,
     from: Screen,
+    next: (result: QualifyResult) => Screen,
   ) => {
     setReturnScreen(from);
     if (!parsed.success) {
@@ -501,7 +536,7 @@ export function QualificationModal({
     setSubmitting(true);
     try {
       const result = await submitQualification(parsed.data);
-      setScreen(result.ok ? "success" : "failure");
+      setScreen(result.ok ? next(result) : "failure");
     } catch {
       // Rule 2.7: preserve the composed answers, show the escape hatch.
       setScreen("failure");
@@ -510,56 +545,85 @@ export function QualificationModal({
     }
   };
 
-  /** Full qualifier (Business Rules §1) — the optional "tell us more" door. */
-  const handleQualifiedSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const parsed = leadPayloadSchema.safeParse({
-      kind: "qualified",
-      project_type: answers.project_type,
-      readiness: answers.readiness,
-      authority: answers.authority,
-      validation: answers.validation,
-      name: contact.name,
-      email: contact.email,
-      company: contact.company === "" ? undefined : contact.company,
-      details: contact.details === "" ? undefined : contact.details,
-      _hp: contact.hp,
-      _t: Date.now() - openedAt.current,
-    });
-    void runSubmit(parsed, "contact");
-  };
-
-  /** Quick door (Unit 04) — name + email + an optional one-line message. */
+  /**
+   * Step 1 (Rule 1.7, #65): an email and at least one offering. The
+   * browser's own validation holds back a missing or malformed email;
+   * no box checked holds back here with a message under the boxes and
+   * focus on the first one. A durable save moves on to step 2 with the
+   * lead ID the server returned (with none, there is nothing to attach
+   * to, so it ends on success).
+   */
   const handleQuickSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (contact.projectTypes.length === 0) {
+      setNeedsError(true);
+      firstNeedRef.current?.focus();
+      return;
+    }
     const parsed = leadPayloadSchema.safeParse({
       kind: "quick",
       source: "quick_door",
-      name: contact.name,
       email: contact.email,
-      project_types:
-        contact.projectTypes.length > 0 ? contact.projectTypes : undefined,
+      project_types: contact.projectTypes,
       _hp: contact.hp,
       _t: Date.now() - openedAt.current,
     });
-    void runSubmit(parsed, "quick");
+    void runSubmit(parsed, "quick", (result) => {
+      if (result.leadId === undefined) return "success";
+      setLeadId(result.leadId);
+      return "project_type";
+    });
   };
 
-  /** Off-ramp email capture (Unit 04) — the honest "not yet" still leaves a contact. */
-  const handleOffRampSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  /**
+   * End step 2 from `from`: the final submit, "Skip for now", or a
+   * still-exploring Next (#65). Whatever was given is sent as one
+   * follow-up on the step 1 lead; nothing given sends nothing. The
+   * ending is the off-ramp's message when an answer was "still
+   * exploring" (Rule 2.1), the success screen otherwise.
+   */
+  const finishStep2 = (from: Screen) => {
+    const given = submittedAnswers(answers);
+    const exploring =
+      given.project_type === EXPLORING || given.readiness === EXPLORING;
+    const ending: Screen = exploring ? "off_ramp" : "success";
+    const payload = {
+      ...given,
+      name: optional(contact.name),
+      company: optional(contact.company),
+      details: optional(contact.details),
+    };
+    if (leadId === null || Object.values(payload).every((v) => v === undefined)) {
+      setScreen(ending);
+      return;
+    }
     const parsed = leadPayloadSchema.safeParse({
-      kind: "quick",
-      source: "off_ramp",
-      name: contact.name,
+      kind: "followup",
+      lead_id: leadId,
       email: contact.email,
+      project_types: contact.projectTypes,
+      ...payload,
       _hp: contact.hp,
       _t: Date.now() - openedAt.current,
     });
-    void runSubmit(parsed, "off_ramp");
+    void runSubmit(parsed, from, () => ending);
   };
 
-  const composed = composeAnswers(answers, contact);
+  /** Next on a question: move on, or end step 2 on "still exploring". */
+  const goNext = () => {
+    if (!isQuestionKey(screen)) return;
+    const next = screenAfter(screen, answers);
+    if (next === "off_ramp") finishStep2(screen);
+    else setScreen(next);
+  };
+
+  /** Step 2's last screen: the contact fields' submit. */
+  const handleContactSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    finishStep2("contact");
+  };
+
+  const composed = composeAnswers(submittedAnswers(answers), contact);
   const failureMailto = fallbackMailto(composed, MODAL_FAILURE_SUBJECT);
 
   return (
@@ -577,37 +641,51 @@ export function QualificationModal({
         "motion-safe:animate-modal-in",
       ].join(" ")}
     >
-      <header className="flex items-center justify-between gap-4 px-6 pt-5 md:px-10 md:pt-7">
-        {stepIndex === -1 ? (
-          <span aria-hidden="true" />
-        ) : (
+      <header className="flex items-center justify-between gap-3 px-6 pt-5 md:px-10 md:pt-7">
+        {inStep2 ? (
           <div>
             <p className="sr-only">
               {MODAL_PROGRESS.step(stepIndex + 1, PROGRESS_STEPS.length)}
             </p>
             {/* Thin segmented meter: rounded-full segments, coral for
                 steps reached, `muted-foreground` at 70% at rest (about 3.1:1 on
-                `card`, fin's 3:1 floor for marks; decision-log #47). */}
+                `card`, fin's 3:1 floor for marks; decision-log #47).
+                Narrower segments below sm leave the header room for
+                "Skip for now" (#65). */}
             <div aria-hidden="true" className="flex items-center gap-1.5">
               {PROGRESS_STEPS.map((step, i) => (
                 <span
                   key={step}
-                  className={`h-[3px] w-7 rounded-full ${
+                  className={`h-[3px] w-5 rounded-full sm:w-7 ${
                     i <= stepIndex ? "bg-brand" : "bg-muted-foreground/70"
                   }`}
                 />
               ))}
             </div>
           </div>
+        ) : (
+          <span aria-hidden="true" />
         )}
-        <button
-          type="button"
-          aria-label={MODAL_NAV.close}
-          onClick={close}
-          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          <CloseIcon />
-        </button>
+        <div className="flex items-center gap-1">
+          {inStep2 && (
+            <button
+              type="button"
+              onClick={() => finishStep2(screen)}
+              disabled={submitting}
+              className={SKIP_CLASS}
+            >
+              {MODAL_STEP2.skip}
+            </button>
+          )}
+          <button
+            type="button"
+            aria-label={MODAL_NAV.close}
+            onClick={close}
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            <CloseIcon />
+          </button>
+        </div>
       </header>
 
       <div
@@ -631,23 +709,6 @@ export function QualificationModal({
               <div className="flex flex-col gap-5">
                 <label className="block">
                   <span className={CAPTION_CLASS}>
-                    {MODAL_CONTACT.fields.name.label}
-                  </span>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    maxLength={100}
-                    autoComplete="name"
-                    value={contact.name}
-                    onChange={(e) =>
-                      setContact({ ...contact, name: e.target.value })
-                    }
-                    className={INPUT_CLASS}
-                  />
-                </label>
-                <label className="block">
-                  <span className={CAPTION_CLASS}>
                     {MODAL_CONTACT.fields.email.label}
                   </span>
                   <input
@@ -666,18 +727,21 @@ export function QualificationModal({
                   <span className={CAPTION_CLASS}>
                     {MODAL_QUICK.messageLabel}
                   </span>
-                  {/* Multi-select tabs (optional): the two offerings
-                      (#53), which combine freely. Picks are stored as
-                      `project_types` → the Sheet's project_type column.
-                      Stacked on mobile, side by side from sm up. */}
+                  {/* Multi-select tabs: the two offerings (#53), which
+                      combine freely; at least one before step 1 sends
+                      (#65). Picks are stored as `project_types` → the
+                      Sheet's project_type column. Stacked on mobile,
+                      side by side from sm up. */}
                   <div
                     role="group"
                     aria-label={MODAL_QUICK.messageLabel}
+                    aria-describedby={needsError ? needsErrorId : undefined}
                     className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2"
                   >
-                    {MODAL_QUICK.needsOptions.map(({ value, label }) => (
+                    {MODAL_QUICK.needsOptions.map(({ value, label }, i) => (
                       <label key={value} className={TAB_CLASS}>
                         <input
+                          ref={i === 0 ? firstNeedRef : undefined}
                           type="checkbox"
                           name="quick_needs"
                           value={value}
@@ -692,6 +756,16 @@ export function QualificationModal({
                       </label>
                     ))}
                   </div>
+                  {/* `destructive` on `card` is about 4.5:1. */}
+                  {needsError && (
+                    <p
+                      id={needsErrorId}
+                      role="alert"
+                      className="mt-2.5 text-sm font-medium text-destructive"
+                    >
+                      {MODAL_QUICK.needsRequired}
+                    </p>
+                  )}
                 </div>
               </div>
               <HoneypotField
@@ -711,33 +785,44 @@ export function QualificationModal({
                 </button>
               </div>
             </form>
-            {/* Secondary path into the full four-question qualifier. */}
-            <button
-              type="button"
-              onClick={() => setScreen("project_type")}
-              className="group/more mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            >
-              {MODAL_QUICK.toQualifier}
-              <span className="transition-[translate] duration-150 motion-safe:group-hover/more:translate-x-0.5">
-                <ArrowIcon className="size-[18px]" />
-              </span>
-            </button>
           </>
         )}
 
         {isQuestionKey(screen) && (
           <>
-            <h2
-              id={headingId}
-              ref={headingRef}
-              tabIndex={-1}
-              className={HEADING_CLASS}
-            >
-              {MODAL_QUESTIONS[screen].question}
-            </h2>
+            {/* Step 2 opens under its own heading and body (#65); the
+                first question sits below them. From Q2 the question is
+                the heading again. */}
+            {screen === "project_type" ? (
+              <>
+                <h2
+                  id={headingId}
+                  ref={headingRef}
+                  tabIndex={-1}
+                  className={HEADING_CLASS}
+                >
+                  {MODAL_STEP2.heading}
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-foreground">
+                  {MODAL_STEP2.body}
+                </p>
+                <h3 id={questionId} className={QUESTION_CLASS}>
+                  {MODAL_QUESTIONS.project_type.question}
+                </h3>
+              </>
+            ) : (
+              <h2
+                id={headingId}
+                ref={headingRef}
+                tabIndex={-1}
+                className={HEADING_CLASS}
+              >
+                {MODAL_QUESTIONS[screen].question}
+              </h2>
+            )}
             <div
               role="radiogroup"
-              aria-labelledby={headingId}
+              aria-labelledby={screen === "project_type" ? questionId : headingId}
               className="mt-6 flex flex-col gap-2.5"
             >
               {MODAL_QUESTIONS[screen].options.map(({ value, label }) => (
@@ -755,13 +840,17 @@ export function QualificationModal({
               ))}
             </div>
             <div className="mt-8 flex items-center justify-between gap-4">
-              <button type="button" onClick={goBack} className={GHOST_CLASS}>
-                {MODAL_NAV.back}
-              </button>
+              {screen === "project_type" ? (
+                <span aria-hidden="true" />
+              ) : (
+                <button type="button" onClick={goBack} className={GHOST_CLASS}>
+                  {MODAL_NAV.back}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={goNext}
-                disabled={answers[screen] === undefined}
+                disabled={submitting}
                 className={ADVANCE_CLASS}
               >
                 <AdvanceInner label={MODAL_NAV.next} />
@@ -780,7 +869,7 @@ export function QualificationModal({
             >
               {MODAL_CONTACT_HEADING}
             </h2>
-            <form onSubmit={handleQualifiedSubmit} className="mt-6">
+            <form onSubmit={handleContactSubmit} className="mt-6">
               <div className="flex flex-col gap-5">
                 <label className="block">
                   <span className={CAPTION_CLASS}>
@@ -789,28 +878,11 @@ export function QualificationModal({
                   <input
                     type="text"
                     name="name"
-                    required
                     maxLength={100}
                     autoComplete="name"
                     value={contact.name}
                     onChange={(e) =>
                       setContact({ ...contact, name: e.target.value })
-                    }
-                    className={INPUT_CLASS}
-                  />
-                </label>
-                <label className="block">
-                  <span className={CAPTION_CLASS}>
-                    {MODAL_CONTACT.fields.email.label}
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    autoComplete="email"
-                    value={contact.email}
-                    onChange={(e) =>
-                      setContact({ ...contact, email: e.target.value })
                     }
                     className={INPUT_CLASS}
                   />
@@ -889,67 +961,11 @@ export function QualificationModal({
                 {MODAL_ESCAPE_HATCH.email}
               </a>
             </p>
-            {/* Optional email capture (Unit 04): an honest "stay in touch,"
-                not a hard sell (Rule 2.2 intent preserved). */}
-            <form
-              onSubmit={handleOffRampSubmit}
-              className="mt-8 border-t border-border pt-6"
-            >
-              <p className="text-base leading-relaxed text-foreground">
-                {MODAL_OFF_RAMP.capture.prompt}
-              </p>
-              <div className="mt-5 flex flex-col gap-5">
-                <label className="block">
-                  <span className={CAPTION_CLASS}>
-                    {MODAL_CONTACT.fields.name.label}
-                  </span>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    maxLength={100}
-                    autoComplete="name"
-                    value={contact.name}
-                    onChange={(e) =>
-                      setContact({ ...contact, name: e.target.value })
-                    }
-                    className={INPUT_CLASS}
-                  />
-                </label>
-                <label className="block">
-                  <span className={CAPTION_CLASS}>
-                    {MODAL_CONTACT.fields.email.label}
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    autoComplete="email"
-                    value={contact.email}
-                    onChange={(e) =>
-                      setContact({ ...contact, email: e.target.value })
-                    }
-                    className={INPUT_CLASS}
-                  />
-                </label>
-              </div>
-              <HoneypotField
-                value={contact.hp}
-                onChange={(value) => setContact({ ...contact, hp: value })}
-              />
-              <div className="mt-8 flex items-center justify-between gap-4">
-                <button type="button" onClick={goBack} className={GHOST_CLASS}>
-                  {MODAL_NAV.back}
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className={ADVANCE_CLASS}
-                >
-                  <AdvanceInner label={MODAL_OFF_RAMP.capture.submit} />
-                </button>
-              </div>
-            </form>
+            <div className="mt-8">
+              <button type="button" onClick={close} className={ADVANCE_CLASS}>
+                <AdvanceInner label={MODAL_NAV.close} arrow={false} />
+              </button>
+            </div>
           </>
         )}
 
@@ -961,14 +977,10 @@ export function QualificationModal({
               tabIndex={-1}
               className={HEADING_CLASS}
             >
-              {returnScreen === "off_ramp"
-                ? MODAL_OFF_RAMP_SUCCESS.headline
-                : MODAL_SUCCESS.headline}
+              {MODAL_SUCCESS.headline}
             </h2>
             <p className="mt-4 text-base leading-relaxed text-foreground">
-              {returnScreen === "off_ramp"
-                ? MODAL_OFF_RAMP_SUCCESS.body
-                : MODAL_SUCCESS.body}
+              {MODAL_SUCCESS.body}
             </p>
             <div className="mt-8">
               <button type="button" onClick={close} className={ADVANCE_CLASS}>

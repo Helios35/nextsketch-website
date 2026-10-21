@@ -13,65 +13,31 @@
  *
  * DRAFT — new copy is a spec change (no canonical email copy exists in
  * Messaging Kit §05). Pending owner approval and flagged for the Sprint
- * 03 doc audit (see briefs/build-notes/11-notify.md). The lead's name
- * and the Rule 2.5 signal prefix are composed at send time, not stored
- * here.
+ * 03 doc audit (see briefs/build-notes/11-notify.md). The Rule 2.5
+ * signal prefix is composed at send time, not stored here.
+ *
+ * Since decision-log #65 the modal is email-first: the auto-reply goes
+ * out once, on step 1, which never asks for a name; step 2 sends Nate a
+ * follow-up alert and the visitor nothing. The qualifier and off-ramp
+ * auto-replies retired with that (one auto-reply, sent before any answer
+ * exists), and so did the name in the greeting.
  */
 
 /**
- * Auto-reply to the lead. Confirms receipt in NextSketch's voice and
- * restates the success-screen promise verbatim in spirit — a real reply
- * from Nathan within two business days, not a nurture sequence.
- */
-export const LEAD_AUTOREPLY = {
-  /** Subject the lead sees in their inbox. */
-  subject: "We've got your project details — NextSketch",
-  /** Greeting; first name resolved from the contact step at send time. */
-  greeting: (firstName: string): string => `Hi ${firstName},`,
-  heading: "Thanks — we've got it.",
-  body: [
-    "Your answers are in front of Nathan now. You'll hear back within two business days — a real reply from the person who'd actually do the work, not an auto-sequence.",
-    "If anything changes or you want to add detail before then, just reply to this email. It comes straight to us.",
-  ],
-  signoff: "— Nathan, NextSketch",
-} as const;
-
-/**
- * Auto-reply variant for a quick-door lead (Sprint 02 Unit 04). A quick
- * lead is a ready-to-talk one, so it keeps the same honest
- * two-business-day promise as the qualifier auto-reply — but its wording
- * must not claim "your answers" / "your project details": the quick door
- * collects neither, only a name, email, and an optional one-line message.
- * New copy = a spec change → DRAFT pending owner approval, flagged for the
- * Sprint 03 audit.
+ * Auto-reply to a step 1 lead (Sprint 02 Unit 04; the only auto-reply
+ * since #65). A ready-to-talk lead, so it keeps the honest
+ * two-business-day promise; its wording does not claim "your answers"
+ * or "your project details", which step 1 does not collect. DRAFT
+ * pending owner approval; the greeting is a builder DRAFT (#65).
  */
 export const LEAD_AUTOREPLY_QUICK = {
   subject: "We've got your message — NextSketch",
-  greeting: (firstName: string): string => `Hi ${firstName},`,
+  /** No name is asked on step 1 (#65), so the greeting never uses one. */
+  greeting: "Hi there,",
   heading: "Thanks — we've got it.",
   body: [
     "Your message is in front of Nathan now. You'll hear back within two business days — a real reply from the person who'd actually do the work, not an auto-sequence.",
     "If anything changes or you want to add detail before then, just reply to this email. It comes straight to us.",
-  ],
-  signoff: "— Nathan, NextSketch",
-} as const;
-
-/**
- * Auto-reply variant for an off-ramp ("exploring") capture (Sprint 02
- * Unit 04). The standard LEAD_AUTOREPLY promises a reply within two
- * business days — honest for a ready lead, wrong for someone who just
- * told us they're still exploring. This one matches the off-ramp's "not
- * yet, no pressure" tone instead (MODAL_OFF_RAMP_SUCCESS), so the email
- * can't contradict the screen the visitor just saw. New copy = a spec
- * change → DRAFT pending owner approval, flagged for the Sprint 03 audit.
- */
-export const LEAD_AUTOREPLY_EXPLORING = {
-  subject: "We've got your note — NextSketch",
-  greeting: (firstName: string): string => `Hi ${firstName},`,
-  heading: "Thanks for reaching out.",
-  body: [
-    "We've got your details. No follow-up sequence and no pressure — when you're ready to build, you'll know where to find us, and we'll reach out if the timing lines up.",
-    "If anything changes, just reply to this email. It comes straight to us.",
   ],
   signoff: "— Nathan, NextSketch",
 } as const;
@@ -91,4 +57,17 @@ export const LEAD_ALERT = {
   answersHeading: "Answers",
   /** Label for the capture timestamp line. */
   capturedLabel: "Captured",
+  /** Label for the ID the Sheet row carries, which step 2 attaches by (#65). */
+  leadIdLabel: "Lead ID",
+} as const;
+
+/**
+ * Nate's follow-up alert when step 2 adds answers to a lead (#65): one
+ * short email pointing at the lead step 1 already alerted, by its email
+ * and lead ID. The subject is the recomputed signal, the email and
+ * `subjectTag`. Builder DRAFT pending owner approval.
+ */
+export const LEAD_FOLLOWUP_ALERT = {
+  intro: "More from a lead already in the Sheet. Same Lead ID, same row.",
+  subjectTag: "(follow-up)",
 } as const;

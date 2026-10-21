@@ -72,7 +72,8 @@ export const WORK_INTRO =
  * Deliberately NOT from the Rule 3.1 CTA set: that set is exhaustive
  * for *conversion* CTAs, and this control is navigation to the
  * project's case study, not a conversion action — the same reasoning
- * the off-ramp's "Stay in Touch" carve-out records in Rule 3.1. It is
+ * the off-ramp's "Stay in Touch" carve-out recorded in Rule 3.1 (retired
+ * with the capture, #65). It is
  * also distinct from the Rule 3.2 banned read-on phrasing, which bans
  * one exact string this is not.
  */

@@ -3,13 +3,17 @@ import { Resend } from "resend";
 import { SITE } from "@/content/copy";
 import {
   LEAD_ALERT,
-  LEAD_AUTOREPLY,
-  LEAD_AUTOREPLY_EXPLORING,
   LEAD_AUTOREPLY_QUICK,
+  LEAD_FOLLOWUP_ALERT,
 } from "@/content/email";
-import { MODAL_CONTACT, MODAL_QUESTIONS, MODAL_QUICK } from "@/content/modal";
-import { labelFor, leadSignal } from "@/lib/lead-format";
-import type { LeadPayload, WaitlistPayload } from "@/lib/schema";
+import { MODAL_CONTACT, MODAL_QUICK } from "@/content/modal";
+import { followupAnswers, leadSignal, quickNeeds } from "@/lib/lead-format";
+import type {
+  FollowupPayload,
+  NewEntryPayload,
+  QuickLeadPayload,
+  WaitlistPayload,
+} from "@/lib/schema";
 
 /**
  * Lead notification (Sprint 02 Unit 03 — notify). Fires two emails via
@@ -26,6 +30,12 @@ import type { LeadPayload, WaitlistPayload } from "@/lib/schema";
  * A waitlist entry (decision-log #58) gets the alert only: no
  * auto-reply, because the band's on-page confirmation is the whole
  * acknowledgement.
+ *
+ * Email-first (decision-log #65): both emails go out on step 1, which
+ * is the lead (an email and the offerings, no name). Step 2's answers
+ * arrive later as a `followup`: `notifyFollowup` sends Nate one short
+ * follow-up alert pointing at the same lead, and the visitor gets no
+ * second auto-reply.
  *
  * Best-effort by contract (brief Outcome 4): this is invoked from the
  * route via `after()`, so it runs *after* the response is sent and
@@ -51,14 +61,6 @@ import type { LeadPayload, WaitlistPayload } from "@/lib/schema";
  * arbitrary-recipient delivery follows domain verification — owner-owned.
  */
 const INTERIM_SENDER = "NextSketch <onboarding@resend.dev>";
-
-/** The four qualification answers, in modal order (Business Rules §1). */
-const QUESTION_ORDER = [
-  "project_type",
-  "readiness",
-  "authority",
-  "validation",
-] as const;
 
 /** Escape user-supplied text before it lands in the HTML email body. */
 function escapeHtml(value: string): string {
@@ -89,22 +91,35 @@ function resolveSender(): { from: string; branded: boolean } {
   return { from: INTERIM_SENDER, branded: false };
 }
 
-export async function notifyLead(payload: LeadPayload): Promise<void> {
+/**
+ * A Resend client and sender, or `null` (logged) when no API key is set:
+ * every send is best-effort, so a missing key skips email and never
+ * touches a capture that already succeeded.
+ */
+function resolveMailer(): { resend: Resend; from: string } | null {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.error(
       "lead-notify: RESEND_API_KEY not set — skipping the lead auto-reply and Nate's alert (best-effort; the lead is already durably captured). Set it in Vercel env (sprint plan owner setup checklist).",
     );
-    return;
+    return null;
   }
-
-  const resend = new Resend(apiKey);
   const { from, branded } = resolveSender();
   if (!branded) {
     console.warn(
       "lead-notify: LEAD_FROM_EMAIL not set — sending from Resend's interim onboarding sender (Decision 3). Set LEAD_FROM_EMAIL to the verified branded sender once DNS is verified.",
     );
   }
+  return { resend: new Resend(apiKey), from };
+}
+
+export async function notifyLead(
+  payload: NewEntryPayload,
+  leadId: string,
+): Promise<void> {
+  const mailer = resolveMailer();
+  if (mailer === null) return;
+  const { resend, from } = mailer;
 
   const capturedAt = new Date().toISOString();
 
@@ -120,7 +135,7 @@ export async function notifyLead(payload: LeadPayload): Promise<void> {
       : sendAutoReply(resend, from, payload),
     payload.kind === "waitlist"
       ? sendWaitlistAlert(resend, from, payload, capturedAt)
-      : sendAlert(resend, from, payload, capturedAt),
+      : sendAlert(resend, from, payload, capturedAt, leadId),
   ]);
 
   if (autoReply.status === "rejected") {
@@ -136,30 +151,18 @@ export async function notifyLead(payload: LeadPayload): Promise<void> {
 }
 
 /**
- * Instant acknowledgment to the lead. Plain, on-brand, and consistent
- * with the success screen the visitor just saw. Reply-to is the brand
- * inbox (`SITE.email`) so any reply reaches Nate.
- *
- * Copy is chosen per door so it never describes content the lead didn't
- * provide (Unit 04): the qualifier keeps "your answers / project
- * details"; the quick door gets answer-neutral wording but the same
- * two-business-day promise (it's a ready lead); the off-ramp
- * ("exploring") capture gets the gentler, no-promise variant matching
- * MODAL_OFF_RAMP_SUCCESS.
+ * Instant acknowledgment to the lead, sent on step 1 (#65). Plain,
+ * on-brand, and consistent with the success screen. Reply-to is the
+ * brand inbox (`SITE.email`) so any reply reaches Nate. Step 1 asks no
+ * name, so the greeting never uses one (Outcome 8).
  */
 async function sendAutoReply(
   resend: Resend,
   from: string,
-  payload: Exclude<LeadPayload, WaitlistPayload>,
+  payload: QuickLeadPayload,
 ): Promise<boolean> {
-  const copy =
-    payload.kind === "qualified"
-      ? LEAD_AUTOREPLY
-      : payload.source === "off_ramp"
-        ? LEAD_AUTOREPLY_EXPLORING
-        : LEAD_AUTOREPLY_QUICK;
-  const firstName = payload.name.trim().split(/\s+/)[0] || payload.name.trim();
-  const greeting = copy.greeting(firstName);
+  const copy = LEAD_AUTOREPLY_QUICK;
+  const greeting = copy.greeting;
 
   const text = [
     greeting,
@@ -197,145 +200,182 @@ async function sendAutoReply(
 }
 
 /**
- * Real-time alert to Nate. Subject carries the Rule 2.5 signal label
- * (so a needs-buy-in / build-first lead is obvious in the inbox); body
- * carries contact details + every answer as display labels. Reply-to
- * is the lead's address so one reply reaches them directly.
+ * Real-time alert to Nate for a step 1 lead. Subject carries the signal
+ * label, the email (step 1 asks no name, #65) and the offerings; the
+ * body carries the email, the lead ID step 2 attaches by and the
+ * offerings, so he can respond without digging. Reply-to is the lead's
+ * address so one reply reaches them directly.
  */
 async function sendAlert(
   resend: Resend,
   from: string,
-  payload: Exclude<LeadPayload, WaitlistPayload>,
+  payload: QuickLeadPayload,
   capturedAt: string,
+  leadId: string,
 ): Promise<boolean> {
+  const to = notifyAddress();
+  if (to === null) return false;
+
+  const needs = quickNeeds(payload.project_types);
+  return sendToNate(resend, from, {
+    to,
+    replyTo: payload.email,
+    subject: `${leadSignal(payload).label} ${payload.email} — ${needs}`,
+    lines: [
+      { text: LEAD_ALERT.intro },
+      { label: MODAL_CONTACT.fields.email.label, text: payload.email },
+      { label: LEAD_ALERT.leadIdLabel, text: leadId },
+      { label: MODAL_QUICK.messageLabel, text: needs },
+      { label: LEAD_ALERT.capturedLabel, text: capturedAt },
+      { text: LEAD_ALERT.replyHint },
+    ],
+    what: "alert",
+  });
+}
+
+/**
+ * Nate's follow-up alert when step 2 adds answers (#65): one short email
+ * pointing at the lead step 1 alerted, by its email and lead ID, under
+ * the recomputed signal (so `[Lead — exploring]`, a Rule 2.5 flag,
+ * `[Lead]` or `[Lead — partial]` tells him how far it got). The body is
+ * only what step 2 added. No auto-reply goes with it.
+ */
+export async function notifyFollowup(payload: FollowupPayload): Promise<void> {
+  const mailer = resolveMailer();
+  if (mailer === null) return;
+  const to = notifyAddress();
+  if (to === null) return;
+
+  const { fields } = MODAL_CONTACT;
+  const answers = followupAnswers(payload);
+  const lines: AlertLine[] = [
+    { text: LEAD_FOLLOWUP_ALERT.intro },
+    { label: fields.email.label, text: payload.email },
+    { label: LEAD_ALERT.leadIdLabel, text: payload.lead_id },
+  ];
+  if (payload.name) lines.push({ label: fields.name.label, text: payload.name });
+  if (payload.company) {
+    lines.push({ label: fields.company.label, text: payload.company });
+  }
+  if (answers.length > 0) {
+    lines.push({ heading: LEAD_ALERT.answersHeading, items: answers });
+  }
+  if (payload.details) {
+    lines.push({ label: fields.details.label, text: payload.details });
+  }
+  lines.push(
+    { label: LEAD_ALERT.capturedLabel, text: new Date().toISOString() },
+    { text: LEAD_ALERT.replyHint },
+  );
+
+  try {
+    const sent = await sendToNate(mailer.resend, mailer.from, {
+      to,
+      replyTo: payload.email,
+      subject: `${leadSignal(payload).label} ${payload.email} ${LEAD_FOLLOWUP_ALERT.subjectTag}`,
+      lines,
+      what: "follow-up alert",
+    });
+    if (!sent) {
+      console.error("lead-notify: follow-up alert NOT sent (see error above).");
+    }
+  } catch (error) {
+    console.error("lead-notify: follow-up alert threw —", String(error));
+  }
+}
+
+/** Nate's inbox, or `null` (logged) when `NOTIFY_EMAIL` is not set. */
+function notifyAddress(): string | null {
   const to = process.env.NOTIFY_EMAIL;
   if (!to) {
     console.error(
       "lead-notify: NOTIFY_EMAIL not set — cannot send Nate's alert (best-effort; the lead is already durably captured). Set it in Vercel env (sprint plan owner setup checklist).",
     );
-    return false;
+    return null;
   }
+  return to;
+}
 
-  const signal = leadSignal(payload);
-  const details = payload.details?.trim() ? payload.details.trim() : "—";
-  const fields = MODAL_CONTACT.fields;
-  // Quick door's multi-select "what do you need" picks (Sprint 03 adhoc),
-  // as the short labels the visitor saw; "" for the qualifier / off-ramp.
-  const needs =
-    payload.kind === "quick"
-      ? (payload.project_types ?? [])
-          .map((value) => labelFor(MODAL_QUICK.needsOptions, value))
-          .join("; ")
-      : "";
-  // Company only exists on the qualifier; the quick door collects none.
-  const company =
-    payload.kind === "qualified" && payload.company?.trim()
-      ? payload.company.trim()
-      : "—";
+/**
+ * One block of an alert body: a plain line, a labelled value, or the
+ * answers list. Rendered once as text and once as escaped HTML, so the
+ * two never say different things.
+ */
+type AlertLine =
+  | { text: string; label?: string }
+  | { heading: string; items: { question: string; answer: string }[] };
 
-  // Qualifier answers only exist on the full path; the quick door has none
-  // (the subject's signal label already says which door it came through).
-  const answers =
-    payload.kind === "qualified"
-      ? QUESTION_ORDER.map((key) => ({
-          question: MODAL_QUESTIONS[key].question,
-          answer: labelFor(MODAL_QUESTIONS[key].options, payload[key]),
-        }))
-      : [];
+/** A label as it leads its value: "Email:", but "What do you need?" as is. */
+function labelled(label: string): string {
+  return /[?:]$/.test(label) ? label : `${label}:`;
+}
 
-  const subject =
-    payload.kind === "qualified"
-      ? `${signal.label} ${payload.name} — ${labelFor(
-          MODAL_QUESTIONS.project_type.options,
-          payload.project_type,
-        )}`
-      : needs
-        ? `${signal.label} ${payload.name} — ${needs}`
-        : `${signal.label} ${payload.name}`;
-
-  const textLines: string[] = [
-    LEAD_ALERT.intro,
-    "",
-    `${fields.name.label}: ${payload.name}`,
-    `${fields.email.label}: ${payload.email}`,
-  ];
-  if (payload.kind === "qualified") {
-    textLines.push(`${fields.company.label}: ${company}`);
-  }
-  textLines.push("");
-  if (answers.length > 0) {
-    textLines.push(
-      LEAD_ALERT.answersHeading,
-      ...answers.map(({ question, answer }) => `${question}\n  → ${answer}`),
-      "",
-    );
-  }
-  if (needs) {
-    textLines.push(`${MODAL_QUICK.messageLabel} ${needs}`, "");
-  }
-  textLines.push(
-    `${fields.details.label}: ${details}`,
-    "",
-    `${LEAD_ALERT.capturedLabel}: ${capturedAt}`,
-    "",
-    LEAD_ALERT.replyHint,
-  );
-  const text = textLines.join("\n");
-
-  const contactHtml = [
-    "<p>",
-    `${escapeHtml(fields.name.label)}: ${escapeHtml(payload.name)}<br>`,
-    `${escapeHtml(fields.email.label)}: ${escapeHtml(payload.email)}`,
-  ];
-  if (payload.kind === "qualified") {
-    contactHtml.push(
-      `<br>${escapeHtml(fields.company.label)}: ${escapeHtml(company)}`,
-    );
-  }
-  contactHtml.push("</p>");
-
-  const answersHtml =
-    answers.length > 0
-      ? [
-          `<p><strong>${escapeHtml(LEAD_ALERT.answersHeading)}</strong></p>`,
-          "<ul>",
-          ...answers.map(
-            ({ question, answer }) =>
-              `<li>${escapeHtml(question)}<br><strong>${escapeHtml(answer)}</strong></li>`,
-          ),
-          "</ul>",
-        ]
-      : [];
-
-  const needsHtml = needs
-    ? [
-        `<p><strong>${escapeHtml(MODAL_QUICK.messageLabel)}</strong> ${escapeHtml(needs)}</p>`,
-      ]
-    : [];
-
+/** Send one alert to Nate; false (logged) on a Resend error. */
+async function sendToNate(
+  resend: Resend,
+  from: string,
+  message: {
+    to: string;
+    replyTo: string;
+    subject: string;
+    lines: AlertLine[];
+    what: string;
+  },
+): Promise<boolean> {
+  // Consecutive labelled values read as one block (the contact lines);
+  // everything else is its own paragraph.
+  const text = message.lines
+    .map((line, i) => {
+      const block =
+        "heading" in line
+          ? [
+              line.heading,
+              ...line.items.map(({ question, answer }) => `${question}\n  → ${answer}`),
+            ].join("\n")
+          : line.label === undefined
+            ? line.text
+            : `${labelled(line.label)} ${line.text}`;
+      const previous = message.lines[i - 1];
+      if (i === 0) return block;
+      const sameBlock =
+        !("heading" in line) &&
+        line.label !== undefined &&
+        previous !== undefined &&
+        !("heading" in previous) &&
+        previous.label !== undefined;
+      return `${sameBlock ? "\n" : "\n\n"}${block}`;
+    })
+    .join("");
   const html = wrapHtml(
-    [
-      `<p>${escapeHtml(LEAD_ALERT.intro)}</p>`,
-      ...contactHtml,
-      ...answersHtml,
-      ...needsHtml,
-      `<p>${escapeHtml(fields.details.label)}: ${escapeHtml(details)}</p>`,
-      `<p>${escapeHtml(LEAD_ALERT.capturedLabel)}: ${escapeHtml(capturedAt)}</p>`,
-      `<p>${escapeHtml(LEAD_ALERT.replyHint)}</p>`,
-    ].join("\n"),
+    message.lines
+      .map((line) =>
+        "heading" in line
+          ? [
+              `<p><strong>${escapeHtml(line.heading)}</strong></p>`,
+              "<ul>",
+              ...line.items.map(
+                ({ question, answer }) =>
+                  `<li>${escapeHtml(question)}<br><strong>${escapeHtml(answer)}</strong></li>`,
+              ),
+              "</ul>",
+            ].join("\n")
+          : line.label === undefined
+            ? `<p>${escapeHtml(line.text)}</p>`
+            : `<p>${escapeHtml(labelled(line.label))} ${escapeHtml(line.text)}</p>`,
+      )
+      .join("\n"),
   );
 
   const { error } = await resend.emails.send({
     from,
-    to,
-    replyTo: payload.email,
-    subject,
+    to: message.to,
+    replyTo: message.replyTo,
+    subject: message.subject,
     text,
     html,
   });
-
   if (error) {
-    console.error("lead-notify: alert send error —", describeSendError(error));
+    console.error(`lead-notify: ${message.what} send error —`, describeSendError(error));
     return false;
   }
   return true;
@@ -354,13 +394,8 @@ async function sendWaitlistAlert(
   payload: WaitlistPayload,
   capturedAt: string,
 ): Promise<boolean> {
-  const to = process.env.NOTIFY_EMAIL;
-  if (!to) {
-    console.error(
-      "lead-notify: NOTIFY_EMAIL not set, so no waitlist alert (best-effort; the entry is already durably captured).",
-    );
-    return false;
-  }
+  const to = notifyAddress();
+  if (to === null) return false;
 
   const lines = [
     `${MODAL_CONTACT.fields.email.label}: ${payload.email}`,

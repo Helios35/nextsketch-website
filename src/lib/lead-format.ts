@@ -1,23 +1,29 @@
 import { MODAL_QUESTIONS, MODAL_QUICK } from "@/content/modal";
-import type { LeadPayload, WaitlistPayload } from "@/lib/schema";
+import {
+  EXPLORING,
+  type FollowupPayload,
+  type LeadPayload,
+  type NewEntryPayload,
+  type QuickLeadPayload,
+} from "@/lib/schema";
 
 /**
- * Lead formatting (Sprint 02 Unit 02; extended Unit 04) — turns a
- * validated `LeadPayload` into the human-readable shapes the durable
- * destinations record: one Google Sheet row and one Asana task. Pure:
- * no I/O, no env, no secrets — so it stays easy to reason about and
- * Unit 03 (notify) can reuse `leadSignal` for the email subject and
- * the same labels for the body without forking the destination code.
+ * Lead formatting (Sprint 02 Unit 02; extended Unit 04; email-first
+ * since decision-log #65) — turns a validated payload into the
+ * human-readable shapes the durable destinations record: one Google
+ * Sheet row, the update that enriches it, and one Asana task. Pure: no
+ * I/O, no env, no secrets — so it stays easy to reason about and the
+ * notify module reuses `leadSignal` and the labels without forking the
+ * destination code.
  *
- * A lead is either kind (Unit 04): the full four-question qualifier or
- * the quick door (no answers). Both render into the SAME Sheet columns
- * and Asana task shape — the quick door simply leaves the qualifier
- * columns empty — so the owner's Apps Script column mapping is unchanged.
- * The waitlist band (decision-log #58) is a third kind and not a lead:
- * it fills the same columns with an email, `lead_type: waitlist` and
- * its own `[Waitlist]` label, so it reads apart from leads in the Sheet
- * and in Nate's alert. It never becomes an Asana task (owner direction,
- * 2026-10-15), so `toAsanaTask` does not take it.
+ * A lead arrives in up to two parts (#65). Step 1 (`kind: "quick"`, an
+ * email and the offerings) appends the row, carrying the `lead_id` the
+ * server minted, with the qualifier columns empty. Step 2 (`kind:
+ * "followup"`) never appends: `toSheetUpdate` fills that same row's
+ * answer columns and recomputes its signal. The waitlist band (#58) is
+ * a third kind and not a lead: it fills the same columns with an email,
+ * `lead_type: waitlist` and its own `[Waitlist]` label, and never becomes
+ * an Asana task (owner direction, 2026-10-15).
  *
  * Answer labels are read straight from `MODAL_QUESTIONS` (the canonical
  * label↔value map, docs/06-taxonomy.md §3) — never re-typed here, so
@@ -28,7 +34,7 @@ import type { LeadPayload, WaitlistPayload } from "@/lib/schema";
 
 /**
  * Resolve a payload value to its canonical display label (Taxonomy §3).
- * Exported so Unit 03 (notify) builds the alert email body from the
+ * Exported so the notify module builds the alert email body from the
  * same resolver the Sheet/Asana records use — the labels can't drift
  * across destinations because there is one resolver, one source.
  */
@@ -42,19 +48,45 @@ export function labelFor(
 }
 
 /**
- * The quick door's multi-select needs as the short labels the visitor saw
- * (Sprint 03 adhoc), joined for the single Sheet `project_type` cell and
- * the Asana task. Empty string when none were picked (it's optional).
+ * The step 1 offerings as the short labels the visitor saw (Sprint 03
+ * adhoc), joined for the single Sheet `project_type` cell, the Asana
+ * task and the alerts.
  */
-function quickNeeds(values: readonly string[] | undefined): string {
-  return (values ?? [])
+export function quickNeeds(values: readonly string[]): string {
+  return values
     .map((value) => labelFor(MODAL_QUICK.needsOptions, value))
     .join("; ");
+}
+
+/** The four qualifier questions, in modal order (Business Rules §1). */
+export const QUESTION_ORDER = [
+  "project_type",
+  "readiness",
+  "authority",
+  "validation",
+] as const;
+
+/** The step 2 answers given, as question/answer label pairs, in order. */
+export function followupAnswers(
+  payload: FollowupPayload,
+): { question: string; answer: string }[] {
+  return QUESTION_ORDER.flatMap((key) => {
+    const value = payload[key];
+    return value === undefined
+      ? []
+      : [
+          {
+            question: MODAL_QUESTIONS[key].question,
+            answer: labelFor(MODAL_QUESTIONS[key].options, value),
+          },
+        ];
+  });
 }
 
 export type LeadType =
   | "qualified"
   | "flagged"
+  | "partial"
   | "quick"
   | "exploring"
   | "waitlist";
@@ -62,9 +94,9 @@ export type LeadType =
 export interface LeadSignal {
   /** Taxonomy §4 lead type: `flagged` if any signal is set. */
   readonly type: LeadType;
-  /** Q3 = "No — I'd need buy-in" (Rule 2.5). Always false for a quick lead. */
+  /** Q3 = "No — I'd need buy-in" (Rule 2.5). */
   readonly needsBuyIn: boolean;
-  /** Q4 = "I just want it built" (Rule 2.5). Always false for a quick lead. */
+  /** Q4 = "I just want it built" (Rule 2.5). */
   readonly buildFirst: boolean;
   /** The `[Lead …]` prefix (Rule 2.5), reused as the task/subject flag. */
   readonly label: string;
@@ -79,16 +111,20 @@ export interface LeadSignal {
 export const WAITLIST_SIGNAL = "[Waitlist]";
 
 /**
- * Rule 2.5 signal-flag logic + Taxonomy §4 lead type. The `[Lead …]`
- * label is canonical (Rule 2.5 names these exact strings); Unit 03
- * reuses it as the email subject prefix.
+ * Rule 2.5 signal-flag logic + Taxonomy §4 lead type. The label is what
+ * tells Nate how far a lead got (#65, Outcome 7):
  *
- * The quick door has no qualifier answers, so the Rule 2.5 buy-in /
- * build-first flags don't apply. It gets its own honest labels instead
- * (Unit 04 — a Business Rules 2.5 extension flagged for the Sprint 03
- * audit): `[Lead — quick]` for the primary quick path, `[Lead —
- * exploring]` for the off-ramp capture so a not-yet lead is obvious in
- * the inbox and isn't mistaken for a ready one.
+ *   • step 1 only: `[Lead — quick]`, the label the answer-less quick
+ *     door always had;
+ *   • step 2 answered: recomputed from the answers, first match wins:
+ *     `[Lead — exploring]` (Q1 or Q2 "still exploring", Rule 2.1), then
+ *     the Rule 2.5 flags (`[Lead — review answers]`, `[Lead — needs
+ *     buy-in]`, `[Lead — build-first mindset]`), then `[Lead]` when all
+ *     four questions are answered, and `[Lead — partial]` when any was
+ *     skipped.
+ *
+ * So `[Lead — quick]` always means step 1 only, and any other `[Lead …]`
+ * label means step 2 added something.
  */
 export function leadSignal(payload: LeadPayload): LeadSignal {
   if (payload.kind === "waitlist") {
@@ -101,29 +137,30 @@ export function leadSignal(payload: LeadPayload): LeadSignal {
   }
 
   if (payload.kind === "quick") {
-    const exploring = payload.source === "off_ramp";
     return {
-      type: exploring ? "exploring" : "quick",
+      type: "quick",
       needsBuyIn: false,
       buildFirst: false,
-      label: exploring ? "[Lead — exploring]" : "[Lead — quick]",
+      label: "[Lead — quick]",
     };
   }
 
   const needsBuyIn = payload.authority === "none";
   const buildFirst = payload.validation === "build_first";
 
-  let label = "[Lead]";
-  if (needsBuyIn && buildFirst) label = "[Lead — review answers]";
-  else if (needsBuyIn) label = "[Lead — needs buy-in]";
-  else if (buildFirst) label = "[Lead — build-first mindset]";
-
-  return {
-    type: needsBuyIn || buildFirst ? "flagged" : "qualified",
-    needsBuyIn,
-    buildFirst,
-    label,
-  };
+  if (payload.project_type === EXPLORING || payload.readiness === EXPLORING) {
+    return { type: "exploring", needsBuyIn, buildFirst, label: "[Lead — exploring]" };
+  }
+  if (needsBuyIn || buildFirst) {
+    let label = "[Lead — build-first mindset]";
+    if (needsBuyIn && buildFirst) label = "[Lead — review answers]";
+    else if (needsBuyIn) label = "[Lead — needs buy-in]";
+    return { type: "flagged", needsBuyIn, buildFirst, label };
+  }
+  const allAnswered = QUESTION_ORDER.every((key) => payload[key] !== undefined);
+  return allAnswered
+    ? { type: "qualified", needsBuyIn, buildFirst, label: "[Lead]" }
+    : { type: "partial", needsBuyIn, buildFirst, label: "[Lead — partial]" };
 }
 
 /**
@@ -131,113 +168,102 @@ export function leadSignal(payload: LeadPayload): LeadSignal {
  * Sheet row. Keys are stable so the owner's Apps Script maps them to
  * columns; labels (not raw enum values) are used so the row reads the
  * way the modal did. `capturedAt` is an ISO timestamp stamped at
- * delivery time (kept out of this pure module).
+ * delivery time (kept out of this pure module). `leadId` is the ID step
+ * 2 finds the row by (#65); a waitlist entry has none.
  */
 export function toSheetRecord(
-  payload: LeadPayload,
+  payload: NewEntryPayload,
   capturedAt: string,
+  leadId: string,
 ): Record<string, string> {
   const signal = leadSignal(payload);
-  if (payload.kind === "waitlist") {
-    // Same eleven columns, so the Apps Script mapping still never
-    // branches: an email, its type and its label, and nothing else.
-    return {
-      timestamp: capturedAt,
-      lead_type: signal.type,
-      signal: signal.label,
-      name: "",
-      email: payload.email,
-      company: "",
-      project_type: "",
-      readiness: "",
-      authority: "",
-      validation: "",
-      details: "",
-    };
-  }
-  const qualified = payload.kind === "qualified";
-  // Same columns for both doors so the owner's Apps Script mapping is
-  // unchanged; the quick door simply leaves the qualifier columns empty.
+  // Same twelve columns for every kind, so the Apps Script mapping never
+  // branches: step 1 leaves the name and the qualifier columns empty
+  // for step 2 to fill; a waitlist entry is an email and its label.
   return {
     timestamp: capturedAt,
     lead_type: signal.type,
     signal: signal.label,
-    name: payload.name,
+    name: "",
     email: payload.email,
-    company: qualified ? (payload.company ?? "") : "",
-    // Qualifier writes its single answer; the quick door writes its
-    // multi-select picks as a delimited list into the same column.
-    project_type: qualified
-      ? labelFor(MODAL_QUESTIONS.project_type.options, payload.project_type)
-      : quickNeeds(payload.project_types),
-    readiness: qualified
-      ? labelFor(MODAL_QUESTIONS.readiness.options, payload.readiness)
-      : "",
-    authority: qualified
-      ? labelFor(MODAL_QUESTIONS.authority.options, payload.authority)
-      : "",
-    validation: qualified
-      ? labelFor(MODAL_QUESTIONS.validation.options, payload.validation)
-      : "",
-    details: payload.details ?? "",
+    company: "",
+    project_type:
+      payload.kind === "quick" ? quickNeeds(payload.project_types) : "",
+    readiness: "",
+    authority: "",
+    validation: "",
+    details: "",
+    lead_id: leadId,
   };
 }
 
 /**
- * The Asana task for one captured lead: a scannable title carrying the
- * Rule 2.5 flag, and notes with every answer (labelled), contact
- * details, and the capture timestamp.
+ * The update a step 2 follow-up sends the Sheet (#65): find the row by
+ * `lead_id` (the email must match it too) and set `fields` on it. Only
+ * what the visitor gave is in `fields`, plus the recomputed signal, so a
+ * skipped question leaves its cell as step 1 wrote it (empty). A Q1
+ * answer goes in the one project column after the step 1 offerings,
+ * since the column holds both. The script never lets an update touch
+ * the row's timestamp, email or lead ID.
+ */
+export function toSheetUpdate(payload: FollowupPayload): {
+  action: "update";
+  lead_id: string;
+  email: string;
+  fields: Record<string, string>;
+} {
+  const signal = leadSignal(payload);
+  const fields: Record<string, string> = {
+    lead_type: signal.type,
+    signal: signal.label,
+  };
+  if (payload.project_type !== undefined) {
+    fields.project_type = [
+      quickNeeds(payload.project_types),
+      labelFor(MODAL_QUESTIONS.project_type.options, payload.project_type),
+    ].join("; ");
+  }
+  for (const key of ["readiness", "authority", "validation"] as const) {
+    const value = payload[key];
+    if (value !== undefined) {
+      fields[key] = labelFor(MODAL_QUESTIONS[key].options, value);
+    }
+  }
+  for (const key of ["name", "company", "details"] as const) {
+    const value = payload[key];
+    if (value !== undefined) fields[key] = value;
+  }
+  return {
+    action: "update",
+    lead_id: payload.lead_id,
+    email: payload.email,
+    fields,
+  };
+}
+
+/**
+ * The Asana task for one step 1 lead: a scannable title carrying the
+ * signal and the email (no name is asked on step 1, #65), and notes
+ * with the offerings, the lead ID and the capture timestamp. Step 2
+ * does not touch the task; its answers land on the Sheet row with the
+ * same lead ID and in Nate's follow-up alert, and the notes say so.
  */
 export function toAsanaTask(
-  payload: Exclude<LeadPayload, WaitlistPayload>,
+  payload: QuickLeadPayload,
   capturedAt: string,
+  leadId: string,
 ): { name: string; notes: string } {
   const signal = leadSignal(payload);
-
-  // Quick door: no qualifier answers — a leaner task carrying the door
-  // it came through and the optional one-line message.
-  if (payload.kind === "quick") {
-    const door =
-      payload.source === "off_ramp" ? "Off-ramp (still exploring)" : "Quick path";
-    const needs = quickNeeds(payload.project_types);
-    const name = needs
-      ? `${signal.label} ${payload.name} — ${needs}`
-      : `${signal.label} ${payload.name}`;
-    const notes = [
-      `Captured: ${capturedAt}`,
-      "",
-      `Name:    ${payload.name}`,
-      `Email:   ${payload.email}`,
-      "",
-      `Door: ${door}`,
-      `Looking for: ${needs || "—"}`,
-      "",
-      `Message: ${payload.details ?? "—"}`,
-    ].join("\n");
-    return { name, notes };
-  }
-
-  const projectType = labelFor(
-    MODAL_QUESTIONS.project_type.options,
-    payload.project_type,
-  );
-  const company = payload.company ? ` · ${payload.company}` : "";
-
-  const name = `${signal.label} ${payload.name}${company} — ${projectType}`;
+  const needs = quickNeeds(payload.project_types);
   const notes = [
     `Captured: ${capturedAt}`,
     "",
-    `Name:    ${payload.name}`,
     `Email:   ${payload.email}`,
-    `Company: ${payload.company ?? "—"}`,
+    `Lead ID: ${leadId}`,
     "",
-    `Project type: ${projectType}`,
-    `Readiness:    ${labelFor(MODAL_QUESTIONS.readiness.options, payload.readiness)}`,
-    `Authority:    ${labelFor(MODAL_QUESTIONS.authority.options, payload.authority)}`,
-    `Validation:   ${labelFor(MODAL_QUESTIONS.validation.options, payload.validation)}`,
+    `Looking for: ${needs}`,
     "",
-    `Details: ${payload.details ?? "—"}`,
+    "Any more answers land on the Sheet row with this Lead ID, and in a follow-up alert.",
   ].join("\n");
-
-  return { name, notes };
+  return { name: `${signal.label} ${payload.email} — ${needs}`, notes };
 }
