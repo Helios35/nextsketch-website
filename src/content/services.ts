@@ -141,7 +141,7 @@ export const SERVICES = [
  * installable tool that took Internal Tool's place (#53).
  *
  * "Join the Waitlist" is a **non-conversion carve-out from Rule 3.1**,
- * the way the off-ramp's "Stay in Touch" is: it asks for interest in a
+ * the way the off-ramp's "Stay in Touch" was until it retired (#65): it asks for interest in a
  * product that does not exist yet, so a conversion CTA would promise
  * the wrong thing. The capture runs through the modal's seam and guards
  * (Rules 2.4, 2.8) and carries its own signal label, `[Waitlist]`; it

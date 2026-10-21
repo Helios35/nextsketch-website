@@ -1,13 +1,19 @@
-import type { QualificationPayload } from "@/lib/schema";
+import type {
+  AUTHORITY_VALUES,
+  EXPLORING,
+  ProjectType,
+  READINESS_VALUES,
+  VALIDATION_VALUES,
+} from "@/lib/schema";
 
 /**
  * Qualification modal copy and answer options.
  *
  * Question text per docs/05-business-rules.md §1; label→payload
  * mapping per docs/06-taxonomy.md §3 — builders never invent
- * alternate values. "exploring" exists only here in the UI layer:
- * it routes to the off-ramp (Rule 2.1) and is rejected by the
- * submit schema by construction.
+ * alternate values. The questions are step 2 of the email-first modal
+ * (decision-log #65): every one optional. "exploring" routes to the
+ * off-ramp's ending (Rule 2.1) and, since #65, is recorded on the lead.
  */
 
 export interface ModalOption<V extends string> {
@@ -15,10 +21,10 @@ export interface ModalOption<V extends string> {
   readonly label: string;
 }
 
-type ProjectTypeValue = QualificationPayload["project_type"] | "exploring";
-type ReadinessValue = QualificationPayload["readiness"] | "exploring";
-type AuthorityValue = QualificationPayload["authority"];
-type ValidationValue = QualificationPayload["validation"];
+type ProjectTypeValue = ProjectType | typeof EXPLORING;
+type ReadinessValue = (typeof READINESS_VALUES)[number] | typeof EXPLORING;
+type AuthorityValue = (typeof AUTHORITY_VALUES)[number];
+type ValidationValue = (typeof VALIDATION_VALUES)[number];
 
 export const MODAL_QUESTIONS = {
   project_type: {
@@ -64,10 +70,19 @@ export const MODAL_QUESTIONS = {
   },
 } as const;
 
-/** Contact step (Business Rules 1.5). */
+/**
+ * The visitor's fields and their labels. Step 1 asks `firstName`,
+ * `lastName` and `email` (#65, amended 2026-10-21: all required); the
+ * contact step (Business Rules 1.5), the last screen of step 2, asks
+ * `company` and `details`, both optional. `name` labels the two names
+ * joined, as the Sheet, Nate's alerts and the Asana task show them.
+ * First and last name are builder DRAFT labels (2026-10-21).
+ */
 export const MODAL_CONTACT = {
   fields: {
-    name: { label: "Name", required: true },
+    firstName: { label: "First name", required: true, maxLength: 50 },
+    lastName: { label: "Last name", required: true, maxLength: 50 },
+    name: { label: "Name" },
     email: { label: "Email", required: true },
     company: { label: "Company", required: false },
     details: { label: "Tell us about it", required: false, maxLength: 1000 },
@@ -76,25 +91,23 @@ export const MODAL_CONTACT = {
 } as const;
 
 /**
- * Quick door (Sprint 02 Unit 04) — the low-friction primary path: name,
- * email, and an optional one-line message, no qualifier questions. The
- * full four-question qualifier stays reachable from here as the optional
- * "tell us more" path (`toQualifier`). The message reuses the contact
- * step's `details` field so it lands in the same lead record.
- *
- * New flow + copy = a spec change touching Business Rules §1–2 — flagged
- * for the Sprint 03 audit (docs/05-business-rules.md). DRAFT in brand
- * voice pending owner approval.
+ * Step 1, the quick door (Rule 1.7; email-first since decision-log #65,
+ * amended 2026-10-21): first name, last name, email and at least one of
+ * the two offerings, nothing else. Submitting it saves the lead;
+ * everything else is step 2. Heading, label, options and submit are
+ * unchanged. `body` was owner copy ("Your email and what you need"); it
+ * now names the name too, a builder DRAFT pending owner approval.
  */
 export const MODAL_QUICK = {
   heading: "Tell us what you need.",
-  body: "The short version. Your name, your email, and a line on what you're building — we'll take it from there.",
-  /** Label for the optional needs selector. */
+  body: "The short version. Your name, your email and what you need. We'll take it from there.",
+  /** Label for the needs selector: at least one box, both is fine (#65). */
   messageLabel: "What do you need?",
   /**
    * Multi-select options replacing the free-text line (Sprint 03 adhoc).
    * Stored as `project_types` and written to the Sheet's existing
-   * `project_type` column as a delimited list. The selection is optional.
+   * `project_type` column as a delimited list. At least one is required
+   * since #65.
    *
    * **The two offerings, agentic first (decision-log #53).** Owner copy
    * (2026-10-15). The stored values are unchanged, so no lead data
@@ -109,10 +122,24 @@ export const MODAL_QUICK = {
     { value: "agentic", label: "Agentic system integration" },
     { value: "new_product", label: "AI product development" },
   ],
+  /**
+   * Shown under the boxes when step 1 is sent with none checked. Builder
+   * DRAFT pending owner approval (#65; Part B has no line for it).
+   */
+  needsRequired: "Pick at least one.",
   /** Submit CTA (Rule 3.1 set). */
   submit: "Talk to Us",
-  /** Secondary affordance into the full four-question qualifier. */
-  toQualifier: "Rather walk us through it? Answer a few questions",
+} as const;
+
+/**
+ * Step 2 (decision-log #65): shown once step 1 has saved the lead. The
+ * heading and body sit above the first question; `skip` is on every
+ * step 2 screen and lands on the success screen. Owner copy (#65).
+ */
+export const MODAL_STEP2 = {
+  heading: "Got it. Want to tell us more?",
+  body: "All optional. A few answers help us show up to the first call ready. Skip it and we'll still be in touch.",
+  skip: "Skip for now",
 } as const;
 
 /**
@@ -134,42 +161,22 @@ export const MODAL_ESCAPE_HATCH = {
 
 /**
  * Off-ramp (Rules 2.1–2.2): a success state for the business, not an
- * error state. Opening line per Rule 2.2; remainder drafted in brand
- * voice — DRAFT pending owner approval, see
- * briefs/build-notes/01-foundation.md.
+ * error state. Since #65 it is step 2's ending when a visitor answers
+ * "I'm still exploring" or "Just exploring": the answer is already
+ * recorded on the lead, so the off-ramp's own email capture ("Stay in
+ * Touch") and its confirmation screen are retired. Opening line per Rule
+ * 2.2; body and closing approved as canonical (decision-log #3).
  */
 export const MODAL_OFF_RAMP = {
   headline: "You're not ready for this yet — and that's the right read.",
   body: "We work with people who have a real problem to solve and the authority to move on it. Still exploring is a fine place to be — it's just not where we add value. When you're ready to build, come back. We'll be here.",
   closing: "Until then, the door stays open:",
-  /**
-   * Off-ramp email capture (Sprint 02 Unit 04): an honest, low-pressure
-   * offer to stay in touch instead of only showing the door — NOT a hard
-   * sell (Rule 2.2 intent preserved). New flow + copy flagged for the
-   * Sprint 03 audit. DRAFT pending owner approval.
-   */
-  capture: {
-    prompt:
-      "Or leave your details and we'll reach out when the timing's right — no sequence, no pressure.",
-    submit: "Stay in Touch",
-  },
 } as const;
 
 /** Success screen (UX spec §Qualification modal). */
 export const MODAL_SUCCESS = {
   headline: "That's everything we need.",
   body: "You'll hear from Nathan within two business days.",
-} as const;
-
-/**
- * Off-ramp capture confirmation (Sprint 02 Unit 04) — a gentler success
- * than MODAL_SUCCESS. An "exploring" visitor isn't promised a
- * two-business-day reply; they're told, honestly, that we'll be here.
- * DRAFT pending owner approval, flagged for the Sprint 03 audit.
- */
-export const MODAL_OFF_RAMP_SUCCESS = {
-  headline: "Got it — we'll be here.",
-  body: "No follow-up sequence, no pressure. When you're ready to build, you'll know where to find us — and we'll reach out if the timing lines up.",
 } as const;
 
 /**

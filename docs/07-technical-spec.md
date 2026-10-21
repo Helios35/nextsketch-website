@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.6 · **Date:** 2026-10-15 · **Status:** Active (2.6: the About team, decision-log #63 and #64: `team-avatar.tsx`, `use-loop-video.ts`, `public/team/`, the portrait placeholder deleted; 2.5: the waitlist band's third payload kind, `waitlist`, decision-log #58, and the two offerings' tree, #53; 2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
+**Version:** 2.7 · **Date:** 2026-10-21 · **Status:** Active (2.7: the email-first modal, decision-log #65 as amended the same day: the `quick` and `followup` kinds, step 1's two names, the lead ID, the Sheet update and the follow-up alert; 2.6: the About team, decision-log #63 and #64: `team-avatar.tsx`, `use-loop-video.ts`, `public/team/`, the portrait placeholder deleted; 2.5: the waitlist band's third payload kind, `waitlist`, decision-log #58, and the two offerings' tree, #53; 2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -32,61 +32,64 @@
 
 ## Data model — **CHANGED** (no database; the Zod union is the contract, the Sheet is the record)
 
-**No database** (decision-log #8). The durable record is the **Google Sheet "Inbound Leads"** (system of record) plus a best-effort **Asana** task. The **Zod discriminated union** (`src/lib/schema.ts`) is the de-facto data contract — a lead is one of two `kind`s, and a third, `waitlist`, carries the Services waitlist band's email (decision-log #58; not a lead, but the same seam):
+**No database** (decision-log #8). The durable record is the **Google Sheet "Inbound Leads"** (system of record) plus a best-effort **Asana** task. The **Zod discriminated union** (`src/lib/schema.ts`) is the de-facto data contract. Since decision-log #65 the modal is email-first, so a lead arrives in up to two parts, `quick` (step 1, the lead) and `followup` (step 2, attached to it), and a third kind, `waitlist`, carries the Services waitlist band's email (decision-log #58; not a lead, but the same seam):
 
 ```
-LeadPayload = QualificationPayload | QuickLeadPayload | WaitlistPayload   // discriminated on `kind`
+LeadPayload = QuickLeadPayload | FollowupPayload | WaitlistPayload   // discriminated on `kind`
 
-WaitlistPayload { kind: "waitlist"; email: valid email; _hp?: ""; _t: number ≥ 3000 }   // #58
-
-QualificationPayload {                       QuickLeadPayload {
-  kind: "qualified"                            kind: "quick"
-  project_type: new_product|rescue|            source: "quick_door" | "off_ramp"
-                agentic|partnership            name:  string (1..100)
-  readiness:    now|soon                       email: valid email
-  authority:    full|shared|none               project_types?: (canonical project types)[]  // off_ramp omits
-  validation:   validated|willing|build_first  details?: string (0..1000)
-  name:  string (1..100)                       _hp?:  "" (honeypot — Rule 2.8)
-  email: valid email                           _t:    number ≥ 3000 (Rule 2.8)
-  company?: string (0..100)                  }
-  details?: string (0..1000)
-  _hp?:  "" (honeypot — Rule 2.8)            // "exploring" values are UI-only — excluded from the
-  _t:    number ≥ 3000 (Rule 2.8)            // qualifier enums so the off-ramp can't be POSTed (2.1)
+QuickLeadPayload {                           FollowupPayload {            // #65; every answer optional,
+  kind: "quick"                                kind: "followup"           // at least one present
+  source: "quick_door"                         lead_id: uuid (step 1's)
+  first_name: string (1..50)                   first_name, last_name: (step 1's, for the alert)
+  last_name:  string (1..50)                   email: valid email (step 1's; must match the row)
+  email: valid email                           project_types: (canonical types)[] ≥ 1 (step 1's)
+  project_types: (canonical types)[] ≥ 1       project_type?: new_product|rescue|agentic|partnership|exploring
+  _hp?:  "" (honeypot — Rule 2.8)              readiness?:    now|soon|exploring
+  _t:    number ≥ 3000 (Rule 2.8)              authority?:    full|shared|none
+}                                              validation?:   validated|willing|build_first
+                                               company?: string (1..100)
+WaitlistPayload {                              details?: string (1..1000)
+  kind: "waitlist"; email: valid email         _hp?: ""; _t: number ≥ 3000
+  _hp?: ""; _t: number ≥ 3000   // #58       }
 }
 ```
 
-**Sheet record (the durable row).** `toSheetRecord` (`src/lib/lead-format.ts`) flattens either kind into the **same 11 columns, in this order** — so the Apps Script column mapping never branches (`scripts/inbound-leads.gs`; build-note 14):
+**Sheet record (the durable row).** `toSheetRecord` (`src/lib/lead-format.ts`) flattens a step 1 lead or a waitlist entry into the **same 12 columns, in this order** — so the Apps Script column mapping never branches (`scripts/inbound-leads.gs`; build-note 14):
 
-`timestamp · lead_type · signal · name · email · company · project_type · readiness · authority · validation · details`
+`timestamp · lead_type · signal · name · email · company · project_type · readiness · authority · validation · details · lead_id`
 
-Stored values are the **display labels** the visitor saw (resolved from the canonical `MODAL_QUESTIONS` map, `06-taxonomy.md` §3 — never re-typed). The quick door leaves the qualifier columns (`company`, `readiness`, `authority`, `validation`) empty and writes its multi-select needs as a `"; "`-joined list into `project_type`. A waitlist entry fills `email`, `lead_type: waitlist` and `signal: [Waitlist]` and leaves every other column empty (#58). `lead_type` ∈ `qualified`/`flagged`/`quick`/`exploring`/`waitlist`; `signal` is the Rule 2.5 label.
+Stored values are the **display labels** the visitor saw (resolved from the canonical `MODAL_QUESTIONS` map, `06-taxonomy.md` §3 — never re-typed). Step 1 writes its two names joined into `name` ("Jane Doe"; the Sheet keeps one Name column), leaves `company` and the qualifier columns empty, writes its offerings as a `"; "`-joined list into `project_type`, and writes the server's `lead_id`. A waitlist entry fills `email`, `lead_type: waitlist` and `signal: [Waitlist]` and leaves every other column empty (#58). `lead_type` ∈ `quick`/`partial`/`qualified`/`flagged`/`exploring`/`waitlist`; `signal` is the Rule 2.5 label.
+
+**Sheet update (step 2, #65).** `toSheetUpdate` sends `{ action: "update", lead_id, email, fields }`: `fields` holds only what step 2 collected (labels again; a Q1 answer goes after the step 1 offerings in `project_type`) plus the recomputed `lead_type` and `signal`. The script finds the row whose **Lead ID** and **Email** both match, writes each field into its column, never touches `timestamp`, `email` or `lead_id`, and answers `{ ok: true, updated: true }`. No row is added. The **Lead ID** column is found by its header and, on a Sheet made before #65, added after the last used column on the first append, so no existing row or column moves.
 
 ## API design — **CHANGED**
 
 `POST /api/qualify` — **the only server-side surface.**
-- **Accepts:** `LeadPayload` JSON. Validated with `leadPayloadSchema` (the discriminated union). The discriminator enforces the right shape per `kind`; the qualifier enums exclude `exploring` (Rule 2.1); every kind, the waitlist's included, requires an empty honeypot and `_t ≥ 3000` (Rule 2.8). **Server-side re-validation is the security boundary** — off-ramp/honeypot/too-fast submissions reject here even on a direct POST.
-- **Does:** hands the validated lead to `deliverLead` (the durable seam). On a durable success, schedules `after(() => notifyLead(payload))` so the auto-reply + alert run **after** the response is flushed (best-effort; an email failure can never block or reverse the capture). Reports `{ ok }` **honestly** — success only once the lead is durably recorded.
-- **Returns:** `200 {ok:true}` (durably recorded) · `503 {ok:false}` (valid but not deliverable — destination unreachable or not yet configured) · `400 {ok:false}` (validation reject or malformed JSON) · `500 {ok:false}` (unexpected thrown error) · `405` (non-POST, Next default). The body is a **generic `{ ok }`** on every rejection — a probe is never told which guard tripped. The client reads `ok` + HTTP-ok and runs Rule 2.7 on anything but `ok:true`.
+- **Accepts:** `LeadPayload` JSON. Validated with `leadPayloadSchema` (the discriminated union). The discriminator enforces the right shape per `kind`; step 1 needs at least one offering; a follow-up needs at least one answer; every kind, the waitlist's included, requires an empty honeypot and `_t ≥ 3000` (Rule 2.8). **Server-side re-validation is the security boundary** — honeypot/too-fast/malformed submissions reject here even on a direct POST, and a follow-up whose lead ID and email match no row is refused by the Sheet script (503).
+- **Does:** for step 1, mints a random `lead_id` (`crypto.randomUUID()`) and hands the validated lead to `deliverLead` (the durable seam); on a durable success, schedules `after(() => notifyLead(payload, leadId))` so the auto-reply + alert run **after** the response is flushed (best-effort; an email failure can never block or reverse the capture). For a follow-up (#65), hands it to `updateLead`; on a confirmed update, schedules `after(() => notifyFollowup(payload))` (Nate's follow-up alert only). A waitlist entry goes through `deliverLead` with no ID. Reports `{ ok }` **honestly** — success only once the lead is durably recorded or updated.
+- **Returns:** `200 {ok:true, lead_id}` (step 1 durably recorded; the browser sends `lead_id` back with step 2) · `200 {ok:true}` (follow-up updated, or waitlist recorded) · `503 {ok:false}` (valid but not deliverable — destination unreachable or not yet configured) · `400 {ok:false}` (validation reject or malformed JSON) · `500 {ok:false}` (unexpected thrown error) · `405` (non-POST, Next default). The body is a **generic `{ ok }`** on every rejection — a probe is never told which guard tripped. The client reads `ok` + HTTP-ok and runs Rule 2.7 on anything but `ok:true`.
 - **No rate limit.** The pre-pivot `429`/"5-per-hour in-memory per IP" was **never implemented** (unreliable on Vercel serverless; build-note 09 §3). There is also no application-level request-body size cap beyond Vercel's platform limit (~4.5 MB) and the schema's field caps. Both sit in the same deferred abuse-hardening bucket.
 
 ## Delivery seam — **CHANGED** (`src/lib/lead-delivery.ts`)
 
-`deliverLead(payload): Promise<boolean>` attempts both destinations concurrently (`Promise.allSettled` — one throwing can't short-circuit the other) and **gates success on the Sheet**:
+`deliverLead(payload, leadId): Promise<boolean>` (step 1 and the waitlist band) attempts both destinations concurrently (`Promise.allSettled` — one throwing can't short-circuit the other) and **gates success on the Sheet**:
 - **Google Sheet "Inbound Leads"** — the **durable system of record**. A single `fetch` POST of the formatted record to the owner-provided Apps Script web-app webhook (`LEADS_SHEET_WEBHOOK_URL`); any non-2xx or missing URL resolves `false` → capture reports not-ok (no fake success). Timeout 10s. Chosen over a service account + `googleapis` to add **no dependency** (smallest diff).
 - **Asana "Inbound Leads" project** — **best-effort**, for leads only: a waitlist entry is never tasked (decision-log #58, owner direction 2026-10-15), and `createAsanaTask` does not accept one. `POST https://app.asana.com/api/1.0/tasks` with a Bearer token (`ASANA_ACCESS_TOKEN`, `ASANA_PROJECT_ID`). A failure/missing config is logged but **never fails the capture** — the Sheet is the record. Timeout 8s.
+- **Step 2, `updateLead(payload)` (#65):** one POST of `toSheetUpdate` to the same webhook. Success only on a 2xx **whose JSON body is exactly `{ ok: true, updated: true }`**: a script that predates #65 answers a plain `{ ok: true }` (and appends the update as a stray row), so reading the body is what keeps that from passing as success. No Asana call: the task opened on step 1 says further answers land on the row with its Lead ID and in a follow-up alert.
 - **Resiliency model (decided in build-note 10):** the Sheet gates success; Asana is best-effort. Every reported success is genuinely, durably recorded; a flaky Asana can't manufacture a false failure for a saved lead. Accepted trade-off: a Sheet-fail/Asana-succeed case reports not-ok, and a retry can create a duplicate Asana task (cheaper than a lost lead; dedupe by hand).
 
 ## Notification — **CHANGED** (`src/lib/lead-notify.ts`)
 
-`notifyLead(payload)` fires **two emails via Resend**, concurrently and best-effort (`Promise.allSettled`), only after a durable capture. A waitlist entry gets the alert only, under its `[Waitlist]` subject, with no auto-reply (#58):
-- **Auto-reply to the lead** — instant acknowledgment honoring the success-screen promise. Reply-to is `hello@nextsketch.com`. Copy is chosen per door (qualified / quick / exploring) so it never describes content the lead didn't provide; the exploring variant drops the two-business-day promise.
-- **Alert to Nathan** (`NOTIFY_EMAIL`) — subject carries the Rule 2.5 signal label; body carries contact details + every answer as display labels. Reply-to is the lead's address.
+`notifyLead(payload, leadId)` fires **two emails via Resend** on step 1, concurrently and best-effort (`Promise.allSettled`), only after a durable capture. A waitlist entry gets the alert only, under its `[Waitlist]` subject, with no auto-reply (#58):
+- **Auto-reply to the lead** — instant acknowledgment honoring the success-screen promise. Reply-to is `hello@nextsketch.com`. One variant since #65 (`LEAD_AUTOREPLY_QUICK`), greeting step 1's first name; the qualifier and exploring variants retired, since the auto-reply goes out before any answer exists.
+- **Alert to Nathan** (`NOTIFY_EMAIL`) — subject: the signal label, the name and the offerings; body: the name, the email, the lead ID and the offerings. Reply-to is the lead's address.
+- **Follow-up alert to Nathan** (`notifyFollowup`, #65) — only after a confirmed step 2 update: subject `<recomputed label> <name> (follow-up)`, body the name, the email, the lead ID and only what step 2 added. The visitor gets no second email.
 - **Sender:** `LEAD_FROM_EMAIL` (verified branded sender) if set, else Resend's interim `onboarding@resend.dev` (decision-log #9 / Decision 3) so email works pre-DNS. HTML user fields are escaped; send errors are logged sanitized (code + status + message, never a raw object).
 
 ## Business logic implementation — **CURRENT**
 
-- Branching (Rules 2.1–2.3): client-side state machine in `QualificationModal`; the server re-validates so the off-ramp can't be bypassed by a direct POST.
-- Two doors and the waitlist band share one submit seam (`submitQualification` → `/api/qualify`); downstream code branches on `kind` (Unit 04, #58) — no parallel system.
+- Branching (Rules 2.1–2.3): client-side state machine in `QualificationModal`. Since #65 a still-exploring answer is sent to the lead and ends step 2 on the off-ramp; the server stores it.
+- The modal's two steps and the waitlist band share one submit seam (`submitQualification` → `/api/qualify`, which returns step 1's `leadId`); downstream code branches on `kind` (Unit 04, #58, #65) — no parallel system.
 - Language rules (§3): all copy in `src/content/*.ts`; a CI check greps the built output for Rule 3.2/3.4 banned terms and fails the build on a hit.
 
 ## Auth and permissions — **CURRENT**

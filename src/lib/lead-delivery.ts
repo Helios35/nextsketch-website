@@ -1,5 +1,9 @@
-import { toAsanaTask, toSheetRecord } from "@/lib/lead-format";
-import type { LeadPayload, WaitlistPayload } from "@/lib/schema";
+import { toAsanaTask, toSheetRecord, toSheetUpdate } from "@/lib/lead-format";
+import type {
+  FollowupPayload,
+  NewEntryPayload,
+  QuickLeadPayload,
+} from "@/lib/schema";
 
 /**
  * Outbound timeouts (`AbortSignal.timeout`) so a hung destination can
@@ -51,11 +55,17 @@ function errMsg(reason: unknown): string {
  * preserve-and-fallback. All credentials and destination identifiers
  * come from environment variables; nothing sensitive is committed.
  *
+ * Since decision-log #65 this takes the kinds that add a row: step 1 of
+ * the modal (`quick`, carrying the `leadId` the route minted, which
+ * step 2 finds the row by) and the waitlist band (`leadId` empty). A
+ * step 2 follow-up goes through `updateLead` instead.
+ *
  * Server-only: imported solely by the route handler and reads secret
  * env vars (no `NEXT_PUBLIC_` prefix) — it must never reach the client.
  */
 export async function deliverLead(
-  payload: LeadPayload,
+  payload: NewEntryPayload,
+  leadId: string,
 ): Promise<boolean> {
   const capturedAt = new Date().toISOString();
 
@@ -67,10 +77,10 @@ export async function deliverLead(
   // in a product, not work to pick up. That slot resolves as nothing to
   // do, so it never logs as a missing action item.
   const [sheetResult, asanaResult] = await Promise.allSettled([
-    writeLeadToSheet(payload, capturedAt),
+    writeLeadToSheet(payload, capturedAt, leadId),
     payload.kind === "waitlist"
       ? Promise.resolve(true)
-      : createAsanaTask(payload, capturedAt),
+      : createAsanaTask(payload, capturedAt, leadId),
   ]);
 
   const sheetOk =
@@ -111,30 +121,74 @@ export async function deliverLead(
  * success while the destination is unconfigured.
  */
 async function writeLeadToSheet(
-  payload: LeadPayload,
+  payload: NewEntryPayload,
   capturedAt: string,
+  leadId: string,
 ): Promise<boolean> {
+  const response = await postToSheet(toSheetRecord(payload, capturedAt, leadId));
+  return response !== null;
+}
+
+/**
+ * Attach a step 2 follow-up to its step 1 lead (decision-log #65): the
+ * Apps Script finds the row whose Lead ID and email match and fills in
+ * the answers given. No second row, no Asana task (the follow-up alert
+ * carries the answers to Nate). Success only once the script says it
+ * updated a row: its reply must be exactly `{ ok: true, updated: true }`.
+ * Reading the reply, not just the status, is what keeps an update from
+ * reporting a fake success against a script that predates #65, which
+ * would append the update as a stray row and answer a plain 200.
+ */
+export async function updateLead(payload: FollowupPayload): Promise<boolean> {
+  try {
+    const response = await postToSheet(toSheetUpdate(payload));
+    if (response === null) return false;
+    const reply: unknown = await response.json().catch(() => null);
+    const updated =
+      typeof reply === "object" &&
+      reply !== null &&
+      (reply as { ok?: unknown }).ok === true &&
+      (reply as { updated?: unknown }).updated === true;
+    if (!updated) {
+      console.error(
+        "lead-delivery: Sheet webhook did not confirm the follow-up update — is the #65 Apps Script deployed? The visitor keeps their answers (Rule 2.7).",
+      );
+    }
+    return updated;
+  } catch (error) {
+    console.error("lead-delivery: follow-up update threw —", errMsg(error));
+    return false;
+  }
+}
+
+/**
+ * POST one body to the "Inbound Leads" Apps Script webhook. Resolves the
+ * response on a 2xx, `null` on a missing URL or any other status (both
+ * logged), so no caller can report success while the destination is
+ * unconfigured.
+ */
+async function postToSheet(body: object): Promise<Response | null> {
   const webhookUrl = process.env.LEADS_SHEET_WEBHOOK_URL;
   if (!webhookUrl) {
     console.error(
       "lead-delivery: LEADS_SHEET_WEBHOOK_URL not set — cannot durably record the lead, so the capture reports not-ok (no fake success). Set it in Vercel env (sprint plan owner setup checklist).",
     );
-    return false;
+    return null;
   }
 
   const response = await fetch(webhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(toSheetRecord(payload, capturedAt)),
+    body: JSON.stringify(body),
     cache: "no-store",
     signal: AbortSignal.timeout(SHEET_TIMEOUT_MS),
   });
 
   if (!response.ok) {
     console.error(`lead-delivery: Sheet webhook responded ${response.status}`);
-    return false;
+    return null;
   }
-  return true;
+  return response;
 }
 
 /**
@@ -146,8 +200,9 @@ async function writeLeadToSheet(
  * record.
  */
 async function createAsanaTask(
-  payload: Exclude<LeadPayload, WaitlistPayload>,
+  payload: QuickLeadPayload,
   capturedAt: string,
+  leadId: string,
 ): Promise<boolean> {
   const token = process.env.ASANA_ACCESS_TOKEN;
   const projectId = process.env.ASANA_PROJECT_ID;
@@ -158,7 +213,7 @@ async function createAsanaTask(
     return false;
   }
 
-  const task = toAsanaTask(payload, capturedAt);
+  const task = toAsanaTask(payload, capturedAt, leadId);
   const response = await fetch("https://app.asana.com/api/1.0/tasks", {
     method: "POST",
     headers: {
