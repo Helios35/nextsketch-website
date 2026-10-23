@@ -73,9 +73,12 @@ function TurnIcon({ className }: { className: string }) {
  * of the flip mark in the corner. Its size follows **the card's own
  * width**, not the screen's (the root is an `@container`, as the
  * diagrams' stages are), because the card is 272px on a 320px phone,
- * 448px on a tablet and 436px on a desktop: `text-sm` under 18rem,
- * `text-base` from `@2xs`, `text-lg` from `@xs`, and `text-2xl` at 1.5
- * leading from `@sm` (384px), where the padding also opens out.
+ * 448px on a tablet and about 283px on a desktop, three across:
+ * `text-sm` under 18rem, `text-base` from `@2xs`, `text-lg` from `@xs`,
+ * and `text-2xl` at 1.5 leading from `@md` (448px). The padding opens
+ * out from `@sm` (384px). `text-2xl` began at `@sm` until #66, where a
+ * ~250-character `bio` ran past the padding into the mark's corner on
+ * 384 to 426px cards (432 to 474px phones).
  *
  * **The caption** (name, then title) is plain text under the card,
  * always visible, server-rendered, and outside the button, so it is
@@ -170,7 +173,7 @@ export function TeamAvatar({ member }: { member: TeamMember }) {
           >
             <span
               id={bioId}
-              className="text-sm leading-relaxed text-foreground @2xs:text-base @xs:text-lg @sm:text-2xl @sm:leading-normal"
+              className="text-sm leading-relaxed text-foreground @2xs:text-base @xs:text-lg @md:text-2xl @md:leading-normal"
             >
               {member.bio}
             </span>
