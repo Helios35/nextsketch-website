@@ -73,7 +73,8 @@ function TurnIcon({ className }: { className: string }) {
  * of the flip mark in the corner. Its size follows **the card's own
  * width**, not the screen's (the root is an `@container`, as the
  * diagrams' stages are), because the card is 272px on a 320px phone,
- * 448px on a tablet and about 283px on a desktop, three across:
+ * 448px on a tablet and, three across on a desktop, about 283px from
+ * 1024 and 368px from 1280:
  * `text-sm` under 18rem, `text-base` from `@2xs`, `text-lg` from `@xs`,
  * and `text-2xl` at 1.5 leading from `@md` (448px). The padding opens
  * out from `@sm` (384px). `text-2xl` began at `@sm` until #66, where a

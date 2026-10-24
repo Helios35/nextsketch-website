@@ -378,8 +378,8 @@ export const ABOUT = {
    * now to fill the back of the card"), and its accessible description.
    * Keep it near 250 characters: the cards stack below `lg:`, so the
    * smallest is 272px (a 320px phone), and that holds it; three across
-   * from `lg:` they are about 283px. `alt` is the avatar's accessible
-   * name.
+   * they are about 283px from `lg:` and 368px from `xl:`. `alt` is the
+   * avatar's accessible name.
    *
    * **Asha is an AI, and her row says so** (#66): her title, her `alt`
    * and the first words of her `bio`. All four of her fields are owner
