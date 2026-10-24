@@ -33,13 +33,16 @@ const ACCENT_PHRASE = ABOUT.accentPhrase;
  * **The team row maps `ABOUT.team`**, so a new person is a content edit
  * (a row there plus their two files under /public/team/), never a code
  * change. The row is centred in the section (owner, 2026-10-15: larger,
- * centred). **On desktop (`lg:`) the cards sit side by side**, two to a
- * row, the row capped at `max-w-4xl`, so each card is 436px; a third
- * person wraps to a second row. **On tablets and phones they stack**, one
- * card per row, capped at `max-w-md` (448px), so a card never shrinks to
- * fit beside another (owner, 2026-10-15). Each is a `TeamAvatar`: its
- * name and title always beneath it, and a flip on click to say who the
- * person is (#63, #64).
+ * centred). **On desktop (`lg:`) the three cards sit in one row** (#66),
+ * the row capped at `max-w-4xl` and, from `xl:`, at `max-w-6xl` (owner,
+ * 2026-10-23), so each card is about 283px from 1024 and 368px from 1280
+ * (436px when the row held two); at 1280 the 1152px row exactly fills
+ * the section inside its gutters. A fourth member would wrap to a second
+ * row. **On tablets and phones they stack**, one card
+ * per row, capped at `max-w-md` (448px), so a card never shrinks to fit
+ * beside another (owner, 2026-10-15). Each is a `TeamAvatar`: its name
+ * and title always beneath it, and a flip on click to say who the member
+ * is (#63, #64).
  */
 export function AboutSection() {
   const headline = ABOUT.headline;
@@ -75,9 +78,9 @@ export function AboutSection() {
           </ScrollReveal>
         ))}
       </div>
-      <ScrollReveal delay={200} className="mx-auto mt-12 w-full max-w-md md:mt-16 lg:max-w-4xl">
+      <ScrollReveal delay={200} className="mx-auto mt-12 w-full max-w-md md:mt-16 lg:max-w-4xl xl:max-w-6xl">
         <Parallax speed={0.06}>
-          <ul className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-6">
+          <ul className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-6">
             {ABOUT.team.map((member) => (
               <li key={member.id}>
                 <TeamAvatar member={member} />

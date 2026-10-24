@@ -338,8 +338,9 @@ export const PROOF = [
  * speak about any one person** (owner, 2026-10-15). Who each person is
  * lives on the back of their card (`bio`), not in the section's text.
  *
- * `team` is the list the section maps (Nate and Julie for now). Adding
- * a person is a row here plus their clip and poster under
+ * `team` is the list the section maps: Nate, Julie and, since #66,
+ * Asha, NextSketch's AI Content Creator, who is always labeled as AI.
+ * Adding a member is a row here plus their clip and poster under
  * `/public/team/` (`TeamMember`, src/lib/types.ts); the component does
  * not change. `video` and `poster` are asset paths (config, not copy),
  * kept beside the person they show, as `LANDING.backgroundVideo` is.
@@ -376,8 +377,13 @@ export const ABOUT = {
    * written to fill it (owner, 2026-10-15: "descriptions can be longer
    * now to fill the back of the card"), and its accessible description.
    * Keep it near 250 characters: the cards stack below `lg:`, so the
-   * smallest is 272px (a 320px phone), and that holds it. `alt` is the
+   * smallest is 272px (a 320px phone), and that holds it; three across
+   * they are about 283px from `lg:` and 368px from `xl:`. `alt` is the
    * avatar's accessible name.
+   *
+   * **Asha is an AI, and her row says so** (#66): her title, her `alt`
+   * and the first words of her `bio`. All four of her fields are owner
+   * copy, verbatim (the asha-team brief's Part B, 2026-10-23).
    *
    * Titles are owner copy (Nate's set 2026-10-15, Julie's from Part B).
    * **Both `bio` lines are owner-approved copy** (builder-written,
@@ -409,6 +415,15 @@ export const ABOUT = {
       bio: "Comes from digital product management, customer innovation and experience design, shaping roadmaps and the experiences people actually use. A co-founder herself, she is your partner from the first call to launch, keeping the work clear and moving.",
       video: "/team/julie.mp4",
       poster: "/team/julie-poster.jpg",
+    },
+    {
+      id: "asha",
+      name: "Asha",
+      title: "AI Content Creator",
+      alt: "Asha, AI Content Creator at NextSketch",
+      bio: "An AI, not a person. She hosts our YouTube Shorts, short breakdowns of how agentic systems and AI products get mapped, built and kept running. Every video is made in-house with AI. One more way we use what we sell.",
+      video: "/team/asha.mp4",
+      poster: "/team/asha-poster.jpg",
     },
   ] satisfies readonly TeamMember[],
 } as const;
