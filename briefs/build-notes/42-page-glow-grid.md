@@ -56,5 +56,5 @@ A glyph that crosses a dot meets the colour it met under the wash. Everywhere el
 
 ## For Nate
 
-1. **The dots are faint.** At the glow's own colour they are about as quiet as the diagram canvas's grid, and they fade out within 560px of the centre (2x crops are in the session scratchpad). Brighter dots are a one-number change, but above about 13% a line of muted text that crosses a dot at the centre falls under 4.5:1. A stronger grid is a trade against the contrast floor, not a free tweak. Tell me if you want it stronger, larger or more widely spaced.
+1. **Answered (owner, 2026-10-30): keep as is.** Shown the result at 1x and 2x, Nate kept the dots at the glow's own 12%. The note below stays as the record. **The dots are faint.** At the glow's own colour they are about as quiet as the diagram canvas's grid, and they fade out within 560px of the centre (2x crops are in the session scratchpad). Brighter dots are a one-number change, but above about 13% a line of muted text that crosses a dot at the centre falls under 4.5:1. A stronger grid is a trade against the contrast floor, not a free tweak. Tell me if you want it stronger, larger or more widely spaced.
 2. **Merge order** with `adhoc/level-colors` doesn't matter for code. The second to merge needs the doc version lines and the log's preamble reconciled.
