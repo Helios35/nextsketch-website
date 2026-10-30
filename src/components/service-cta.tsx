@@ -39,7 +39,7 @@ export function ServiceCta({ label, need, service }: ServiceCtaProps) {
   return (
     <a
       href={`mailto:${MODAL_ESCAPE_HATCH.email}`}
-      aria-label={`${label} — ${service}`}
+      aria-label={`${label}, ${service}`}
       onClick={(event: MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         openModal(need);

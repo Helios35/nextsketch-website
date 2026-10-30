@@ -48,6 +48,27 @@ export type AccentName = (typeof ACCENT_NAMES)[number];
 export type ServiceSlug = "agentic-system" | "product";
 
 /**
+ * The five levels of AI in business (decision-log #69), from the owner's
+ * "NextSketch Messaging: The 5 Levels of AI" (`docs/five-levels-messaging.md`).
+ * Content lives in `src/content/levels.ts`.
+ */
+export type LevelNumber = 1 | 2 | 3 | 4 | 5;
+
+export interface Level {
+  readonly level: LevelNumber;
+  /** The doc's level name, verbatim. */
+  readonly name: string;
+  /** The doc's one line, verbatim. */
+  readonly line: string;
+  /** What the level means for a business, from the doc's "How to tell them apart". */
+  readonly means: string;
+  /** The doc's examples, verbatim. */
+  readonly examples: string;
+  /** The offering that covers it; Level 1 is not sold (`null`). */
+  readonly offer: ServiceSlug | null;
+}
+
+/**
  * One offering on the home page's Services cards (#53). Copy lives in
  * `src/content/services.ts`.
  *
@@ -61,11 +82,9 @@ export interface Service {
   /** The line under the name: what the offering is, in buyer words. */
   readonly subtitle: string;
   readonly description: string;
-  /** The card's price row, upfront first, composed from `PRICES`. */
-  readonly price: readonly string[];
   /**
-   * The example jobs the card previews (#57). They are the names of
-   * the blocks on that offering's page, read from here by
+   * The example jobs (#57). The card no longer previews them (#74);
+   * they are the names of the blocks on that offering's page, read from here by
    * `src/content/service-pages.ts`, so the two cannot drift.
    */
   readonly examples?: readonly string[];
@@ -346,7 +365,9 @@ export interface PricingTier {
  * `included` is `readonly string[]` and **may be empty**: a block with
  * no bullets renders no list at all, and no empty frame either (Rule
  * 4.3). `mapFirst` is the agentic example blocks' "What we map first"
- * line (#57); a block without one renders no panel.
+ * line (#57); a block without one renders no panel. `level` is the
+ * level of AI the example job sits at (#69): the agentic examples carry
+ * one, the product ways in do not (any of them can be Level 4 or 5).
  */
 export interface ServicePageBlock {
   readonly id: ServiceBlockId;
@@ -356,6 +377,7 @@ export interface ServicePageBlock {
   readonly mapFirst?: string;
   readonly need: QuickNeed;
   readonly included: readonly string[];
+  readonly level?: LevelNumber;
 }
 
 /**
@@ -372,8 +394,8 @@ export interface ServicePageBlock {
  * - `accentPhrase` — the coral payoff word inside `headline`. Matched
  *   against the string, so it degrades to an unaccented heading exactly
  *   like every other section's `ACCENT_PHRASE`.
- * - `leadLine`, `intro`, `price` — the hero's lead line, supporting
- *   paragraph and published price (#53, #56).
+ * - `leadLine`, `intro` — the hero's lead line and supporting
+ *   paragraph (#53). No price: prices live on `/pricing` only (#73).
  * - `offer` — the "What you get" and "What the monthly covers" lists,
  *   the agentic page's (#57).
  *
@@ -393,7 +415,6 @@ export interface ServicePageContent {
   readonly accentPhrase?: string;
   readonly leadLine?: string;
   readonly intro?: string;
-  readonly price?: string;
   readonly need?: QuickNeed;
   /**
    * Labels for the hero's capability strip — the same marquee the

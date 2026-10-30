@@ -56,11 +56,10 @@ export const SERVICES_ACCENT_PHRASE = "actually works";
 export const SERVICES_CTA = "Build With Us";
 
 /**
- * The published figures, once (#53, #56). The home cards ("a month"),
- * the service routes ("upfront, then … a month") and `/pricing` ("per
- * month") word them differently, so each composes its own string from
- * these rather than repeating a figure that could then drift: a price
- * change is one edit here.
+ * The published figures, once (#53, #56). Since #73 only `/pricing`
+ * shows them ("per month"); the home cards and the service routes carry
+ * no price. `src/content/pricing.ts` composes its strings from these, so
+ * a price change is still one edit here.
  */
 export const PRICES = {
   "agentic-system": { upfront: "$3,998", monthly: "$2,998" },
@@ -101,8 +100,8 @@ export const SERVICE_PAGE_HREF: Record<ServiceSlug, string> = {
 
 /**
  * The two cards, in owner order (#53). `examples` is the agentic
- * page's four example jobs (#57): the card previews their names and
- * the page's blocks and ribbon read them from here.
+ * page's four example jobs (#57): the page's blocks and ribbon read
+ * them from here. The card no longer lists them (#74).
  */
 export const SERVICES = [
   {
@@ -111,10 +110,6 @@ export const SERVICES = [
     subtitle: "AI automation for the work you already do",
     description:
       "We plug AI agents into the work your team already does (emails, reports, moving tasks along) and keep them running and improving every month.",
-    price: [
-      `${PRICES["agentic-system"].upfront} upfront`,
-      `${PRICES["agentic-system"].monthly} a month`,
-    ],
     examples: [
       "Email triage",
       "Weekly reporting",
@@ -128,10 +123,6 @@ export const SERVICES = [
     subtitle: "New software with AI agents built in",
     description:
       "We build your product from scratch in 6 to 8 weeks, or finish one someone else started, with AI agents built in, and we stay on as your product team.",
-    price: [
-      `${PRICES.product.upfront} upfront`,
-      `${PRICES.product.monthly} a month`,
-    ],
   },
 ] as const satisfies readonly Service[];
 

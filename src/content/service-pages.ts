@@ -1,5 +1,5 @@
 import { PRICING, PRICING_TIERS } from "@/content/pricing";
-import { PRICES, SERVICE_NEED, SERVICES } from "@/content/services";
+import { SERVICE_NEED, SERVICES } from "@/content/services";
 import type {
   ServicePageBlock,
   ServicePageContent,
@@ -26,8 +26,9 @@ import type {
  * (2026-10-15), shipped verbatim; nothing is DRAFT any more. Names are
  * referenced, never copied: the eyebrows are the offerings' names, the
  * agentic block names are the offering's `examples`, the monthly list is
- * the agentic tier's, the prices are `PRICES`', and each ribbon is its
- * page's block names. A rename lands everywhere at once.
+ * the agentic tier's, and each ribbon is its page's block names. A
+ * rename lands everywhere at once. No price: prices live on `/pricing`
+ * only (#73).
  *
  * `need` on every CTA comes from `SERVICE_NEED`, so the page, its
  * blocks, its card and its tier preselect the same need.
@@ -64,7 +65,10 @@ const EXAMPLES = SERVICE["agentic-system"].examples;
 
 /**
  * The four example jobs (#57), in owner order. Each block is the job's
- * name, what the agent does, and what we map first. Each carries a
+ * name, what the agent does, and what we map first, and since #69 the
+ * level of AI it sits at, from the doc's examples: the morning inbox
+ * sort and the weekly report are Level 2 (AI automations), quotes and
+ * intake and data entry are Level 3 (integrating AI into your systems). Each carries a
  * before-and-after diagram of the job (decision-log #60;
  * `service-block-visual.tsx`), so its map panel sits under the
  * description.
@@ -73,12 +77,18 @@ const AGENTIC_BLOCKS = [
   {
     id: "email-triage",
     name: EXAMPLES[0],
+    /**
+     * A morning sort, Level 2 (#71, Nate, 2026-10-30), replacing "An
+     * agent reads every email that comes in, sorts it, ...", which
+     * read as always-on (Level 4). Builder DRAFT.
+     */
     description:
-      "An agent reads every email that comes in, sorts it, drafts the replies, and flags the few you actually need to look at.",
+      "Every morning, an agent sorts the inbox, drafts the replies, and flags the few you actually need to look at.",
     mapFirst:
       "How mail really flows: who handles what, which messages matter, and the replies you send over and over.",
     need: SERVICE_NEED["agentic-system"],
     included: [],
+    level: 2,
   },
   {
     id: "weekly-reporting",
@@ -88,6 +98,7 @@ const AGENTIC_BLOCKS = [
     mapFirst: "Where your numbers live, and how you build the report today, by hand.",
     need: SERVICE_NEED["agentic-system"],
     included: [],
+    level: 2,
   },
   {
     id: "quoting-and-intake",
@@ -98,6 +109,7 @@ const AGENTIC_BLOCKS = [
       "Your quoting steps: what gets asked, what gets checked, and where requests stall.",
     need: SERVICE_NEED["agentic-system"],
     included: [],
+    level: 3,
   },
   {
     id: "document-and-data-entry",
@@ -108,6 +120,7 @@ const AGENTIC_BLOCKS = [
       "Which documents come in, what you pull from them, and where it has to land.",
     need: SERVICE_NEED["agentic-system"],
     included: [],
+    level: 3,
   },
 ] as const satisfies readonly ServicePageBlock[];
 
@@ -184,7 +197,6 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
      */
     intro:
       "Most teams guessing at AI buy the wrong tools and stall in pilots that never ship. We map how your work really runs first, then build agents into the exact steps where they pay off. If the map shows nothing worth building, we'll tell you.",
-    price: `${PRICES["agentic-system"].upfront} upfront, then ${PRICES["agentic-system"].monthly} a month. The monthly is required for the first three months, optional after.`,
     strip: AGENTIC_BLOCKS.map((block) => block.name),
     need: SERVICE_NEED["agentic-system"],
     blocks: AGENTIC_BLOCKS,
@@ -213,7 +225,6 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
     leadLine: "New software with AI agents built in.",
     intro:
       "Three ways in, one way of working. Start from an idea, finish a product someone else got 70% of the way, or keep a live product growing. We map the business first, build it correctly, and stay on as your product team.",
-    price: `${PRICES.product.upfront} upfront, then ${PRICES.product.monthly} a month. The monthly covers the build for the first three months. After that it's your ongoing product team.`,
     strip: PRODUCT_BLOCKS.map((block) => block.name),
     /**
      * One offering now, so the hero and close preselect it too. Under

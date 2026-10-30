@@ -46,7 +46,7 @@ export function OfferTab({
   return (
     <span
       aria-hidden="true"
-      className={`absolute -top-px h-0.5 w-10 rounded-full ${TAB_COLOUR[offer]} ${className}`}
+      className={`pointer-events-none absolute -top-px h-0.5 w-10 rounded-full ${TAB_COLOUR[offer]} ${className}`}
     />
   );
 }
