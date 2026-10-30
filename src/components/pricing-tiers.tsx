@@ -1,5 +1,7 @@
+import { LevelMark } from "@/components/level-mark";
 import { ModalTrigger } from "@/components/modal-trigger";
 import { OfferTab } from "@/components/offer-tab";
+import { OFFER_LEVELS, PRICING_LEVELS } from "@/content/levels";
 import {
   PRICING,
   PRICING_CTA,
@@ -171,9 +173,23 @@ export function PricingTiers() {
             key={tier.slug}
             className="relative row-span-7 mb-4 grid grid-rows-subgrid rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:mb-0 md:p-8"
           >
-            <h3 className="font-sans text-lg font-semibold tracking-tight text-foreground md:text-xl">
-              {tier.name}
-            </h3>
+            {/* Row one: the name, then which levels of AI the tier
+                covers (#69), so the price says what it buys. Inside the
+                name's cell, so the seven-row subgrid is unchanged and
+                both cards' rows still start together. */}
+            <div>
+              <h3 className="font-sans text-lg font-semibold tracking-tight text-foreground md:text-xl">
+                {tier.name}
+              </h3>
+              <p className="mt-3 flex gap-2.5 text-sm leading-relaxed text-muted-foreground">
+                <span className="mt-1 flex shrink-0 items-center gap-1">
+                  {OFFER_LEVELS[PRICING_OFFER[tier.slug]].map((level) => (
+                    <LevelMark key={level} level={level} />
+                  ))}
+                </span>
+                {PRICING_LEVELS[tier.slug]}
+              </p>
+            </div>
             <p className="mt-3 text-base leading-relaxed text-foreground">
               {tier.description}
             </p>

@@ -1,8 +1,11 @@
+import { LevelMark } from "@/components/level-mark";
+import { LevelsBand } from "@/components/levels-band";
 import { OfferTab } from "@/components/offer-tab";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { ServiceCta } from "@/components/service-cta";
 import { WaitlistBand } from "@/components/waitlist-band";
+import { LEVEL_WORDS, levelOf, levelsLabel, OFFER_LEVELS } from "@/content/levels";
 import {
   SERVICE_NEED,
   SERVICE_PAGE_HREF,
@@ -73,9 +76,23 @@ export function ServicesSection() {
             </span>
           </SectionHeading>
         </ScrollReveal>
+        {/* The five levels of AI (#69), above the cards they map onto. */}
+        <LevelsBand />
         {/* Two cards since #53: side by side from md. The 4-up `xl`
-            step left with the other two services. */}
-        <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2">
+            step left with the other two services.
+
+            **Each card is a two-row subgrid (#69)**, the `/pricing`
+            tiers' device: row one is everything down to the CTA, row
+            two the levels panel. Row one's track is the taller card's,
+            so the CTAs line up as they did, and it never changes when a
+            panel opens: the panel only grows row two, so no CTA moves
+            under a pointer. (With one flex column, the shorter product
+            card's CTA sat on spare space the opening panel used up, and
+            it jumped up, measured at 768, 1280 and 1920.) The parent
+            carries no row gap and the cards a uniform `mb-4` below `md`,
+            because a subgrid inherits its parent's row gap, which would
+            open 16px under every CTA. */}
+        <div className="mt-14 grid gap-x-4 gap-y-0 md:mt-20 md:grid-cols-2">
           {/* Widened to `Service`: `as const satisfies` narrows each entry
               to its own literal type, so `examples` would not exist on
               the card that omits it. */}
@@ -83,102 +100,178 @@ export function ServicesSection() {
             <ScrollReveal
               key={service.slug}
               delay={120 + i * 80}
-              className="h-full"
+              className="row-span-2 mb-4 grid grid-rows-subgrid last:mb-0 md:mb-0"
             >
-              {/* flex-col + mt-auto on the CTA row so the two CTAs
-                  line up across cards whose copy runs to different
-                  lengths. `relative` holds the offer tab (#67). */}
-              <div className="relative flex h-full flex-col rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
-                <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
-                  <span
-                    aria-hidden="true"
-                    className="h-1.5 w-1.5 rotate-45 bg-brand"
-                  />
-                  {String(i + 1).padStart(2, "0")}
-                </p>
-                {/* One line at every breakpoint (owner direction
-                    2026-08-04). nowrap is the guarantee. Measured for
-                    the #53 names in Inter semibold with tight tracking:
-                    the longer, "Agentic System Integration", sets at
-                    224px at 18px against a 264px column at 360, and at
-                    249px at 20px against a 280px column at 768, the two
-                    narrowest cards. The `xl:text-lg` step back down
-                    existed for the retired 4-up grid and went with it. */}
-                {/* The name is the card's second affordance
-                    (decision-log #30): the CTA below still opens the
-                    modal on this service, and the name now opens the
-                    service route at this service's block. Root-relative
-                    by construction — `SERVICE_PAGE_HREF` builds every
-                    href through `serviceBlockHref`, so nothing here is
-                    a hand-written hash.
+              {/* `relative` holds the offer tab (#67) and the name
+                  link's stretched hit area (#70); `group/card` drives
+                  the levels panel (#69). */}
+              <div className="group/card relative row-span-2 grid grid-rows-subgrid rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
+                {/* Row one. flex-col + mt-auto on the CTA row so the two
+                    CTAs line up across cards whose copy runs to
+                    different lengths. */}
+                <div className="flex flex-col">
+                  <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
+                    {/* Click-through: a rotated mark paints above the
+                        card's stretched link (#70), so it would eat a click. */}
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none h-1.5 w-1.5 rotate-45 bg-brand"
+                    />
+                    {String(i + 1).padStart(2, "0")}
+                  </p>
+                  {/* One line at every breakpoint (owner direction
+                      2026-08-04). nowrap is the guarantee. Measured for
+                      the #53 names in Inter semibold with tight tracking:
+                      the longer, "Agentic System Integration", sets at
+                      224px at 18px against a 264px column at 360, and at
+                      249px at 20px against a 280px column at 768, the two
+                      narrowest cards. The `xl:text-lg` step back down
+                      existed for the retired 4-up grid and went with it. */}
+                  {/* **The whole card opens the service route (#70,
+                      superseding #30's name-only link).** The name is
+                      still the one link, so a screen reader hears the
+                      offering's name as the link and nothing doubles up,
+                      but its `::after` is stretched over the card
+                      (`after:absolute after:inset-0`, the card is the
+                      nearest positioned box), so a click anywhere on the
+                      card follows it. The Build With Us CTA sits above
+                      that layer (`relative z-10`) and still opens the
+                      modal on this offering. Because the hit area is the
+                      link's own, hovering anywhere on the card is hovering
+                      the link, so the name takes its coral there; and the
+                      focus ring moves from the name to the card's edge,
+                      the size of what Enter opens. Root-relative by
+                      construction: `SERVICE_PAGE_HREF` builds every href
+                      through `serviceBlockHref`.
 
-                    Deliberately not the §Interaction-vocabulary coral
-                    text link: coral on the card heading would put a
-                    second coral element above the coral CTA and spend
-                    the page's one accent twice per card. It rests as
-                    the linen (`foreground`) heading it already was
-                    under a `muted-foreground` hairline underline, and
-                    takes coral (`brand`, decision-log #47) only on
-                    hover and focus, where the accent is doing "you are
-                    here" work. An underline adds no width, so the
-                    measured one-line nowrap guarantee above still
-                    holds. */}
-                <h3 className="mt-6 font-sans text-lg font-semibold tracking-tight whitespace-nowrap text-foreground md:text-xl">
-                  <a
-                    href={SERVICE_PAGE_HREF[service.slug]}
-                    className="underline decoration-muted-foreground underline-offset-4 transition-colors duration-150 hover:text-brand hover:decoration-brand focus-visible:text-brand focus-visible:decoration-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                  >
-                    {service.name}
-                  </a>
-                </h3>
-                {/* What the offering is, in buyer words: secondary text
-                    under the name, the step the system keeps for it. */}
-                <p className="mt-2 text-base font-medium text-muted-foreground">
-                  {service.subtitle}
-                </p>
-                <p className="mt-4 text-base leading-relaxed text-foreground">
-                  {service.description}
-                </p>
-                {/* The published price (#53): figures in Inter
-                    tabular-nums (fin §1), in linen, never coral (coral
-                    stays on `/pricing`'s monthly figures, where the
-                    accent rules put it). Stacked on a phone, where the
-                    pair does not fit one line; side by side from sm,
-                    with a hairline dividing upfront from monthly. */}
-                <ul className="mt-6 flex flex-col gap-1 font-sans text-base font-medium text-foreground tabular-nums sm:flex-row sm:items-baseline sm:gap-4">
-                  {service.price.map((item, j) => (
-                    <li
-                      key={item}
-                      className={j > 0 ? "sm:border-l sm:border-border sm:pl-4" : undefined}
+                      Deliberately not the §Interaction-vocabulary coral
+                      text link: coral on the card heading would put a
+                      second coral element above the coral CTA and spend
+                      the page's one accent twice per card. It rests as
+                      the linen (`foreground`) heading it already was
+                      under a `muted-foreground` hairline underline, and
+                      takes coral (`brand`, decision-log #47) only on
+                      hover and focus. An underline adds no width, so the
+                      measured one-line nowrap guarantee above still
+                      holds. */}
+                  <h3 className="mt-6 font-sans text-lg font-semibold tracking-tight whitespace-nowrap text-foreground md:text-xl">
+                    <a
+                      href={SERVICE_PAGE_HREF[service.slug]}
+                      className="underline decoration-muted-foreground underline-offset-4 transition-colors duration-150 after:absolute after:inset-0 after:rounded-xl hover:text-brand hover:decoration-brand focus-visible:text-brand focus-visible:decoration-brand focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-ring"
                     >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                {/* The four example jobs, previewed (#57). A list, so
-                    the system's coral list diamond marks each. */}
-                {service.examples !== undefined && (
-                  <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5">
-                    {service.examples.map((example) => (
+                      {service.name}
+                    </a>
+                  </h3>
+                  {/* What the offering is, in buyer words: secondary text
+                      under the name, the step the system keeps for it. */}
+                  <p className="mt-2 text-base font-medium text-muted-foreground">
+                    {service.subtitle}
+                  </p>
+                  {/* The levels this offering covers (#69): each level's
+                      mark, then "Levels 2 and 3". */}
+                  <p className="mt-4 flex items-center gap-2 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      {OFFER_LEVELS[service.slug].map((level) => (
+                        <LevelMark key={level} level={level} />
+                      ))}
+                    </span>
+                    {levelsLabel(service.slug)}
+                  </p>
+                  <p className="mt-4 text-base leading-relaxed text-foreground">
+                    {service.description}
+                  </p>
+                  {/* The published price (#53): figures in Inter
+                      tabular-nums (fin §1), in linen, never coral (coral
+                      stays on `/pricing`'s monthly figures, where the
+                      accent rules put it). Stacked on a phone, where the
+                      pair does not fit one line; side by side from sm,
+                      with a hairline dividing upfront from monthly. */}
+                  <ul className="mt-6 flex flex-col gap-1 font-sans text-base font-medium text-foreground tabular-nums sm:flex-row sm:items-baseline sm:gap-4">
+                    {service.price.map((item, j) => (
                       <li
-                        key={example}
-                        className="flex items-center gap-2.5 text-sm text-muted-foreground"
+                        key={item}
+                        className={j > 0 ? "sm:border-l sm:border-border sm:pl-4" : undefined}
                       >
-                        <span
-                          aria-hidden="true"
-                          className="h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
-                        />
-                        {example}
+                        {item}
                       </li>
                     ))}
                   </ul>
-                )}
-                <div className="mt-auto pt-6">
-                  <ServiceCta
-                    label={SERVICES_CTA}
-                    need={SERVICE_NEED[service.slug]}
-                    service={service.name}
-                  />
+                  {/* The four example jobs, previewed (#57). A list, so
+                      the system's coral list diamond marks each. */}
+                  {service.examples !== undefined && (
+                    <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5">
+                      {service.examples.map((example) => (
+                        <li
+                          key={example}
+                          className="flex items-center gap-2.5 text-sm text-muted-foreground"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="pointer-events-none h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
+                          />
+                          {example}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="mt-auto pt-6">
+                    {/* Above the card's stretched link (#70), so it still
+                        opens the modal with this offering picked. */}
+                    <span className="relative z-10 inline-flex">
+                      <ServiceCta
+                        label={SERVICES_CTA}
+                        need={SERVICE_NEED[service.slug]}
+                        service={service.name}
+                      />
+                    </span>
+                  </div>
+                </div>
+                {/* Row two. **The card opens up (#69).** What each of its levels
+                    means, with the doc's examples, in a panel that
+                    opens on hover (pointers that can hover), on keyboard
+                    focus anywhere in the card (the name link or the
+                    CTA), and that is simply open on screens that cannot
+                    hover: a tap on the card opens the page, so a tap
+                    target of its own would compete with it. The panel
+                    animates its row from 0fr to 1fr at 200ms, and
+                    reduced motion takes the transition away (base
+                    layer). Clipped, not hidden, so a screen reader reads
+                    it whether or not it is open. Text only: nothing in
+                    it can take focus or a click, so the stretched link
+                    above it is never in the way.
+
+                    **It opens below the CTA, on purpose.** Above it, the
+                    panel pushed Build With Us down the moment a pointer
+                    entered the card, so a pointer coming up from below
+                    found the card body under it instead and a click
+                    opened the page, not the form (measured at 768).
+                    Below it, the card grows downward and the CTA never
+                    moves in the card being hovered. */}
+                <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 group-focus-within/card:grid-rows-[1fr] group-hover/card:grid-rows-[1fr] [@media(hover:none)]:grid-rows-[1fr]">
+                  <div className="min-h-0 overflow-hidden">
+                    <ul className="mt-6 space-y-5 border-t border-border pt-6">
+                      {OFFER_LEVELS[service.slug].map((level) => {
+                        const { name, means, examples } = levelOf(level);
+                        return (
+                          <li key={level}>
+                            <p className="flex items-center gap-2 text-base font-semibold text-foreground">
+                              <LevelMark level={level} />
+                              <span className="font-mono text-[0.7rem] font-normal tracking-[0.14em] uppercase text-muted-foreground">
+                                {LEVEL_WORDS.level} {level}
+                              </span>
+                              {name}
+                            </p>
+                            <p className="mt-1.5 text-sm leading-relaxed text-foreground">
+                              {means}
+                            </p>
+                            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                              {LEVEL_WORDS.examples}: {examples}
+                            </p>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
                 </div>
                 {/* The offering's own colour (#67), on the card's top
                     hairline above the index; coral keeps the index, the

@@ -64,7 +64,10 @@ const EXAMPLES = SERVICE["agentic-system"].examples;
 
 /**
  * The four example jobs (#57), in owner order. Each block is the job's
- * name, what the agent does, and what we map first. Each carries a
+ * name, what the agent does, and what we map first, and since #69 the
+ * level of AI it sits at, from the doc's examples: the morning inbox
+ * sort and the weekly report are Level 2 (AI automations), quotes and
+ * intake and data entry are Level 3 (integrating AI into your systems). Each carries a
  * before-and-after diagram of the job (decision-log #60;
  * `service-block-visual.tsx`), so its map panel sits under the
  * description.
@@ -73,12 +76,18 @@ const AGENTIC_BLOCKS = [
   {
     id: "email-triage",
     name: EXAMPLES[0],
+    /**
+     * A morning sort, Level 2 (#71, Nate, 2026-10-30), replacing "An
+     * agent reads every email that comes in, sorts it, ...", which
+     * read as always-on (Level 4). Builder DRAFT.
+     */
     description:
-      "An agent reads every email that comes in, sorts it, drafts the replies, and flags the few you actually need to look at.",
+      "Every morning, an agent sorts the inbox, drafts the replies, and flags the few you actually need to look at.",
     mapFirst:
       "How mail really flows: who handles what, which messages matter, and the replies you send over and over.",
     need: SERVICE_NEED["agentic-system"],
     included: [],
+    level: 2,
   },
   {
     id: "weekly-reporting",
@@ -88,6 +97,7 @@ const AGENTIC_BLOCKS = [
     mapFirst: "Where your numbers live, and how you build the report today, by hand.",
     need: SERVICE_NEED["agentic-system"],
     included: [],
+    level: 2,
   },
   {
     id: "quoting-and-intake",
@@ -98,6 +108,7 @@ const AGENTIC_BLOCKS = [
       "Your quoting steps: what gets asked, what gets checked, and where requests stall.",
     need: SERVICE_NEED["agentic-system"],
     included: [],
+    level: 3,
   },
   {
     id: "document-and-data-entry",
@@ -108,6 +119,7 @@ const AGENTIC_BLOCKS = [
       "Which documents come in, what you pull from them, and where it has to land.",
     need: SERVICE_NEED["agentic-system"],
     included: [],
+    level: 3,
   },
 ] as const satisfies readonly ServicePageBlock[];
 

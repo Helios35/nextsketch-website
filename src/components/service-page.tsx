@@ -1,6 +1,7 @@
 import { BrandWordmark } from "@/components/brand-wordmark";
 import { Button } from "@/components/button";
 import { CapabilityStrip } from "@/components/capability-strip";
+import { LevelMark } from "@/components/level-mark";
 import { ModalTrigger } from "@/components/modal-trigger";
 import { OfferTab } from "@/components/offer-tab";
 import { PageGlow } from "@/components/page-glow";
@@ -10,6 +11,13 @@ import { hasBlockVisual, ServiceBlockVisual } from "@/components/service-block-v
 import { ServiceCta } from "@/components/service-cta";
 import { ServiceProcess } from "@/components/service-process";
 import { FINAL_CTA, LANDING, NAV } from "@/content/copy";
+import {
+  LEVEL_WORDS,
+  levelOf,
+  OFFER_LEVELS,
+  SERVICE_LEVELS,
+  SERVICE_LEVELS_EYEBROW,
+} from "@/content/levels";
 import { SERVICE_PAGE_LABELS } from "@/content/service-pages";
 import { SERVICES_CTA } from "@/content/services";
 import type { ServicePageContent, ServiceSlug } from "@/lib/types";
@@ -91,6 +99,87 @@ function OfferList({
         <OfferTab offer={offer} className="left-6 md:left-8" />
       </div>
     </ScrollReveal>
+  );
+}
+
+/**
+ * Which levels of AI the page covers (#69): Levels 2 and 3 on the
+ * agentic page, 4 and 5 on the product page, which so names internal
+ * tools as part of what it builds (#72). A section of its own after the
+ * hero, on the patterns the page already uses: the display
+ * `SectionHeading` with its coral payoff (the levels), the body
+ * paragraph, and two cards on the site's card recipe, one per level,
+ * each carrying the level's mark (#69), its name and line, what it
+ * means for the visitor's business, and the doc's examples. Level
+ * words come from `src/content/levels.ts`; the heading and intro are
+ * builder DRAFT.
+ */
+function LevelsSection({ offer }: { offer: ServiceSlug }) {
+  const { headline, accentPhrase, intro } = SERVICE_LEVELS[offer];
+  const accentStart = headline.indexOf(accentPhrase);
+  return (
+    <section
+      aria-labelledby="levels-heading"
+      className="w-full px-6 pb-24 sm:px-8 sm:pb-28 lg:px-16 lg:pb-32"
+    >
+      <div className={MEASURE}>
+        <ScrollReveal>
+          <SectionHeading
+            as="h2"
+            eyebrow={SERVICE_LEVELS_EYEBROW}
+            className="max-w-3xl"
+          >
+            <span id="levels-heading">
+              {accentStart === -1 ? (
+                headline
+              ) : (
+                <>
+                  {headline.slice(0, accentStart)}
+                  <span className="text-brand">{accentPhrase}</span>
+                  {headline.slice(accentStart + accentPhrase.length)}
+                </>
+              )}
+            </span>
+          </SectionHeading>
+          <p className={`mt-6 max-w-2xl ${BODY_CLASS}`}>{intro}</p>
+        </ScrollReveal>
+        <ul className="mt-10 grid gap-4 md:mt-12 md:grid-cols-2">
+          {OFFER_LEVELS[offer].map((level, i) => {
+            const { name, line, means, examples } = levelOf(level);
+            return (
+              <li key={level}>
+                <ScrollReveal delay={120 + i * 80} className="h-full">
+                  <div className="h-full rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
+                    <p className="flex items-center gap-2 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
+                      <LevelMark level={level} className="size-4" />
+                      {LEVEL_WORDS.level} {level}
+                    </p>
+                    <h3 className="mt-5 font-sans text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+                      {name}
+                    </h3>
+                    <p className="mt-2 text-base leading-relaxed text-foreground md:text-lg">
+                      {line}
+                    </p>
+                    <p className="mt-6 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
+                      {LEVEL_WORDS.means}
+                    </p>
+                    <p className="mt-2 text-base leading-relaxed text-foreground">
+                      {means}
+                    </p>
+                    <p className="mt-5 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
+                      {LEVEL_WORDS.examples}
+                    </p>
+                    <p className="mt-2 text-base leading-relaxed text-foreground">
+                      {examples}
+                    </p>
+                  </div>
+                </ScrollReveal>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
   );
 }
 
@@ -368,6 +457,10 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
         </div>
       </section>
 
+      {/* Which levels of AI this page covers (#69), before the rows that
+          show them at work. */}
+      <LevelsSection offer={page.slug} />
+
       {/* "What you get" — alternating split rows. See the doc block
           above for what the reference contributed and what it did not.
           Each block is a real <section id>, so `globals.css`'s
@@ -439,6 +532,15 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                         className="h-1.5 w-1.5 rotate-45 bg-brand"
                       />
                       {String(i + 1).padStart(2, "0")}
+                      {/* The level of AI this example job sits at (#69).
+                          Its own muted colour, so the `:target` coral
+                          stays on the index alone. */}
+                      {block.level !== undefined && (
+                        <span className="ml-2 flex items-center gap-2 text-muted-foreground">
+                          <LevelMark level={block.level} />
+                          {LEVEL_WORDS.level} {block.level}
+                        </span>
+                      )}
                     </p>
                     {/* The row-title treatment at panel scale
                         (§Typography: Inter semibold, decision-log #47),
