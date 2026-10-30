@@ -34,6 +34,11 @@
  * (decision-log #52), and contrast sets the ceiling: much above 13%,
  * `muted-foreground` text crossing the glow's centre falls under 4.5:1.
  *
+ * **Since #68 the glow is a dot grid** (owner, 2026-10-30): the same
+ * coral at the same 12%, the same fade and geometry, drawn as the
+ * diagram canvas's dots rather than a wash. Only the utility changed;
+ * this component, its mounting and its three routes did not.
+ *
  * `fixed inset-0 -z-10` is the source's own mounting: the glow rides
  * the viewport, above the `background` page ground and beneath every
  * band. That is why the bands on these routes shed their own
