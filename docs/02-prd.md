@@ -1,6 +1,6 @@
 # PRD — NextSketch Website Rebuild
 
-**Version:** 2.6 · **Date:** 2026-10-23 · **Status:** Active: F7 gains Asha, the AI Content Creator (decision-log #66); F2 is the email-first modal (decision-log #65); F7 is the team section (decision-log #63); aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the look reconciled to the fin Zen Linen dark rebrand (decision-log #47 to #50); the offer set is the two offerings of #53 (F6 and the user stories)
+**Version:** 2.7 · **Date:** 2026-10-30 · **Status:** Active: the look gains seven identifying colours beside coral, one per level and one per offering (decision-log #67); F7 gains Asha, the AI Content Creator (decision-log #66); F2 is the email-first modal (decision-log #65); F7 is the team section (decision-log #63); aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the look reconciled to the fin Zen Linen dark rebrand (decision-log #47 to #50); the offer set is the two offerings of #53 (F6 and the user stories)
 **Answers:** What are we building?
 **References:** `01-vision.md` (why) · `03-site-architecture.md` (structure) · `04-ux-spec.md` (look/behavior) · `05-business-rules.md` (logic) · `06-taxonomy.md` (naming) · `07-technical-spec.md` (how) · `08-runbook.md` (ops)
 
@@ -17,7 +17,7 @@
 
 A marketing site for NextSketch on Next.js/Vercel, replacing the Webflow site. **As-built: a dark cinematic home page (hero + six sections), a standalone `/pricing` route, and two service routes under `/services/`** (**decision-log #23**, 2026-08-25 — the site is no longer single-page; **#30**, 2026-08-28 — the service routes), with a **two-door** branching qualification modal as the structured lead path. **Shipped (decision-log #13, extended by #16):** Selected Work, Manifesto, Services, Process, About and Final CTA, added one unit at a time, each designed against the hero-derived design system (`04-ux-spec.md`). The old eleven-section scrolling page is **RETIRED** (dormant in code, not a destination). The lead path writes to a durable Google Sheet + best-effort Asana, with transactional email — not a single notification email (see `07-technical-spec.md`).
 
-**The look, CHANGED (decision-log #47 to #50, 2026-10-14):** every route renders in the fin design system's Zen Linen theme, dark only with no theme toggle; coral replaces gold as the one accent (#47), corners follow fin's radius scale (#48), the logo is recoloured but not reshaped (#49), and the hero plays new footage that fades out on every edge (#50). The rebrand is visual only: every rendered word, route, section order (#13) and the modal's logic are unchanged.
+**The look, CHANGED (decision-log #47 to #50, 2026-10-14):** every route renders in the fin design system's Zen Linen theme, dark only with no theme toggle; coral replaces gold as the one accent (#47), corners follow fin's radius scale (#48), the logo is recoloured but not reshaped (#49), and the hero plays new footage that fades out on every edge (#50). Since #67 (2026-10-30) seven identifying colours join coral, one per level of AI and one per offering; coral is still the one accent and the only emphasis. The rebrand is visual only: every rendered word, route, section order (#13) and the modal's logic are unchanged.
 
 ## Background — **CURRENT**
 
