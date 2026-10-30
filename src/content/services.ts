@@ -100,8 +100,8 @@ export const SERVICE_PAGE_HREF: Record<ServiceSlug, string> = {
 
 /**
  * The two cards, in owner order (#53). `examples` is the agentic
- * page's four example jobs (#57): the card previews their names and
- * the page's blocks and ribbon read them from here.
+ * page's four example jobs (#57): the page's blocks and ribbon read
+ * them from here. The card no longer lists them (#74).
  */
 export const SERVICES = [
   {

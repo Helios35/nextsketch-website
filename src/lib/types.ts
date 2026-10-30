@@ -83,8 +83,8 @@ export interface Service {
   readonly subtitle: string;
   readonly description: string;
   /**
-   * The example jobs the card previews (#57). They are the names of
-   * the blocks on that offering's page, read from here by
+   * The example jobs (#57). The card no longer previews them (#74);
+   * they are the names of the blocks on that offering's page, read from here by
    * `src/content/service-pages.ts`, so the two cannot drift.
    */
   readonly examples?: readonly string[];

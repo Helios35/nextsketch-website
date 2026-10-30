@@ -15,7 +15,6 @@ import {
   SERVICES_EYEBROW,
   SERVICES_HEADLINE,
 } from "@/content/services";
-import type { Service } from "@/lib/types";
 
 /**
  * The promise the section exists to land takes the coral payoff
@@ -30,9 +29,9 @@ const ACCENT_PHRASE = SERVICES_ACCENT_PHRASE;
 /**
  * Services (#services) — the two offerings (decision-log #53;
  * docs/03-site-architecture.md row 6), agentic first, each card naming
- * the offering, what it is, its levels (#69), what it does, and (on
- * the agentic card) the four example jobs its page shows (#57). No
- * price: prices live on `/pricing` only (#73). The
+ * the offering, what it is, its levels (#69) and what it does. No
+ * price: prices live on `/pricing` only (#73). No example-job list
+ * either (#74): the agentic page and its ribbon still show the four. The
  * waitlist band sits under the cards (#58). Rebuilt in place to the
  * hero-derived design system (Redesign Unit 02): a transparent band,
  * built to sit over the site's fixed scroll-synced video backdrop
@@ -84,10 +83,7 @@ export function ServicesSection() {
             open on hover (#69, amended): what each level means lives
             in the band above and on the service routes. */}
         <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2">
-          {/* Widened to `Service`: `as const satisfies` narrows each entry
-              to its own literal type, so `examples` would not exist on
-              the card that omits it. */}
-          {SERVICES.map((service: Service, i) => (
+          {SERVICES.map((service, i) => (
             <ScrollReveal
               key={service.slug}
               delay={120 + i * 80}
@@ -168,24 +164,6 @@ export function ServicesSection() {
                 <p className="mt-4 text-base leading-relaxed text-foreground">
                   {service.description}
                 </p>
-                {/* The four example jobs, previewed (#57). A list, so
-                    the system's coral list diamond marks each. */}
-                {service.examples !== undefined && (
-                  <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2.5">
-                    {service.examples.map((example) => (
-                      <li
-                        key={example}
-                        className="flex items-center gap-2.5 text-sm text-muted-foreground"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="pointer-events-none h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
-                        />
-                        {example}
-                      </li>
-                    ))}
-                  </ul>
-                )}
                 <div className="mt-auto pt-6">
                   {/* Above the card's stretched link (#70), so it still
                       opens the modal with this offering picked. */}
@@ -198,8 +176,8 @@ export function ServicesSection() {
                   </span>
                 </div>
                 {/* The offering's own colour (#67), on the card's top
-                    hairline above the index; coral keeps the index, the
-                    diamonds and the CTA. */}
+                    hairline above the index; coral keeps the index's
+                    diamond and the CTA. */}
                 <OfferTab offer={service.slug} className="left-6 md:left-8" />
               </div>
             </ScrollReveal>

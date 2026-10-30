@@ -1,18 +1,20 @@
 # Build Note 43: Five Levels messaging (adhoc)
 
 **Date:** 2026-10-30 · **Branch:** `adhoc/five-levels-messaging` · **Base:** `main` @ `7a579ed` (Brief 1, `adhoc/level-colors`, merged as PR #50)
-**Status:** COMPLETE. The five levels of AI live in Services, on both service routes and on `/pricing`. The whole Services card links to its page. **Amended before merge (Nate, 2026-10-30):** the cards no longer open, and prices show on `/pricing` only (#73); see Owner changes before merge. Email triage is a morning sort, and internal tools sit under AI Product Development. All four gates green. No PR: Nate opens it.
-**Decisions:** **#69** (the Five Levels, the doc as source), **#70** (whole-card link, superseding #30's name-only link), **#71** (email triage, a morning sort), **#72** (internal tools under AI Product Development), **#73** (prices on `/pricing` only, before merge). Next free row **#74**, next build note **44**.
+**Status:** COMPLETE. The five levels of AI live in Services, on both service routes and on `/pricing`. The whole Services card links to its page. **Amended before merge (Nate, 2026-10-30):** the cards no longer open, prices show on `/pricing` only (#73), and the agentic card lists no example jobs (#74); see Owner changes before merge. Email triage is a morning sort, and internal tools sit under AI Product Development. All four gates green. No PR: Nate opens it.
+**Decisions:** **#69** (the Five Levels, the doc as source), **#70** (whole-card link, superseding #30's name-only link), **#71** (email triage, a morning sort), **#72** (internal tools under AI Product Development), **#73** (prices on `/pricing` only, before merge), **#74** (no example-job list on the agentic card, before merge). Next free row **#75**, next build note **44**.
 **Brief:** "Adhoc Unit: Five Levels messaging" (Nate, 2026-10-29 and 2026-10-30), Brief 2 of 2. Source: "NextSketch Messaging: The 5 Levels of AI" (2026-10-29), read end to end from Nate's OneDrive (`__WORK/_SKETCH_MARKETING/`); it was not attached.
 
 ---
 
 ## Owner changes before merge (Nate, 2026-10-30)
 
-Two changes, on this branch, nothing else.
+Three changes, on this branch, nothing else.
 
 1. **The Services cards do not open (#69, amended).** The levels panel is gone, with its hover, focus and touch states and its 200ms row animation. Each card is one flex column again (`flex h-full flex-col`, CTA on `mt-auto`, grid `gap-4`), exactly `main`'s structure, so the two-row subgrid that kept the CTAs still while a panel opened left with it. Each card keeps its two level marks and "Levels 2 and 3" (or "4 and 5"), the whole-card link (#70) and the offer tab. What each level means is still in the band above and on the service routes.
 2. **Prices show on `/pricing` only (#73).** Removed: the home cards' price row ("$3,998 upfront | $2,998 a month", "$12,000 upfront | $10,000 a month") and each service route's hero price line. The `price` fields left `Service`, `ServicePageContent`, `SERVICES` and `SERVICE_PAGES`. `/pricing` is untouched, and `PRICES` stays the one place a figure lives, read now by `src/content/pricing.ts` alone.
+
+3. **The Agentic System Integration card lists no example jobs (#74).** Its coral-diamond list of the four jobs is removed. The jobs stay in `SERVICES.examples`, which the agentic page's blocks and ribbon read, so the page is unchanged. **Verified against `51621a1`** at 360, 768, 1280 and 1920: the four job names are the only text gone; every section on every route outside Services matches element for element, and inside Services the heading, levels band and waitlist band do too. In the agentic card only the list left and its CTA row moved up. From 768, where the two cards share a row height, the product card is shorter by the same amount and only its CTA row moved, so the two CTAs still line up. Hover, focus and touch change nothing; both CTAs open the form with their offer ticked and a body click opens the route. Gates ✓.
 
 **Left as they were, flagged:** the proof band's "Prices on the page" (home, under the hero) and the product route's "The same published price as a new build". Neither shows a figure.
 
