@@ -1,9 +1,11 @@
 import { ModalTrigger } from "@/components/modal-trigger";
+import { OfferTab } from "@/components/offer-tab";
 import {
   PRICING,
   PRICING_CTA,
   PRICING_CTA_CUSTOM,
   PRICING_NEED,
+  PRICING_OFFER,
   PRICING_TIERS,
 } from "@/content/pricing";
 import type { PricingTier } from "@/lib/types";
@@ -163,9 +165,11 @@ export function PricingTiers() {
              mb-4 is the row separation the parent's zeroed row-gap no
              longer provides, and is uniform on purpose; from md both
              cards share one row and need none. */
+          /* `relative` holds the offer tab (#67); the tab is absolutely
+             positioned, so it takes no subgrid row. */
           <div
             key={tier.slug}
-            className="row-span-7 mb-4 grid grid-rows-subgrid rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:mb-0 md:p-8"
+            className="relative row-span-7 mb-4 grid grid-rows-subgrid rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:mb-0 md:p-8"
           >
             <h3 className="font-sans text-lg font-semibold tracking-tight text-foreground md:text-xl">
               {tier.name}
@@ -228,6 +232,13 @@ export function PricingTiers() {
                 {tier.slug === "custom" ? PRICING_CTA_CUSTOM : PRICING_CTA}
               </ModalTrigger>
             </div>
+            {/* The offering's own colour (#67), the tab its Services
+                card and route carry; the monthly figure and the
+                diamonds stay coral. */}
+            <OfferTab
+              offer={PRICING_OFFER[tier.slug]}
+              className="left-6 md:left-8"
+            />
           </div>
         ))}
       </div>

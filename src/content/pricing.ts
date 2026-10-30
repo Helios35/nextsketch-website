@@ -1,6 +1,6 @@
 import { PRICES, SERVICE_NEED, SERVICES } from "@/content/services";
 import type { QuickNeed } from "@/content/modal";
-import type { PricingTier, PricingTierSlug } from "@/lib/types";
+import type { PricingTier, PricingTierSlug, ServiceSlug } from "@/lib/types";
 
 /**
  * Pricing page (`/pricing`) copy — decision-log #23 (the route),
@@ -101,6 +101,16 @@ export const PRICING = {
 export const PRICING_NEED: Record<PricingTierSlug, QuickNeed> = {
   workflow: SERVICE_NEED["agentic-system"],
   custom: SERVICE_NEED.product,
+};
+
+/**
+ * Tier slug -> the offering it sells, which is what the tier's offer
+ * tab reads (#67), so a tier carries the same colour as its offering's
+ * card and route. The same pairing `PRICING_NEED` spells out above.
+ */
+export const PRICING_OFFER: Record<PricingTierSlug, ServiceSlug> = {
+  workflow: "agentic-system",
+  custom: "product",
 };
 
 /**

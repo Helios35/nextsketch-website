@@ -2,6 +2,7 @@ import { BrandWordmark } from "@/components/brand-wordmark";
 import { Button } from "@/components/button";
 import { CapabilityStrip } from "@/components/capability-strip";
 import { ModalTrigger } from "@/components/modal-trigger";
+import { OfferTab } from "@/components/offer-tab";
 import { PageGlow } from "@/components/page-glow";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
@@ -11,7 +12,7 @@ import { ServiceProcess } from "@/components/service-process";
 import { FINAL_CTA, LANDING, NAV } from "@/content/copy";
 import { SERVICE_PAGE_LABELS } from "@/content/service-pages";
 import { SERVICES_CTA } from "@/content/services";
-import type { ServicePageContent } from "@/lib/types";
+import type { ServicePageContent, ServiceSlug } from "@/lib/types";
 
 /**
  * The qualification promise the close turns on takes the coral payoff
@@ -54,20 +55,23 @@ const BODY_CLASS = "text-base leading-relaxed text-foreground md:text-lg";
  * One list card in the agentic page's offer band (#57): "What you get"
  * or "What the monthly covers". The site's card recipe with the
  * How-it-works card title and the deliverables list's coral diamonds,
- * so nothing here is new vocabulary.
+ * so nothing here is new vocabulary. Both lists are the offering's, so
+ * the card takes its offer tab (#67), as the tier listing them does.
  */
 function OfferList({
   title,
   items,
   delay,
+  offer,
 }: {
   title: string;
   items: readonly string[];
   delay: number;
+  offer: ServiceSlug;
 }) {
   return (
     <ScrollReveal delay={delay} className="h-full">
-      <div className="h-full rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
+      <div className="relative h-full rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
         <h2 className="font-sans text-xl font-semibold tracking-tight text-foreground md:text-2xl">
           {title}
         </h2>
@@ -84,6 +88,7 @@ function OfferList({
             </li>
           ))}
         </ul>
+        <OfferTab offer={offer} className="left-6 md:left-8" />
       </div>
     </ScrollReveal>
   );
@@ -264,12 +269,17 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             labels and two), and four would run out of track and show
             the loop seam. */}
         <div className="mt-24 w-full px-6 motion-safe:animate-rise-in sm:mt-28 sm:px-8 lg:mt-32 lg:px-16">
-          <div className={MEASURE}>
+          {/* `relative` holds the offer tab (#67) on the ribbon's top
+              hairline, at the left edge the heading below starts on:
+              the first mark of this offering's colour on the page. The
+              strip itself is the home hero's, untouched. */}
+          <div className={`relative ${MEASURE}`}>
             <CapabilityStrip
               items={page.strip}
               label={LANDING.capabilitiesLabel}
               copies={10}
             />
+            <OfferTab offer={page.slug} className="left-0" />
           </div>
         </div>
         <div className="w-full px-6 pt-16 pb-16 sm:px-8 sm:pt-20 lg:px-16 lg:pt-24 lg:pb-20">
@@ -403,7 +413,8 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                    `rounded-xl` (decision-log #48) and padding, solid
                    rather than glass for the reason the sibling process
                    band gives: no footage is mounted here. */
-                className={`group grid items-center gap-12 rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8 ${visual ? "lg:grid-cols-2 lg:gap-16" : mapHalf ? "lg:grid-cols-2 lg:gap-x-16 lg:gap-y-10" : ""}`}
+                /* `relative` holds the offer tab (#67). */
+                className={`group relative grid items-center gap-12 rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8 ${visual ? "lg:grid-cols-2 lg:gap-16" : mapHalf ? "lg:grid-cols-2 lg:gap-x-16 lg:gap-y-10" : ""}`}
               >
                 {/* `min-w-0` on both columns is the bento tiles' own
                     load-bearing device, one level up: a grid item's
@@ -532,6 +543,13 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                     <ServiceBlockVisual block={block.id} />
                   </div>
                 )}
+                {/* The offering's colour (#67), on the row's top
+                    hairline, so the row and the diagram it holds say
+                    which offering they belong to; the diagram is drawn
+                    exactly as before. At the card's left padding edge
+                    on every row, so the tabs line up down the page
+                    whichever side the text takes. */}
+                <OfferTab offer={page.slug} className="left-6 md:left-8" />
               </section>
             );
           })}
@@ -548,11 +566,13 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
               title={SERVICE_PAGE_LABELS.included}
               items={page.offer.included}
               delay={0}
+              offer={page.slug}
             />
             <OfferList
               title={SERVICE_PAGE_LABELS.monthlyCovers}
               items={page.offer.monthlyCovers}
               delay={120}
+              offer={page.slug}
             />
           </div>
         </div>

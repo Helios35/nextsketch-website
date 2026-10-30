@@ -1,3 +1,4 @@
+import { OfferTab } from "@/components/offer-tab";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { ServiceCta } from "@/components/service-cta";
@@ -86,8 +87,8 @@ export function ServicesSection() {
             >
               {/* flex-col + mt-auto on the CTA row so the two CTAs
                   line up across cards whose copy runs to different
-                  lengths. */}
-              <div className="flex h-full flex-col rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
+                  lengths. `relative` holds the offer tab (#67). */}
+              <div className="relative flex h-full flex-col rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:p-8">
                 <p className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
                   <span
                     aria-hidden="true"
@@ -179,6 +180,10 @@ export function ServicesSection() {
                     service={service.name}
                   />
                 </div>
+                {/* The offering's own colour (#67), on the card's top
+                    hairline above the index; coral keeps the index, the
+                    diamonds and the CTA. */}
+                <OfferTab offer={service.slug} className="left-6 md:left-8" />
               </div>
             </ScrollReveal>
           ))}
