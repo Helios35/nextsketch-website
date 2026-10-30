@@ -62,7 +62,7 @@ Token **names** are fin's (decision-log **#47**) and canonical per `06-taxonomy.
 | `sidebar` | `#101010` | Fin's darkest step. Defined; no live use |
 | `chart-1` to `chart-5` | `#D17359` terracotta · `#698EDD` indigo · `#C2802D` ochre · `#B077C2` plum · `#7A9F46` sage | Fin's dark categorical steps, kept under fin's names as **the source values of the five level colours** (CHANGED, #67). No component writes them: a component writes the `level-*` name. Their interface-chrome job (#31, carried by #47) retired with the wireframes (#60) |
 | `level-1` to `level-5` | `chart-2` · `chart-3` · `chart-1` · `chart-4` · `chart-5` (blue · amber · reddish-brown · purple · olive) | **The five levels of AI, one colour each** (new, #67; §Identifying colours). No level is on the site yet, so none renders today |
-| `offer-agentic-system` · `offer-product` | `#7FA85E` green · `#C99A2E` dark yellow | **The two offerings, one colour each** (new, #67; §Identifying colours): the offer tab on every surface that holds an offering |
+| `offer-agentic-system` · `offer-product` | `#C99A2E` dark yellow · `#7FA85E` green | **The two offerings, one colour each** (new, #67; §Identifying colours): the offer tab on every surface that holds an offering |
 
 **New tokens are fin's spirit, recorded.** #14's "gold only, no new tokens" is superseded by #47. Fin is the source; where the site needs something fin does not have, the token is added in fin's spirit, declared in `globals.css`, and recorded here and in build-note 33. The site's additions so far: `brand-foreground`, the two over-video shadows (§Typography), five utilities: `hero-fade` and `bg-hero-scrim` (§Hero loop), `bg-page-glow` (#35), and the diagrams' `bg-diagram-grid` and `diagram-packet` (§Diagrams, #60), and the seven identifying colours of #67 (build-note 41). Five of those seven are fin's own chart steps under a name that says their job; the two offer colours are fin's dark `status-good` and `status-warning` values, which the site does not otherwise carry. `bg-visual-fade`, the wireframe fade, retired with the wireframes (#60).
 
@@ -81,7 +81,7 @@ Fin's accessibility floor binds the site: **4.5:1 for text, 3:1 for marks, in ev
 | `foreground` on `brand` | 2.4 | **Fails: never** |
 | `primary-foreground` on `primary` | 7.7 | The advance button |
 | `ring` against `background` | 11.8 | Focus; outlines measured at 10.87:1 or better on every keyboard stop of every route (10.02:1 where a ring sat over the page glow at 16%, build-note 34; the glow is fainter since #52) |
-| `offer-agentic-system` / `offer-product` on `background` / `card` / `secondary` | 6.7 / 6.2 / 5.8 · 7.2 / 6.6 / 6.2 | Legal as text and marks; shipped as the offer tab only (#67). **Measured as rendered**, every tab on every route at 360, 768, 1280 and 1920 against the pixels directly above and below it: green 6.16:1 or better, dark yellow 6.55:1 or better (the low end is a tab over the page glow) |
+| `offer-agentic-system` / `offer-product` on `background` / `card` / `secondary` | 7.2 / 6.6 / 6.2 · 6.7 / 6.2 / 5.8 | Legal as text and marks; shipped as the offer tab only (#67). **Measured as rendered**, every tab on every route at 360, 768, 1280 and 1920 against the pixels directly above and below it: green 6.16:1 or better, dark yellow 6.55:1 or better (the low end is a tab over the page glow) |
 | `level-1` to `level-5` on `background` / `card` / `secondary` | 5.5 to 6.0 / 5.1 to 5.6 / 4.8 to 5.2 | Legal as text there, and as marks on every surface (`muted` 4.3 to 4.7, `accent` 3.6 to 4.0). **Never as text on `muted` or `accent`**, where levels 1 to 4 fall under 4.5:1. No level renders yet (#67) |
 
 A computed sweep of every text element on `/`, `/pricing`, both service routes and the 404, at 1280 and 360, found none below 4.5:1 (minimum 4.96:1, `muted-foreground` on `card`). That sweep composited each text against flat fills and so missed the page glow (#35). **Measured against the pixels behind it** (build-note 34), `muted-foreground` text on the page ground of `/pricing` and the service routes fell to 4.36 to 4.48:1 where it passed the glow's centre (viewport y 200px) while the glow was 16%; **#52 set it to 12%**, and every page-ground text scrolled to that centre now measures 4.64:1 or better (muted) and 5.21:1 or better (coral) at 360, 768, 1280 and 1920 (build-note 35). Every other text, mark, hover and focus state measured at those widths clears the floor (build-note 34 has the full table). **The glow's percentage is bounded by this:** above about 13%, muted text at its centre fails again. Fin's own comment puts coral at 6.6:1 on the dark card; measured, it is 5.6:1. Use the measured number.
@@ -121,17 +121,17 @@ The old token names have **left the token layer**: none compiles. Their old valu
 
 Seven colours join coral, each with one job, from the owner's "NextSketch Messaging: The 5 Levels of AI" (2026-10-29, outside the repo), at their dark-page values. **They identify; they never emphasise.** A visitor notices coral first and these second, and no section shows more than one of them today.
 
-| Token | Value | Job | The doc's light value (not used: dark only, #47) |
+| Token | Value | Job | Light value (not used: dark only, #47) |
 |---|---|---|---|
 | `level-1` | `#698EDD` (`chart-2`) | Level 1, chatting with AI | `#5579C6` |
 | `level-2` | `#C2802D` (`chart-3`) | Level 2, AI automations | `#AB6B0C` |
 | `level-3` | `#D17359` (`chart-1`) | Level 3, integrating AI into your systems | `#B95D45` |
 | `level-4` | `#B077C2` (`chart-4`) | Level 4, internal tools | `#9A62AB` |
 | `level-5` | `#7A9F46` (`chart-5`) | Level 5, custom agentic systems | `#66892F` |
-| `offer-agentic-system` | `#7FA85E` | Agentic System Integration | `#4F7A3A` |
-| `offer-product` | `#C99A2E` | AI Product Development | `#9A6B10` |
+| `offer-agentic-system` | `#C99A2E` dark yellow | Agentic System Integration | `#9A6B10` |
+| `offer-product` | `#7FA85E` green | AI Product Development | `#4F7A3A` |
 
-The level values are fin's chart steps (the doc's light values are fin's light set, checked against fin's `zen-linen-fin.css`), so `level-*` points at `chart-*` and each value lives once. The offer values are fin's dark `status-good` and `status-warning`; fin reserves those for status, and on this site they mean the offering and nothing else (the site carries no status colours). Contrast is in §Measured contrast.
+The level values are fin's chart steps (the doc's light values are fin's light set, checked against fin's `zen-linen-fin.css`), so `level-*` points at `chart-*` and each value lives once. **The offer colours are the doc's two, swapped** (owner, 2026-10-30, #67 amended): the doc gives Agentic System Integration green and AI Product Development dark yellow, which put each offering's colour beside a near twin from the other offering's levels. Swapped, each sits beside its own: the agentic yellow near Level 2's amber, the product green near Level 5's olive. The doc and its posts are the owner's to bring in line. The offer values are fin's dark `status-warning` and `status-good`; fin reserves those for status, and on this site they mean the offering and nothing else (the site carries no status colours). Contrast is in §Measured contrast.
 
 **Where they go:**
 
@@ -146,7 +146,7 @@ The level values are fin's chart steps (the doc's light values are fin's light s
 - **Not in the home hero** (locked, #50, #51): its capability strip names both offerings and carries no tab. **Not in the qualification modal:** its two offering boxes are selection controls whose state is coral. Both are left as they were and brought back in build-note 41.
 - **Never as text on `muted` or `accent`**, where levels 1 to 4 fall under 4.5:1.
 
-**Close pairs (CIEDE2000, measured).** Olive (`level-5`) and green (`offer-agentic-system`) are 4.3 apart, which reads as one colour; amber (`level-2`) and dark yellow (`offer-product`) are 10.3 apart. The two offerings are 25.1 apart, but 7.4 under simulated protanopia and 9.6 under deuteranopia. So **hue never tells two of these apart on its own**: an offering is always a line beside its name, a level always its own shape beside its label. `level-3` is 6.3 from coral, the same hue family, so a Level 3 mark must not read as coral's emphasis (Brief 2).
+**Close pairs (CIEDE2000, measured).** Olive (`level-5`) and the product green (`offer-product`) are 4.3 apart, which reads as one colour; amber (`level-2`) and the agentic yellow (`offer-agentic-system`) are 10.3 apart. Since the swap each pair stays inside one offering (Level 5 is a product level, Level 2 an agentic one), so a near match says the right thing. The two offerings are 25.1 apart, but 7.4 under simulated protanopia and 9.6 under deuteranopia. So **hue never tells two of these apart on its own**: an offering is always a line beside its name, a level always its own shape beside its label. `level-3` is 6.3 from coral, the same hue family, so a Level 3 mark must not read as coral's emphasis (Brief 2).
 
 ## Typography
 

@@ -2,7 +2,7 @@ import type { ServiceSlug } from "@/lib/types";
 
 /**
  * The offer tab — decision-log **#67**. Each offering carries its own
- * colour (`offer-agentic-system` green, `offer-product` dark yellow, in
+ * colour (`offer-agentic-system` dark yellow, `offer-product` green, in
  * `globals.css`), and it shows as this one mark only: a short 2px line
  * sitting on the top hairline of the surface that holds the offering,
  * at its content's left edge, like an index tab. The home Services
@@ -18,11 +18,12 @@ import type { ServiceSlug } from "@/lib/types";
  * alone was too faint to tell the two cards apart at a glance.
  *
  * **Always a line, always beside the name.** A level's colour is one
- * of five shapes (Brief 2), and two pairs nearly match on dark: olive
- * (level 5) and the agentic green, amber (level 2) and the product
- * yellow. An offer's colour is never a shape, and it never appears
- * without the offering's name on the same surface, so neither pair
- * relies on hue alone.
+ * of five shapes (Brief 2), and two pairs nearly match on dark: the
+ * product green and olive (level 5, a product level), the agentic
+ * yellow and amber (level 2, an agentic level). Each pair stays inside
+ * one offering, but an offer's colour is still never a shape and never
+ * appears without the offering's name on the same surface, so neither
+ * pair relies on hue alone.
  *
  * Positioned, so nothing moves: the host is `relative` and the tab
  * covers its 1px hairline plus 1px inside it. `className` places it

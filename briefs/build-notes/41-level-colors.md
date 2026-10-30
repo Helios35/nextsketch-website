@@ -1,7 +1,7 @@
 # Build Note 41: Level and offer colours (adhoc)
 
 **Date:** 2026-10-30 · **Branch:** `adhoc/level-colors` · **Base:** `main` @ `c931fdf`
-**Status:** COMPLETE. Seven identifying colours are site tokens. Each offering's colour shows as the **offer tab** on every surface that holds that offering, and no level colour renders yet, because no level is on the site. Coral is unchanged: no coral pixel moved. All four gates green.
+**Status:** COMPLETE. Seven identifying colours are site tokens. Each offering's colour shows as the **offer tab** on every surface that holds that offering, and no level colour renders yet, because no level is on the site. Coral is unchanged: no coral pixel moved. All four gates green. **Amended the same day, before merge:** Nate approved swapping the two offer colours (agentic dark yellow, product green; see the Amendment section at the end).
 **Follows:** build-note 40. **Decision:** **#67**. Next free row **#68**, next build note **42**.
 **Brief:** "Adhoc Unit: Level and offer colors" (Nate, 2026-10-29 and 2026-10-30), Brief 1 of 2. Brief 2, the Five Levels messaging, uses these colours. Source: "NextSketch Messaging: The 5 Levels of AI" (2026-10-29), Visual style section.
 
@@ -22,8 +22,8 @@ Fin's `styles/zen-linen-fin.css` (`C:\Users\nteiv\OneDrive\Documents\Projects\Fi
 | Level 3 | `#b95d45` | `chart-1` | `level-3` → `chart-1` | `#D17359` |
 | Level 4 | `#9a62ab` | `chart-4` | `level-4` → `chart-4` | `#B077C2` |
 | Level 5 | `#66892f` | `chart-5` | `level-5` → `chart-5` | `#7A9F46` |
-| Agentic System Integration | `#4f7a3a` | `status-good` | `offer-agentic-system` | `#7FA85E` |
-| AI Product Development | `#9a6b10` | `status-warning` | `offer-product` | `#C99A2E` |
+| Agentic System Integration | `#4f7a3a` green (swapped, see Amendment) | `status-warning` `#9A6B10` | `offer-agentic-system` | `#C99A2E` |
+| AI Product Development | `#9a6b10` dark yellow (swapped) | `status-good` `#4F7A3A` | `offer-product` | `#7FA85E` |
 
 - **The five levels are confirmed:** the doc's values are exactly fin's light chart set, and the dark values the brief guessed are fin's `.dark` chart set, already in `globals.css`. Fin orders its series ("assign in sequence"); the levels take the steps out of that order (2, 3, 1, 4, 5). That is the doc's call, and nothing on the site is a chart series.
 - **The two offer colours are not new to fin.** The brief says "none yet", but `#7FA85E` and `#C99A2E` are fin's dark `status-good` and `status-warning`, and the doc's light values are fin's light ones. Fin marks those as **reserved for status, "never reused as a series"**, always with a label. The site carries no status colours, so there is no clash today. They are declared under offer names, and the reservation is recorded in `globals.css` and the spec.
@@ -80,7 +80,7 @@ All seven are `:root` properties bridged through `@theme inline` like every othe
 ## The offer tab, and the two forms that lost
 
 1. **The 1px top hairline recoloured.** No layout change, but at 1x the green and yellow lines were too faint to tell the two cards apart at a glance.
-2. **A 2px edge across the top, between the paddings.** Clear, but on the wide service rows it was a 1,000px green line, the first thing the eye found: the new colour leading coral.
+2. **A 2px edge across the top, between the paddings.** Clear, but on the wide service rows it was a 1,000px green line (the agentic colour before the swap), the first thing the eye found: the new colour leading coral.
 3. **The tab (shipped).** 2px by 40px, at the content's left edge, directly above the coral index, like a tab on a folder. It reads at a glance on both widths and is smaller than any coral element on the same card. It is a line, never a shape, so it can never be read as a level's mark.
 
 On the service rows the tab sits at the card's left padding edge on every row, including the alternating rows whose diagram is on the left at `lg:`, so the tabs line up down the page.
@@ -96,27 +96,27 @@ On the service rows the tab sits at the card's left padding edge on every row, i
 | `level-3` | 5.53 | 5.12 | 4.78 | 4.31 | 3.63 |
 | `level-4` | 5.49 | 5.08 | 4.75 | 4.28 | 3.60 |
 | `level-5` | 6.03 | 5.58 | 5.21 | 4.70 | 3.96 |
-| `offer-agentic-system` | 6.72 | 6.22 | 5.81 | 5.24 | 4.41 |
-| `offer-product` | 7.15 | 6.61 | 6.17 | 5.57 | 4.69 |
+| `offer-agentic-system` (dark yellow) | 7.15 | 6.61 | 6.17 | 5.57 | 4.69 |
+| `offer-product` (green) | 6.72 | 6.22 | 5.81 | 5.24 | 4.41 |
 | `brand` (for reference) | 6.09 | 5.63 | 5.26 | 4.74 | 3.99 |
 
 All seven are legal as text on `background`, `card` and `secondary`, and as marks (3:1) everywhere. Levels 1 to 4 must never be text on `muted` or `accent`.
 
-**Every tab as rendered:** 60 tabs (15 per width across `/`, `/pricing` and both routes, at 360, 768, 1280 and 1920), each sampled against the pixel directly above and below it in the screenshot. Green 6.16 to 6.72:1, dark yellow 6.55 to 7.15:1. The low ends are tabs over the page glow.
+**Every tab as rendered:** 60 tabs (15 per width across `/`, `/pricing` and both routes, at 360, 768, 1280 and 1920), each sampled against the pixel directly above and below it in the screenshot. Green 6.16 to 6.72:1, dark yellow 6.55 to 7.15:1, both before and after the swap. The low ends are the ribbon tabs over the page glow on a phone.
 
 **Close pairs (CIEDE2000; simulation Machado 2009, severity 1):**
 
 | Pair | Normal | Protan | Deutan | Tritan |
 |---|---|---|---|---|
-| agentic green vs product yellow | 25.1 | 7.4 | 9.6 | 39.1 |
-| agentic green vs `level-5` olive | **4.3** | 4.3 | 4.0 | 3.5 |
-| product yellow vs `level-2` amber | 10.3 | 7.7 | 5.8 | 7.2 |
-| agentic green vs coral | 50.9 | 9.9 | 5.8 | 48.2 |
-| product yellow vs coral | 29.3 | 12.5 | 4.0 | 13.3 |
+| agentic yellow vs product green | 25.1 | 7.4 | 9.6 | 39.1 |
+| product green vs `level-5` olive | **4.3** | 4.3 | 4.0 | 3.5 |
+| agentic yellow vs `level-2` amber | 10.3 | 7.7 | 5.8 | 7.2 |
+| product green vs coral | 50.9 | 9.9 | 5.8 | 48.2 |
+| agentic yellow vs coral | 29.3 | 12.5 | 4.0 | 13.3 |
 | `level-3` vs coral | **6.3** | 3.9 | 5.8 | 5.0 |
 | `level-2` vs coral | 20.5 | 6.7 | 4.0 | 8.6 |
 
-Olive and green read as one colour, as the brief warned. That is why an offering is only ever a line beside its name and a level only ever its own shape. Today the pair never meets, because no level renders.
+Olive and green read as one colour, as the brief warned. That is why an offering is only ever a line beside its name and a level only ever its own shape. Since the swap, both near pairs sit inside one offering (green and olive are product, yellow and amber agentic). Today neither pair meets on the site, because no level renders.
 
 ## Verification
 
@@ -147,7 +147,7 @@ Olive and green read as one colour, as the brief warned. That is why an offering
 
 ## For Nate, and for Brief 2
 
-1. **The offer colours cross the levels-to-offers mapping.** In the doc, Levels 2 and 3 are the agentic offer and Levels 4 and 5 the product offer. But the agentic green nearly matches Level 5's olive (4.3), a product level, and the product yellow sits near Level 2's amber (10.3), an agentic level. In a "levels to offers" picture, each offering's colour would sit beside a near twin from the other offering. **Swapping the two offer colours** (product green, agentic yellow) would make both near-matches point the right way. Recommended before Brief 2. It is a two-line change in `globals.css` plus the docs, and the doc and posts would follow. The alternative is to keep the doc's assignment and let labels and shapes carry it.
+1. **Resolved: the offer colours crossed the levels-to-offers mapping.** As the doc had them, the agentic green nearly matched Level 5's olive (a product level) and the product yellow sat near Level 2's amber (an agentic level). Nate approved the swap the same day (Amendment, below). **Still owed:** the 5 Levels doc and its posts give Agentic System Integration green, and need the same swap.
 2. **Fin reserves the two offer values for status.** No conflict while the site has none. If status colours ever come to the site, one of the two moves.
 3. **Under red-green colour blindness the two offerings are closer** (7.4 protan, 9.6 deutan). The name on every surface carries it.
 4. **Level 3 is 6.3 from coral**, the same hue family. A Level 3 mark must not read as coral's emphasis.
@@ -157,3 +157,13 @@ Olive and green read as one colour, as the brief warned. That is why an offering
 ## Screenshots
 
 Before and after, all 20 per side, plus the edge variants and crops, are in this session's scratchpad (not the repo). They can be sent on request.
+
+## Amendment (2026-10-30, owner, before merge): the offer colours swap
+
+Nate: "Yes, swap them", answering item 1 above. Recorded as an in-row "Amended" clause on #67 (the #63 and #66 precedent), not a new row.
+
+- `offer-agentic-system` is now `#C99A2E` dark yellow and `offer-product` `#7FA85E` green, the reverse of the doc. Each offering's colour now sits beside its own levels: the agentic yellow is 10.3 from Level 2's amber, and the product green 4.3 from Level 5's olive.
+- **Changed:** the two values in `globals.css` and its comment; the comment in `offer-tab.tsx`; the spec's palette row, contrast row, §Identifying colours table, its paragraph on the doc and the close pairs; Taxonomy §5's offer row; #67 and the log's footer; this note.
+- **Nothing else moves:** the tab, its surfaces and the token set are as before.
+- **Re-verified on the rebuilt branch.** With LCD text off, every changed pixel against `main` is still inside a tab, on all 20 shots. The tabs measure as before, now on the other offering: yellow 6.55 to 7.15:1 (agentic), green 6.16 to 6.72:1 (product; the low end is the product ribbon's tab over the glow at 360). All four gates are green again.
+- **Owner-owed:** the 5 Levels doc, its Instagram posts and anything else that gives Agentic System Integration green need the same swap.

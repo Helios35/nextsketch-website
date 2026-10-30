@@ -79,13 +79,15 @@
    * one shape everywhere (Brief 2 draws the shapes). No level is on the
    * site yet, so none of these renders today.
    *
-   * The two offers. Their values are fin's dark `status-good` and
-   * `status-warning`, which the site does not otherwise carry; here they
-   * mean the offer, never a status. An offer colour is only ever a
-   * line, the offer tab (`offer-tab.tsx`, docs/04-ux-spec.md §Color),
-   * always beside the offering's name, so it never shares a shape with
-   * a level: olive (level 5) and green (agentic) nearly match on dark,
-   * and so do amber (level 2) and dark yellow (product).
+   * The two offers. Their values are fin's dark `status-warning` and
+   * `status-good`, which the site does not otherwise carry; here they
+   * mean the offer, never a status. They are the doc's two, swapped
+   * (owner, 2026-10-30): each offer takes the colour its own levels sit
+   * near, so dark yellow (agentic) neighbours amber (level 2, agentic)
+   * and green (product) nearly matches olive (level 5, product). An
+   * offer colour is still only ever a line, the offer tab
+   * (`offer-tab.tsx`, docs/04-ux-spec.md §Color), always beside the
+   * offering's name, so it never shares a shape with a level.
    *
    * Measured (WCAG): 5.5 to 7.2:1 on `background`, 5.1 to 6.6:1 on
    * `card`, 4.8 to 6.2:1 on `secondary`, so all seven are legal as text
@@ -96,8 +98,8 @@
   --level-3: var(--chart-1);
   --level-4: var(--chart-4);
   --level-5: var(--chart-5);
-  --offer-agentic-system: #7fa85e;
-  --offer-product: #c99a2e;
+  --offer-agentic-system: #c99a2e;
+  --offer-product: #7fa85e;
 }
 
 /*
