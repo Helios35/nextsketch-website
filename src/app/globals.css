@@ -383,11 +383,26 @@
  * the 16% #47 set, `muted-foreground` text on the page ground measured
  * 4.36:1 where it crossed the glow's centre, under the 4.5:1 floor
  * (build-note 34, F1). Above about 13% it fails again.
+ *
+ * A dot grid since #68 (owner, 2026-10-30): the glow's wash is drawn as
+ * dots instead, with the same fade and the same colour. The dots are
+ * the diagram canvas's (`bg-diagram-grid`: a 1px dot every 16px) in
+ * coral at the same 12%, and a mask with the glow's exact geometry
+ * fades them out, so each dot is the colour the glow was at that spot
+ * and nothing between the dots is tinted. 12% is still the ceiling: a
+ * glyph that crosses a dot at the centre meets the colour it met there
+ * before.
  */
 @utility bg-page-glow {
   background-image: radial-gradient(
+    circle at 1px 1px,
+    color-mix(in srgb, var(--brand) 12%, transparent) 1px,
+    transparent 0
+  );
+  background-size: 16px 16px;
+  mask-image: radial-gradient(
     circle 560px at 50% 200px,
-    color-mix(in srgb, var(--brand) 12%, transparent),
+    rgb(0 0 0),
     transparent
   );
 }
