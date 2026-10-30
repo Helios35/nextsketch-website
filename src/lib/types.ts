@@ -82,8 +82,6 @@ export interface Service {
   /** The line under the name: what the offering is, in buyer words. */
   readonly subtitle: string;
   readonly description: string;
-  /** The card's price row, upfront first, composed from `PRICES`. */
-  readonly price: readonly string[];
   /**
    * The example jobs the card previews (#57). They are the names of
    * the blocks on that offering's page, read from here by
@@ -396,8 +394,8 @@ export interface ServicePageBlock {
  * - `accentPhrase` — the coral payoff word inside `headline`. Matched
  *   against the string, so it degrades to an unaccented heading exactly
  *   like every other section's `ACCENT_PHRASE`.
- * - `leadLine`, `intro`, `price` — the hero's lead line, supporting
- *   paragraph and published price (#53, #56).
+ * - `leadLine`, `intro` — the hero's lead line and supporting
+ *   paragraph (#53). No price: prices live on `/pricing` only (#73).
  * - `offer` — the "What you get" and "What the monthly covers" lists,
  *   the agentic page's (#57).
  *
@@ -417,7 +415,6 @@ export interface ServicePageContent {
   readonly accentPhrase?: string;
   readonly leadLine?: string;
   readonly intro?: string;
-  readonly price?: string;
   readonly need?: QuickNeed;
   /**
    * Labels for the hero's capability strip — the same marquee the

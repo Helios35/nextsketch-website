@@ -192,9 +192,9 @@ function LevelsSection({ offer }: { offer: ServiceSlug }) {
  * **The blocks, owner-specified (2026-08-28), extended by #53 and
  * #57:** hero → the anchored topic blocks → (the agentic page only)
  * what you get and what the monthly covers → how it works → close. No
- * proof band, no FAQ, no testimonials. **The price is on the page now**
- * (#53, #56): one line in the hero, under the intro, in the `/pricing`
- * term line's treatment, read from the same figures `/pricing` reads.
+ * proof band, no FAQ, no testimonials. **No price on the page (#73,
+ * retiring the hero's price line of #53 and #56):** prices live on
+ * `/pricing` only, which the hero's second button opens.
  * The close's link to `/pricing` stays removed (owner, 2026-08-28), so
  * the close carries one action; `/pricing` is still the hero's second
  * button, the nav bar's featured button and a footer link.
@@ -415,22 +415,6 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
                   style={{ animationDelay: "120ms" }}
                 >
                   {page.intro}
-                </p>
-              )}
-              {/* The published price (#53, #56), in the treatment
-                  `/pricing` gives its term: the coral list marker
-                  beside a medium-weight line, so the figure and its
-                  commitment read as one stated fact, not a footnote. */}
-              {page.price !== undefined && (
-                <p
-                  className="mt-6 flex max-w-2xl gap-3 text-base leading-relaxed text-foreground motion-safe:animate-rise-in"
-                  style={{ animationDelay: "200ms" }}
-                >
-                  <span
-                    aria-hidden="true"
-                    className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-brand"
-                  />
-                  <span className="font-medium">{page.price}</span>
                 </p>
               )}
               {/* Primary plus Pricing (owner direction, 2026-08-30):

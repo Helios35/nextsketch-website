@@ -1,9 +1,27 @@
 # Build Note 43: Five Levels messaging (adhoc)
 
 **Date:** 2026-10-30 · **Branch:** `adhoc/five-levels-messaging` · **Base:** `main` @ `7a579ed` (Brief 1, `adhoc/level-colors`, merged as PR #50)
-**Status:** COMPLETE. The five levels of AI live in Services, on both service routes and on `/pricing`. The Services cards open up on hover and focus (open on touch screens), and the whole card links to its page. Email triage is a morning sort, and internal tools sit under AI Product Development. All four gates green. No PR: Nate opens it.
-**Decisions:** **#69** (the Five Levels, the doc as source), **#70** (whole-card link, superseding #30's name-only link), **#71** (email triage, a morning sort), **#72** (internal tools under AI Product Development). Next free row **#73**, next build note **44**.
+**Status:** COMPLETE. The five levels of AI live in Services, on both service routes and on `/pricing`. The whole Services card links to its page. **Amended before merge (Nate, 2026-10-30):** the cards no longer open, and prices show on `/pricing` only (#73); see Owner changes before merge. Email triage is a morning sort, and internal tools sit under AI Product Development. All four gates green. No PR: Nate opens it.
+**Decisions:** **#69** (the Five Levels, the doc as source), **#70** (whole-card link, superseding #30's name-only link), **#71** (email triage, a morning sort), **#72** (internal tools under AI Product Development), **#73** (prices on `/pricing` only, before merge). Next free row **#74**, next build note **44**.
 **Brief:** "Adhoc Unit: Five Levels messaging" (Nate, 2026-10-29 and 2026-10-30), Brief 2 of 2. Source: "NextSketch Messaging: The 5 Levels of AI" (2026-10-29), read end to end from Nate's OneDrive (`__WORK/_SKETCH_MARKETING/`); it was not attached.
+
+---
+
+## Owner changes before merge (Nate, 2026-10-30)
+
+Two changes, on this branch, nothing else.
+
+1. **The Services cards do not open (#69, amended).** The levels panel is gone, with its hover, focus and touch states and its 200ms row animation. Each card is one flex column again (`flex h-full flex-col`, CTA on `mt-auto`, grid `gap-4`), exactly `main`'s structure, so the two-row subgrid that kept the CTAs still while a panel opened left with it. Each card keeps its two level marks and "Levels 2 and 3" (or "4 and 5"), the whole-card link (#70) and the offer tab. What each level means is still in the band above and on the service routes.
+2. **Prices show on `/pricing` only (#73).** Removed: the home cards' price row ("$3,998 upfront | $2,998 a month", "$12,000 upfront | $10,000 a month") and each service route's hero price line. The `price` fields left `Service`, `ServicePageContent`, `SERVICES` and `SERVICE_PAGES`. `/pricing` is untouched, and `PRICES` stays the one place a figure lives, read now by `src/content/pricing.ts` alone.
+
+**Left as they were, flagged:** the proof band's "Prices on the page" (home, under the hero) and the product route's "The same published price as a new build". Neither shows a figure.
+
+**Verified** in headless Chrome against the pushed tip before the change (`cc99fac`, served from a `git archive` build on :3101):
+- **Text:** the only lines gone are the four card prices, the panel's eight level lines ("means" and "Examples: …"), and the two hero price lines. Nothing was added. `/pricing` and the 404 lose nothing.
+- **Layout, at 360, 768, 1280 and 1920:** every section on `/pricing`, the 404, the home page except Services, and the service routes except the hero matches the previous tip element for element (box, colour, type, text). Zero-size diagram connectors are compared by size only, since a zero-size box reports the viewport's corner. Inside Services, the heading, the levels band (70 elements) and the waitlist band (12) are identical, and the cards start at the same height. Inside each hero, the price line is the only thing gone, and the buttons row is identical, just higher (76px at 1280).
+- **Cards, mouse at 768, 1280 and 1920, touch at 360 and 768:** nothing moves or grows on hover, on keyboard focus of the link or the CTA, or on touch. No `$` in either card. The two CTAs line up from 768. Build With Us opens the form with `agentic` or `new_product` ticked, and a click on the card body opens the right route.
+- **Built HTML:** no published figure ($3,998, $2,998, $12,000, $10,000) outside `/pricing`. The agentic route's other dollar amounts are diagram sample data (#60), unchanged.
+- **Gates:** lint ✓ · typecheck ✓ · build ✓ · banned-terms ✓ (58 files).
 
 ---
 
@@ -44,7 +62,7 @@ Name, line and examples are the doc's, verbatim.
    - A dashed rule divides Level 1 from Level 2.
    - **"We start here"** over Level 2 is the band's one coral mark.
 2. **Each card carries its levels:** under the subtitle, its two marks and "Levels 2 and 3" (or "4 and 5").
-3. **Each card opens up:** see the next section.
+3. ~~**Each card opens up**~~: removed before merge (#69, amended). See Owner changes before merge.
 4. **The whole card links to its page** (#70). See below.
 
 ### Both service routes
@@ -65,7 +83,9 @@ Each tier, under its name, shows its two marks and one line:
 
 The line sits inside the name's cell, so the seven-row subgrid and every price, term and monthly rule are untouched.
 
-## How the cards open
+## How the cards opened (removed before merge)
+
+As first built and pushed in `b567c7c`. Nate removed it before merge (#69, amended); this section is the record of what was there.
 
 - **Hover:** `group-hover/card`, which only fires for pointers that can hover.
 - **Keyboard focus:** `group-focus-within/card`. Tabbing to the card's link or to Build With Us opens it, and the first card's panel was measured open at both tab stops.
@@ -140,7 +160,7 @@ The muted-text figure covers `secondary` 4.63, `card` 4.96 and `background` 5.36
 
 **DRAFT, for Nate's yes or a change:**
 - **"Not sold"** (the doc's table cell, used as a label) and **"We start here"**.
-- **Labels:** "Level 1" to "Level 5", "Levels 2 and 3", "Levels 4 and 5", "What it means", "Examples", and "Examples: …".
+- **Labels:** "Level 1" to "Level 5", "Levels 2 and 3", "Levels 4 and 5", "What it means" and "Examples" ("Examples: …" left with the card panel).
 - **What each level means:**
   1. "Someone on your team asks, every time. Nothing happens until a person presses go."
   2. "Nobody has to ask. It runs on a timer, and a person approves what it did."
@@ -155,9 +175,9 @@ The muted-text figure covers `secondary` 4.63, `card` 4.96 and `background` 5.36
 
 ## Deviations and builder calls (each comes back to Nate)
 
-1. **Touch screens show the card's levels open** instead of a tap to open them (see How the cards open). Recommended: keep it.
+1. ~~**Touch screens show the card's levels open**~~: moot, the cards no longer open.
 2. **The doc's "you are here" is not used.** The band can't know where a visitor sits; the doc's approved "Where does your business sit?" asks instead, and Level 1 says "Where most businesses stop".
-3. **The Services cards are now two-row subgrids,** to keep the CTAs still. At rest they look and align as before.
+3. ~~**The Services cards are now two-row subgrids**~~: moot, they are one flex column again, as on `main`.
 4. **The service routes' level cards carry no offer tab.** They're level surfaces, so the level mark identifies them; a green tab beside an olive hexagon would put two near-twin colours on one card.
 5. **The `ServiceCta` dash fix reaches the service rows too.** It's one component.
 6. **The doc is in the stack as `docs/five-levels-messaging.md`.** That's a word-for-word transcription with a short header: the source, its authority under Rule 4.1, and the offer-colour swap of #67. It's unnumbered, like `scope-lock-mvp.md`.
