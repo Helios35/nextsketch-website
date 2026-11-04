@@ -37,7 +37,7 @@ import type { ServiceBlockId } from "@/lib/types";
  *   retyped.
  * - AI Product Development's three ways in (#53): a product taking
  *   shape with agents inside it; a half-built product assessed and
- *   completed; a live product watched and improved.
+ *   completed; a live product watched and tuned.
  *
  * **They say things now** (#61): labels, sample names, sample numbers
  * and generic tool names, all in `src/content/diagrams.ts` and all about

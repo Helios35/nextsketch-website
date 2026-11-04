@@ -327,12 +327,19 @@ export type PricingTierSlug = "workflow" | "custom";
  *
  * The struck former price (`upfrontWas`) retired with #56: a discount
  * that never expires stopped reading as one.
+ *
+ * **Labels are per tier since #75**, because the product tier reads
+ * Setup, Build and Support where the agentic tier reads Upfront and
+ * Ongoing. The field names stay the agentic words: `upfront` holds the
+ * product's setup, `ongoing` its build rate.
  */
 export interface PricingTier {
   readonly slug: PricingTierSlug;
   readonly name: string;
   readonly description: string;
-  /** Headline figure, e.g. "$3,998" / "$12,000". */
+  /** Mono label over `upfront`: "Upfront" or "Setup" (#75). */
+  readonly upfrontLabel: string;
+  /** Headline figure, e.g. "$3,998" / "$11,998". */
   readonly upfront: string;
   /**
    * Caption under the headline figure. Optional since #45: a tier
@@ -340,13 +347,29 @@ export interface PricingTier {
    * line (Rule 4.3).
    */
   readonly upfrontNote?: string;
-  /** The retainer figure, e.g. "$2,998 per month". */
+  /** Mono label over `ongoing`: "Ongoing" or "Build" (#75). */
+  readonly ongoingLabel: string;
+  /** The monthly figure, e.g. "$2,998 per month". */
   readonly ongoing: string;
-  /** Caption under the retainer figure — where the term is said out loud. */
+  /** Caption under the monthly figure: where the term is said out loud. */
   readonly ongoingNote: string;
+  /**
+   * The lower monthly rate after launch (#75), which renders directly
+   * under `ongoing`. Only the product tier has one.
+   */
+  readonly support?: {
+    readonly label: string;
+    readonly figure: string;
+    readonly note: string;
+  };
   /** "Included": what the upfront build delivers (#56). */
   readonly features: readonly string[];
-  /** "What the monthly covers" (#56). */
+  /**
+   * Mono label over `monthlyCovers`: "What the monthly covers" or, on
+   * the product tier, "What support covers" (#75).
+   */
+  readonly coversLabel: string;
+  /** What the tier's ongoing monthly covers (#56); support's since #75. */
   readonly monthlyCovers: readonly string[];
 }
 

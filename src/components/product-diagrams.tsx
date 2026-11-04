@@ -17,8 +17,8 @@ import { BUILD_FROM_SCRATCH, FINISH_STARTED } from "@/content/diagrams";
  * Two of AI Product Development's three ways in (decision-log #53),
  * drawn in the diagram language of #60. They replace the New Product
  * bento and the Product Completion editor of #30, which retire with
- * the rest of the wireframe set; the third way in, the ongoing product
- * team, has a control and lives in `product-team-diagram.tsx`.
+ * the rest of the wireframe set; the third way in, support after launch,
+ * has a control and lives in `product-team-diagram.tsx`.
  *
  * Both draw a product's window on the canvas, one 4/3 drawing at every
  * width (the frame the wireframes held, so the rows keep their height).
