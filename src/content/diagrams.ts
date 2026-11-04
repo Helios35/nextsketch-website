@@ -249,7 +249,7 @@ export const FINISH_STARTED = {
  */
 export const ONGOING_TEAM = {
   label:
-    "Support after launch: a live product being watched and tuned. It is live with 99.98% uptime. A chart of weekly active users across twelve weeks climbs from 820 users in week 1 to 1,240 in week 12, with updates 1.4, 1.5 and 1.6 shipped along the way, and update 1.7 next.",
+    "Ongoing product support: a live product being watched and tuned. It is live with 99.98% uptime. A chart of weekly active users across twelve weeks climbs from 820 users in week 1 to 1,240 in week 12, with updates 1.4, 1.5 and 1.6 shipped along the way, and update 1.7 next.",
   live: "Live",
   uptime: "Uptime 99.98%",
   chart: "Weekly active users",

@@ -18,7 +18,7 @@ import type {
  *   Internal Tool) retired with their blocks and anchors.
  * - `/services/product` is **AI Product Development**, one offer with
  *   three ways in: build from scratch, finish what someone started, and
- *   support after launch. They reuse the three existing blocks and their
+ *   ongoing product support. They reuse the three existing blocks and their
  *   anchors (`#new-product`, `#product-completion`, `#product-support`),
  *   so a shared or bookmarked link still lands where it did.
  *
@@ -151,9 +151,9 @@ const PRODUCT_BLOCKS = [
     description:
       "Someone got you 70% there and disappeared. We assess what was built, map where it needs to go, and get you to launch.",
     need: SERVICE_NEED.product,
-    /** DRAFT (#75): the first and last lines. Setup covers the assessment. */
+    /** DRAFT (#75): the last line. The build rate covers the assessment. */
     included: [
-      "A written assessment of what was built and what to keep, covered by setup",
+      "A written assessment of what was built and what to keep",
       "The direction checked before more money goes in",
       "The same published price as a new build",
       "Two months minimum, then staying on is your call",
@@ -162,12 +162,13 @@ const PRODUCT_BLOCKS = [
   {
     id: "product-support",
     /**
-     * DRAFT (#75), and the name with it: "Ongoing product team" read as
-     * a team building new features, which support does not do. The
-     * anchor already says `product-support`. The list is the rest of the
-     * after-launch list in Nate's Strata proposal, with no figure (#73).
+     * DRAFT (#75). The name is Nate's words for it, 2026-11-04: "Ongoing
+     * product team" read as a team building new features, which support
+     * does not do. The anchor already says `product-support`. The list is
+     * the rest of the after-launch list in Nate's Strata proposal, with no
+     * figure (#73).
      */
-    name: "Support after launch",
+    name: "Ongoing product support",
     description:
       "The product is live. Now it needs tuning and upkeep. Support covers both, with no new features. When you want new features, we go back to the build rate for those months, then back to support.",
     need: SERVICE_NEED.product,

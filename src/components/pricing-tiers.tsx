@@ -21,8 +21,8 @@ import type { PricingTier } from "@/lib/types";
  * took with the gallery reference: a titled block above a card grid,
  * each card running name -> description -> price -> included list ->
  * CTA. Its own vocabulary was refused wholesale. #56 adds a second list,
- * under "Included", saying what the monthly covers. #75 gives the
- * product tier a third price, support, directly under its monthly.
+ * under "Included", saying what the monthly covers. #75 lets each tier
+ * name its two price bands, because the product has no upfront price.
  *
  * **Zero new dependencies.** The reference imports `lucide-react`,
  * `@radix-ui/react-slot`, `class-variance-authority` and
@@ -36,8 +36,8 @@ import type { PricingTier } from "@/lib/types";
  * **What else was refused, and why:**
  *
  * - **The monthly/annual billing toggle.** The reference's centrepiece.
- *   There is no such choice here: the model is a scoped upfront figure
- *   plus a monthly required for the first two months (#25, #75). A
+ *   There is no such choice here: every tier publishes its prices, and
+ *   its monthly is required for the first two months (#25, #75). A
  *   toggle would invent an annual plan that does not exist and
  *   imply the commitment is optional from day one, which is the exact
  *   "surprise invoice" Brand Philosophy §6 rejects.
@@ -74,15 +74,13 @@ import type { PricingTier } from "@/lib/types";
  * The descriptions run to different lengths, so a plain flex column
  * staggers `Upfront` and `Ongoing` down the row and only the
  * `mt-auto` CTA lines up (owner feedback, 2026-08-25). Each card is
- * therefore a **seven-row subgrid** — name, description, upfront,
- * ongoing, included, what the monthly covers, CTA (six until #56) —
+ * therefore a **seven-row subgrid** (name, description, headline price,
+ * ongoing, included, what the monthly covers, CTA; six until #56),
  * sharing its neighbours' row tracks, so each band's track is the
  * tallest across the row and every card's bands start together.
  * Content-driven, so it survives a copy edit, a font swap and every
  * breakpoint; a `min-h` in pixels or `lh` survives none of those, and
- * clamping would truncate a price description. The product's support
- * rate sits inside the ongoing row (#75), so both cards still span
- * seven; the agentic card keeps the row's spare height under its note.
+ * clamping would truncate a price description.
  *
  * Two things were measured in-browser rather than assumed, because both
  * decide the markup:
@@ -111,35 +109,6 @@ import type { PricingTier } from "@/lib/types";
  * it carries each tier's `need` so the modal opens with that tier
  * already selected (the `SERVICE_NEED` pattern, `PRICING_NEED` here).
  */
-/**
- * One monthly price under a hairline: the mono label, the coral figure
- * and its caption. Every tier's ongoing rate, and the product tier's
- * support rate under it (#75).
- */
-function TierMonthly({
-  label,
-  figure,
-  note,
-}: {
-  label: string;
-  figure: string;
-  note: string;
-}) {
-  return (
-    <div className="mt-6 border-t border-border pt-6">
-      <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 font-sans text-xl font-medium text-brand tabular-nums">
-        {figure}
-      </p>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        {note}
-      </p>
-    </div>
-  );
-}
-
 /**
  * One labelled list row inside a tier card: the mono micro-label over
  * the system's coral-diamond list. A tier with no items for a row shows
@@ -226,52 +195,53 @@ export function PricingTiers() {
               {tier.description}
             </p>
 
-            {/* Price block. The upfront figure is at display size but
+            {/* Price block. The headline price is at display size but
                 set as a figure (Inter, tabular numerals, never Playfair:
-                fin §1); the retainer sits under a hairline as a second,
-                quieter figure, so the commitment is stated on every card
-                rather than once in a footnote (#25). */}
+                fin §1); the ongoing monthly sits under a hairline as a
+                second, quieter figure, so the commitment is stated on
+                every card rather than once in a footnote (#25). */}
             <div className="mt-8">
               <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
-                {tier.upfrontLabel}
+                {tier.headlinePriceLabel}
               </p>
-              {/* The figure alone: the struck former price that sat
-                  beside it retired with #56. */}
+              {/* The figure alone, with its unit set quieter when it has
+                  one (#75): the struck former price that sat beside it
+                  retired with #56. */}
               <p className="mt-2 font-sans text-3xl leading-[1.05] font-medium tracking-tight text-foreground tabular-nums">
-                {tier.upfront}
+                {tier.headlinePrice}
+                {tier.headlinePriceUnit !== undefined && (
+                  <span className="text-base font-normal tracking-normal text-muted-foreground">
+                    {" "}
+                    {tier.headlinePriceUnit}
+                  </span>
+                )}
               </p>
               {/* Optional (#45): a tier with no approved caption renders
                   none. The subgrid row is shared, so the card's bands
                   still line up with its neighbours'. */}
-              {tier.upfrontNote !== undefined && (
+              {tier.headlinePriceNote !== undefined && (
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {tier.upfrontNote}
+                  {tier.headlinePriceNote}
                 </p>
               )}
             </div>
-            {/* Row four: the monthly, then on the product tier the support
-                rate directly under it (#75). One cell, so the seven-row
-                subgrid is unchanged. */}
-            <div>
-              <TierMonthly
-                label={tier.ongoingLabel}
-                figure={tier.ongoing}
-                note={tier.ongoingNote}
-              />
-              {tier.support !== undefined && (
-                <TierMonthly
-                  label={tier.support.label}
-                  figure={tier.support.figure}
-                  note={tier.support.note}
-                />
-              )}
+            <div className="mt-6 border-t border-border pt-6">
+              <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
+                {tier.ongoingLabel}
+              </p>
+              <p className="mt-2 font-sans text-xl font-medium text-brand tabular-nums">
+                {tier.ongoing}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {tier.ongoingNote}
+              </p>
             </div>
 
-            {/* Rows five and six (#56): what the upfront build includes,
-                then what the monthly covers (on the product tier, what
-                support covers, #75). Always rendered, even empty: the
-                seven-row spans must match across cards or the subgrids
-                stop aligning. */}
+            {/* Rows five and six (#56): what the build includes, then what
+                the monthly covers (on the product tier, what support
+                covers, #75). Always rendered, even empty: the seven-row
+                spans must match across cards or the subgrids stop
+                aligning. */}
             <TierList label={PRICING.featuresLabel} items={tier.features} />
             <TierList label={tier.coversLabel} items={tier.monthlyCovers} />
 

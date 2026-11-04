@@ -15,7 +15,7 @@ export const metadata: Metadata = {
  * `/services/product` — decision-log **#30** (2026-08-28): the page for
  * **AI Product Development** since **#53** (2026-10-15), one offer with
  * three ways in. Build from scratch, finish what someone started and
- * support after launch are anchored blocks on the anchors the retired
+ * ongoing product support are anchored blocks on the anchors the retired
  * services gave them (`#new-product`, `#product-completion`,
  * `#product-support`), so an old shared link still lands on its block.
  *

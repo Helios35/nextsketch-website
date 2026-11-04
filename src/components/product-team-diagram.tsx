@@ -14,7 +14,7 @@ import {
 import { ONGOING_TEAM } from "@/content/diagrams";
 
 /**
- * Support after launch (decision-log #53; "Ongoing product team" until
+ * Ongoing product support (decision-log #53; "Ongoing product team" until
  * #75, and this file keeps that name), drawn in the diagram language of
  * #60: a live product being watched and tuned. It
  * replaces the Product Support timeline of #30 (and with it build-note

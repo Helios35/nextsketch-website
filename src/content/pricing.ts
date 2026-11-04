@@ -7,8 +7,9 @@ import type { PricingTier, PricingTierSlug, ServiceSlug } from "@/lib/types";
  * **#25** (the tier structure, the term, and the naming), **#45** (the
  * 2026-09-25 price reset), **#56** (2026-10-15: two tiers, one per
  * offering, each listing what's included and what the monthly covers)
- * and **#75** (2026-11-04: the product in three parts, and a two-month
- * minimum on both offers).
+ * and **#75** (2026-11-04: the product as a build rate from the start and
+ * ongoing product support, with no upfront price, and a two-month minimum
+ * on both offers).
  *
  * Pricing ships as a **standalone route, not a section**. A static
  * route is not a backend, so decision #8 is untouched: the page
@@ -18,9 +19,10 @@ import type { PricingTier, PricingTierSlug, ServiceSlug } from "@/lib/types";
  *
  * Structure traces to Brand Philosophy §6: "a defined upfront build,
  * then a lighter ongoing partnership." Since #75 the product's build is
- * itself monthly, so its upfront figure is a setup, and the lighter rate
- * is support. Scoped, never hourly, so the client "knows exactly what
- * they're paying and what they're getting. No surprise invoices."
+ * itself monthly from the start, with no upfront figure, and the lighter
+ * rate is its ongoing product support. Scoped, never hourly, so the client
+ * "knows exactly what they're paying and what they're getting. No
+ * surprise invoices."
  *
  * **The term is said out loud, on every card and once above the grid.**
  * The monthly is required for the first two months on both tiers (#75,
@@ -44,9 +46,9 @@ import type { PricingTier, PricingTierSlug, ServiceSlug } from "@/lib/types";
 export const PRICING = {
   /** Browser tab and search-result title for the route (#59). */
   title: "Pricing: AI Automation and AI Product Development | NextSketch",
-  /** DRAFT (#75): the product's build is no longer upfront. */
+  /** DRAFT (#75): only the agentic offering has an upfront price now. */
   description:
-    "Published prices for AI automation and AI product development: a scoped upfront price, then a monthly rate. No hourly billing, no surprise invoices.",
+    "Published prices for AI automation and AI product development. You know every number before you commit. No hourly billing, no surprise invoices.",
   /** Mono micro-label above the heading (docs/04-ux-spec.md §Typography). */
   eyebrow: "Pricing",
   headline: "NextSketch puts the price upfront.",
@@ -58,12 +60,12 @@ export const PRICING = {
   accentPhrase: "upfront",
   /**
    * Brand Philosophy §6 in the site's voice, rewritten for the monthly
-   * fee (#56) and for the product's two monthly rates (#75, DRAFT). "No
+   * fee (#56) and for the offers' two different shapes (#75, DRAFT). "No
    * meter running during meetings" and "no surprise invoices" are §6
-   * verbatim.
+   * verbatim. The offers' names are read from `SERVICES`, so a rename
+   * cannot leave this line behind.
    */
-  intro:
-    "Every engagement starts with a scoped upfront price, then a monthly rate. AI Product Development has two: a build rate while we build and a lower support rate after launch. You know every number before you commit. No hourly billing, no meter running during meetings, no surprise invoices.",
+  intro: `${SERVICES[0].name} has a scoped upfront price, then a monthly rate. ${SERVICES[1].name} has no upfront price: a monthly rate from the start while we build, then a lower rate for ongoing product support after launch. You know every number before you commit. No hourly billing, no meter running during meetings, no surprise invoices.`,
   /**
    * The commitment, stated plainly and before the cards. Owner-settled
    * (#25), two months since #75 (DRAFT wording). It names no figure
@@ -80,10 +82,11 @@ export const PRICING = {
   /** Mono micro-labels inside each card. */
   upfrontLabel: "Upfront",
   ongoingLabel: "Ongoing",
-  /** The product tier's three parts (#75). DRAFT. */
-  setupLabel: "Setup",
+  /** The product tier's two bands (#75). "Build" is DRAFT. */
   buildLabel: "Build",
-  supportLabel: "Support",
+  supportLabel: "Ongoing product support",
+  /** What a tier's headline price is per, when it is per anything (#75). */
+  perMonth: "per month",
   featuresLabel: "Included",
   /** The second list's label (#56). Also heads the agentic page's list. */
   monthlyCoversLabel: "What the monthly covers",
@@ -144,15 +147,17 @@ export const PRICING_CTA_CUSTOM = "Let's See if We're a Fit";
  * `coversLabel`. Together they close the long-open "tier feature bullets"
  * item and the "what the monthly buys" one.
  *
- * **The product tier is setup, build and support (#75).** Build runs two
- * months minimum, support starts after launch and adds no new features,
- * and new features later mean the build rate for those months, then back
- * to support. Its list is the head of the after-launch list in Nate's
- * Strata proposal, led by tuning; the product route carries the rest
+ * **The product tier is a build rate and ongoing product support (#75),
+ * with no upfront price.** Build starts from the start and runs two months
+ * minimum, support starts after launch and adds no new features, and new
+ * features later mean the build rate for those months, then back to
+ * support. Its list is the head of the after-launch list in Nate's Strata
+ * proposal, led by tuning; the product route carries the rest
  * (`src/content/service-pages.ts`). A project someone else started takes
- * this same card: its setup covers assessing what's already built, which
- * is what keeps "the same published price as a new build" true. Every
- * line new to this tier is DRAFT.
+ * this same card: the build rate covers assessing what's already built,
+ * which is what keeps "the same published price as a new build" true.
+ * Every line new to this tier is DRAFT. The brief's $11,998 setup was
+ * removed before merge (Nate, 2026-11-04).
  */
 export const PRICING_TIERS = [
   {
@@ -160,11 +165,11 @@ export const PRICING_TIERS = [
     name: SERVICES[0].name,
     description:
       "AI automation for the work you already do. We map how your team works, then plug Claude or OpenAI agents into it: email triage, weekly reports, quotes and intake, data entry. No custom tool to build, nothing new to babysit.",
-    upfrontLabel: PRICING.upfrontLabel,
-    upfront: PRICES["agentic-system"].upfront,
-    upfrontNote: "Scoped upfront. Process mapping, build and validation.",
+    headlinePriceLabel: PRICING.upfrontLabel,
+    headlinePrice: PRICES["agentic-system"].upfront,
+    headlinePriceNote: "Scoped upfront. Process mapping, build and validation.",
     ongoingLabel: PRICING.ongoingLabel,
-    ongoing: `${PRICES["agentic-system"].monthly} per month`,
+    ongoing: `${PRICES["agentic-system"].monthly} ${PRICING.perMonth}`,
     ongoingNote: "Required the first two months, optional after.",
     features: [
       "A map of how the work runs today",
@@ -184,19 +189,15 @@ export const PRICING_TIERS = [
     name: SERVICES[1].name,
     description:
       "New software with AI agents built in. Two starting points, one price: a new product built from scratch and live in 6 to 8 weeks, or a product someone got 70% of the way there before disappearing.",
-    upfrontLabel: PRICING.setupLabel,
-    upfront: PRICES.product.upfront,
-    upfrontNote:
-      "One time. Includes process mapping and discovery. On a project someone else started, it also covers assessing what's already built.",
-    ongoingLabel: PRICING.buildLabel,
-    ongoing: `${PRICES.product.monthly} per month`,
+    headlinePriceLabel: PRICING.buildLabel,
+    headlinePrice: PRICES.product.build,
+    headlinePriceUnit: PRICING.perMonth,
+    headlinePriceNote:
+      "From the start, while we build, with no upfront cost. Two months minimum, which lines up with the 6 to 8 week build. Includes process mapping and discovery, and on a project someone else started, assessing what's already built.",
+    ongoingLabel: PRICING.supportLabel,
+    ongoing: `${PRICES.product.support} ${PRICING.perMonth}`,
     ongoingNote:
-      "While we build. Two months minimum, which lines up with the 6 to 8 week build.",
-    support: {
-      label: PRICING.supportLabel,
-      figure: `${PRICES.product.support} per month`,
-      note: "Starts after launch, and staying on is your call. Covers tuning and keeping things running, but no new features. New features later go back to the build rate for those months, then back to support.",
-    },
+      "Starts after launch, and staying on is your call. Covers tuning and keeping things running, but no new features. New features later go back to the build rate for those months, then back to support.",
     features: [
       "A mapped scope you sign off on",
       "A working product in production in 6 to 8 weeks",
