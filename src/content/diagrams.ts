@@ -241,10 +241,15 @@ export const FINISH_STARTED = {
   launch: "Launch",
 } as const;
 
-/** `/services/product#product-support`: a live product, watched and improved. */
+/**
+ * `/services/product#product-support`: a live product, watched and tuned.
+ * The sample releases are support's kind of work since #75 (DRAFT), which
+ * adds no new features. The constant's name is a fossil of the block's
+ * old name, "Ongoing product team", kept like the tier slugs.
+ */
 export const ONGOING_TEAM = {
   label:
-    "Ongoing product team: a live product being watched and improved. It is live with 99.98% uptime. A chart of weekly active users across twelve weeks climbs after each release, from 820 users in week 1 to 1,240 in week 12, with versions 1.4, 1.5 and 1.6 shipped along the way, and version 1.7 next.",
+    "Ongoing product support: a live product being watched and tuned. It is live with 99.98% uptime. A chart of weekly active users across twelve weeks climbs from 820 users in week 1 to 1,240 in week 12, with updates 1.4, 1.5 and 1.6 shipped along the way, and update 1.7 next.",
   live: "Live",
   uptime: "Uptime 99.98%",
   chart: "Weekly active users",
@@ -252,13 +257,13 @@ export const ONGOING_TEAM = {
   weeks: [820, 842, 836, 905, 931, 924, 1012, 1040, 1036, 1150, 1191, 1240],
   /** Releases land in the week they shipped (1-based). */
   releases: [
-    { week: 4, version: "v1.4", note: "Faster checkout" },
-    { week: 7, version: "v1.5", note: "AI search" },
-    { week: 10, version: "v1.6", note: "Smarter alerts" },
+    { week: 4, version: "v1.4", note: "Security patches" },
+    { week: 7, version: "v1.5", note: "Agent tuning" },
+    { week: 10, version: "v1.6", note: "Bug fixes" },
   ],
   weekLabel: "Week",
   usersLabel: "users",
-  next: "Next: v1.7, saved searches",
+  next: "Next: v1.7, tool upkeep",
   /** The scrubber's accessible name. */
   scrub: "Week of the chart to inspect",
 } as const;

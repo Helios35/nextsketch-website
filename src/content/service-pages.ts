@@ -18,12 +18,14 @@ import type {
  *   Internal Tool) retired with their blocks and anchors.
  * - `/services/product` is **AI Product Development**, one offer with
  *   three ways in: build from scratch, finish what someone started, and
- *   ongoing product team. They reuse the three existing blocks and their
+ *   ongoing product support. They reuse the three existing blocks and their
  *   anchors (`#new-product`, `#product-completion`, `#product-support`),
  *   so a shared or bookmarked link still lands where it did.
  *
  * Every rendered string here is owner copy from the two-offerings brief
- * (2026-10-15), shipped verbatim; nothing is DRAFT any more. Names are
+ * (2026-10-15), shipped verbatim, except the lines marked DRAFT below:
+ * #71's morning sort, and the lines #75 changed, which build-note 44
+ * lists. Names are
  * referenced, never copied: the eyebrows are the offerings' names, the
  * agentic block names are the offering's `examples`, the monthly list is
  * the agentic tier's, and each ribbon is its page's block names. A
@@ -149,24 +151,35 @@ const PRODUCT_BLOCKS = [
     description:
       "Someone got you 70% there and disappeared. We assess what was built, map where it needs to go, and get you to launch.",
     need: SERVICE_NEED.product,
+    /** DRAFT (#75): the last line. The build rate covers the assessment. */
     included: [
       "A written assessment of what was built and what to keep",
       "The direction checked before more money goes in",
       "The same published price as a new build",
-      "Three months together, then staying on is your call",
+      "Two months minimum, then staying on is your call",
     ],
   },
   {
     id: "product-support",
-    name: "Ongoing product team",
+    /**
+     * DRAFT (#75). The name is Nate's words for it, 2026-11-04: "Ongoing
+     * product team" read as a team building new features, which support
+     * does not do. The anchor already says `product-support`. The list is
+     * the rest of the after-launch list in Nate's Strata proposal, with no
+     * figure (#73).
+     */
+    name: "Ongoing product support",
     description:
-      "The product is live. Now it needs to grow. After the first three months, your monthly becomes your ongoing product team: new features, AI improvements, and upkeep.",
+      "The product is live. Now it needs tuning and upkeep. Support covers both, with no new features. When you want new features, we go back to the build rate for those months, then back to support.",
     need: SERVICE_NEED.product,
     included: [
-      "A team that covers growth, not just uptime",
-      "Work agreed with you each month, never billed by the hour",
-      "The product maintained, monitored and kept current",
-      "Whatever comes next, built by the people who built it",
+      "Tuning the agents so they keep getting better",
+      "Bug fixes and monitoring",
+      "Security patches and updates",
+      "Upkeep when outside tools change",
+      "Watching what it costs to run, and keeping backups",
+      "Small changes, help for your team, and documentation",
+      "One monthly rate, never billed by the hour",
     ],
   },
 ] as const satisfies readonly ServicePageBlock[];
@@ -213,18 +226,19 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
   },
   product: {
     slug: "product",
-    /** Buyer words (#59). */
+    /** Buyer words (#59). The closing sentence is DRAFT (#75). */
     title: "AI Product Development: New Software With AI Built In | NextSketch",
     description:
-      "New software products with AI agents built in, live in 6 to 8 weeks, or finished after someone else stalled. Then we stay on as your product team.",
+      "New software products with AI agents built in, live in 6 to 8 weeks, or finished after someone else stalled. Then we stay on after launch.",
     eyebrow: SERVICE.product.name,
     name: SERVICE.product.name,
     /** Owner copy (#53), closing the h1 owed since #30. */
     headline: "We build products with agents inside, take them live, and stay.",
     accentPhrase: "stay",
     leadLine: "New software with AI agents built in.",
+    /** "Keep a live product running" and "stay on after launch": DRAFT (#75). */
     intro:
-      "Three ways in, one way of working. Start from an idea, finish a product someone else got 70% of the way, or keep a live product growing. We map the business first, build it correctly, and stay on as your product team.",
+      "Three ways in, one way of working. Start from an idea, finish a product someone else got 70% of the way, or keep a live product running. We map the business first, build it correctly, and stay on after launch.",
     strip: PRODUCT_BLOCKS.map((block) => block.name),
     /**
      * One offering now, so the hero and close preselect it too. Under

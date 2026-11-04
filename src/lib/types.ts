@@ -319,34 +319,54 @@ export type PricingTierSlug = "workflow" | "custom";
  * lives in `src/content/pricing.ts`; nothing here is rendered from a
  * component literal.
  *
- * `upfront` and `ongoing` are **display strings, not numbers**. They
- * were chosen when two tiers had no numeric upfront (one retainer-only,
- * one quoted); every tier carries a figure since #45, and the strings
- * stay because they already carry their own currency symbol and unit.
+ * `headlinePrice` and `ongoing` are **display strings, not numbers**.
+ * They were chosen when two tiers had no numeric upfront (one
+ * retainer-only, one quoted); every tier carries a figure since #45, and
+ * the strings stay because they already carry their own currency symbol.
  * The figure a visitor reads is the figure in content.
  *
  * The struck former price (`upfrontWas`) retired with #56: a discount
  * that never expires stopped reading as one.
+ *
+ * **Each tier has two prices and names its own bands since #75.** The
+ * agentic tier reads Upfront and Ongoing; the product tier has no upfront
+ * price and reads Build and Ongoing product support. So the first band's
+ * fields are `headlinePrice*`, renamed from `upfront*`, which would have
+ * held a monthly on the product tier.
  */
 export interface PricingTier {
   readonly slug: PricingTierSlug;
   readonly name: string;
   readonly description: string;
-  /** Headline figure, e.g. "$3,998" / "$12,000". */
-  readonly upfront: string;
+  /** Mono label over the headline price: "Upfront" or "Build" (#75). */
+  readonly headlinePriceLabel: string;
+  /** The figure at display size, e.g. "$3,998" / "$9,998". */
+  readonly headlinePrice: string;
   /**
-   * Caption under the headline figure. Optional since #45: a tier
+   * What the headline price is per, set quieter beside it, e.g. "per
+   * month" (#75). A one-time price has none.
+   */
+  readonly headlinePriceUnit?: string;
+  /**
+   * Caption under the headline price. Optional since #45: a tier
    * without an approved caption renders none rather than an invented
    * line (Rule 4.3).
    */
-  readonly upfrontNote?: string;
-  /** The retainer figure, e.g. "$2,998 per month". */
+  readonly headlinePriceNote?: string;
+  /** Mono label over `ongoing`: "Ongoing" or "Ongoing product support" (#75). */
+  readonly ongoingLabel: string;
+  /** The ongoing monthly figure, e.g. "$2,998 per month". */
   readonly ongoing: string;
-  /** Caption under the retainer figure — where the term is said out loud. */
+  /** Caption under the ongoing figure: what it is, and when it applies. */
   readonly ongoingNote: string;
-  /** "Included": what the upfront build delivers (#56). */
+  /** "Included": what the build delivers (#56). */
   readonly features: readonly string[];
-  /** "What the monthly covers" (#56). */
+  /**
+   * Mono label over `monthlyCovers`: "What the monthly covers" or, on
+   * the product tier, "What support covers" (#75).
+   */
+  readonly coversLabel: string;
+  /** What the tier's ongoing monthly covers (#56); support's since #75. */
   readonly monthlyCovers: readonly string[];
 }
 

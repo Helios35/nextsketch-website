@@ -4,6 +4,8 @@
 **Authority:** `05-business-rules.md` Rule 4.1 makes this doc the source for **level language**: the five level names, their one-liners and their examples. Offer names and prices stay exactly as the site has them (Taxonomy §1, `src/content/services.ts`), which this doc itself says ("The website is the baseline").
 **Where it differs from the site (recorded, not edited below):** the doc gives Agentic System Integration green and AI Product Development dark yellow. On the site the two are **swapped** (decision-log #67, amended 2026-10-30), so each offer's colour sits beside its own levels. The doc's Visual style section is for social posts: only the level colours (#67) and the level shapes (#69) come over to the site.
 
+**Brought in line with the site, decision-log #75 (2026-11-04):** the product row of the table under Levels to offers, the sentence under it on the term, and its third path name. Those lines no longer match the PDF, which is Nate's to reconcile. Everything else here is still word for word.
+
 ---
 
 ## The story
@@ -50,9 +52,9 @@ Levels 2 and 3 are the automations offer. Levels 4 and 5 are the product offer. 
 |---|---|---|---|---|
 | 1 | Not sold | None | None | Where most businesses stop |
 | 2 and 3 | Agentic System Integration | $3,998 | $2,998 | AI automation for the work you already do |
-| 4 and 5 | AI Product Development | $12,000 | $10,000 | New software with AI agents built in |
+| 4 and 5 | AI Product Development | None | $9,998 from the start, then $4,998 ongoing product support | New software with AI agents built in |
 
-The monthly fee is required for the first three months on both offers, then optional. Site examples for Agentic System Integration: email triage, weekly reporting, quoting and intake, document and data entry. Site paths into AI Product Development: build from scratch (live in 6 to 8 weeks), finish what someone started, ongoing product team. Source: NextSketch pricing.
+The monthly fee is required for the first two months on both offers, then optional. Site examples for Agentic System Integration: email triage, weekly reporting, quoting and intake, document and data entry. Site paths into AI Product Development: build from scratch (live in 6 to 8 weeks), finish what someone started, ongoing product support. Source: NextSketch pricing.
 
 ## Words to use and avoid
 

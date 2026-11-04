@@ -60,11 +60,18 @@ export const SERVICES_CTA = "Build With Us";
  * shows them ("per month"); the home cards and the service routes carry
  * no price. `src/content/pricing.ts` composes its strings from these, so
  * a price change is still one edit here.
+ *
+ * Since #75 the product has no upfront figure: `build` is its monthly
+ * rate from the start, and `support` the lower rate after launch. The
+ * agentic offering keeps its upfront figure and its one monthly.
  */
 export const PRICES = {
   "agentic-system": { upfront: "$3,998", monthly: "$2,998" },
-  product: { upfront: "$12,000", monthly: "$10,000" },
-} as const satisfies Record<ServiceSlug, { upfront: string; monthly: string }>;
+  product: { build: "$9,998", support: "$4,998" },
+} as const satisfies Record<
+  ServiceSlug,
+  { upfront: string; monthly: string } | { build: string; support: string }
+>;
 
 /**
  * Offering slug -> the quick-door need its CTAs preselect.
@@ -72,7 +79,7 @@ export const PRICES = {
  * Typed to `QuickNeed`, the door's own options, so a card, tier or
  * block can never preselect a value the door does not show. Every CTA
  * on `/services/product` reads the `product` entry: Build from scratch,
- * Finish what someone started and Ongoing product team are three ways
+ * Finish what someone started and Ongoing product support are three ways
  * into one offering, and the door offers that offering once. Display
  * slugs are kebab-case (§8) and payload values snake_case (§3), so the
  * mapping stays spelled out.
