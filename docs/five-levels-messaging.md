@@ -52,9 +52,9 @@ Levels 2 and 3 are the automations offer. Levels 4 and 5 are the product offer. 
 |---|---|---|---|---|
 | 1 | Not sold | None | None | Where most businesses stop |
 | 2 and 3 | Agentic System Integration | $3,998 | $2,998 | AI automation for the work you already do |
-| 4 and 5 | AI Product Development | $11,998 setup | $9,998 build, then $4,998 support after launch | New software with AI agents built in |
+| 4 and 5 | AI Product Development | None | $9,998 from the start, then $4,998 ongoing product support | New software with AI agents built in |
 
-The monthly fee is required for the first two months on both offers, then optional. Site examples for Agentic System Integration: email triage, weekly reporting, quoting and intake, document and data entry. Site paths into AI Product Development: build from scratch (live in 6 to 8 weeks), finish what someone started, support after launch. Source: NextSketch pricing.
+The monthly fee is required for the first two months on both offers, then optional. Site examples for Agentic System Integration: email triage, weekly reporting, quoting and intake, document and data entry. Site paths into AI Product Development: build from scratch (live in 6 to 8 weeks), finish what someone started, ongoing product support. Source: NextSketch pricing.
 
 ## Words to use and avoid
 
