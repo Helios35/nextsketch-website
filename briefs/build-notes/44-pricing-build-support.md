@@ -15,7 +15,7 @@ The brief asked for three prices on the product card, and the first cut (`d1cbac
 - **The setup price is gone**, with its label and caption.
 - **The product card has two prices, like the agentic card**, so the third-price extension came out (`support?` on the tier, the `TierMonthly` helper).
 - **Build took the first price band and support the second**, so the two cards' prices line up band for band. The empty space the first cut left on the agentic card (about 210px at 1280) closed with it.
-- **Discovery and the assessment moved into the build rate** (call 2).
+- **Discovery and the assessment moved into the build rate** (call 2, confirmed by Nate).
 - **The block's name became Nate's own words**, "Ongoing product support" (call 7).
 
 The agentic card is exactly as in the first cut. Against `main`, its one change is still "first two months".
@@ -90,7 +90,7 @@ Same card, same seven-row subgrid, no fork, no dependency.
 None was resolved silently. Calls 3 and 4 are left as they were; the rest are built the way recommended here.
 
 1. **Decided: the home card stays (Nate, 2026-11-04, "Leave it").** It still says "we stay on as your product team" (`services.ts:125`), the only "product team" in the built HTML. The brief says no line on the site may disagree, and also that the home page is out of scope; I recommended "and we stay on after launch", and Nate kept the line.
-2. **Discovery and the assessment now sit in the build rate.** Setup was what paid for them, and it is what kept "the same published price as a new build" true for a project someone else started. With no setup, the card says the build rate includes them. **Recommend** keeping it. If an assessment should cost something separately, that line and the route's "same published price" both change.
+2. **Decided: discovery and the assessment sit in the build rate (Nate, 2026-11-04, "Yes, keep it").** Setup was what paid for them, and it is what kept "the same published price as a new build" true for a project someone else started. With no setup, the card says the build rate includes them, and that line stays true.
 3. **The product tier's description still says "Two starting points, one price"**, above two figures. Descriptions are guarded, so it stands. It means both starting points cost the same. **Recommend** "one set of prices".
 4. **The headline still says "NextSketch puts the price upfront"**, with "upfront" in coral, above a card that says "no upfront cost". It means the price is out in the open, which is still true. **Recommend** leaving it.
 5. **Is support optional?** The brief sets a minimum on the build rate and none on support, and the old copy said "staying on is your call", so I kept that on the card and in the term line. **Recommend** keeping it. If support has a minimum, the card must say so (#25).
