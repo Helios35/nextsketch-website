@@ -79,7 +79,7 @@ Nothing was renamed. Added:
 
 Each is built the way recommended here, except 1 and 2, which are left as they were. None was resolved silently.
 
-1. **The home card still says "we stay on as your product team"** (`services.ts:125`). The brief says no line on the site may disagree, and also that the home page is out of scope. I held to the scope line. It is now the only "product team" in the built HTML. **Recommend** changing it to "and we stay on after launch", which matches the proof band. It is a one-line edit.
+1. **Decided: the home card stays (Nate, 2026-11-04, "Leave it").** It still says "we stay on as your product team" (`services.ts:125`), the only "product team" in the built HTML. The brief says no line on the site may disagree, and also that the home page is out of scope; I recommended "and we stay on after launch", and Nate kept the line.
 2. **The product tier's description still says "Two starting points, one price"**, above three figures. Descriptions are guarded, so it stands. It means both starting points cost the same, but it could read as a slip. **Recommend** "one set of prices".
 3. **Is support optional?** The brief sets a minimum on the build rate and none on support, and the old copy said "staying on is your call", so I kept that on the card and in the term line. **Recommend** keeping it. If support has a minimum, the card must say so (#25).
 4. **"Ongoing product team" is renamed "Support after launch."** The brief names offers as guarded, and this is a way in, not an offer. A block called a product team with "no new features" under it reads as a contradiction. The anchor (`#product-support`) does not move, so old links still land. **Recommend** keeping the rename. It narrows #53's name, and #75 says so.
