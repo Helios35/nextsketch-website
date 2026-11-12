@@ -1,6 +1,6 @@
 # Runbook — NextSketch Website Rebuild
 
-**Version:** 2.2 · **Date:** 2026-10-21 · **Status:** Active (pre-launch) — reconciled to the as-built pipeline (Sprint 03 doc audit); the smoke test covers the waitlist band (decision-log #58) and the email-first modal's two steps (#65), and the Apps Script redeploy #65 needs
+**Version:** 2.3 · **Date:** 2026-11-12 · **Status:** Active (pre-launch) — the smoke test covers the free guide card (decision-log #76); before that, reconciled to the as-built pipeline (Sprint 03 doc audit); the smoke test covers the waitlist band (decision-log #58) and the email-first modal's two steps (#65), and the Apps Script redeploy #65 needs
 **Answers:** How do we run it?
 **References:** `07-technical-spec.md` (what's deployed)
 
@@ -23,6 +23,7 @@ Run on the deployed site **after** the env vars below are set **and the #65 Apps
 2. **Step 1 + all of step 2:** email + both boxes → answer the four questions on a non-exploring path → company, "tell us about it" → "Let's See if We're a Fit" → success. Confirm it is **still one Sheet row**, now with every answer (`lead_type: qualified` or `flagged`), **one** extra email to Nate (subject ending "(follow-up)", same Lead ID), and no second auto-reply or Asana task.
 3. **Skip, and still exploring:** step 1, then "Skip for now" → success, and no follow-up alert. Again with "I'm still exploring" on Q1 → Next → the off-ramp message; the row reads `[Lead — exploring]`.
 3a. **Waitlist band (#58):** on `/`, in Services under the two cards, enter an email → "Join the Waitlist" (wait three seconds after load; the minimum-time guard applies). Confirm the on-page "You're on the list…" line, a Sheet row (`lead_type: waitlist`, signal `[Waitlist]`, email only), Nate's `[Waitlist]` alert, and **no** Asana task and **no** auto-reply.
+3b. **Free guide card (#76):** on `/` (or either service route), scroll half a screen: the indigo card slides up. Enter a name and an email, wait three seconds after it appears (the minimum-time guard), "Download the guide". Confirm the PDF downloads as "The Small Business Guide to AI.pdf" and the thank-you shows; one Sheet row (`lead_type: guide`, signal `[Guide lead]`, name and email only); an Asana task `[Guide lead] <name>`; Nate's `[Guide lead]` alert; and **one** email to the visitor, "Your copy of The Small Business Guide to AI", whose link opens the PDF (no attachment, no auto-reply). Reload: the card does not come back. Confirm it never shows on `/pricing`. To test again, clear the site's data (the flag is `localStorage` `nextsketch:guide-offer`). The visitor email needs `LEAD_FROM_EMAIL` on a verified domain to reach an outside address, the same as the auto-reply.
 4. **Honest failure (no fake success):** temporarily point `LEADS_SHEET_WEBHOOK_URL` at a failing/empty value and submit → the modal shows "That didn't go through — your answers are safe." with answers preserved + the escape hatch (Rule 2.7); restore the webhook after.
 5. **As-built checks:** modal renders full-height on mobile (≤375px); reduced-motion users get no animation; banned-terms gate green (CI).
 
@@ -32,9 +33,9 @@ Set in Vercel project settings for **Production and Preview**; never committed. 
 
 | Var | Purpose | Gating |
 |---|---|---|
-| `LEADS_SHEET_WEBHOOK_URL` | Apps Script web-app URL for the "Inbound Leads" Sheet; appends a row (step 1, waitlist) or updates one (step 2, #65), returns 2xx on success | **Durable record — gates capture success.** Unset ⇒ every capture honestly reports not-ok (no fake success). **Set this first.** |
+| `LEADS_SHEET_WEBHOOK_URL` | Apps Script web-app URL for the "Inbound Leads" Sheet; appends a row (step 1, waitlist, the free guide card #76) or updates one (step 2, #65), returns 2xx on success | **Durable record — gates capture success.** Unset ⇒ every capture honestly reports not-ok (no fake success). **Set this first.** |
 | `ASANA_ACCESS_TOKEN` + `ASANA_PROJECT_ID` | Open a task in the Asana "Inbound Leads" project | Best-effort. Unset ⇒ task skipped, capture still succeeds. |
-| `RESEND_API_KEY` | Resend key for the lead auto-reply + Nate's alert | Notification only (best-effort, via `after()`). Unset ⇒ emails skipped, lead still captured. |
+| `RESEND_API_KEY` | Resend key for the lead auto-reply (or, for a guide lead, the guide email, #76) + Nate's alert | Notification only (best-effort, via `after()`). Unset ⇒ emails skipped, lead still captured. |
 | `NOTIFY_EMAIL` | Recipient of the `[Lead …]` alert (Nate's inbox) | Unset ⇒ alert skipped (auto-reply unaffected). |
 | `LEAD_FROM_EMAIL` *(optional)* | Verified branded sender (e.g. `"NextSketch <hello@nextsketch.com>"`) | Unset ⇒ sends from Resend's interim onboarding domain (decision-log #9); set once DNS verifies. |
 
