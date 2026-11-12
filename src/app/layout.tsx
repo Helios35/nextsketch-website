@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ApolloTracker } from "@/components/apollo-tracker";
+import { GuideOffer } from "@/components/guide-offer";
 import { QualificationModalProvider } from "@/components/qualification-modal-provider";
 import { SITE } from "@/content/copy";
 import "./globals.css";
@@ -40,9 +41,9 @@ export const metadata: Metadata = {
 
 /**
  * Root layout: the page surface (fin's dark `background`, the site's
- * only theme since decision-log #47), the fonts, and the
- * qualification-modal provider (every CTA opens the modal). Nav and
- * footer are mounted per page, not here.
+ * only theme since decision-log #47), the fonts, the
+ * qualification-modal provider (every CTA opens the modal) and the free
+ * guide card (#76). Nav and footer are mounted per page, not here.
  */
 export default function RootLayout({
   children,
@@ -59,7 +60,15 @@ export default function RootLayout({
           routes, page-glow.tsx) paints above it while staying below
           all in-flow content. */}
       <body className="flex min-h-full flex-col font-sans text-foreground">
-        <QualificationModalProvider>{children}</QualificationModalProvider>
+        <QualificationModalProvider>
+          {/* The free guide card (decision-log #76): every route but
+              /pricing, after a scroll, once per visitor. Inside the
+              provider so it can stay hidden while the form is open, and
+              first in the document so the first Tab on a page reaches it
+              (it renders nothing until it is due). */}
+          <GuideOffer />
+          {children}
+        </QualificationModalProvider>
         {/* Both trackers sit together for readability, but they mount
             differently: <Analytics /> is the first-party cookieless
             pageview tracker and renders here, while <ApolloTracker />

@@ -71,3 +71,39 @@ export const LEAD_FOLLOWUP_ALERT = {
   intro: "More from a lead already in the Sheet. Same Lead ID, same row.",
   subjectTag: "(follow-up)",
 } as const;
+
+/**
+ * The guide email (decision-log #76): the one email a free guide lead
+ * gets, in place of the auto-reply, sent once the lead is in the Sheet.
+ * A link to the guide, never an attachment. Owner copy (the free guide
+ * brief, Part B), word for word but for the sign-off. Reply-to is the
+ * brand inbox, so "just reply to this email" reaches Nate.
+ */
+export const LEAD_GUIDE_EMAIL = {
+  subject: "Your copy of The Small Business Guide to AI",
+  /**
+   * The paragraph the link closes. Greets the first word of the name the
+   * visitor typed (the card asks one Name, the auto-reply greets a first
+   * name), and the link label follows the colon.
+   */
+  opening: (firstName: string): string =>
+    `Hi ${firstName}, here's your copy of The Small Business Guide to AI:`,
+  linkLabel: "Download the guide",
+  body: [
+    'Start with the "map one job this week" checklist near the end. It shows you where your first agent should go.',
+    "Want help with the rest? Just reply to this email.",
+  ],
+  /**
+   * DRAFT: Part B signs "Nate, Next Sketch". The brand is one word in all
+   * copy (Rule 3.3, Taxonomy §8; "Next Sketch" is the legal line only).
+   */
+  signoff: "Nate, NextSketch",
+} as const;
+
+/**
+ * Nate's alert for a guide lead (#76): the usual lead alert, plus one
+ * line naming what the visitor asked for. Builder DRAFT.
+ */
+export const LEAD_GUIDE_ALERT = {
+  guideLabel: "Guide",
+} as const;

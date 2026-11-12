@@ -17,6 +17,9 @@ import { z } from "zod";
  *   • "waitlist" — the Services waitlist band (decision-log #58): an
  *     email and nothing else. Not a lead; it rides the same seam so it
  *     gets the same durable record, guards and failure fallback.
+ *   • "guide" — the free guide card (decision-log #76): a name and an
+ *     email for the guide. A lead, recorded and alerted like step 1,
+ *     with the guide email in place of the auto-reply.
  *
  * The server re-validating with these schemas (POST /api/qualify) is what
  * keeps the guards un-bypassable by a direct POST: the honeypot (`_hp`)
@@ -153,6 +156,23 @@ export const waitlistPayloadSchema = z.object({
 });
 
 /**
+ * The free guide card (decision-log #76): a name and an email, both
+ * required, for "The Small Business Guide to AI", and the same anti-bot
+ * guards as every door, timed from when the card appeared. A lead in
+ * its own right, recorded and alerted like step 1, under its own label
+ * (`[Guide lead]`). One name field, not the modal's two: the card asks
+ * for as little as it can, and the Sheet keeps one Name column anyway.
+ * No offering is asked or stored; the modal's step 1 still requires
+ * one (Rule 1.7), so the form's rules do not loosen.
+ */
+export const guidePayloadSchema = z.object({
+  kind: z.literal("guide"),
+  name: z.string().trim().min(1).max(100),
+  email: z.email(),
+  ...botGuards,
+});
+
+/**
  * Every entry — the contract the endpoint and the delivery seam validate
  * against. Discriminated on `kind` so the right shape is enforced and a
  * direct POST can't smuggle one kind's fields past another's guards.
@@ -161,11 +181,13 @@ export const leadPayloadSchema = z.discriminatedUnion("kind", [
   quickLeadPayloadSchema,
   followupPayloadSchema,
   waitlistPayloadSchema,
+  guidePayloadSchema,
 ]);
 
 export type QuickLeadPayload = z.infer<typeof quickLeadPayloadSchema>;
 export type FollowupPayload = z.infer<typeof followupPayloadSchema>;
 export type WaitlistPayload = z.infer<typeof waitlistPayloadSchema>;
+export type GuidePayload = z.infer<typeof guidePayloadSchema>;
 export type LeadPayload = z.infer<typeof leadPayloadSchema>;
-/** The two kinds that add a Sheet row (a follow-up updates one). */
-export type NewEntryPayload = QuickLeadPayload | WaitlistPayload;
+/** The kinds that add a Sheet row (a follow-up updates one). */
+export type NewEntryPayload = QuickLeadPayload | WaitlistPayload | GuidePayload;

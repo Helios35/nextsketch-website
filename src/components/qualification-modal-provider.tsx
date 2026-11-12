@@ -18,6 +18,11 @@ interface QualificationModalContextValue {
    * selected, exactly as every other CTA does.
    */
   openModal: (need?: QuickNeed) => void;
+  /**
+   * Whether the modal is open. Read by the free guide card (#76), which
+   * never shows while the form is up.
+   */
+  isOpen: boolean;
 }
 
 const QualificationModalContext =
@@ -56,8 +61,9 @@ export function QualificationModalProvider({
         setNeed(need);
         setOpen(true);
       },
+      isOpen: open,
     }),
-    [],
+    [open],
   );
 
   return (

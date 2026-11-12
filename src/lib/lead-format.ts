@@ -1,7 +1,10 @@
+import { LEAD_GUIDE_ALERT } from "@/content/email";
+import { GUIDE_OFFER } from "@/content/guide";
 import { MODAL_QUESTIONS, MODAL_QUICK } from "@/content/modal";
 import {
   EXPLORING,
   type FollowupPayload,
+  type GuidePayload,
   type LeadPayload,
   type NewEntryPayload,
   type QuickLeadPayload,
@@ -23,7 +26,9 @@ import {
  * answer columns and recomputes its signal. The waitlist band (#58) is
  * a third kind and not a lead: it fills the same columns with an email,
  * `lead_type: waitlist` and its own `[Waitlist]` label, and never becomes
- * an Asana task (owner direction, 2026-10-15).
+ * an Asana task (owner direction, 2026-10-15). The free guide card (#76)
+ * is a fourth: a lead with a name and an email, `lead_type: guide` and
+ * `[Guide lead]`, a row and a task like step 1, and no lead ID.
  *
  * Answer labels are read straight from `MODAL_QUESTIONS` (the canonical
  * label↔value map, docs/06-taxonomy.md §3) — never re-typed here, so
@@ -100,7 +105,8 @@ export type LeadType =
   | "partial"
   | "quick"
   | "exploring"
-  | "waitlist";
+  | "waitlist"
+  | "guide";
 
 export interface LeadSignal {
   /** Taxonomy §4 lead type: `flagged` if any signal is set. */
@@ -120,6 +126,22 @@ export interface LeadSignal {
  * lead at a glance in the Sheet and the alert subject.
  */
 export const WAITLIST_SIGNAL = "[Waitlist]";
+
+/**
+ * The free guide card's signal label (decision-log #76): a lead, so the
+ * label says so, and a guide lead, so Nate can tell it from a modal lead
+ * in the Sheet, the Asana task and the alert subject. Not the
+ * `[Lead — …]` family's form, because new copy carries no em dash
+ * (#19); `lead_type: guide` sorts it in the Sheet either way.
+ */
+export const GUIDE_SIGNAL = "[Guide lead]";
+
+/** The visitor's name as the Sheet, the task and the alerts show it. */
+function entryName(payload: NewEntryPayload): string {
+  if (payload.kind === "quick") return fullName(payload);
+  if (payload.kind === "guide") return payload.name;
+  return "";
+}
 
 /**
  * Rule 2.5 signal-flag logic + Taxonomy §4 lead type. The label is what
@@ -144,6 +166,15 @@ export function leadSignal(payload: LeadPayload): LeadSignal {
       needsBuyIn: false,
       buildFirst: false,
       label: WAITLIST_SIGNAL,
+    };
+  }
+
+  if (payload.kind === "guide") {
+    return {
+      type: "guide",
+      needsBuyIn: false,
+      buildFirst: false,
+      label: GUIDE_SIGNAL,
     };
   }
 
@@ -190,12 +221,14 @@ export function toSheetRecord(
   const signal = leadSignal(payload);
   // Same twelve columns for every kind, so the Apps Script mapping never
   // branches: step 1 leaves the company and the qualifier columns empty
-  // for step 2 to fill; a waitlist entry is an email and its label.
+  // for step 2 to fill; a waitlist entry is an email and its label; a
+  // guide lead (#76) is a name, an email and its label, with no lead ID,
+  // since nothing ever attaches to it.
   return {
     timestamp: capturedAt,
     lead_type: signal.type,
     signal: signal.label,
-    name: payload.kind === "quick" ? fullName(payload) : "",
+    name: entryName(payload),
     email: payload.email,
     company: "",
     project_type:
@@ -261,11 +294,24 @@ export function toSheetUpdate(payload: FollowupPayload): {
  * same lead ID and in Nate's follow-up alert, and the notes say so.
  */
 export function toAsanaTask(
-  payload: QuickLeadPayload,
+  payload: QuickLeadPayload | GuidePayload,
   capturedAt: string,
   leadId: string,
 ): { name: string; notes: string } {
   const signal = leadSignal(payload);
+  if (payload.kind === "guide") {
+    // A guide lead (#76): who, and what they asked for. No lead ID and no
+    // follow-up line: nothing attaches to it.
+    const notes = [
+      `Captured: ${capturedAt}`,
+      "",
+      `Name:    ${payload.name}`,
+      `Email:   ${payload.email}`,
+      "",
+      `${LEAD_GUIDE_ALERT.guideLabel}: ${GUIDE_OFFER.heading}`,
+    ].join("\n");
+    return { name: `${signal.label} ${payload.name}`, notes };
+  }
   const needs = quickNeeds(payload.project_types);
   const notes = [
     `Captured: ${capturedAt}`,

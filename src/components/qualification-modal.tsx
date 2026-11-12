@@ -26,6 +26,7 @@ import {
   MODAL_SUCCESS,
   type QuickNeed,
 } from "@/content/modal";
+import { markGuideOffer } from "@/lib/guide-offer";
 import { submitQualification, type QualifyResult } from "@/lib/qualify";
 import { EXPLORING, leadPayloadSchema } from "@/lib/schema";
 
@@ -578,6 +579,9 @@ export function QualificationModal({
       _t: Date.now() - openedAt.current,
     });
     void runSubmit(parsed, "quick", (result) => {
+      // A saved lead has already left a way to reach them, so the free
+      // guide card (#76) is done for this visitor.
+      markGuideOffer("form");
       if (result.leadId === undefined) return "success";
       setLeadId(result.leadId);
       return "project_type";
