@@ -17,6 +17,15 @@
   3. **Whether the Sheet or Apps Script has to change:** **no.** The script appends any body with the same twelve keys, and a guide lead is those twelve keys with new values (`lead_type: guide`, `signal: [Guide lead]`). Verified by running the repo's `scripts/inbound-leads.gs` in Node against an in-memory sheet (below). Nothing to bring back.
 - **Before-screenshots:** `/`, both service routes and `/pricing` (the last one extra) at 360, 768, 1280 and 1920, full page, reduced motion, from a production build of `main` (`.claude/guide-popup-shots/before/`, gitignored).
 
+## Owner change after review (Nate, 2026-11-12)
+
+Nate looked at the card in the dev server (1186px wide) and asked for it wider: "looks a bit squished." From `sm:` (640px) up:
+
+- **Width 400px → 480px** (`sm:w-[25rem]` → `sm:w-[30rem]`), so each field is 208px wide (was 174).
+- **More room inside:** padding 20 → 24px; the cover 72 → 80px wide; the heading `text-xl` → `text-2xl`; the body `text-sm` → `text-base` with relaxed leading; more space between the header, body, fields, button and small print; the small print `text-xs` → `text-sm`; the × sits 12px in.
+- **Measured:** 480×441px at 640, 768, 1280 and 1920 (500 with the failure line, was 400×380), never near the nav (its top is 335px at 640×800, the bar ends at 69px). Coverage 41% at 640×800, 27% at 768×1024, 20% at 1280×832, 10% at 1920×1080.
+- **Unchanged:** the phone layout (336×349px at 360×740), every colour and so every contrast figure below, the copy, and the behaviour.
+
 ## What shipped
 
 - **The card** (`src/components/guide-offer.tsx`): the cover, "Free guide", the heading, the body, Name and Email side by side, "Download the guide", the small print and a × (named "Close"). The thank-you replaces the form; the failure line sits above the button.

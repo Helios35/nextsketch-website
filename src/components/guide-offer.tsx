@@ -228,10 +228,12 @@ export function GuideOffer() {
           }}
           className={[
             // A toast: the bottom edge on a phone (12px gutters), the
-            // bottom-right corner from sm. Below the nav bar (z-40) and its
-            // menu (z-50), and never taller than the space under the bar.
+            // bottom-right corner from sm, 480px wide there (it was 400px
+            // and read cramped, Nate 2026-11-12). Below the nav bar (z-40)
+            // and its menu (z-50), and never taller than the space under
+            // the bar.
             "fixed inset-x-3 bottom-3 z-30 max-h-[calc(100dvh-6rem)] overflow-y-auto",
-            "sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[25rem]",
+            "sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[30rem]",
             "rounded-xl bg-guide text-guide-foreground shadow-guide",
             // The two tokens the shared caption and focus outline read,
             // re-pointed for this indigo surface (see the doc block).
@@ -240,37 +242,43 @@ export function GuideOffer() {
             "origin-bottom motion-safe:animate-guide-in",
           ].join(" ")}
         >
-          <div className="p-4 sm:p-5">
-            <div className="flex items-start gap-3.5 pr-10 sm:gap-4">
+          {/* The phone layout stays tight (every pixel covers the page);
+              from sm the card has room, so it breathes: wider padding,
+              a larger cover and heading, a step up in body size and more
+              space between the rows. */}
+          <div className="p-4 sm:p-6">
+            <div className="flex items-start gap-3.5 pr-10 sm:gap-5">
               {/* The cover, cropped to the book by its frame (the file is
                   the delivered image, a book on black). Decorative: the
                   heading beside it says what it is. */}
-              <div className="relative aspect-[5/7] w-14 shrink-0 overflow-hidden rounded-md sm:w-[4.5rem]">
+              <div className="relative aspect-[5/7] w-14 shrink-0 overflow-hidden rounded-md sm:w-20">
                 <Image
                   src={GUIDE_ASSETS.cover}
                   alt=""
                   fill
                   loading="eager"
-                  sizes="(min-width: 640px) 101px, 79px"
+                  sizes="(min-width: 640px) 112px, 79px"
                   className="object-cover"
                 />
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 sm:pt-1">
                 <p className={CAPTION_CLASS}>{GUIDE_OFFER.eyebrow}</p>
                 <h2
                   id={headingId}
-                  className="mt-1.5 font-serif text-lg leading-tight font-bold tracking-tight text-balance sm:text-xl"
+                  className="mt-1.5 font-serif text-lg leading-tight font-bold tracking-tight text-balance sm:mt-2 sm:text-2xl"
                 >
                   {GUIDE_OFFER.heading}
                 </h2>
               </div>
             </div>
-            <p className="mt-3 text-sm leading-snug">{GUIDE_OFFER.body}</p>
+            <p className="mt-3 text-sm leading-snug sm:mt-5 sm:text-base sm:leading-relaxed">
+              {GUIDE_OFFER.body}
+            </p>
             <button
               type="button"
               aria-label={GUIDE_OFFER.close}
               onClick={() => markGuideOffer("closed")}
-              className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-md transition-colors duration-150 hover:bg-guide-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="absolute top-2 right-2 sm:top-3 sm:right-3 inline-flex size-11 items-center justify-center rounded-md transition-colors duration-150 hover:bg-guide-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <CloseIcon />
             </button>
@@ -280,13 +288,13 @@ export function GuideOffer() {
                 ref={successRef}
                 tabIndex={-1}
                 role="status"
-                className="mt-4 text-base leading-snug font-medium outline-none"
+                className="mt-4 text-base leading-snug font-medium outline-none sm:mt-5 sm:text-lg"
               >
                 {GUIDE_OFFER.success}
               </p>
             ) : (
-              <form onSubmit={handleSubmit} className="mt-4">
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+              <form onSubmit={handleSubmit} className="mt-4 sm:mt-6">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
                   <label className="block min-w-0">
                     <span className={CAPTION_CLASS}>{GUIDE_OFFER.fields.name.label}</span>
                     <input
@@ -318,7 +326,7 @@ export function GuideOffer() {
                   /* Rule 2.7: what they typed stays in the fields, and the
                      escape hatch carries it in the mailto body. The link is
                      underlined, not coral: coral on indigo is 1.07:1. */
-                  <p role="alert" className="mt-3 text-sm leading-snug font-medium">
+                  <p role="alert" className="mt-3 text-sm leading-snug font-medium sm:mt-4 sm:text-base">
                     {GUIDE_OFFER.failure.lead}{" "}
                     <a
                       href={fallbackMailto(composed, GUIDE_OFFER.heading)}
@@ -336,11 +344,13 @@ export function GuideOffer() {
                   type="submit"
                   variant="secondary"
                   disabled={status === "submitting"}
-                  className="mt-3.5 w-full"
+                  className="mt-3.5 w-full sm:mt-5"
                 >
                   {GUIDE_OFFER.submit}
                 </Button>
-                <p className="mt-2 text-xs leading-snug">{GUIDE_OFFER.smallPrint}</p>
+                <p className="mt-2 text-xs leading-snug sm:mt-3 sm:text-sm">
+                  {GUIDE_OFFER.smallPrint}
+                </p>
               </form>
             )}
           </div>
