@@ -5,7 +5,10 @@ import {
   LEAD_ALERT,
   LEAD_AUTOREPLY_QUICK,
   LEAD_FOLLOWUP_ALERT,
+  LEAD_GUIDE_ALERT,
+  LEAD_GUIDE_EMAIL,
 } from "@/content/email";
+import { GUIDE_ASSETS, GUIDE_OFFER } from "@/content/guide";
 import { MODAL_CONTACT, MODAL_QUICK } from "@/content/modal";
 import {
   followupAnswers,
@@ -15,6 +18,7 @@ import {
 } from "@/lib/lead-format";
 import type {
   FollowupPayload,
+  GuidePayload,
   NewEntryPayload,
   QuickLeadPayload,
   WaitlistPayload,
@@ -35,6 +39,13 @@ import type {
  * A waitlist entry (decision-log #58) gets the alert only: no
  * auto-reply, because the band's on-page confirmation is the whole
  * acknowledgement.
+ *
+ * A free guide lead (decision-log #76) gets the guide email in place of
+ * the auto-reply: one email with a link to the guide, never an
+ * attachment, so the visitor gets exactly one email. Nate gets his
+ * usual alert under `[Guide lead]`. The link is built from the origin
+ * the visitor submitted from, which the route passes in, so it points
+ * at the host that served them.
  *
  * Email-first (decision-log #65): both emails go out on step 1, which
  * is the lead (name, email and the offerings). Step 2's answers
@@ -121,6 +132,8 @@ function resolveMailer(): { resend: Resend; from: string } | null {
 export async function notifyLead(
   payload: NewEntryPayload,
   leadId: string,
+  /** The origin the visitor submitted from; the guide email links there. */
+  origin: string,
 ): Promise<void> {
   const mailer = resolveMailer();
   if (mailer === null) return;
@@ -133,20 +146,25 @@ export async function notifyLead(
   // waitlist band sends no auto-reply (decision-log #58): its on-page
   // confirmation is the whole acknowledgement, so that slot resolves as
   // nothing to send rather than as a failure. Nate's alert still fires,
-  // under the `[Waitlist]` label.
+  // under the `[Waitlist]` label. A guide lead's slot is the guide email
+  // (#76), which replaces the auto-reply.
   const [autoReply, alert] = await Promise.allSettled([
     payload.kind === "waitlist"
       ? Promise.resolve(true)
-      : sendAutoReply(resend, from, payload),
+      : payload.kind === "guide"
+        ? sendGuideEmail(resend, from, payload, origin)
+        : sendAutoReply(resend, from, payload),
     payload.kind === "waitlist"
       ? sendWaitlistAlert(resend, from, payload, capturedAt)
-      : sendAlert(resend, from, payload, capturedAt, leadId),
+      : payload.kind === "guide"
+        ? sendGuideAlert(resend, from, payload, capturedAt)
+        : sendAlert(resend, from, payload, capturedAt, leadId),
   ]);
 
   if (autoReply.status === "rejected") {
-    console.error("lead-notify: auto-reply threw —", String(autoReply.reason));
+    console.error("lead-notify: visitor email threw —", String(autoReply.reason));
   } else if (!autoReply.value) {
-    console.error("lead-notify: lead auto-reply NOT sent (see error above).");
+    console.error("lead-notify: visitor email (auto-reply or guide email) NOT sent (see error above).");
   }
   if (alert.status === "rejected") {
     console.error("lead-notify: Nate alert threw —", String(alert.reason));
@@ -202,6 +220,86 @@ async function sendAutoReply(
     return false;
   }
   return true;
+}
+
+/**
+ * The guide email (#76): the one email a guide lead gets, in place of
+ * the auto-reply. One paragraph closing on the link to the guide, never
+ * an attachment; the PDF is served under its clean download name
+ * (`next.config.ts`). Greets the first word of the name typed into the
+ * card's one Name field. Reply-to is the brand inbox (`SITE.email`), so
+ * "just reply to this email" reaches Nate.
+ */
+async function sendGuideEmail(
+  resend: Resend,
+  from: string,
+  payload: GuidePayload,
+  origin: string,
+): Promise<boolean> {
+  const copy = LEAD_GUIDE_EMAIL;
+  const link = new URL(GUIDE_ASSETS.pdf, origin).toString();
+  const firstName = payload.name.trim().split(/\s+/)[0] ?? payload.name;
+  const opening = copy.opening(firstName);
+
+  const text = [
+    `${opening} ${copy.linkLabel} (${link}).`,
+    "",
+    ...copy.body.flatMap((line) => [line, ""]),
+    copy.signoff,
+  ].join("\n");
+
+  const html = wrapHtml(
+    [
+      `<p>${escapeHtml(opening)} <a href="${escapeHtml(link)}">${escapeHtml(copy.linkLabel)}</a>.</p>`,
+      ...copy.body.map((line) => `<p>${escapeHtml(line)}</p>`),
+      `<p>${escapeHtml(copy.signoff)}</p>`,
+    ].join("\n"),
+  );
+
+  const { error } = await resend.emails.send({
+    from,
+    to: payload.email,
+    replyTo: SITE.email,
+    subject: copy.subject,
+    text,
+    html,
+  });
+
+  if (error) {
+    console.error("lead-notify: guide email send error —", describeSendError(error));
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Nate's alert for a guide lead (#76): the step 1 alert's shape under
+ * `[Guide lead]`, with the guide in place of the offerings. Reply-to is
+ * the visitor, so one reply reaches them.
+ */
+async function sendGuideAlert(
+  resend: Resend,
+  from: string,
+  payload: GuidePayload,
+  capturedAt: string,
+): Promise<boolean> {
+  const to = notifyAddress();
+  if (to === null) return false;
+
+  return sendToNate(resend, from, {
+    to,
+    replyTo: payload.email,
+    subject: `${leadSignal(payload).label} ${payload.name}`,
+    lines: [
+      { text: LEAD_ALERT.intro },
+      { label: GUIDE_OFFER.fields.name.label, text: payload.name },
+      { label: GUIDE_OFFER.fields.email.label, text: payload.email },
+      { label: LEAD_GUIDE_ALERT.guideLabel, text: GUIDE_OFFER.heading },
+      { label: LEAD_ALERT.capturedLabel, text: capturedAt },
+      { text: LEAD_ALERT.replyHint },
+    ],
+    what: "guide alert",
+  });
 }
 
 /**

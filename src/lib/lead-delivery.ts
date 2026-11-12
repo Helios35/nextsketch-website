@@ -1,6 +1,7 @@
 import { toAsanaTask, toSheetRecord, toSheetUpdate } from "@/lib/lead-format";
 import type {
   FollowupPayload,
+  GuidePayload,
   NewEntryPayload,
   QuickLeadPayload,
 } from "@/lib/schema";
@@ -57,8 +58,10 @@ function errMsg(reason: unknown): string {
  *
  * Since decision-log #65 this takes the kinds that add a row: step 1 of
  * the modal (`quick`, carrying the `leadId` the route minted, which
- * step 2 finds the row by) and the waitlist band (`leadId` empty). A
- * step 2 follow-up goes through `updateLead` instead.
+ * step 2 finds the row by), the waitlist band (`leadId` empty) and,
+ * since #76, the free guide card (`guide`, `leadId` empty: nothing
+ * attaches to it), which is a lead and gets its Asana task like step 1.
+ * A step 2 follow-up goes through `updateLead` instead.
  *
  * Server-only: imported solely by the route handler and reads secret
  * env vars (no `NEXT_PUBLIC_` prefix) — it must never reach the client.
@@ -200,7 +203,7 @@ async function postToSheet(body: object): Promise<Response | null> {
  * record.
  */
 async function createAsanaTask(
-  payload: QuickLeadPayload,
+  payload: QuickLeadPayload | GuidePayload,
   capturedAt: string,
   leadId: string,
 ): Promise<boolean> {

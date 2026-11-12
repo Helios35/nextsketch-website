@@ -9,8 +9,9 @@ import { leadPayloadSchema } from "@/lib/schema";
  * (docs/07-technical-spec.md §API; no database, no auth — owner
  * decision). Receives the email-first modal's two steps (decision-log
  * #65: step 1's email and offerings, which is the lead, and step 2's
- * optional answers, which attach to it) or a waitlist email from the
- * Services band (#58), re-validates it with the shared
+ * optional answers, which attach to it), a waitlist email from the
+ * Services band (#58) or a name and email from the free guide card
+ * (#76), re-validates it with the shared
  * `leadPayloadSchema`, and hands it to the durable delivery seam. Still
  * the only server-side surface (#8).
  *
@@ -60,8 +61,11 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   // Step 1 is the lead step 2 can attach to, so it gets an ID; a
-  // waitlist entry is never followed up and gets none.
+  // waitlist entry and a free guide lead (#76) are never followed up
+  // and get none.
   const leadId = payload.kind === "quick" ? crypto.randomUUID() : "";
+  // The guide email links to the guide on the host the visitor is on.
+  const origin = new URL(request.url).origin;
 
   try {
     const delivered = await deliverLead(payload, leadId);
@@ -72,7 +76,7 @@ export async function POST(request: Request): Promise<Response> {
       // failure can never block or reverse a capture that already
       // succeeded (brief Outcome 4); we never acknowledge a lead that
       // wasn't stored (Scope Guardrail).
-      after(() => notifyLead(payload, leadId));
+      after(() => notifyLead(payload, leadId, origin));
     }
     // No fake success: ok:true only once the lead is durably recorded.
     // 503 when it isn't (destination unreachable or not yet

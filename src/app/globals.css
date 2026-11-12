@@ -100,6 +100,18 @@
   --level-5: var(--chart-5);
   --offer-agentic-system: #c99a2e;
   --offer-product: #7fa85e;
+
+  /*
+   * The free guide card (decision-log #76), and nothing else: the
+   * site's existing indigo, `chart-2`, as the card's fill, so the one
+   * offer that floats over a page reads apart from coral at a glance.
+   * Named for its one use (Taxonomy §8), pointing at its chart step so
+   * the value lives once. Everything written on it is the page's own
+   * `background` step, 5.71:1 (the way a coral fill carries
+   * `brand-foreground`); linen on indigo is 2.52:1 and never used.
+   */
+  --guide: var(--chart-2);
+  --guide-foreground: var(--background);
 }
 
 /*
@@ -146,6 +158,8 @@
   --color-level-5: var(--level-5);
   --color-offer-agentic-system: var(--offer-agentic-system);
   --color-offer-product: var(--offer-product);
+  --color-guide: var(--guide);
+  --color-guide-foreground: var(--guide-foreground);
 
   /* Radius: every step derived from the one --radius token (fin). The
      squared-corner rule is retired (decision-log #48). */
@@ -185,6 +199,11 @@
   --shadow-lg: 0 8px 30px 5px rgb(0 0 0 / 0.06);
   --shadow-xl: 0 14px 44px 7px rgb(0 0 0 / 0.07);
   --shadow-2xl: 0 24px 64px 10px rgb(0 0 0 / 0.09);
+  /* The free guide card's drop shadow (#76), named for its one use. The
+     scale above barely registers on the dark page, which is right for a
+     surface with a hairline; the card has no hairline and floats over
+     whatever is under it, so its shadow has to read. */
+  --shadow-guide: 0 18px 48px 4px rgb(0 0 0 / 0.55), 0 4px 14px rgb(0 0 0 / 0.4);
 
   --text-shadow-*: initial;
   --text-shadow-over-video: 0 1px 24px rgb(0 0 0 / 0.6);
@@ -205,6 +224,10 @@
   --animate-modal-in: modal-in 200ms var(--ease-out);
   --animate-step-in: step-in 180ms var(--ease-out);
   --animate-rise-in: rise-in 200ms var(--ease-out) both;
+  /* The free guide card's entrance (#76): it slides up from below and
+     grows upward a little (the card sets `origin-bottom`), inside the
+     200ms ceiling. */
+  --animate-guide-in: guide-in 200ms var(--ease-out) both;
   /* The capability strip's marquee is continuous, ambient motion like
      the hero footage, not a transition: exempt from the 200ms ceiling
      and stopped under reduced motion (components gate it motion-safe). */
@@ -228,6 +251,13 @@
     from {
       opacity: 0;
       transform: translateY(12px);
+    }
+  }
+
+  @keyframes guide-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scale(0.96);
     }
   }
 
