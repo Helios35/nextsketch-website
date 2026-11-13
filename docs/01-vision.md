@@ -1,6 +1,6 @@
 # Vision — NextSketch Website Rebuild
 
-**Version:** 2.4 · **Date:** 2026-10-21 · **Status:** Active: aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the hero headline updated to #51; the capability strip names the two offerings (#53); the modal asks for an email first (#65)
+**Version:** 2.5 · **Date:** 2026-11-13 · **Status:** Active: the Work band is dormant (decision-log #78) and `/pricing` is one monthly rate per offer (#77); aligned to the redesign decisions (decision-log #13–#14, Redesign Unit 01); the hero headline updated to #51; the capability strip names the two offerings (#53); the modal asks for an email first (#65)
 **Answers:** Why does this exist?
 **Upstream sources:** NextSketch Brand Philosophy v1.0, NextSketch Messaging & Branding Kit v1.0, `concept-website-rebuild.md`
 
@@ -36,8 +36,8 @@ A website that is itself proof of capability: sleek, modern, fast, with purposef
 
 ## Non-goals
 
-- Not a portfolio site — the page itself is the credibility play. **CHANGED** — the "selected work" grid is **no longer RETIRED**: decision-log #16 (2026-08-24) brought `#work` back as the proof band, first section under the hero, because nothing on the page was demonstrating proof of work. The principle holds — it is one band on the page, not a portfolio site, and per-project case-study pages are still not planned.
+- Not a portfolio site — the page itself is the credibility play. **CHANGED** — the "selected work" grid is **no longer RETIRED**: decision-log #16 (2026-08-24) brought `#work` back as the proof band, first section under the hero, because nothing on the page was demonstrating proof of work. The principle holds — it is one band on the page, not a portfolio site, and per-project case-study pages are still not planned. **CHANGED again (#78, 2026-11-13):** the band is off the page (it did not help a buyer decide) and its files are dormant; case studies will come back later, built when the owner needs them, so "not planned" now means not scheduled.
 - Not a content/SEO play at launch — blog and newsletter are cut. **CURRENT.**
-- No e-commerce, no client portal, no CMS, **no backend beyond one serverless lead route — ever** (decision-log #8). **CURRENT** (hardened post-pivot). *"No pricing display" is* **CHANGED** *— `/pricing` publishes the four tiers and their figures (decision-log #23/#25, 2026-08-25). The page still sells nothing and takes no payment: it qualifies, so #8 is untouched.*
+- No e-commerce, no client portal, no CMS, **no backend beyond one serverless lead route — ever** (decision-log #8). **CURRENT** (hardened post-pivot). *"No pricing display" is* **CHANGED** *— `/pricing` publishes the tiers and their figures (decision-log #23/#25, 2026-08-25; two tiers since #56, one monthly rate each since #77). The page still sells nothing and takes no payment: it qualifies, so #8 is untouched.*
 - Not a multi-page site — one page plus the modal. **CHANGED** — the site is **four routes** since decision-log #23 (2026-08-25) and **#30** (2026-08-28): the scrolling home page, `/pricing`, and the two service routes `/services/product` and `/services/agentic-system`. The principle holds (no sprawl, no CMS, every page static, the modal still the only lead path); the literal count does not.
 - No lead nurture infrastructure (CRM, sequences) at launch. **CURRENT** — note the durable record is a Google Sheet + best-effort Asana task with transactional email, not a CRM (decision-log #7/#8).
