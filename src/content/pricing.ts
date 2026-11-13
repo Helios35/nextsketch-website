@@ -152,9 +152,10 @@ export const PRICING_CTA_CUSTOM = "Let's See if We're a Fit";
  * else since #53. Names are the offerings' (`SERVICES`), so a rename
  * cannot leave a tier behind; figures are `PRICES`'.
  *
- * **One price each since #77:** the monthly while we work, two months
- * minimum, nothing upfront, and its caption saying what the months
- * cover. Then the "After the build" band, which carries no figure: the
+ * **One price each since #77:** the monthly while we work, and under it
+ * the term alone, "Two months minimum." (Nate cut the captions to that
+ * before merge: "just the cost"). Then the "After the build" band,
+ * which carries no figure: the
  * product tier's ownership line, then `PRICING.ongoingWork` on both.
  * `features` is the one list left, "Included", and it says what the paid
  * months deliver. The agentic tier's "What the monthly covers" list and
@@ -163,9 +164,9 @@ export const PRICING_CTA_CUSTOM = "Let's See if We're a Fit";
  * route keeps its four lines as its own "After the build" list
  * (`src/content/service-pages.ts`).
  *
- * A project someone else started still takes the product card: the
- * monthly covers assessing what's already built, which is what keeps
- * "the same published price as a new build" true.
+ * A project someone else started still takes the product card at the
+ * same $9,998, which keeps "the same published price as a new build"
+ * true; the card no longer says the monthly covers the assessment.
  */
 export const PRICING_TIERS = [
   {
@@ -177,9 +178,8 @@ export const PRICING_TIERS = [
     headlinePriceLabel: PRICING.workLabel,
     headlinePrice: PRICES["agentic-system"].monthly,
     headlinePriceUnit: PRICING.perMonth,
-    /** DRAFT (#77). */
-    headlinePriceNote:
-      "Nothing upfront, two months minimum. Covers the strategy, the process mapping, the build and validation.",
+    /** The term, and nothing more (Nate, 2026-11-13: "just the cost"). */
+    headlinePriceNote: "Two months minimum.",
     /** The first line is DRAFT (#77); the other three are #56's. */
     features: [
       "Your AI strategy, and where agents save the most time",
@@ -196,9 +196,8 @@ export const PRICING_TIERS = [
     headlinePriceLabel: PRICING.buildLabel,
     headlinePrice: PRICES.product.monthly,
     headlinePriceUnit: PRICING.perMonth,
-    /** DRAFT (#77): #75's build caption, from "Nothing upfront". */
-    headlinePriceNote:
-      "Nothing upfront, two months minimum, which lines up with the 6 to 8 week build. Includes process mapping and discovery, and on a project someone else started, assessing what's already built.",
+    /** The term, and nothing more (Nate, 2026-11-13: "just the cost"). */
+    headlinePriceNote: "Two months minimum.",
     /** DRAFT (#77). */
     ownership: "You own what we built.",
     features: [

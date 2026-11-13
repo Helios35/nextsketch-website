@@ -125,6 +125,21 @@ Line numbers are `main`'s.
 
 ---
 
+## Owner change before merge (Nate, 2026-11-13)
+
+Nate looked at the cards in the dev server and cut both price captions to the term alone. "Nothing upfront" there could read as no first payment, and the rest over-explained: "its just the cost." He said to touch nothing else.
+
+| | Was (first cut) | Now |
+|---|---|---|
+| Agentic caption | Nothing upfront, two months minimum. Covers the strategy, the process mapping, the build and validation. | Two months minimum. |
+| Product caption | Nothing upfront, two months minimum, which lines up with the 6 to 8 week build. Includes process mapping and discovery, and on a project someone else started, assessing what's already built. | Two months minimum. |
+
+**Left as they were, per "DO NOT touch anything else":** "nothing upfront" still appears in the `/pricing` intro, its search description, and the product route's "Finish what someone started" line ("Nothing upfront, two months minimum, and the finished product is yours"). The same first-payment reading could apply there. Each is one string if Nate wants it changed.
+
+**What the cut drops:** the product card no longer says the monthly covers assessing a project someone else started. The product route's "The same published price as a new build" still holds, because it's the same $9,998, but the card no longer explains why.
+
+Both cards still line up row for row: at 1280 in the dev server, both read 627, 725, 861, 974, 1115, 1320.
+
 ## What shipped
 
 ### Part A: pricing
@@ -136,7 +151,7 @@ Line numbers are `main`'s.
 | Description | Owner line, word for word: "We start with your AI strategy. We map your systems, your processes and how work actually moves through your business, then build agents into the places they save the most time." | Unchanged ("Two starting points, one price..."), which is now literally true: one figure |
 | Price label | While we work | While we build |
 | Price | **$2,998** per month | **$9,998** per month |
-| Caption | Nothing upfront, two months minimum. Covers the strategy, the process mapping, the build and validation. | Nothing upfront, two months minimum, which lines up with the 6 to 8 week build. Includes process mapping and discovery, and on a project someone else started, assessing what's already built. |
+| Caption | Two months minimum. | Two months minimum. |
 | After the build | Ongoing work is priced separately. | You own what we built. / Ongoing work is priced separately. |
 | Included | Your AI strategy, and where agents save the most time · A map of how the work runs today · Agents built into the tools you already use · Validated on your real work | Unchanged (scope, product in 6 to 8 weeks, everything handed over) |
 | CTA, preselect | Qualify Your Project, `agentic` (unchanged) | Let's See if We're a Fit, `new_product` (unchanged) |
@@ -182,9 +197,9 @@ Owner copy, not DRAFT: the agentic description and "Ongoing work is priced separ
 2. Intro: "Both offers are one monthly rate while we work, with two months minimum and nothing upfront. When the work is done, you own what we built, and anything after that is priced when it comes up. No hourly billing, no meter running during meetings, no surprise invoices."
 3. Term: "Both offers bill monthly while we work, two months minimum. When the work is done, the monthly stops."
 4. Labels: "While we work", "While we build", "After the build".
-5. Agentic caption: "Nothing upfront, two months minimum. Covers the strategy, the process mapping, the build and validation."
+5. Agentic caption: owner direction, not DRAFT (see Owner change below): "Two months minimum."
 6. Agentic "Included", first line: "Your AI strategy, and where agents save the most time".
-7. Product caption: "Nothing upfront, two months minimum, which lines up with the 6 to 8 week build." The rest is #75's DRAFT, unchanged.
+7. Product caption: owner direction, not DRAFT: "Two months minimum."
 8. Product ownership: "You own what we built."
 
 **`/services/agentic-system`**
@@ -197,7 +212,7 @@ Owner copy, not DRAFT: the agentic description and "Ongoing work is priced separ
 11. Ongoing product support: "The product is live, and you own it. If you want us to keep it tuned and running, we scope that work with you. Ongoing work is priced separately."
 
 **Removed lines**
-- `/pricing`: the old intro, term and agentic description; "Upfront", "$3,998", "Scoped upfront. Process mapping, build and validation.", "Ongoing", "Required the first two months, optional after.", "What the monthly covers" and its four lines; "Build", the old build caption, "Ongoing product support", "$4,998 per month", the support caption, "What support covers" and its four lines.
+- `/pricing`: the old intro, term and agentic description; "Upfront", "$3,998", "Scoped upfront. Process mapping, build and validation.", "Ongoing", "Required the first two months, optional after.", "What the monthly covers" and its four lines; "Build", the old build caption (including #75's "which lines up with the 6 to 8 week build" and "Includes process mapping and discovery, and on a project someone else started, assessing what's already built."), "Ongoing product support", "$4,998 per month", the support caption, "What support covers" and its four lines.
 - `/services/agentic-system`: "What the monthly covers".
 - `/services/product`: "Two months minimum, then staying on is your call", the old support description, "One monthly rate, never billed by the hour".
 
