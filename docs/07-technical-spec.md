@@ -1,6 +1,6 @@
 # Technical Spec — NextSketch Website Rebuild
 
-**Version:** 2.8 · **Date:** 2026-11-12 · **Status:** Active (2.8: the free guide card, decision-log #76: the `guide` kind, its Sheet row and Asana task, the guide email in place of the auto-reply (linked from the request's origin), the PDF's headers in `next.config.ts`, `guide-offer.tsx`, `src/content/guide.ts`, `src/lib/guide-offer.ts` and `public/guides/`; 2.7: the email-first modal, decision-log #65 as amended the same day: the `quick` and `followup` kinds, step 1's two names, the lead ID, the Sheet update and the follow-up alert; 2.6: the About team, decision-log #63 and #64: `team-avatar.tsx`, `use-loop-video.ts`, `public/team/`, the portrait placeholder deleted; 2.5: the waitlist band's third payload kind, `waitlist`, decision-log #58, and the two offerings' tree, #53; 2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
+**Version:** 2.9 · **Date:** 2026-11-13 · **Status:** Active (2.9: the Work files dormant in the tree, decision-log #78; `PRICES` holds one monthly per offer, #77; 2.8: the free guide card, decision-log #76: the `guide` kind, its Sheet row and Asana task, the guide email in place of the auto-reply (linked from the request's origin), the PDF's headers in `next.config.ts`, `guide-offer.tsx`, `src/content/guide.ts`, `src/lib/guide-offer.ts` and `public/guides/`; 2.7: the email-first modal, decision-log #65 as amended the same day: the `quick` and `followup` kinds, step 1's two names, the lead ID, the Sheet update and the follow-up alert; 2.6: the About team, decision-log #63 and #64: `team-avatar.tsx`, `use-loop-video.ts`, `public/team/`, the portrait placeholder deleted; 2.5: the waitlist band's third payload kind, `waitlist`, decision-log #58, and the two offerings' tree, #53; 2.4: `hero-cta.tsx` left the tree, folded into `<Button>`, build-note 34): reconciled to the as-built lead pipeline (Sprint 03 doc audit); route count and project structure updated for the service routes (#30); the scroll-scrubbed video components and their engine removed from the tree (#46); styling, fonts, motion and the hero loop's assets reconciled to the fin Zen Linen dark rebrand (#47 to #50)
 **Answers:** How is it built?
 **References:** `05-business-rules.md` (logic to implement) · `06-taxonomy.md` (names/values) · `08-runbook.md` (ops) · Live code: `src/app/api/qualify/route.ts`, `src/lib/{schema,lead-delivery,lead-format,lead-notify,qualify}.ts`, `scripts/inbound-leads.gs`
 
@@ -130,8 +130,8 @@ src/
   app/            layout.tsx (the dark `background` shell, the three
                   next/font families, modal provider; #47; the
                   free guide card, #76),
-                  page.tsx (home: hero, the proof band and six
-                  sections; the waitlist band inside Services, #58),
+                  page.tsx (home: hero, the proof band and five
+                  sections, #78; the waitlist band inside Services, #58),
                   pricing/page.tsx (the standalone route, #23),
                   services/product/page.tsx +
                   services/agentic-system/page.tsx (the two service
@@ -142,7 +142,7 @@ src/
                   (recoloured, #49),
                   api/qualify/route.ts (the only server surface)
   components/     hero.tsx + hero-loop.tsx, site-nav.tsx,
-                  site-footer.tsx, the six section components,
+                  site-footer.tsx, the five section components,
                   team-avatar.tsx (About's flip cards, #63),
                   pricing-tiers.tsx (the /pricing grid, #25),
                   service-page.tsx + service-process.tsx (the two
@@ -150,17 +150,18 @@ src/
                   proof-band.tsx + waitlist-band.tsx (the home
                   bands, #58), guide-offer.tsx (the free guide
                   card, #76),
-                  work-rail.tsx, scroll-reveal.tsx,
+                  scroll-reveal.tsx,
                   parallax.tsx, section-heading.tsx, brand-wordmark.tsx,
                   qualification-modal(-provider).tsx, modal-trigger.tsx,
                   button.tsx (variant + size, #26; the hero's `large`
                   size, build-note 34)
-                  (DORMANT, the retired paper plan: hero-section.tsx,
+                  (DORMANT: work-section.tsx + work-rail.tsx, the
+                   Work band, #78; the retired paper plan: hero-section.tsx,
                    sketch-accent.tsx, the held sections, Reveal, etc.:
                    on disk, not rendered; delete vs. keep is an open
                    owner call, build-note 08)
   content/        copy.ts (SITE + NAV + LANDING live; retired-plan copy
-                  dormant), work.ts, pricing.ts, services.ts,
+                  dormant), work.ts (dormant, #78), pricing.ts, services.ts,
                   service-pages.ts (the two routes' content, #30,
                   #53; references services.ts/pricing.ts, never
                   re-literals their names or figures), modal.ts,
@@ -180,7 +181,7 @@ src/
 public/           hero-loop.mp4 + hero-loop-poster.jpg (the hero loop,
                   #46; since #50 the delivered hero-loop-sketch footage
                   and its first-frame poster, byte-identical, installed
-                  at these paths), work/ (the #work screenshots),
+                  at these paths), work/ (the #work screenshots, dormant, #78),
                   team/ (the About avatars: {id}.mp4 as delivered +
                   {id}-poster.jpg, #63), placeholders/ (empty since
                   #63 retired the About portrait; the naming

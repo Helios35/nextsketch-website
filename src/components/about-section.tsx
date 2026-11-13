@@ -19,7 +19,7 @@ const ACCENT_PHRASE = ABOUT.accentPhrase;
  * About (#about): the team you work with (decision-log #63; it was the
  * person behind it, solo, until then; docs/03-site-architecture.md row
  * 7). Same slot, id, nav label and eyebrow. It sits flat on the
- * full-width band with the shared gutter rhythm, the mono "(05)"
+ * full-width band with the shared gutter rhythm, the mono "(04)"
  * eyebrow and the coral payoff phrase; entrances are the shared
  * ScrollReveal at the hero stagger (0 / 120+i·80 / 200ms), and the team
  * row carries the section's single whisper parallax, as the portrait it
@@ -55,7 +55,7 @@ export function AboutSection() {
       className="w-full px-6 py-24 sm:px-8 sm:py-28 lg:px-16 lg:py-36"
     >
       <ScrollReveal>
-        <SectionHeading index="05" eyebrow={ABOUT.eyebrow}>
+        <SectionHeading index="04" eyebrow={ABOUT.eyebrow}>
           <span id="about-headline">
             {phraseStart === -1 ? (
               headline

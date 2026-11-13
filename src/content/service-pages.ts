@@ -1,4 +1,4 @@
-import { PRICING, PRICING_TIERS } from "@/content/pricing";
+import { PRICING } from "@/content/pricing";
 import { SERVICE_NEED, SERVICES } from "@/content/services";
 import type {
   ServicePageBlock,
@@ -13,9 +13,10 @@ import type {
  *
  * - `/services/agentic-system` is **Agentic System Integration**. Its
  *   blocks are four example jobs (#57), each saying what the agent does
- *   and what we map first, and the page lists what's included and what
- *   the monthly covers. The two depths of #29 (AI Workflow Integration,
- *   Internal Tool) retired with their blocks and anchors.
+ *   and what we map first, and the page lists what you get and, since
+ *   #77, the ongoing work we can pick up after the build (it was "what
+ *   the monthly covers"). The two depths of #29 (AI Workflow
+ *   Integration, Internal Tool) retired with their blocks and anchors.
  * - `/services/product` is **AI Product Development**, one offer with
  *   three ways in: build from scratch, finish what someone started, and
  *   ongoing product support. They reuse the three existing blocks and their
@@ -24,13 +25,12 @@ import type {
  *
  * Every rendered string here is owner copy from the two-offerings brief
  * (2026-10-15), shipped verbatim, except the lines marked DRAFT below:
- * #71's morning sort, and the lines #75 changed, which build-note 44
- * lists. Names are
- * referenced, never copied: the eyebrows are the offerings' names, the
- * agentic block names are the offering's `examples`, the monthly list is
- * the agentic tier's, and each ribbon is its page's block names. A
+ * #71's morning sort, the lines #75 changed (build-note 44), and the
+ * lines #77 changed (build-note 46). Names are referenced, never copied:
+ * the eyebrows are the offerings' names, the agentic block names are the
+ * offering's `examples`, and each ribbon is its page's block names. A
  * rename lands everywhere at once. No price: prices live on `/pricing`
- * only (#73).
+ * only (#73), and ongoing work has no figure anywhere (#77).
  *
  * `need` on every CTA comes from `SERVICE_NEED`, so the page, its
  * blocks, its card and its tier preselect the same need.
@@ -51,16 +51,16 @@ const SERVICE = {
   [S in ServiceSlug]: Extract<(typeof SERVICES)[number], { slug: S }>;
 };
 
-const AGENTIC_TIER = PRICING_TIERS[0] satisfies Extract<
-  (typeof PRICING_TIERS)[number],
-  { slug: "workflow" }
->;
-
-/** Labels the routes render around their lists (#57). Owner copy. */
+/**
+ * Labels the routes render around their lists (#57). Owner copy, except
+ * `afterBuild` (DRAFT, #77), which is `/pricing`'s band label, and
+ * `afterBuildNote`, the #77 owner line both tiers carry.
+ */
 export const SERVICE_PAGE_LABELS = {
   mapFirst: "What we map first",
   included: "What you get",
-  monthlyCovers: PRICING.monthlyCoversLabel,
+  afterBuild: PRICING.afterLabel,
+  afterBuildNote: PRICING.ongoingWork,
 } as const;
 
 const EXAMPLES = SERVICE["agentic-system"].examples;
@@ -151,26 +151,32 @@ const PRODUCT_BLOCKS = [
     description:
       "Someone got you 70% there and disappeared. We assess what was built, map where it needs to go, and get you to launch.",
     need: SERVICE_NEED.product,
-    /** DRAFT (#75): the last line. The build rate covers the assessment. */
+    /**
+     * The last line is DRAFT (#77), replacing #75's "Two months minimum,
+     * then staying on is your call", which read as a plan carrying on.
+     * The monthly covers the assessment, so "the same published price as
+     * a new build" stays true (an open owner item under #73).
+     */
     included: [
       "A written assessment of what was built and what to keep",
       "The direction checked before more money goes in",
       "The same published price as a new build",
-      "Two months minimum, then staying on is your call",
+      "Two months minimum, and the finished product is yours",
     ],
   },
   {
     id: "product-support",
     /**
-     * DRAFT (#75). The name is Nate's words for it, 2026-11-04: "Ongoing
-     * product team" read as a team building new features, which support
-     * does not do. The anchor already says `product-support`. The list is
-     * the rest of the after-launch list in Nate's Strata proposal, with no
-     * figure (#73).
+     * Still a way in (#77), with no figure and no set rate. The name is
+     * Nate's words for it (#75, 2026-11-04); the anchor already says
+     * `product-support`. The description is DRAFT (#77) and ends on the
+     * #77 owner line; it replaces #75's, which said support had no new
+     * features and that new features went back to the build rate. The
+     * list is #75's (the after-launch list in Nate's Strata proposal),
+     * less its last line, "One monthly rate, never billed by the hour".
      */
     name: "Ongoing product support",
-    description:
-      "The product is live. Now it needs tuning and upkeep. Support covers both, with no new features. When you want new features, we go back to the build rate for those months, then back to support.",
+    description: `The product is live, and you own it. If you want us to keep it tuned and running, we scope that work with you. ${PRICING.ongoingWork}`,
     need: SERVICE_NEED.product,
     included: [
       "Tuning the agents so they keep getting better",
@@ -179,7 +185,6 @@ const PRODUCT_BLOCKS = [
       "Upkeep when outside tools change",
       "Watching what it costs to run, and keeping backups",
       "Small changes, help for your team, and documentation",
-      "One monthly rate, never billed by the hour",
     ],
   },
 ] as const satisfies readonly ServicePageBlock[];
@@ -220,8 +225,19 @@ export const SERVICE_PAGES: Record<ServicePageSlug, ServicePageContent> = {
         "Everyday work handled: emails, reports, quotes, data entry",
         "Validated in production, on your real work",
       ],
-      /** The agentic tier's list, word for word, so it is read from there. */
-      monthlyCovers: AGENTIC_TIER.monthlyCovers,
+      /**
+       * The ongoing work we can pick up after the build (#77), under
+       * "After the build" and above "Ongoing work is priced separately."
+       * These are the four lines the agentic tier listed as "What the
+       * monthly covers" (#56), word for word; they left the tier when the
+       * monthly became the rate while we work, and live here now.
+       */
+      afterBuild: [
+        "Watching what's running, so problems get caught early",
+        "Fixes when your tools or data change",
+        "Tuning the agents so they keep getting better",
+        "Mapping the next step worth handing to an agent",
+      ],
     },
   },
   product: {

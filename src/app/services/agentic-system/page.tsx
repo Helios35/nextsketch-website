@@ -18,9 +18,10 @@ export const metadata: Metadata = {
  *
  * Its four anchored blocks are **example jobs** (#57): email triage,
  * weekly reporting, quoting and intake, and document and data entry,
- * each saying what the agent does and what we map first. Then what's
- * included and what the monthly covers, and the price in the hero.
- * Every CTA preselects `agentic`. The two depths of #29 (AI Workflow
+ * each saying what the agent does and what we map first. Then what you
+ * get and what we can pick up after the build (#77, which says ongoing
+ * work is priced separately). No price on the page (#73). Every CTA
+ * preselects `agentic`. The two depths of #29 (AI Workflow
  * Integration, Internal Tool) and their anchors retired with #53; a
  * link to either anchor still opens this page, at the top.
  *

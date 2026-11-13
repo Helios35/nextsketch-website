@@ -6,10 +6,11 @@ import type { PricingTier, PricingTierSlug, ServiceSlug } from "@/lib/types";
  * Pricing page (`/pricing`) copy — decision-log #23 (the route),
  * **#25** (the tier structure, the term, and the naming), **#45** (the
  * 2026-09-25 price reset), **#56** (2026-10-15: two tiers, one per
- * offering, each listing what's included and what the monthly covers)
- * and **#75** (2026-11-04: the product as a build rate from the start and
- * ongoing product support, with no upfront price, and a two-month minimum
- * on both offers).
+ * offering, each listing what's included), **#75** (2026-11-04: the
+ * product's build rate, and a two-month minimum on both offers) and
+ * **#77** (2026-11-13: one monthly rate per offer while we work, two
+ * months minimum, nothing upfront; the client owns what we built, and
+ * ongoing work is priced separately, with no figure).
  *
  * Pricing ships as a **standalone route, not a section**. A static
  * route is not a backend, so decision #8 is untouched: the page
@@ -17,28 +18,30 @@ import type { PricingTier, PricingTierSlug, ServiceSlug } from "@/lib/types";
  * payment**. It qualifies. `/api/qualify` remains the entire
  * server-side footprint.
  *
- * Structure traces to Brand Philosophy §6: "a defined upfront build,
- * then a lighter ongoing partnership." Since #75 the product's build is
- * itself monthly from the start, with no upfront figure, and the lighter
- * rate is its ongoing product support. Scoped, never hourly, so the client
- * "knows exactly what they're paying and what they're getting. No
- * surprise invoices."
+ * Brand Philosophy §6 framed the offer as "a defined upfront build,
+ * then a lighter ongoing partnership." Since #77 neither offer has an
+ * upfront price or a set ongoing rate: each is one monthly rate while we
+ * work, and what comes after is priced when it comes up (buyers compare
+ * a monthly with no end to the software bill they pay today). Still
+ * scoped, never hourly, so the client "knows exactly what they're paying
+ * and what they're getting. No surprise invoices."
  *
  * **The term is said out loud, on every card and once above the grid.**
- * The monthly is required for the first two months on both tiers (#75,
- * down from the three of #25 and #45). A price that hides a commitment
- * is exactly the surprise invoice §6 rejects, so it is not tucked into a
- * footnote. The page-level `term` names no figure because the monthly
- * differs by tier.
+ * The monthly runs for two months at least on both tiers (#75, down from
+ * the three of #25 and #45), and stops when the work is done (#77). A
+ * price that hides a commitment is exactly the surprise invoice §6
+ * rejects, so it is not tucked into a footnote. The page-level `term`
+ * names no figure because the monthly differs by tier.
  *
  * **Two tiers since #56**, one per offering (#53): Agentic System
  * Integration and AI Product Development. Internal Tool retired from
  * the site, and the struck former prices retired with it (their label
  * and field are gone too): a discount that never expires stopped
- * reading as one. Every figure is read from `PRICES` in `src/content/services.ts`,
- * the one place a price lives. The copy in this file is owner copy from
- * the two-offerings brief (2026-10-15), shipped verbatim, except the
- * lines marked DRAFT below, which build-note 44 lists for Nate's yes.
+ * reading as one. Every figure is read from `PRICES` in
+ * `src/content/services.ts`, the one place a price lives. The two lines
+ * the #77 brief gave word for word (the agentic description and
+ * `ongoingWork`) are owner copy; every other line #77 changed or wrote
+ * is DRAFT, and build-note 46 lists them for Nate's yes.
  *
  * No em dashes in any rendered string (decision-log #19); the doc
  * blocks in this file are exempt. `title` separates with a pipe.
@@ -46,11 +49,17 @@ import type { PricingTier, PricingTierSlug, ServiceSlug } from "@/lib/types";
 export const PRICING = {
   /** Browser tab and search-result title for the route (#59). */
   title: "Pricing: AI Automation and AI Product Development | NextSketch",
-  /** DRAFT (#75): only the agentic offering has an upfront price now. */
+  /** DRAFT (#77): one monthly rate per offer. */
   description:
-    "Published prices for AI automation and AI product development. You know every number before you commit. No hourly billing, no surprise invoices.",
+    "Published prices for AI automation and AI product development. One monthly rate while we work, two months minimum. No hourly billing, no surprise invoices.",
   /** Mono micro-label above the heading (docs/04-ux-spec.md §Typography). */
   eyebrow: "Pricing",
+  /**
+   * Left as it was (an open owner item, #75 call 4 and the #77 brief):
+   * "upfront" means the price is out in the open. No line on the site
+   * says "nothing upfront" any more (Nate, 2026-11-13), so the word has
+   * only this meaning here.
+   */
   headline: "NextSketch puts the price upfront.",
   /**
    * The headline's coral payoff word (docs/04-ux-spec.md §Typography),
@@ -59,39 +68,40 @@ export const PRICING = {
    */
   accentPhrase: "upfront",
   /**
-   * Brand Philosophy §6 in the site's voice, rewritten for the monthly
-   * fee (#56) and for the offers' two different shapes (#75, DRAFT). "No
-   * meter running during meetings" and "no surprise invoices" are §6
-   * verbatim. The offers' names are read from `SERVICES`, so a rename
-   * cannot leave this line behind.
+   * Brand Philosophy §6 in the site's voice, rewritten for one monthly
+   * rate per offer (#77, DRAFT). "No meter running during meetings" and
+   * "no surprise invoices" are §6 verbatim. The ownership clause is the
+   * #77 brief's short version, which says it of both offers.
    */
-  intro: `${SERVICES[0].name} has a scoped upfront price, then a monthly rate. ${SERVICES[1].name} has no upfront price: a monthly rate from the start while we build, then a lower rate for ongoing product support after launch. You know every number before you commit. No hourly billing, no meter running during meetings, no surprise invoices.`,
+  intro:
+    "Both offers are one monthly rate while we work, with two months minimum. When the work is done, you own what we built, and anything after that is priced when it comes up. No hourly billing, no meter running during meetings, no surprise invoices.",
   /**
    * The commitment, stated plainly and before the cards. Owner-settled
-   * (#25), two months since #75 (DRAFT wording). It names no figure
-   * because the monthly differs by tier.
+   * (#25), two months since #75, and since #77 it says the monthly ends
+   * with the work, so nothing reads as a plan that carries on (DRAFT
+   * wording). It names no figure because the monthly differs by tier.
    */
-  term:
-    "The monthly is required for the first two months on both offers. After that, staying on is your call.",
+  term: "Both offers bill monthly while we work, two months minimum. When the work is done, the monthly stops.",
   /**
    * Accessible name for the tier grid (screen-reader only). The grid is
    * a landmark region with no visible heading of its own — the page's
    * <h1> already names it — so it needs one that is not the eyebrow.
    */
   tiersHeading: "Pricing tiers",
-  /** Mono micro-labels inside each card. */
-  upfrontLabel: "Upfront",
-  ongoingLabel: "Ongoing",
-  /** The product tier's two bands (#75). "Build" is DRAFT. */
-  buildLabel: "Build",
-  supportLabel: "Ongoing product support",
-  /** What a tier's headline price is per, when it is per anything (#75). */
+  /** Mono micro-labels over each card's price (#77). DRAFT. */
+  workLabel: "While we work",
+  buildLabel: "While we build",
+  /** What a tier's price is per (#75; both tiers since #77). */
   perMonth: "per month",
+  /** Mono micro-label over each card's second band (#77). DRAFT. */
+  afterLabel: "After the build",
+  /**
+   * Owner copy, word for word (#77, Nate, 2026-11-13). On both cards, and
+   * under the agentic route's "After the build" list. No figure and no
+   * "starting at", anywhere.
+   */
+  ongoingWork: "Ongoing work is priced separately.",
   featuresLabel: "Included",
-  /** The second list's label (#56). Also heads the agentic page's list. */
-  monthlyCoversLabel: "What the monthly covers",
-  /** The product tier's second list (#75). DRAFT. */
-  supportCoversLabel: "What support covers",
   /**
    * Closing line under the grid. Says the page sells nothing directly,
    * which is decision #8 showing through to the visitor rather than
@@ -143,45 +153,40 @@ export const PRICING_CTA_CUSTOM = "Let's See if We're a Fit";
  * else since #53. Names are the offerings' (`SERVICES`), so a rename
  * cannot leave a tier behind; figures are `PRICES`'.
  *
- * `features` is the "Included" list and `monthlyCovers` the list under
- * `coversLabel`. Together they close the long-open "tier feature bullets"
- * item and the "what the monthly buys" one.
+ * **One price each since #77:** the monthly while we work, and under it
+ * the term alone, "Two months minimum." (Nate cut the captions to that
+ * before merge: "just the cost"). Then the "After the build" band,
+ * which carries no figure: the
+ * product tier's ownership line, then `PRICING.ongoingWork` on both.
+ * `features` is the one list left, "Included", and it says what the paid
+ * months deliver. The agentic tier's "What the monthly covers" list and
+ * the product tier's "What support covers" list are gone: both described
+ * work after the build, which is now priced separately. The agentic
+ * route keeps its four lines as its own "After the build" list
+ * (`src/content/service-pages.ts`).
  *
- * **The product tier is a build rate and ongoing product support (#75),
- * with no upfront price.** Build starts from the start and runs two months
- * minimum, support starts after launch and adds no new features, and new
- * features later mean the build rate for those months, then back to
- * support. Its list is the head of the after-launch list in Nate's Strata
- * proposal, led by tuning; the product route carries the rest
- * (`src/content/service-pages.ts`). A project someone else started takes
- * this same card: the build rate covers assessing what's already built,
- * which is what keeps "the same published price as a new build" true.
- * Every line new to this tier is DRAFT. The brief's $11,998 setup was
- * removed before merge (Nate, 2026-11-04).
+ * A project someone else started still takes the product card at the
+ * same $9,998, which keeps "the same published price as a new build"
+ * true; the card no longer says the monthly covers the assessment.
  */
 export const PRICING_TIERS = [
   {
     slug: "workflow",
     name: SERVICES[0].name,
+    /** Owner copy, word for word (#77, Nate, 2026-11-13). */
     description:
-      "AI automation for the work you already do. We map how your team works, then plug Claude or OpenAI agents into it: email triage, weekly reports, quotes and intake, data entry. No custom tool to build, nothing new to babysit.",
-    headlinePriceLabel: PRICING.upfrontLabel,
-    headlinePrice: PRICES["agentic-system"].upfront,
-    headlinePriceNote: "Scoped upfront. Process mapping, build and validation.",
-    ongoingLabel: PRICING.ongoingLabel,
-    ongoing: `${PRICES["agentic-system"].monthly} ${PRICING.perMonth}`,
-    ongoingNote: "Required the first two months, optional after.",
+      "We start with your AI strategy. We map your systems, your processes and how work actually moves through your business, then build agents into the places they save the most time.",
+    headlinePriceLabel: PRICING.workLabel,
+    headlinePrice: PRICES["agentic-system"].monthly,
+    headlinePriceUnit: PRICING.perMonth,
+    /** The term, and nothing more (Nate, 2026-11-13: "just the cost"). */
+    headlinePriceNote: "Two months minimum.",
+    /** The first line is DRAFT (#77); the other three are #56's. */
     features: [
+      "Your AI strategy, and where agents save the most time",
       "A map of how the work runs today",
       "Agents built into the tools you already use",
       "Validated on your real work",
-    ],
-    coversLabel: PRICING.monthlyCoversLabel,
-    monthlyCovers: [
-      "Watching what's running, so problems get caught early",
-      "Fixes when your tools or data change",
-      "Tuning the agents so they keep getting better",
-      "Mapping the next step worth handing to an agent",
     ],
   },
   {
@@ -190,25 +195,16 @@ export const PRICING_TIERS = [
     description:
       "New software with AI agents built in. Two starting points, one price: a new product built from scratch and live in 6 to 8 weeks, or a product someone got 70% of the way there before disappearing.",
     headlinePriceLabel: PRICING.buildLabel,
-    headlinePrice: PRICES.product.build,
+    headlinePrice: PRICES.product.monthly,
     headlinePriceUnit: PRICING.perMonth,
-    headlinePriceNote:
-      "From the start, while we build, with no upfront cost. Two months minimum, which lines up with the 6 to 8 week build. Includes process mapping and discovery, and on a project someone else started, assessing what's already built.",
-    ongoingLabel: PRICING.supportLabel,
-    ongoing: `${PRICES.product.support} ${PRICING.perMonth}`,
-    ongoingNote:
-      "Starts after launch, and staying on is your call. Covers tuning and keeping things running, but no new features. New features later go back to the build rate for those months, then back to support.",
+    /** The term, and nothing more (Nate, 2026-11-13: "just the cost"). */
+    headlinePriceNote: "Two months minimum.",
+    /** DRAFT (#77). */
+    ownership: "You own what we built.",
     features: [
       "A mapped scope you sign off on",
       "A working product in production in 6 to 8 weeks",
       "Everything handed over: code, accounts, deployment",
-    ],
-    coversLabel: PRICING.supportCoversLabel,
-    monthlyCovers: [
-      "Tuning the agents so they keep getting better",
-      "Bug fixes and monitoring",
-      "Security patches and updates",
-      "Upkeep when outside tools change",
     ],
   },
 ] as const satisfies readonly PricingTier[];

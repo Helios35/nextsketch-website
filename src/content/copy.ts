@@ -70,12 +70,11 @@ export const NAV = {
    * footer, not a nav item. The "Why" label is DRAFT copy pending
    * owner approval (the held sections' old items are gone with them).
    *
-   * #work leads (decision-log #16 / #21, 2026-08-24): the proof band
-   * ships as the first section under the hero, so it also takes the
-   * first slot — a visitor who came for evidence should be one click
-   * from it, which is the whole reason the section exists. Shipped as
-   * the builder's judgment call in PR #27 and **ratified as the
-   * owner's decision** by #21, so it is not a call to quietly reverse.
+   * #work led the list from decision-log #16 / #21 (2026-08-24) until
+   * **#78** (2026-11-13) took the Work band off the home page, and its
+   * item with it: Why leads now, in page order. Nothing links to
+   * `/#work` any more; the anchor's id stays in `SECTION_IDS` with the
+   * other dormant sections'.
    *
    * Pricing takes the last slot (decision-log #24, 2026-08-25). It is
    * the only item that leaves the page, and the one a visitor looks
@@ -90,7 +89,6 @@ export const NAV = {
    * survives, so a bad id still fails typecheck.
    */
   items: [
-    { href: sectionHref("work"), label: "Work" },
     { href: sectionHref("why"), label: "Why" },
     { href: sectionHref("services"), label: "Services" },
     { href: sectionHref("process"), label: "Process" },
@@ -311,9 +309,10 @@ export const PROCESS = {
 } as const;
 
 /**
- * The proof band directly under the hero, above Work (decision-log
- * **#58**). Three short claims, owner copy 2026-10-15; a band, not a
- * section, so it takes no index, no heading and no nav item.
+ * The proof band directly under the hero, above Manifesto since the Work
+ * band came off (decision-log **#58**, **#78**). Three short claims,
+ * owner copy 2026-10-15; a band, not a section, so it takes no index, no
+ * heading and no nav item.
  */
 export const PROOF = [
   "Live in weeks, not quarters",
@@ -326,7 +325,8 @@ export const PROOF = [
  * section went live (decision-log #16, 2026-08-24) — it carries a
  * structured item inventory now, which is the src/content/services.ts
  * precedent for a section outgrowing this file. The retired
- * placeholder-tile strings went with the paper-era grid.
+ * placeholder-tile strings went with the paper-era grid. The band is
+ * dormant since #78 (2026-11-13), and work.ts with it.
  */
 
 /**

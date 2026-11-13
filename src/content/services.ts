@@ -61,17 +61,16 @@ export const SERVICES_CTA = "Build With Us";
  * no price. `src/content/pricing.ts` composes its strings from these, so
  * a price change is still one edit here.
  *
- * Since #75 the product has no upfront figure: `build` is its monthly
- * rate from the start, and `support` the lower rate after launch. The
- * agentic offering keeps its upfront figure and its one monthly.
+ * **One figure per offering since #77** (2026-11-13): a monthly rate
+ * while we work, two months minimum, nothing upfront. The agentic
+ * offering's $3,998 upfront and the product's $4,998 support rate are
+ * gone; ongoing work after the build is priced separately and has no
+ * figure anywhere. The product's $9,998 is #75's build rate, unchanged.
  */
 export const PRICES = {
-  "agentic-system": { upfront: "$3,998", monthly: "$2,998" },
-  product: { build: "$9,998", support: "$4,998" },
-} as const satisfies Record<
-  ServiceSlug,
-  { upfront: string; monthly: string } | { build: string; support: string }
->;
+  "agentic-system": { monthly: "$2,998" },
+  product: { monthly: "$9,998" },
+} as const satisfies Record<ServiceSlug, { monthly: string }>;
 
 /**
  * Offering slug -> the quick-door need its CTAs preselect.

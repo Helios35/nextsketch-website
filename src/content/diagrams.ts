@@ -243,9 +243,10 @@ export const FINISH_STARTED = {
 
 /**
  * `/services/product#product-support`: a live product, watched and tuned.
- * The sample releases are support's kind of work since #75 (DRAFT), which
- * adds no new features. The constant's name is a fossil of the block's
- * old name, "Ongoing product team", kept like the tier slugs.
+ * The sample releases are support's kind of work since #75 (DRAFT). The
+ * drawing shows no figure and no rate, so #77 (ongoing work priced
+ * separately) left it as it was. The constant's name is a fossil of the
+ * block's old name, "Ongoing product team", kept like the tier slugs.
  */
 export const ONGOING_TEAM = {
   label:

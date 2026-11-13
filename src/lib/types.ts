@@ -289,10 +289,10 @@ export const serviceBlockHref = (block: ServiceBlockId): string =>
   `${serviceRoute(SERVICE_BLOCK_PAGE[block])}#${block}`;
 
 /**
- * Root-relative anchor for a section — `/#work`, never `#work`.
+ * Root-relative anchor for a section: `/#services`, never `#services`.
  *
- * A bare hash is resolved against the *current* route, so `#work` on
- * `/pricing` means `/pricing#work`, which is nothing. Every nav and
+ * A bare hash is resolved against the *current* route, so `#services`
+ * on `/pricing` means `/pricing#services`, which is nothing. Every nav and
  * footer link now leaves the page it is on, so all of them must be
  * root-relative (decision-log #23). On `/` the two forms behave
  * identically: same document, same fragment navigation, same
@@ -319,55 +319,52 @@ export type PricingTierSlug = "workflow" | "custom";
  * lives in `src/content/pricing.ts`; nothing here is rendered from a
  * component literal.
  *
- * `headlinePrice` and `ongoing` are **display strings, not numbers**.
- * They were chosen when two tiers had no numeric upfront (one
- * retainer-only, one quoted); every tier carries a figure since #45, and
- * the strings stay because they already carry their own currency symbol.
- * The figure a visitor reads is the figure in content.
+ * `headlinePrice` is a **display string, not a number**. It was chosen
+ * when two tiers had no numeric upfront (one retainer-only, one quoted);
+ * every tier carries a figure since #45, and the string stays because it
+ * already carries its own currency symbol. The figure a visitor reads is
+ * the figure in content.
  *
  * The struck former price (`upfrontWas`) retired with #56: a discount
  * that never expires stopped reading as one.
  *
- * **Each tier has two prices and names its own bands since #75.** The
- * agentic tier reads Upfront and Ongoing; the product tier has no upfront
- * price and reads Build and Ongoing product support. So the first band's
- * fields are `headlinePrice*`, renamed from `upfront*`, which would have
- * held a monthly on the product tier.
+ * **One price per tier since #77** (2026-11-13): a monthly rate while we
+ * work, two months minimum, nothing upfront. The second band no longer
+ * carries a figure: it says what happens after the build (the client owns
+ * what we built, and ongoing work is priced separately). So the ongoing
+ * figure and its label and caption (`ongoing`, `ongoingLabel`,
+ * `ongoingNote`) and the second list with its label (`monthlyCovers`,
+ * `coversLabel`) are gone. The first band keeps the `headlinePrice*`
+ * names #75 gave it.
  */
 export interface PricingTier {
   readonly slug: PricingTierSlug;
   readonly name: string;
   readonly description: string;
-  /** Mono label over the headline price: "Upfront" or "Build" (#75). */
+  /** Mono label over the price: "While we work" or "While we build" (#77). */
   readonly headlinePriceLabel: string;
-  /** The figure at display size, e.g. "$3,998" / "$9,998". */
+  /** The monthly figure at display size, e.g. "$2,998" / "$9,998". */
   readonly headlinePrice: string;
   /**
-   * What the headline price is per, set quieter beside it, e.g. "per
-   * month" (#75). A one-time price has none.
+   * What the headline price is per, set quieter beside it: "per month"
+   * on both tiers since #77. A one-time price would have none.
    */
   readonly headlinePriceUnit?: string;
   /**
-   * Caption under the headline price. Optional since #45: a tier
-   * without an approved caption renders none rather than an invented
-   * line (Rule 4.3).
+   * Caption under the headline price: the term, and what the months
+   * cover. Optional since #45: a tier without an approved caption renders
+   * none rather than an invented line (Rule 4.3).
    */
   readonly headlinePriceNote?: string;
-  /** Mono label over `ongoing`: "Ongoing" or "Ongoing product support" (#75). */
-  readonly ongoingLabel: string;
-  /** The ongoing monthly figure, e.g. "$2,998 per month". */
-  readonly ongoing: string;
-  /** Caption under the ongoing figure: what it is, and when it applies. */
-  readonly ongoingNote: string;
-  /** "Included": what the build delivers (#56). */
-  readonly features: readonly string[];
   /**
-   * Mono label over `monthlyCovers`: "What the monthly covers" or, on
-   * the product tier, "What support covers" (#75).
+   * The ownership line that leads the "After the build" band (#77), above
+   * the owner line every tier carries ("Ongoing work is priced
+   * separately."). The product tier's today; a tier without one shows the
+   * owner line alone.
    */
-  readonly coversLabel: string;
-  /** What the tier's ongoing monthly covers (#56); support's since #75. */
-  readonly monthlyCovers: readonly string[];
+  readonly ownership?: string;
+  /** "Included": what the paid months deliver (#56, #77). */
+  readonly features: readonly string[];
 }
 
 /**
@@ -416,8 +413,9 @@ export interface ServicePageBlock {
  *   like every other section's `ACCENT_PHRASE`.
  * - `leadLine`, `intro` — the hero's lead line and supporting
  *   paragraph (#53). No price: prices live on `/pricing` only (#73).
- * - `offer` — the "What you get" and "What the monthly covers" lists,
- *   the agentic page's (#57).
+ * - `offer`: the "What you get" and "After the build" lists, the
+ *   agentic page's (#57; the second was "What the monthly covers" until
+ *   #77, when ongoing work came out of the monthly).
  *
  * `need` is optional for the same reason it is optional on
  * `ModalTrigger`; both routes carry one since each is one offering.
@@ -447,6 +445,7 @@ export interface ServicePageContent {
   readonly blocks: readonly ServicePageBlock[];
   readonly offer?: {
     readonly included: readonly string[];
-    readonly monthlyCovers: readonly string[];
+    /** The ongoing work we can pick up once the build is done (#77). */
+    readonly afterBuild: readonly string[];
   };
 }
