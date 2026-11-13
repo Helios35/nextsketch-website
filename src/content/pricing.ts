@@ -49,15 +49,16 @@ import type { PricingTier, PricingTierSlug, ServiceSlug } from "@/lib/types";
 export const PRICING = {
   /** Browser tab and search-result title for the route (#59). */
   title: "Pricing: AI Automation and AI Product Development | NextSketch",
-  /** DRAFT (#77): one monthly rate per offer, nothing upfront. */
+  /** DRAFT (#77): one monthly rate per offer. */
   description:
-    "Published prices for AI automation and AI product development. One monthly rate while we work, two months minimum, nothing upfront. No hourly billing, no surprise invoices.",
+    "Published prices for AI automation and AI product development. One monthly rate while we work, two months minimum. No hourly billing, no surprise invoices.",
   /** Mono micro-label above the heading (docs/04-ux-spec.md §Typography). */
   eyebrow: "Pricing",
   /**
    * Left as it was (an open owner item, #75 call 4 and the #77 brief):
-   * "upfront" means the price is out in the open, beside two cards that
-   * now both say "nothing upfront".
+   * "upfront" means the price is out in the open. No line on the site
+   * says "nothing upfront" any more (Nate, 2026-11-13), so the word has
+   * only this meaning here.
    */
   headline: "NextSketch puts the price upfront.",
   /**
@@ -73,7 +74,7 @@ export const PRICING = {
    * #77 brief's short version, which says it of both offers.
    */
   intro:
-    "Both offers are one monthly rate while we work, with two months minimum and nothing upfront. When the work is done, you own what we built, and anything after that is priced when it comes up. No hourly billing, no meter running during meetings, no surprise invoices.",
+    "Both offers are one monthly rate while we work, with two months minimum. When the work is done, you own what we built, and anything after that is priced when it comes up. No hourly billing, no meter running during meetings, no surprise invoices.",
   /**
    * The commitment, stated plainly and before the cards. Owner-settled
    * (#25), two months since #75, and since #77 it says the monthly ends

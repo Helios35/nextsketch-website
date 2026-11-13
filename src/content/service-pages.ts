@@ -161,7 +161,7 @@ const PRODUCT_BLOCKS = [
       "A written assessment of what was built and what to keep",
       "The direction checked before more money goes in",
       "The same published price as a new build",
-      "Nothing upfront, two months minimum, and the finished product is yours",
+      "Two months minimum, and the finished product is yours",
     ],
   },
   {

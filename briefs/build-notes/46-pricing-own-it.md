@@ -134,7 +134,15 @@ Nate looked at the cards in the dev server and cut both price captions to the te
 | Agentic caption | Nothing upfront, two months minimum. Covers the strategy, the process mapping, the build and validation. | Two months minimum. |
 | Product caption | Nothing upfront, two months minimum, which lines up with the 6 to 8 week build. Includes process mapping and discovery, and on a project someone else started, assessing what's already built. | Two months minimum. |
 
-**Left as they were, per "DO NOT touch anything else":** "nothing upfront" still appears in the `/pricing` intro, its search description, and the product route's "Finish what someone started" line ("Nothing upfront, two months minimum, and the finished product is yours"). The same first-payment reading could apply there. Each is one string if Nate wants it changed.
+**Then, the same day (Nate: "Yes, drop them"):** "nothing upfront" came off the three lines that still said it, for the same first-payment reading. No rendered line on the site says it now.
+
+| Line | Was | Now |
+|---|---|---|
+| `/pricing` intro | "...with two months minimum and nothing upfront." | "...with two months minimum." |
+| `/pricing` search description | "...two months minimum, nothing upfront." | "...two months minimum." |
+| Finish what someone started | "Nothing upfront, two months minimum, and the finished product is yours" | "Two months minimum, and the finished product is yours" |
+
+The rest of each line is unchanged. The headline's "upfront" now has only its own meaning (the price is out in the open).
 
 **What the cut drops:** the product card no longer says the monthly covers assessing a project someone else started. The product route's "The same published price as a new build" still holds, because it's the same $9,998, but the card no longer explains why.
 
@@ -163,7 +171,7 @@ Both cards still line up row for row: at 1280 in the dev server, both read 627, 
 **`/services/agentic-system`:** the second list card was "What the monthly covers" (the tier's four lines, read from the tier). It is now **"After the build"**, holding the same four lines itself, and closes on "Ongoing work is priced separately." (`OfferList` gained a `note`). Nothing else on the route changed.
 
 **`/services/product`:**
-- Finish what someone started, last line: "Nothing upfront, two months minimum, and the finished product is yours" (was "Two months minimum, then staying on is your call").
+- Finish what someone started, last line: "Two months minimum, and the finished product is yours" (was "Two months minimum, then staying on is your call").
 - **Ongoing product support stays a way in** (name, anchor, diagram unchanged). Its description is new and ends on the owner line; its list keeps six lines and loses "One monthly rate, never billed by the hour". No figure, no rate.
 
 ### Part B: the Work band
@@ -193,8 +201,8 @@ On disk, unchanged except a two-line DORMANT note in the first two:
 Owner copy, not DRAFT: the agentic description and "Ongoing work is priced separately."
 
 **`/pricing`**
-1. Search description: "Published prices for AI automation and AI product development. One monthly rate while we work, two months minimum, nothing upfront. No hourly billing, no surprise invoices."
-2. Intro: "Both offers are one monthly rate while we work, with two months minimum and nothing upfront. When the work is done, you own what we built, and anything after that is priced when it comes up. No hourly billing, no meter running during meetings, no surprise invoices."
+1. Search description: "Published prices for AI automation and AI product development. One monthly rate while we work, two months minimum. No hourly billing, no surprise invoices."
+2. Intro: "Both offers are one monthly rate while we work, with two months minimum. When the work is done, you own what we built, and anything after that is priced when it comes up. No hourly billing, no meter running during meetings, no surprise invoices."
 3. Term: "Both offers bill monthly while we work, two months minimum. When the work is done, the monthly stops."
 4. Labels: "While we work", "While we build", "After the build".
 5. Agentic caption: owner direction, not DRAFT (see Owner change below): "Two months minimum."
@@ -208,7 +216,7 @@ Owner copy, not DRAFT: the agentic description and "Ongoing work is priced separ
 
 **`/services/product`**
 
-10. Finish what someone started: "Nothing upfront, two months minimum, and the finished product is yours".
+10. Finish what someone started: "Two months minimum, and the finished product is yours".
 11. Ongoing product support: "The product is live, and you own it. If you want us to keep it tuned and running, we scope that work with you. Ongoing work is priced separately."
 
 **Removed lines**
@@ -249,7 +257,7 @@ None was resolved silently. Each is built the way recommended unless it says "le
 
    None states a figure, a plan or a rate, and ongoing work still exists (priced separately). But next to a monthly price they can read as a monthly plan that never ends, which is the problem this unit solves. **Recommend** changing the two that describe the offer: the home card to "...and keep them running and improving." and the route description to "...Kept running and improving after launch." Leave Why and Optimize, which describe how we work.
 7. **The owner line appears in two places beyond the cards:** under the agentic route's "After the build" list, and at the end of the product route's support description. Without it, both places would list ongoing work with nothing saying how it's priced. **Recommend** keeping both.
-8. **Left: the `/pricing` headline**, "NextSketch puts the price upfront.", with "upfront" in coral. Both cards now say "Nothing upfront" right under it (still open since #75, call 4).
+8. **Left: the `/pricing` headline**, "NextSketch puts the price upfront.", with "upfront" in coral (still open since #75, call 4). Since "nothing upfront" came off every line (Owner change above), nothing beside it competes with that meaning.
 9. **Left: the home product card's "we stay on as your product team"** (your call under #75, "Leave it"). It states no rate, so it still reads true with ongoing work priced separately.
 10. **Left: the agentic route's "What you get" list** (owner copy, #57). It doesn't lead with strategy the way the card's description now does. **Recommend** leaving it. A strategy line can lead it if you want the route to match.
 11. **The commitment, for the record:** the least an agentic client pays falls from $9,994 ($3,998 + 2 × $2,998) to $5,996. The product stays at $19,996. No copy states a total.
