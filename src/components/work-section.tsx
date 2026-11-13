@@ -50,6 +50,10 @@ const ACCENT_PHRASE = WORK_ACCENT_PHRASE;
  * the right edge to signal there is more to scroll.
  *
  * Server component; the rail's controls are the only interactive part.
+ *
+ * **DORMANT since decision-log #78 (2026-11-13):** no route renders it,
+ * and no link points at `#work`. Its index "01" is Manifesto's now; a
+ * return would renumber the sections again (and take a new owner row).
  */
 export function WorkSection() {
   const headline = WORK_HEADLINE;

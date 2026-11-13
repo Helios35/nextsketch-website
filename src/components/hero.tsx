@@ -22,7 +22,8 @@ import { LANDING } from "@/content/copy";
  * loop that plays on its own (<HeroLoop>) and ignores scroll: the
  * 260vh scroll runway and the sticky stage that existed only to give
  * the old scrubbed orbit room are gone, so the hero is one screen tall
- * and the first scroll moves straight into Work. Composition, overlays,
+ * and the first scroll moves straight into the proof band and Manifesto
+ * (into Work until #78 took that band off). Composition, overlays,
  * header block, strip and copy are unchanged by that swap. #50
  * (2026-10-14) swapped the footage for the fin-palette sketch loop and
  * made it dissolve into the page on every edge (<HeroLoop>).

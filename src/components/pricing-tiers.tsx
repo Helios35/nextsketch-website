@@ -20,9 +20,11 @@ import type { PricingTier } from "@/lib/types";
  * reference, which contributed **layout only**, the same posture PR #27
  * took with the gallery reference: a titled block above a card grid,
  * each card running name -> description -> price -> included list ->
- * CTA. Its own vocabulary was refused wholesale. #56 adds a second list,
- * under "Included", saying what the monthly covers. #75 lets each tier
- * name its two price bands, because the product has no upfront price.
+ * CTA. Its own vocabulary was refused wholesale. #56 added a second list
+ * and #75 a second figure; **#77 takes both out again**: each tier has
+ * one price (a monthly while we work), then an "After the build" band
+ * with no figure (ownership on the product tier, and "Ongoing work is
+ * priced separately." on both), then one list.
  *
  * **Zero new dependencies.** The reference imports `lucide-react`,
  * `@radix-ui/react-slot`, `class-variance-authority` and
@@ -36,9 +38,9 @@ import type { PricingTier } from "@/lib/types";
  * **What else was refused, and why:**
  *
  * - **The monthly/annual billing toggle.** The reference's centrepiece.
- *   There is no such choice here: every tier publishes its prices, and
- *   its monthly is required for the first two months (#25, #75). A
- *   toggle would invent an annual plan that does not exist and
+ *   There is no such choice here: every tier publishes its price, and
+ *   its monthly runs for two months at least, while we work (#25, #75,
+ *   #77). A toggle would invent an annual plan that does not exist and
  *   imply the commitment is optional from day one, which is the exact
  *   "surprise invoice" Brand Philosophy §6 rejects.
  * - **The `recommended` tier** — its badge, its `ring`, its `scale`
@@ -62,8 +64,9 @@ import type { PricingTier } from "@/lib/types";
  * `card` with a `border` hairline and fin's `rounded-xl` (#47, #48),
  * not the glass `card/95 + backdrop-blur-xl`. Glass exists so a
  * surface reads over something moving; `/pricing` mounts no video, so
- * there is nothing behind the card to blur. This is the Work band's
- * precedent (build-note 20), applied for the same reason. The fill is
+ * there is nothing behind the card to blur. This was the Work band's
+ * precedent (build-note 20; the band is dormant since #78), applied for
+ * the same reason. The fill is
  * the same `card` the Services cards use, so these read as one family
  * with them.
  *
@@ -72,12 +75,12 @@ import type { PricingTier } from "@/lib/types";
  *
  * **Every band starts on the same line across the row — CSS subgrid.**
  * The descriptions run to different lengths, so a plain flex column
- * staggers `Upfront` and `Ongoing` down the row and only the
- * `mt-auto` CTA lines up (owner feedback, 2026-08-25). Each card is
- * therefore a **seven-row subgrid** (name, description, headline price,
- * ongoing, included, what the monthly covers, CTA; six until #56),
- * sharing its neighbours' row tracks, so each band's track is the
- * tallest across the row and every card's bands start together.
+ * staggers the bands down the row and only the `mt-auto` CTA lines up
+ * (owner feedback, 2026-08-25). Each card is therefore a **six-row
+ * subgrid** (name, description, price, after the build, included, CTA;
+ * seven from #56 until #77 took the second list out), sharing its
+ * neighbours' row tracks, so each band's track is the tallest across the
+ * row and every card's bands start together.
  * Content-driven, so it survives a copy edit, a font swap and every
  * breakpoint; a `min-h` in pixels or `lh` survives none of those, and
  * clamping would truncate a price description.
@@ -97,8 +100,8 @@ import type { PricingTier } from "@/lib/types";
  *    padding shifts them; all four cards carry the same `p-6 md:p-8`,
  *    so they shift identically and stay aligned with each other.
  *
- * Both list rows are rendered even when a tier has no bullets for one:
- * every card must span the same seven rows or the subgrids stop lining
+ * The list row is rendered even when a tier has no bullets for it:
+ * every card must span the same six rows or the subgrids stop lining
  * up. Empty, a row's track collapses to nothing.
  *
  * Alignment is per grid row, which is what matters visually — the two
@@ -163,20 +166,20 @@ export function PricingTiers() {
             on a tier that omits it. The component reads the interface,
             not the content's literals, which is the right coupling anyway. */}
         {PRICING_TIERS.map((tier: PricingTier) => (
-          /* Seven-row subgrid: the row tracks are the parent's, so every
-             card's bands start on the same line as its neighbours'. The
-             mb-4 is the row separation the parent's zeroed row-gap no
-             longer provides, and is uniform on purpose; from md both
-             cards share one row and need none. */
+          /* Six-row subgrid (#77; seven before it): the row tracks are
+             the parent's, so every card's bands start on the same line as
+             its neighbours'. The mb-4 is the row separation the parent's
+             zeroed row-gap no longer provides, and is uniform on purpose;
+             from md both cards share one row and need none. */
           /* `relative` holds the offer tab (#67); the tab is absolutely
              positioned, so it takes no subgrid row. */
           <div
             key={tier.slug}
-            className="relative row-span-7 mb-4 grid grid-rows-subgrid rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:mb-0 md:p-8"
+            className="relative row-span-6 mb-4 grid grid-rows-subgrid rounded-xl border border-border bg-card p-6 transition-colors duration-150 hover:border-muted-foreground/50 md:mb-0 md:p-8"
           >
             {/* Row one: the name, then which levels of AI the tier
                 covers (#69), so the price says what it buys. Inside the
-                name's cell, so the seven-row subgrid is unchanged and
+                name's cell, so it takes no subgrid row of its own and
                 both cards' rows still start together. */}
             <div>
               <h3 className="font-sans text-lg font-semibold tracking-tight text-foreground md:text-xl">
@@ -195,17 +198,17 @@ export function PricingTiers() {
               {tier.description}
             </p>
 
-            {/* Price block. The headline price is at display size but
+            {/* Price block. The one price (#77) is at display size but
                 set as a figure (Inter, tabular numerals, never Playfair:
-                fin §1); the ongoing monthly sits under a hairline as a
-                second, quieter figure, so the commitment is stated on
-                every card rather than once in a footnote (#25). */}
+                fin §1), and its caption states the term, so the
+                commitment is on every card rather than once in a
+                footnote (#25). */}
             <div className="mt-8">
               <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
                 {tier.headlinePriceLabel}
               </p>
-              {/* The figure alone, with its unit set quieter when it has
-                  one (#75): the struck former price that sat beside it
+              {/* The figure, with its unit set quieter when it has one
+                  (#75): the struck former price that sat beside it
                   retired with #56. */}
               <p className="mt-2 font-sans text-3xl leading-[1.05] font-medium tracking-tight text-foreground tabular-nums">
                 {tier.headlinePrice}
@@ -225,25 +228,32 @@ export function PricingTiers() {
                 </p>
               )}
             </div>
+            {/* After the build (#77): no figure, under the same hairline
+                the ongoing monthly sat under until #77. Ownership leads
+                where a tier has it (the product tier), then the owner
+                line every tier carries. Plain `foreground`: there is no
+                figure here to set in coral, and nothing here hides. */}
             <div className="mt-6 border-t border-border pt-6">
               <p className="font-mono text-[0.7rem] tracking-[0.14em] uppercase text-muted-foreground">
-                {tier.ongoingLabel}
+                {PRICING.afterLabel}
               </p>
-              <p className="mt-2 font-sans text-xl font-medium text-brand tabular-nums">
-                {tier.ongoing}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {tier.ongoingNote}
+              {tier.ownership !== undefined && (
+                <p className="mt-2 text-base leading-relaxed font-medium text-foreground">
+                  {tier.ownership}
+                </p>
+              )}
+              <p className="mt-2 text-base leading-relaxed text-foreground">
+                {PRICING.ongoingWork}
               </p>
             </div>
 
-            {/* Rows five and six (#56): what the build includes, then what
-                the monthly covers (on the product tier, what support
-                covers, #75). Always rendered, even empty: the seven-row
-                spans must match across cards or the subgrids stop
-                aligning. */}
+            {/* Row five (#56): what the paid months deliver. Always
+                rendered, even empty: the six-row spans must match across
+                cards or the subgrids stop aligning. The second list
+                ("What the monthly covers", then "What support covers")
+                came out with #77. */}
             <TierList label={PRICING.featuresLabel} items={tier.features} />
-            <TierList label={tier.coversLabel} items={tier.monthlyCovers} />
+
 
             <div className="mt-8">
               <ModalTrigger
@@ -255,8 +265,7 @@ export function PricingTiers() {
               </ModalTrigger>
             </div>
             {/* The offering's own colour (#67), the tab its Services
-                card and route carry; the monthly figure and the
-                diamonds stay coral. */}
+                card and route carry; the diamonds stay coral. */}
             <OfferTab
               offer={PRICING_OFFER[tier.slug]}
               className="left-6 md:left-8"

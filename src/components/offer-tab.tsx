@@ -11,8 +11,9 @@ import type { ServiceSlug } from "@/lib/types";
  * without being redrawn) and the agentic lists.
  *
  * **It identifies; it never emphasises.** Coral keeps every job it had
- * on these surfaces (the index diamond, the list diamonds, the CTA, the
- * monthly figure), and the tab is smaller than any of them, so a
+ * on these surfaces (the index diamond, the list diamonds, the CTA; the
+ * coral ongoing monthly figure left the tiers with #77), and the tab is
+ * smaller than any of them, so a
  * visitor notices coral first. A full-width 2px edge was tried and read
  * before coral on the wide service rows; the 1px hairline recoloured
  * alone was too faint to tell the two cards apart at a glance.

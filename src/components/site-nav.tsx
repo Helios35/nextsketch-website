@@ -34,8 +34,9 @@ function BurgerIcon() {
  * glass (bg-card/95 + backdrop-blur, `border` hairline; decision-log
  * #47) with reduced height after 80px of scroll. The shrink is plain
  * CSS transitions gated by motion-safe. Items ride NAV.items: the live redesign
- * sections (decision-log #13: work / why / services / process / about;
- * #start is reached via the CTA, not a nav item) plus Pricing, the one
+ * sections (decision-log #13: why / services / process / about; Work
+ * led them from #21 until its band came off the page, #78; #start is
+ * reached via the CTA, not a nav item) plus Pricing, the one
  * item that leaves the page (#23/#24). The hero renders the brand
  * wordmark itself, so the nav's wordmark appears only once scrolled —
  * otherwise it would double over the hero. `/pricing` has no hero, so
@@ -91,7 +92,7 @@ function BurgerIcon() {
  * The burger sits right via justify-between, against the
  * wordmark slot on the left. Every href is root-relative (NAV.home,
  * NAV.items) so it resolves from `/pricing` as well as `/`; a bare
- * `#work` would mean `/pricing#work` there, which is nothing.
+ * `#services` would mean `/pricing#services` there, which is nothing.
  *
  * Server render is the static branch: not scrolled (no wordmark),
  * menu closed. **Closed means the items are not in the SSR HTML**, so

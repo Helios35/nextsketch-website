@@ -40,7 +40,7 @@ export function FinalCtaSection() {
     >
       <ScrollReveal>
         <SectionHeading
-          index="06"
+          index="05"
           eyebrow={FINAL_CTA.eyebrow}
           className="max-w-3xl"
         >

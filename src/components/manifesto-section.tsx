@@ -17,7 +17,7 @@ const ACCENT_PHRASE = MANIFESTO.accentPhrase;
 /**
  * Manifesto (#why) — reframe the problem. Rebuilt in place to the
  * hero-derived design system (Redesign Unit 02): a full-width band on
- * `background` with the shared gutter rhythm, the mono "(02)" eyebrow,
+ * `background` with the shared gutter rhythm, the mono "(01)" eyebrow,
  * a Playfair display statement with the coral payoff phrase (no text
  * shadow: it sits on plain `background`, decision-log #47), and the
  * body offset right in the two-column editorial rhythm. Entrances are
@@ -38,7 +38,7 @@ export function ManifestoSection() {
     >
       <ScrollReveal>
         <SectionHeading
-          index="02"
+          index="01"
           eyebrow={MANIFESTO.eyebrow}
           className="max-w-4xl"
         >

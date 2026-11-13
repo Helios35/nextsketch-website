@@ -7,6 +7,12 @@ import type { WorkItem } from "@/lib/types";
  * is reactivated from the dormant set, which decision-log #13 required
  * a new owner decision to do — see docs/decision-log.md #16.
  *
+ * **DORMANT since decision-log #78 (2026-11-13).** The band came off
+ * the home page because it did not help a buyer decide; nothing imports
+ * this file but the dormant `work-section.tsx` and `work-rail.tsx`. It
+ * stays on disk, unchanged, for the case studies Nate will ask for
+ * later. Bringing it back is an owner decision and a new row.
+ *
  * No canonical copy exists for this section (Messaging Kit §05 does
  * not cover it and architecture row 5 deferred to the placeholder
  * spec), so every string here is DRAFT in brand voice pending owner

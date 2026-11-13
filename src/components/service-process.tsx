@@ -43,7 +43,7 @@ const MEASURE = "mx-auto w-full max-w-6xl";
  *
  * **Why this is not `<ProcessSection>`.** That component is the home
  * page's interactive centerpiece: a native `<details name>` exclusive
- * accordion, `#process` in the nav, index `(04)` in the page's section
+ * accordion, `#process` in the nav, index `(03)` in the page's section
  * rhythm. Reusing it here would put a second element with `id="process"`
  * on a route that also links to `/#process`, and would import the home
  * page's section numbering onto a page that has none. The **content is

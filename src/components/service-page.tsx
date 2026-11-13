@@ -61,19 +61,24 @@ const BODY_CLASS = "text-base leading-relaxed text-foreground md:text-lg";
 
 /**
  * One list card in the agentic page's offer band (#57): "What you get"
- * or "What the monthly covers". The site's card recipe with the
- * How-it-works card title and the deliverables list's coral diamonds,
- * so nothing here is new vocabulary. Both lists are the offering's, so
- * the card takes its offer tab (#67), as the tier listing them does.
+ * or "After the build" ("What the monthly covers" until #77). The site's
+ * card recipe with the How-it-works card title and the deliverables
+ * list's coral diamonds, so nothing here is new vocabulary. Both lists
+ * are the offering's, so the card takes its offer tab (#67), as the tier
+ * does. `note` is a closing line under the list, in the body style:
+ * "After the build" ends on "Ongoing work is priced separately." (#77),
+ * so the list never reads as part of the monthly.
  */
 function OfferList({
   title,
   items,
+  note,
   delay,
   offer,
 }: {
   title: string;
   items: readonly string[];
+  note?: string;
   delay: number;
   offer: ServiceSlug;
 }) {
@@ -96,6 +101,11 @@ function OfferList({
             </li>
           ))}
         </ul>
+        {note !== undefined && (
+          <p className="mt-6 text-base leading-relaxed text-foreground">
+            {note}
+          </p>
+        )}
         <OfferTab offer={offer} className="left-6 md:left-8" />
       </div>
     </ScrollReveal>
@@ -191,7 +201,7 @@ function LevelsSection({ offer }: { offer: ServiceSlug }) {
  *
  * **The blocks, owner-specified (2026-08-28), extended by #53 and
  * #57:** hero → the anchored topic blocks → (the agentic page only)
- * what you get and what the monthly covers → how it works → close. No
+ * what you get and after the build (#77) → how it works → close. No
  * proof band, no FAQ, no testimonials. **No price on the page (#73,
  * retiring the hero's price line of #53 and #56):** prices live on
  * `/pricing` only, which the hero's second button opens.
@@ -257,7 +267,7 @@ function LevelsSection({ offer }: { offer: ServiceSlug }) {
  * does not have. Dropping it would leave the section that is *called*
  * "what you get" saying only what each service is.
  *
- * **Every href is root-relative.** A bare `#work` on a service route
+ * **Every href is root-relative.** A bare `#services` on a service route
  * resolves to nothing, and the brief calls this the trap the unit
  * multiplies. Nothing here writes a hash: `NAV.home` and `ROUTES` are
  * finished paths, block anchors are same-document, and inbound links
@@ -642,7 +652,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
         </div>
       </div>
 
-      {/* What you get and what the monthly covers (#57): the agentic
+      {/* What you get and after the build (#57, #77): the agentic
           page's two lists, side by side from md, before How it works.
           The product page carries its deliverables in its blocks. */}
       {page.offer !== undefined && (
@@ -655,8 +665,9 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
               offer={page.slug}
             />
             <OfferList
-              title={SERVICE_PAGE_LABELS.monthlyCovers}
-              items={page.offer.monthlyCovers}
+              title={SERVICE_PAGE_LABELS.afterBuild}
+              items={page.offer.afterBuild}
+              note={SERVICE_PAGE_LABELS.afterBuildNote}
               delay={120}
               offer={page.slug}
             />

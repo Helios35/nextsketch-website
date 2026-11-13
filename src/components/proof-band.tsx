@@ -3,9 +3,10 @@ import { PROOF } from "@/content/copy";
 
 /**
  * The proof band (decision-log **#58**): three short claims directly
- * under the hero, above Work. A band, not a section, so it takes no
+ * under the hero, above Manifesto since the Work band came off (#78;
+ * it sat above Work until then). A band, not a section, so it takes no
  * index, no heading, no anchor and no nav item, and the section order
- * (#13, #16) is unchanged.
+ * (#13) is unchanged by it.
  *
  * Built from the system's own pieces and nothing new: the shared
  * gutter ladder, the coral list diamond (a list is where the accent

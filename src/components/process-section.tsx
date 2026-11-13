@@ -17,7 +17,7 @@ const ACCENT_PHRASE = PROCESS.accentPhrase;
 /**
  * Process (#process) — the interactive centerpiece, rebuilt in place
  * to the hero-derived design system (Redesign Unit 02): a full-width
- * band on `background` with the shared gutter rhythm, the mono "(04)"
+ * band on `background` with the shared gutter rhythm, the mono "(03)"
  * eyebrow, and phase rows divided by `border` hairlines, titled in
  * Inter semibold (decision-log #47). The native
  * <details name> exclusive accordion is canonical (build-note 03) and
@@ -45,7 +45,7 @@ export function ProcessSection() {
     >
       <ScrollReveal>
         <SectionHeading
-          index="04"
+          index="03"
           eyebrow={PROCESS.eyebrow}
           className="max-w-4xl"
         >
